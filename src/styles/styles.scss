@@ -1,0 +1,594 @@
+@import "./imports";
+
+a {
+  text-decoration: none;
+}
+
+h1 {
+  @include heading;
+
+  font-size: 5rem;
+  line-height: 8rem;
+  text-align: center;
+  margin-top: 4rem;
+  margin-bottom: 2rem;
+}
+h2 {
+  @include heading;
+  font-size: 3rem;
+  line-height: 6rem;
+  margin-top: 3.5rem;
+  margin-bottom: 1.5rem;
+}
+
+h3 {
+  @include heading;
+
+  font-size: 3rem;
+  line-height: 5rem;
+  text-align: center;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+}
+
+.li {
+  font-family: $font;
+  font-size: 1.6rem;
+  color: $grey;
+  line-height: 2.8rem;
+  &-unstyled {
+    list-style: none;
+  }
+}
+
+.paragraph {
+  font-family: $font;
+  font-size: 1.6rem;
+  color: $grey;
+  line-height: 2.8rem;
+  margin-bottom: 2.8rem;
+}
+.centered-text {
+  text-align: center;
+}
+.centered {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.justify-end {
+  width: max-content;
+  margin-left: auto;
+}
+
+.message {
+  &-bold {
+    font-family: $fontBold, $fontHebrew;
+    font-size: 5rem;
+    line-height: 7rem;
+    color: $mainColorDarkest;
+  }
+  &-body {
+    font-size: 2.5rem;
+    line-height: 5rem;
+    color: $mainColorLight;
+  }
+  &-ill {
+    max-width: 40vw;
+    max-height: 40vh;
+  }
+}
+
+.bold {
+  &-700 {
+    font-weight: 700;
+    color: $greyDark;
+  }
+  &-900 {
+    font-weight: 900;
+    color: $greyDark;
+  }
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.quote {
+  font-size: 2.5rem;
+
+  &__content {
+    font-style: italic;
+  }
+}
+
+.form-error {
+  color: red;
+}
+
+.cover-image {
+  &__preview {
+    @include image;
+  }
+
+  &__container {
+    background-color: $greyLightest;
+    width: 100%;
+    padding-top: 52.35%;
+    position: relative;
+  }
+}
+
+.boxed-button {
+  height: min-content;
+  width: max-content;
+  font-size: 1.8rem;
+  user-select: none;
+  font-family: $font;
+  // background: $gradientColor;
+  background-color: $mainColor;
+  color: white;
+  padding: 1.5rem 5rem 1.7rem 5rem;
+  border-radius: 3px;
+  box-shadow: 0 0.2rem 1rem rgb(170, 170, 170);
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover {
+    transform: translateY(-0.2rem);
+    box-shadow: 0 0.4rem 1.4rem rgb(170, 170, 170);
+  }
+}
+
+.text-button {
+
+
+  &-delete {
+    font-size: 1.8rem;
+    color: $greyDark;
+    text-decoration: none;
+    cursor: pointer;
+    &:hover {
+      color: red;
+    }
+  }
+
+  &-normal {
+    font-size: 1.8rem;
+    color: $greyDark;
+    text-decoration: none;
+    cursor: pointer;
+    &:hover {
+      color: $mainColor;
+    }
+  }
+}
+
+.round-image {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  &__container {
+    position: relative;
+    border-radius: 100%;
+    overflow: hidden;
+    transition: all 0.1s cubic-bezier(1, 0, 0, 1);
+
+    &--profile-form {
+      margin: auto;
+      width: 40%;
+      padding-top: 40%;
+      border: white solid 0.5rem;
+      box-shadow: 0 0.2rem 1rem rgb(170, 170, 170);
+
+      &:hover {
+        width: 42%;
+        padding-top: 42%;
+      }
+    }
+
+    &--small {
+      border: white solid 0.2rem;
+      width: 4.5rem;
+      height: 4.5rem;
+      // margin: 1rem;
+      box-shadow: 0 0.2rem 0.2rem rgba(170, 170, 170, 0.8);
+    }
+  }
+}
+
+// .round-image {
+//   @include image;
+
+//   &__container {
+//     width: 40%;
+//     padding-top: 40%;
+//     position: relative;
+//     border-radius: 100%;
+//     overflow: hidden;
+//     margin: auto;
+//     border: white solid 0.5rem;
+//     box-shadow: 0 0.2rem 1rem rgb(170, 170, 170);
+//     transition: all 0.2s cubic-bezier(1, 0, 0, 1);
+
+//     &--growing {
+//       &:hover {
+//         width: 45%;
+//         padding-top: 45%;
+//       }
+//     }
+//   }
+// }
+
+.places-autocomplete {
+  font-family: $font, Arimo;
+  font-size: 1.9rem;
+  padding: 0.4rem 3rem;
+  &--active {
+    font-size: 1.4rem;
+  }
+  &-dropdown-container {
+    margin-top: 2rem;
+  }
+}
+
+.social {
+  display: grid;
+  grid-gap: 2rem;
+  grid-template-columns: repeat(2, min-content);
+  &__icon {
+    height: 4rem;
+    width: 4rem;
+    cursor: pointer;
+    &--facebook {
+      :hover {
+        fill: $facebookColor;
+      }
+    }
+    &--instagram {
+      :hover {
+        fill: $instagramColor;
+      }
+    }
+  }
+}
+
+.popup {
+  display: none;
+  // width: calc(100% - 12rem);
+  max-width: 60%;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s;
+  position: absolute;
+  margin: 8rem auto;
+  left: 0;
+  right: 0;
+
+  @include resize(800px) {
+    max-width: 80%;
+  }
+
+  @include resize(600px) {
+    max-width: 95%;
+  }
+
+  &:target {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &__close {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    justify-self: stretch;
+    width: 100%;
+    margin-top: 0rem;
+    font-size: 1.4rem;
+    color: $greyDarkest;
+    cursor: pointer;
+    &:hover {
+      color: $mainColor;
+    }
+  }
+  &__container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    z-index: 10000;
+    margin: 3rem 2rem 8rem 2rem;
+    padding: 5rem 8rem;
+    // border-radius: 3rem;
+    box-shadow: 0 0.2rem 9rem rgb(228, 228, 228);
+    background-color: white;
+    @include resize(600px) {
+      padding: 5rem;
+    }
+  }
+
+  &__title {
+    text-align: center;
+    font-family: $fontBold, $fontHebrew;
+    font-size: 5rem;
+    color: $mainColor;
+    margin-bottom: 6rem;
+    margin-top: 3rem;
+  }
+
+  &__button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.empty-feed {
+  font-family: $fontBold, $fontHebrew;
+  color: $greyLight;
+  font-size: 5rem;
+  text-align: center;
+}
+
+.auth {
+  &__button {
+    height: 6rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    font-family: $font;
+    user-select: none;
+    padding: 1.5rem 5rem 1.7rem 5rem;
+    border-radius: $borderRadius;
+    box-shadow: 0 0.2rem 1rem rgb(170, 170, 170);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      transform: translateY(-0.2rem);
+      box-shadow: 0 0.4rem 1.4rem rgb(170, 170, 170);
+    }
+
+    &--google {
+      background: white;
+      color: red;
+    }
+
+    &--facebook {
+      background: white;
+      color: $facebookColor;
+    }
+
+    &--direct {
+      background: $mainColor;
+      color: white;
+    }
+  }
+}
+
+.flex-group {
+  display: flex;
+}
+.flex-group-spaced {
+  display: flex;
+  justify-content: space-between;
+}
+
+.fr-max {
+  @include gridVariation;
+  grid-template-columns: 1fr max-content;
+}
+
+.fr-fr {
+  @include gridVariation;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.max-fr {
+  @include gridVariation;
+  grid-template-columns: max-content 1fr;
+}
+
+.max-max {
+  @include gridVariation;
+  grid-template-columns: repeat(2, max-content);
+}
+
+.fr-max-max {
+  @include gridVariation;
+  grid-template-columns: 1fr repeat(2, max-content);
+}
+
+.max-max-fr {
+  @include gridVariation;
+  grid-template-columns: repeat(2, max-content) 1fr;
+}
+
+.fr-2max {
+  @include gridVariation;
+  grid-template-columns: 1fr repeat(2, max-content);
+}
+
+.two-max-fr {
+  @include gridVariation;
+  grid-template-columns: repeat(2, max-content) 1fr;
+}
+
+.max-fr-max {
+  @include gridVariation;
+  grid-template-columns: max-content 1fr max-content;
+}
+
+.big-numbered-list {
+  font-family: $font;
+  font-size: 1.6rem;
+  color: $grey;
+  line-height: 2.8rem;
+  border-color: $mainColor !important;
+  margin-top: 4rem;
+  padding: 3rem;
+  counter-increment: section;
+  position: relative;
+  z-index: 5;
+}
+
+.big-numbered-list::before {
+  content: counter(section);
+  position: absolute;
+  text-align: center;
+  height: 2rem;
+  width: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  color: $mainColorTransparent;
+  font-size: 12rem;
+  font-family: $fontBold, $fontHebrew;
+  font-weight: 900;
+  z-index: -5;
+}
+
+.caged-list {
+  font-family: $font;
+  font-size: 1.6rem;
+  color: $grey;
+  line-height: 2.8rem;
+  border-top: 2px dashed;
+  border-color: $mainColor !important;
+  margin: 0;
+  padding: 3rem;
+  counter-increment: section;
+  position: relative;
+}
+
+.caged-list:nth-child(even):before {
+  content: counter(section);
+  right: 100%;
+  margin-right: -2rem;
+  position: absolute;
+  border-radius: 50%;
+  padding: 1rem;
+  height: 2rem;
+  width: 2rem;
+  background: $gradientColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  color: white;
+  font-size: 110%;
+}
+
+.caged-list:nth-child(odd):before {
+  content: counter(section);
+  left: 100%;
+  margin-left: -2rem;
+  position: absolute;
+  border-radius: 50%;
+  padding: 1rem;
+  height: 2rem;
+  width: 2rem;
+  background: $gradientColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 110%;
+}
+
+.caged-list:nth-child(even) {
+  border-left: 2px dashed;
+  border-top-left-radius: 3rem;
+  border-bottom-left-radius: 3rem;
+  margin-right: 3rem;
+  padding-right: 0;
+}
+
+.caged-list:nth-child(odd) {
+  border-right: 2px dashed;
+  border-top-right-radius: 3rem;
+  border-bottom-right-radius: 3rem;
+  margin-left: 3rem;
+  padding-left: 0;
+}
+
+.caged-list:first-child {
+  border-top: 0;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.caged-list:last-child {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.tiny-margin-right {
+  margin-right: 2rem;
+}
+
+.small-margin-right {
+  margin-right: 4rem;
+}
+
+.medium-margin-right {
+  margin-right: 8rem;
+}
+
+.big-margin-right {
+  margin-right: 16rem;
+}
+
+.extra-tiny-margin-bottom {
+  margin-bottom: 1rem;
+}
+
+.tiny-margin-bottom {
+  margin-bottom: 2rem;
+}
+.extra-small-margin-bottom {
+  margin-bottom: 3rem;
+}
+
+.small-margin-bottom {
+  margin-bottom: 4rem;
+}
+
+.medium-margin-bottom {
+  margin-bottom: 8rem;
+}
+
+.big-margin-bottom {
+  margin-bottom: 16rem;
+}
+
+.tiny-margin-top {
+  margin-top: 2rem;
+}
+
+.small-margin-top {
+  margin-top: 4rem;
+}
+
+.medium-margin-top {
+  margin-top: 8rem;
+}
+
+.big-margin-top {
+  margin-top: 16rem;
+}

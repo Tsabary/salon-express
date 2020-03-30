@@ -1,0 +1,53 @@
+
+// FONTS //
+
+
+$font: GilroyLight;
+$fontBold: GilroyBold;
+$fontHebrew: Arimo;
+
+
+
+// COLORS //
+
+
+$mainColorBlue: rgb(0, 153, 255);
+$mainColorBlueLightest: lighten($mainColorBlue, 30%);
+$mainColorBlueLight: lighten($mainColorBlue, 15%);
+$mainColorBlueDark: darken($mainColorBlue, 15%);
+$mainColorBlueDarkest: darken($mainColorBlue, 30%);
+$mainColorBlueTransparent: rgba(90, 50, 100, 0.05);
+$blueGradientColor: linear-gradient($mainColorBlue, $mainColorBlueDark);
+
+$mainColor: rgb(111, 0, 255);
+$mainColorLightest: lighten($mainColor, 30%);
+$mainColorLight: lighten($mainColor, 15%);
+$mainColorDark: darken($mainColor, 15%);
+$mainColorDarkest: darken($mainColor, 30%);
+$mainColorTransparent: rgba(90, 50, 100, 0.05);
+$gradientColor: linear-gradient($mainColorLight, $mainColor);
+
+$mainColorSuperLight: #fbeaff;
+$mainColorBlack: #051b3d;
+
+$grey: #ababab;
+$greyLightest: lighten($grey, 29%);
+$greyLight: lighten($grey, 15%);
+$greyDark: darken($grey, 25%);
+$greyDarkest: darken($grey, 50%);
+
+$facebookColor: #3b5998;
+$instagramColor: #f2003c;
+$linkedinColor: #0e76a8;
+$dribbbleColor: #ea4c89;
+$githubColor: #505050;
+$twitterColor: #00acee ;
+
+
+
+
+
+
+// UNITS //
+
+$borderRadius : .5rem;

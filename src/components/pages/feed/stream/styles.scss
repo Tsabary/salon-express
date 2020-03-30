@@ -1,0 +1,219 @@
+@import "../../../../styles/imports";
+
+.stream {
+  min-width: 30rem;
+  border-radius: $borderRadius;
+  box-shadow: 0 0.2rem 9rem rgb(228, 228, 228);
+  background-color: white;
+  padding: 0;
+  margin: 4rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+
+  &__content {
+    padding: 1rem;
+  }
+
+  &__center {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    padding: 1rem;
+  }
+
+  &__title {
+    font-family: $fontBold;
+    font-size: 1.6rem;
+    color: $greyDarkest;
+  }
+
+  &__body {
+    font-size: 1.4rem;
+    color: $greyDarkest;
+  }
+
+  &__tag {
+    display: inline-block;
+    font-size: 1.2rem;
+    padding: .6rem 0.8rem;
+    line-height: 1rem;
+    border-radius: $borderRadius;
+    width: max-content;
+    margin-right: 1rem;
+    user-select: none;
+    color: white;
+    background-color: $mainColor;
+  }
+  &__host {
+    font-size: 1.4rem;
+    color: $grey;
+  }
+  &__timestamp {
+    font-size: 1.4rem;
+    color: $grey;
+  }
+
+  &:hover {
+    transform: translateY(-0.2rem);
+    box-shadow: 0 0.8rem 5rem rgb(190, 190, 190);
+  }
+
+  &__social {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: stretch;
+  }
+
+  &__attend {
+    background: $mainColor;
+    margin: 0.5rem;
+    padding: 1rem;
+    color: white;
+    text-align: center;
+    border-radius: $borderRadius;
+    font-size: 1.2rem;
+
+    transition: all 0.2s;
+
+    &:hover {
+      transform: translateY(-0.1rem);
+      box-shadow: 0 0.1rem 0.2rem rgb(170, 170, 170);
+    }
+  }
+
+  &__attending {
+    background: $greyLightest;
+    margin: 0.5rem;
+    padding: 1rem;
+    color: $grey;
+    text-align: center;
+    border-radius: $borderRadius;
+    font-size: 1.2rem;
+
+  }
+
+  &__follow {
+    background: $blueGradientColor;
+    margin: 0.5rem;
+    padding: 1rem;
+    color: white;
+    text-align: center;
+    border-radius: $borderRadius;
+    transition: all 0.2s;
+
+    &:hover {
+      transform: translateY(-0.1rem);
+      box-shadow: 0 0.1rem 0.2rem rgb(170, 170, 170);
+    }
+  }
+
+  &__actions {
+    text-align: center;
+    padding: .0 .5rem .5rem .5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .5rem;
+  
+  }
+
+  &-button{
+    background-color: $mainColor;
+    color: white;
+    font-size: 1.2rem;
+    border-radius: $borderRadius;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all .2s;
+
+    &__delete{
+      &:hover{
+        background-color: red;
+      }
+    }
+  }
+
+  @include toggleConainer;
+
+  &-delete-checkbox {
+    display: none;
+    &:checked + .stream__visible {
+      transform: translateX(-110%);
+    }
+
+    &:checked ~ .stream__hidden {
+      left: 0;
+    }
+  }
+
+  &__hidden {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5rem;
+    text-align: center;
+  }
+}
+
+.social {
+  display: flex;
+  flex-direction: column;
+  margin: 1.5rem;
+
+  &__icon {
+    height: 3rem;
+    width: 3rem;
+    cursor: pointer;
+    fill: $mainColor;
+
+    &--facebook {
+      &-icon {
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      :hover .social__icon--facebook-icon {
+        fill: $facebookColor;
+        transform: rotate(1080deg);
+      }
+    }
+
+    &--instagram {
+      &-icon {
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      :hover .social__icon--instagram-icon {
+        fill: $instagramColor;
+        transform: rotate(1080deg);
+      }
+    }
+
+    &--twitter {
+      &-icon {
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      :hover .social__icon--twitter-icon {
+        fill: $twitterColor;
+        transform: rotate(1080deg);
+      }
+    }
+
+    &--web {
+      &-icon {
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      :hover .social__icon--web-icon {
+        fill: $mainColor;
+        transform: rotate(1080deg);
+      }
+    }
+
+    &--stream {
+      &-icon {
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      :hover .social__icon--stream-icon {
+        fill: $mainColor;
+        transform: rotate(1080deg);
+      }
+    }
+  }
+}

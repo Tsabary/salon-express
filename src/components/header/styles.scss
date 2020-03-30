@@ -1,0 +1,96 @@
+@import "../../styles/imports";
+
+.header {
+  z-index: 100;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  padding: 5rem 10rem;
+  margin-bottom: 5rem;
+
+  &-with-logo{
+    // width: 100%;
+    display: grid;
+    grid-template-columns: max-content 1fr max-content;
+    align-items: start;
+    gap: 4rem;
+    @include resize(700px) {
+      display: none;
+    }
+  }
+
+  &-without-logo{
+    // width: 100%;
+    display: none;
+    grid-template-columns: 1fr max-content;
+    align-items: start;
+    gap: 4rem;
+    @include resize(700px) {
+      display: grid;
+    }
+  }
+
+  @include resize(800px) {
+    padding: 5rem 8rem;
+  }
+
+  @include resize(700px) {
+    padding: 5rem 6rem;
+  }
+
+  @include resize(600px) {
+    padding: 5rem 5rem;
+  }
+
+  @include resize(500px) {
+    padding: 5rem 4rem;
+  }
+
+  &__logo {
+    height: 8rem;
+    width: 8rem;
+    background: url("/imgs/logo.jpg") no-repeat;
+    background-size: cover;
+    cursor: pointer;
+    &-container {
+      display: grid;
+      grid-template-columns: repeat(2, min-content);
+      grid-gap: 3rem;
+      align-items: center;
+      @include resize(700px) {
+        display: none;
+      }
+    }
+
+    &-empty-holder{
+      display: none;
+      @include resize(700px) {
+        display: block;
+      }
+    }
+  }
+
+  &__title {
+    font-family: $fontBold, $fontHebrew;
+    font-weight: 900;
+    font-size: 4rem;
+    text-align: center;
+    color: $mainColorBlack;
+    margin-top: 1rem;
+    transition: all 0.2s;
+
+    @include resize(700px) {
+      display: none;
+    }
+    &:hover {
+      color: $mainColor;
+      cursor: pointer;
+    }
+  }
+
+  &__auth {
+    display: grid;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+  }
+}

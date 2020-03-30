@@ -1,0 +1,34 @@
+@import "../../../styles/imports";
+
+.rich-text-editor {
+  position: relative;
+  width: 100%;
+  height: max-content;
+  font-family: $font;
+  font-size: 1.6rem;
+  margin-top: 3rem;
+  padding: 3rem;
+  outline: none;
+  border: none;
+  background-color: white;
+  box-shadow: 0 0.2rem 2rem rgb(228, 228, 228);
+  border-radius: $borderRadius;
+  display: block;
+
+  &__container {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.public-DraftEditorPlaceholder-inner {
+  position: absolute;
+  color: #ccc;
+  pointer-events: none;
+}
+.public-DraftEditor-content {
+  height: max-content;
+  min-height: 20rem;
+  // max-height: 80rem;
+  overflow-x: visible;
+}
