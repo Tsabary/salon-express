@@ -6,8 +6,14 @@
   top: 0;
   width: 100%;
   padding: 5rem 10rem;
-  margin-bottom: 5rem;
-  margin-top: 1rem;
+  // margin-bottom: 5rem;
+  // margin-top: 1rem;
+
+// background-color: yellowgreen;
+
+
+
+
   &__center {
     font-size: 8rem;
     font-family: $fontBold;
@@ -77,15 +83,15 @@
   }
 
   @include resize(700px) {
-    padding: 5rem 6rem;
+    padding: 4rem 6rem;
   }
 
   @include resize(600px) {
-    padding: 5rem 5rem;
+    padding: 3rem 5rem;
   }
 
   @include resize(500px) {
-    padding: 5rem 4rem;
+    padding: 3rem 4rem;
   }
 
   &__logo {

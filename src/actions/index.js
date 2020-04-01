@@ -37,7 +37,9 @@ import {
   FETCH_TAGS,
   SET_EDITED_STREAM,
   FETCH_NEW_SUBSCRIPTIONS,
-  FETCH_MORE_SUBSCRIPTIONS
+  FETCH_MORE_SUBSCRIPTIONS,
+  FETCH_TEMPLATES,
+  DELETE_TEMPLATE
 } from "./types";
 
 const db = firebase.firestore();
@@ -52,13 +54,13 @@ export const fetchFirstStreams = (
 ) => async dispatch => {
   const data = await db
     .collection("streams")
-    .where("start_timestamp", ">", timestampNow)
-    .orderBy("start_timestamp")
-    .limit(25)
+    .where("start", ">", timestampNow)
+    .orderBy("start")
+    .limit(15)
     .get();
 
   setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 25) setReachedLast(false);
+  if (data.docs.length === 15) setReachedLast(false);
 
   dispatch({
     type: FETCH_NEW_STREAMS,
@@ -74,14 +76,14 @@ export const fetchMoreStreams = (
 ) => async dispatch => {
   const data = await db
     .collection("streams")
-    .where("start_timestamp", ">", timestampNow)
-    .orderBy("start_timestamp")
+    .where("start", ">", timestampNow)
+    .orderBy("start")
     .startAfter(lastVisible)
-    .limit(25)
+    .limit(15)
     .get();
 
   setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 25) setReachedLast(true);
+  if (data.docs.length < 15) setReachedLast(true);
 
   dispatch({
     type: FETCH_MORE_STREAMS,
@@ -100,13 +102,13 @@ export const fetchFirstSearchedStreams = (
   const data = await db
     .collection("streams")
     .where("tags", "array-contains", tag)
-    .where("start_timestamp", ">", timestampNow)
-    .orderBy("start_timestamp")
-    .limit(25)
+    .where("start", ">", timestampNow)
+    .orderBy("start")
+    .limit(15)
     .get();
 
   setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 25) setReachedLast(false);
+  if (data.docs.length === 15) setReachedLast(false);
 
   dispatch({
     type: FETCH_NEW_SEARCHED_STREAMS,
@@ -124,14 +126,14 @@ export const fetchMoreSearchedStreams = (
   const data = await db
     .collection("streams")
     .where("tags", "array-contains", tag)
-    .where("start_timestamp", ">", timestampNow)
-    .orderBy("start_timestamp")
+    .where("start", ">", timestampNow)
+    .orderBy("start")
     .startAfter(lastVisible)
-    .limit(25)
+    .limit(15)
     .get();
 
   setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 25) setReachedLast(true);
+  if (data.docs.length < 15) setReachedLast(true);
 
   dispatch({
     type: FETCH_MORE_SEARCHED_STREAMS,
@@ -150,13 +152,13 @@ export const fetchFirstSubscriptionStreams = (
   const data = await db
     .collection("streams")
     .where("followers", "array-contains", userUID)
-    .where("start_timestamp", ">", timestampNow)
-    .orderBy("start_timestamp")
-    .limit(25)
+    .where("start", ">", timestampNow)
+    .orderBy("start")
+    .limit(15)
     .get();
 
   setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 25) setReachedLast(false);
+  if (data.docs.length === 15) setReachedLast(false);
 
   dispatch({
     type: FETCH_NEW_SUBSCRIPTIONS,
@@ -174,14 +176,14 @@ export const fetchMoreSubscriptionStreams = (
   const data = db
     .collection("streams")
     .where("followers", "array-contains", userUID)
-    .where("start_timestamp", ">", timestampNow)
-    .orderBy("start_timestamp")
+    .where("start", ">", timestampNow)
+    .orderBy("start")
     .startAfter(lastVisible)
-    .limit(25)
+    .limit(15)
     .get();
 
   setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 25) setReachedLast(true);
+  if (data.docs.length < 15) setReachedLast(true);
 
   dispatch({
     type: FETCH_MORE_SUBSCRIPTIONS,
@@ -199,14 +201,14 @@ export const fetchFirstCalendarUpcoming = (
   const data = await db
     .collection("streams")
     .where("attendants", "array-contains", userID)
-    .where("start_timestamp", ">", Date.now())
-    .orderBy("start_timestamp", "asc")
-    .limit(25)
+    .where("start", ">", Date.now())
+    .orderBy("start", "asc")
+    .limit(15)
     .get();
 
   if (data.docs[data.docs.length - 1])
     setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 25) setReachedLast(false);
+  if (data.docs.length === 15) setReachedLast(false);
 
   dispatch({
     type: FETCH_NEW_CALENDAR_UPCOMING,
@@ -223,15 +225,15 @@ export const fetchMoreCalendarUpcoming = (
   const data = await db
     .collection("streams")
     .where("attendants", "array-contains", userID)
-    .where("start_timestamp", ">", Date.now())
-    .orderBy("start_timestamp", "asc")
+    .where("start", ">", Date.now())
+    .orderBy("start", "asc")
     .startAfter(lastVisible)
     .limit(2)
     .get();
 
   if (data.docs[data.docs.length - 1])
     setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 25) setReachedLast(true);
+  if (data.docs.length < 15) setReachedLast(true);
 
   dispatch({
     type: FETCH_MORE_CALENDAR_UPCOMING,
@@ -249,14 +251,14 @@ export const fetchFirstCalendarPast = (
   const data = await db
     .collection("streams")
     .where("attendants", "array-contains", userID)
-    .where("start_timestamp", "<", Date.now())
-    .orderBy("start_timestamp", "desc")
-    .limit(25)
+    .where("start", "<", Date.now())
+    .orderBy("start", "desc")
+    .limit(15)
     .get();
 
   if (data.docs[data.docs.length - 1])
     setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 25) setReachedLast(false);
+  if (data.docs.length === 15) setReachedLast(false);
 
   dispatch({
     type: FETCH_NEW_CALENDAR_PAST,
@@ -273,15 +275,15 @@ export const fetchMoreCalendarPast = (
   const data = await db
     .collection("streams")
     .where("attendants", "array-contains", userID)
-    .where("start_timestamp", "<", Date.now())
-    .orderBy("start_timestamp", "desc")
+    .where("start", "<", Date.now())
+    .orderBy("start", "desc")
     .startAfter(lastVisible)
-    .limit(25)
+    .limit(15)
     .get();
 
   if (data.docs[data.docs.length - 1])
     setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 25) setReachedLast(true);
+  if (data.docs.length < 15) setReachedLast(true);
 
   dispatch({
     type: FETCH_MORE_CALENDAR_PAST,
@@ -299,14 +301,14 @@ export const fetchFirstMyStreamsUpcoming = (
   const data = await db
     .collection("streams")
     .where("user_ID", "==", userID)
-    .where("start_timestamp", ">", Date.now())
-    .orderBy("start_timestamp", "asc")
-    .limit(25)
+    .where("start", ">", Date.now())
+    .orderBy("start", "asc")
+    .limit(15)
     .get();
 
   if (data.docs[data.docs.length - 1])
     setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 25) setReachedLast(false);
+  if (data.docs.length === 15) setReachedLast(false);
 
   dispatch({
     type: FETCH_NEW_MY_STREAMS_UPCOMING,
@@ -323,15 +325,15 @@ export const fetchMoreMyStreamsUpcoming = (
   const data = await db
     .collection("streams")
     .where("user_ID", "==", userID)
-    .where("start_timestamp", ">", Date.now())
-    .orderBy("start_timestamp", "asc")
+    .where("start", ">", Date.now())
+    .orderBy("start", "asc")
     .startAfter(lastVisible)
-    .limit(25)
+    .limit(15)
     .get();
 
   if (data.docs[data.docs.length - 1])
     setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 25) setReachedLast(true);
+  if (data.docs.length < 15) setReachedLast(true);
 
   dispatch({
     type: FETCH_MORE_MY_STREAMS_UPCOMING,
@@ -349,14 +351,14 @@ export const fetchFirstMyStreamsPast = (
   const data = await db
     .collection("streams")
     .where("user_ID", "==", userID)
-    .where("start_timestamp", "<", Date.now())
-    .orderBy("start_timestamp", "desc")
-    .limit(25)
+    .where("start", "<", Date.now())
+    .orderBy("start", "desc")
+    .limit(15)
     .get();
 
   if (data.docs[data.docs.length - 1])
     setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 25) setReachedLast(false);
+  if (data.docs.length === 15) setReachedLast(false);
 
   dispatch({
     type: FETCH_NEW_MY_STREAMS_PAST,
@@ -373,15 +375,15 @@ export const fetchMoreMyStreamsPast = (
   const data = await db
     .collection("streams")
     .where("user_ID", "==", userID)
-    .where("start_timestamp", "<", Date.now())
-    .orderBy("start_timestamp", "desc")
+    .where("start", "<", Date.now())
+    .orderBy("start", "desc")
     .startAfter(lastVisible)
-    .limit(25)
+    .limit(15)
     .get();
 
   if (data.docs[data.docs.length - 1])
     setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 25) setReachedLast(true);
+  if (data.docs.length < 15) setReachedLast(true);
 
   dispatch({
     type: FETCH_MORE_MY_STREAMS_PAST,
@@ -400,63 +402,111 @@ export const fetchSingleStream = (streamID, setStream) => async dispatch => {
 
 // STREAMS //
 
-export const newStream = (values, image, reset) => dispatch => {
-  const imageName = Date.now() + image.name;
+const makeTemplate = (stream, batch) => {
+  const templateDoc = db.collection("templates").doc();
+  const templateStream = { ...stream, id: templateDoc.id };
+  delete templateStream.url;
+  delete templateStream.start;
+  delete templateStream.end;
 
+  batch.set(templateDoc, templateStream);
+};
+
+export const deleteTemplate = template => async dispatch => {
+  db.collection("templates")
+    .doc(template.id)
+    .delete()
+    .then(() => {
+      dispatch({
+        type: DELETE_TEMPLATE,
+        payload: template.id
+      });
+    });
+};
+
+const dispatchNew = (reset, dispatch, stream) => {
+  reset();
+
+  dispatch({
+    type: NEW_STREAM,
+    payload: stream
+  });
+
+  dispatch({
+    type: ADD_TO_CALENDAR_UPCOMING,
+    payload: stream
+  });
+};
+
+export const newStream = (values, image, isTemplate, reset) => dispatch => {
   const batch = db.batch();
-
   const newDoc = db.collection("streams").doc();
 
-  const uploadTask = storage
-    .ref(`/images/streams/${newDoc.id}/${imageName}`)
-    .put(image);
+  if (image) {
+    const imageName = Date.now() + image.name;
 
-  //initiates the firebase side uploading
-  uploadTask.on(
-    "state_changed",
-    snapShot => {
-      //takes a snap shot of the process as it is happening
-      console.log(snapShot);
-    },
-    err => {
-      //catches the errors
-      console.log(err);
-    },
-    () => {
-      // gets the functions from storage refences the image storage in firebase by the children
-      // gets the download url then sets the image from firebase as the value for the imgUrl key:
-      storage
-        .ref(`images/streams/${newDoc.id}`)
-        .child(imageName)
-        .getDownloadURL()
-        .then(fireBaseUrl => {
-          const stream = {
-            ...values,
-            image: fireBaseUrl,
-            image_file_name: imageName,
-            id: newDoc.id
-          };
-          batch.set(newDoc, stream);
+    const uploadTask = storage
+      .ref(`/images/streams/${newDoc.id}/${imageName}`)
+      .put(image);
 
-          addTags(values.tags, newDoc.id, batch);
+    //initiates the firebase side uploading
+    uploadTask.on(
+      "state_changed",
+      snapShot => {
+        //takes a snap shot of the process as it is happening
+        console.log(snapShot);
+      },
+      err => {
+        //catches the errors
+        console.log(err);
+      },
+      () => {
+        // gets the functions from storage refences the image storage in firebase by the children
+        // gets the download url then sets the image from firebase as the value for the imgUrl key:
+        storage
+          .ref(`images/streams/${newDoc.id}`)
+          .child(imageName)
+          .getDownloadURL()
+          .then(fireBaseUrl => {
+            const stream = {
+              ...values,
+              image: fireBaseUrl,
+              image_file_name: imageName,
+              id: newDoc.id
+            };
 
-          batch.commit().then(d => {
-            console.log("success", d);
-            reset();
+            batch.set(newDoc, stream);
 
-            dispatch({
-              type: NEW_STREAM,
-              payload: stream
-            });
+            addTags(values.tags, newDoc.id, batch);
 
-            dispatch({
-              type: ADD_TO_CALENDAR_UPCOMING,
-              payload: stream
+            if (isTemplate) {
+              makeTemplate(stream, batch);
+            }
+
+            batch.commit().then(d => {
+              dispatchNew(reset, dispatch, stream);
             });
           });
-        });
+      }
+    );
+  } else {
+    const stream = {
+      ...values,
+      id: newDoc.id
+    };
+
+    batch.set(newDoc, stream);
+
+    addTags(values.tags, newDoc.id, batch);
+
+    if (isTemplate) {
+      makeTemplate(stream, batch);
     }
-  );
+
+    batch.commit().then(d => {
+      dispatchNew(reset, dispatch, stream);
+    });
+  }
 };
 
 export const updateStream = (
@@ -494,10 +544,12 @@ export const updateStream = (
           .child(imageName)
           .getDownloadURL()
           .then(fireBaseUrl => {
-            storage
-              .ref()
-              .child(`images/streams/${values.id}/${values.image_file_name}`)
-              .delete();
+            if (!values.from_template) {
+              storage
+                .ref()
+                .child(`images/streams/${values.id}/${values.image_file_name}`)
+                .delete();
+            }
 
             const stream = {
               ...values,
@@ -549,10 +601,12 @@ export const removeStream = stream => dispatch => {
   removeTags(stream.tags, stream.id, batch);
 
   batch.commit().then(() => {
-    storage
-      .ref()
-      .child(`images/streams/${stream.id}/${stream.image_file_name}`)
-      .delete();
+    if (!stream.from_template) {
+      storage
+        .ref()
+        .child(`images/streams/${stream.id}/${stream.image_file_name}`)
+        .delete();
+    }
 
     dispatch({
       type: DELETE_STREAM,
@@ -645,7 +699,7 @@ export const follow = (
   const futureHostEvents = await db
     .collection("streams")
     .where("user_ID", "==", hostID)
-    .where("start_timestamp", ">", Date.now())
+    .where("start", ">", Date.now())
     .get();
 
   futureHostEvents.docs.forEach(doc => {
@@ -691,7 +745,7 @@ export const unfollow = (
   const futureHostEvents = await db
     .collection("streams")
     .where("user_ID", "==", hostID)
-    .where("start_timestamp", ">", Date.now())
+    .where("start", ">", Date.now())
     .get();
 
   futureHostEvents.docs.forEach(doc => {
@@ -716,7 +770,13 @@ export const unfollow = (
 
 // AUTH //
 
-export const signUp = (email, password, setSubmitting, setFormError, togglePopup) => () => {
+export const signUp = (
+  email,
+  password,
+  setSubmitting,
+  setFormError,
+  togglePopup
+) => () => {
   firebase
     .auth()
     .createUserWithEmailAndPassword(email, password)
@@ -731,7 +791,7 @@ export const signUp = (email, password, setSubmitting, setFormError, togglePopup
           .signInWithEmailAndPassword(email, password)
           .then(() => {
             setSubmitting(3);
-            togglePopup()
+            togglePopup();
           })
           .catch(err => {
             console.log("login error:", err);
@@ -870,6 +930,18 @@ export const fetchTags = () => async dispatch => {
   });
 };
 
+export const fetchTemplates = userID => async dispatch => {
+  const data = await db
+    .collection("templates")
+    .where("user_ID", "==", userID)
+    .get();
+
+  dispatch({
+    type: FETCH_TEMPLATES,
+    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+  });
+};
+
 export const togglePopup = () => {
   return {
     type: TOGGLE_POPUP
@@ -917,5 +989,27 @@ const addTags = (tags, docID, batch) => {
       },
       { merge: true }
     );
+  });
+};
+
+// DANGAROUS STREAMS //
+
+export const deleteTags = () => async () => {
+  const tags = await db.collection("tags").get();
+
+  tags.docs.forEach(tag => {
+    console.log(tag);
+    db.collection("tags")
+      .doc(tag.id)
+      .delete();
+  });
+
+  const tagsCount = await db.collection("tags_count").get();
+
+  tagsCount.docs.forEach(tag => {
+    console.log(tag);
+    db.collection("tags_count")
+      .doc(tag.id)
+      .delete();
   });
 };

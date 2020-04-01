@@ -5,11 +5,11 @@ import { Link } from "react-router-dom";
 
 import { AuthContext } from "../../../providers/Auth";
 
-import { logOut, resendVerification } from "../../../actions";
+import { logOut, resendVerification, togglePopup } from "../../../actions";
 
 import TextButton from "../../formComponents/textButton";
 
-const UserOptions = ({ logOut, resendVerification }) => {
+const UserOptions = ({ logOut, resendVerification, togglePopup }) => {
   const { currentUserProfile, currentUser } = useContext(AuthContext);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -53,7 +53,7 @@ const UserOptions = ({ logOut, resendVerification }) => {
 
       <div className="user-options__options">
 
-        <a className="user-options__option" href="#update-profile">
+        <a className="user-options__option" href="#update-profile" onClick={togglePopup}>
           <TextButton text="Update Profile" />
         </a>
 
@@ -68,4 +68,4 @@ const UserOptions = ({ logOut, resendVerification }) => {
     </div>
   );
 };
-export default connect(null, { logOut, resendVerification })(UserOptions);
+export default connect(null, { logOut, resendVerification, togglePopup })(UserOptions);

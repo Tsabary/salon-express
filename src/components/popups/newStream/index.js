@@ -1,19 +1,23 @@
 import "./styles.scss";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 import React, { useContext, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Loader from "react-loader-spinner";
-
+import Form from "react-bootstrap/Form";
 import { useToasts } from "react-toast-notifications";
 
 import { AuthContext } from "../../../providers/Auth";
 
-import { newStream, togglePopup } from "../../../actions";
+import { newStream, togglePopup, fetchTemplates } from "../../../actions";
 import {
   checkValidity,
   errorMessages,
-  trimURL
+  trimURL,
+  renderHours,
+  renderMinutes
 } from "../../../utils/forms";
 
 import { validateWordsLength } from "../../../utils";
@@ -21,9 +25,16 @@ import { validateWordsLength } from "../../../utils";
 import InputField from "../../formComponents/inputField";
 import TextArea from "../../formComponents/textArea";
 import Tags from "../../formComponents/tags";
+import ToggleField from "../../formComponents/toggleField";
+import Template from "./template";
 
-const NewStream = ({ newStream, togglePopup }) => {
+const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
   const [values, setValues] = useState({});
+  const [makeTemplate, setMakeTemplate] = useState(false);
+  const [isExistingTemplate, setIsExistingTemplate] = useState(false);
+
+  const [hour, setHour] = useState(0);
+  const [minutes, setMinutes] = useState(0);
 
   const { currentUserProfile } = useContext(AuthContext);
   const { addToast } = useToasts();
@@ -36,15 +47,24 @@ const NewStream = ({ newStream, togglePopup }) => {
 
   const handleImageAsFile = e => {
     const image = e.target.files[0];
-    setImageAsFile(imageFile => image);
+    setImageAsFile(() => image);
     setSelectedImage(URL.createObjectURL(image));
   };
 
   useEffect(() => {
     if (currentUserProfile) {
+      fetchTemplates(currentUserProfile.uid);
       reset();
     }
   }, [currentUserProfile]);
+
+  useEffect(() => {
+    if (values.start) {
+      const duration = hour * 3600000 + minutes * 60000;
+      const end = new Date(values.start.getTime() + duration);
+      setValues({ ...values, duration, end });
+    }
+  }, [hour, minutes]);
 
   const reset = () => {
     setValues({
@@ -67,7 +87,6 @@ const NewStream = ({ newStream, togglePopup }) => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    console.log(values);
     if (!checkValidity(values, setFormError, imageAsFile)) {
       return;
     }
@@ -84,7 +103,7 @@ const NewStream = ({ newStream, togglePopup }) => {
       url: trimURL(values.url)
     };
 
-    newStream(streamObj, imageAsFile, () => {
+    newStream(streamObj, imageAsFile, makeTemplate, () => {
       addToast("Event posted", {
         appearance: "success",
         autoDismiss: true
@@ -92,128 +111,131 @@ const NewStream = ({ newStream, togglePopup }) => {
       togglePopup();
       reset();
       window.location.hash = "";
+    });
+  };
 
+  const renderTemplates = temps => {
+    return temps.map(t => {
+      return (
+        <Template
+          template={t}
+          key={t.id}
+          setTemplate={() => {
+            setValues({ ...t, from_template: true });
+            setIsExistingTemplate(true);
+          }}
+        />
+      );
     });
   };
 
   return (
-    <div className="popup" id="new-stream">
-      <div className="popup__container">
+    <div className="popup" id="add-stream">
+      <div className="popup__close">
+        <div />
         <a
-          className="popup__close"
           href="#"
           onClick={() => {
             togglePopup();
             reset();
           }}
         >
-          <div />
           Close
         </a>
+      </div>
+      <div>
+        <input
+          className="add-stream-checkbox"
+          type="checkbox"
+          id="add-stream-checkbox"
+        />
 
-        {!submitting ? (
-          <div>
-            <div className="popup__title">Share a Stream</div>
-            <form onSubmit={handleSubmit}>
-              <label htmlFor="add-stream-img" className="add-stream__label">
-                <div className="cover-image__container clickable">
+        <span className="add-stream__visible">
+          {!submitting ? (
+            <div>
+              <div className="popup__title">Share a Stream</div>
+              {templates.length ? (
+                <label
+                  className="add-stream__template-button cenetered"
+                  htmlFor="add-stream-checkbox"
+                >
+                  Use a template
+                </label>
+              ) : null}
+
+              <form
+                onSubmit={handleSubmit}
+                className="small-margin-top"
+                autoComplete="off"
+              >
+                <label
+                  htmlFor="add-stream-img"
+                  className="cover-image__container clickable"
+                >
                   <img
                     className="cover-image__preview clickable"
-                    src={selectedImage || "./imgs/placeholder.jpg"}
-                  />
-                </div>
-              </label>
-              <input
-                id="add-stream-img"
-                className="add-stream__img-input"
-                type="file"
-                accept="image/*" 
-                onChange={handleImageAsFile}
-              />
-
-              <InputField
-                type="text"
-                placeHolder="Title"
-                value={values.title}
-                onChange={title => {
-                  if (title.length < 60 && validateWordsLength(title, 25))
-                    setValues({ ...values, title });
-                }}
-                // label="Title"
-                // required={true}
-              />
-              <TextArea
-                type="text"
-                placeHolder="Extra details"
-                value={values.body}
-                onChange={body => {
-                  if (body.length < 300 && validateWordsLength(body, 25))
-                    setValues({ ...values, body });
-                }}
-                // label="Extra details"
-                // required={true}
-              />
-
-              <InputField
-                type="text"
-                placeHolder="Host name"
-                value={values.host_name}
-                onChange={host_name => {
-                  if (host_name.length < 20  && validateWordsLength(host_name, 15))
-                    setValues({ ...values, host_name });
-                }}
-                // label="Host name"
-                // required={true}
-              />
-
-              <div className="add-stream__date">
-                <DatePicker
-                  selected={values.start_date}
-                  onChange={start_date => {
-                    if (
-                      Object.prototype.toString.call(start_date) ===
-                      "[object Date]"
-                    ) {
-                      setValues({
-                        ...values,
-                        start_date,
-                        start_timestamp: start_date.getTime()
-                      });
-                    } else {
-                      delete values.start_date;
-                      delete values.start_timestamp;
+                    src={
+                      selectedImage || values.image || "./imgs/placeholder.jpg"
                     }
-                  }}
-                  showTimeSelect
-                  timeFormat="HH:mm"
-                  timeIntervals={15}
-                  timeCaption="time"
-                  dateFormat="MMMM d, yyyy h:mm aa"
-                  className="input-field__input"
-                  placeholderText="Click to select a starting time"
-                  minDate={new Date()}
-                  excludeOutOfBoundsTimes
+                  />
+                </label>
+                <input
+                  id="add-stream-img"
+                  className="add-stream__img-input"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageAsFile}
                 />
-              </div>
 
-              {values.start_date &&
-              Object.prototype.toString.call(values.start_date) ? (
+                <InputField
+                  type="text"
+                  placeHolder="Title"
+                  value={values.title}
+                  onChange={title => {
+                    if (title.length < 60 && validateWordsLength(title, 25))
+                      setValues({ ...values, title });
+                  }}
+                  required={true}
+                />
+                <TextArea
+                  type="text"
+                  placeHolder="Extra details"
+                  value={values.body}
+                  onChange={body => {
+                    if (body.length < 300 && validateWordsLength(body, 25))
+                      setValues({ ...values, body });
+                  }}
+                  required={true}
+                />
+
+                <InputField
+                  type="text"
+                  placeHolder="Host name"
+                  value={values.host_name}
+                  onChange={host_name => {
+                    if (
+                      host_name.length < 30 &&
+                      validateWordsLength(host_name, 15)
+                    )
+                      setValues({ ...values, host_name });
+                  }}
+                  required={true}
+                />
+
                 <div className="add-stream__date">
                   <DatePicker
-                    selected={values.end_date}
-                    onChange={end_date => {
+                    selected={values.start}
+                    onChange={start => {
                       if (
-                        Object.prototype.toString.call(end_date) ===
+                        Object.prototype.toString.call(start) ===
                         "[object Date]"
                       ) {
                         setValues({
                           ...values,
-                          end_date,
-                          end_timestamp: end_date.getTime()
+                          start
                         });
                       } else {
-                        delete values.end_date;
-                        delete values.end_timestamp;
+                        delete values.start;
                       }
                     }}
                     showTimeSelect
@@ -222,94 +244,125 @@ const NewStream = ({ newStream, togglePopup }) => {
                     timeCaption="time"
                     dateFormat="MMMM d, yyyy h:mm aa"
                     className="input-field__input"
-                    placeholderText="Click to select an end time"
-                    minDate={values.start_date}
+                    placeholderText="Click to select a starting time"
+                    minDate={new Date()}
                     excludeOutOfBoundsTimes
                   />
                 </div>
-              ) : null}
+                <div className="fr-fr">
+                  <Form.Control
+                    as="select"
+                    value={hour + " hours"}
+                    bsPrefix="input-field__input form-drop"
+                    onChange={v => setHour(v.target.value.split(" ")[0])}
+                  >
+                    {renderHours()}
+                  </Form.Control>
 
-              <InputField
-                type="text"
-                placeHolder="Link to the stream"
-                value={values.url}
-                onChange={url => {
-                  setValues({ ...values, url });
-                }}
-                // label="Link to the stream"
-                // required={true}
-              />
+                  <Form.Control
+                    as="select"
+                    value={minutes + " minutes"}
+                    bsPrefix="input-field__input form-drop"
+                    onChange={v => setMinutes(v.target.value.split(" ")[0])}
+                  >
+                    {renderMinutes()}
+                  </Form.Control>
+                </div>
 
-              <InputField
-                type="text"
-                placeHolder="Host Instagram page"
-                value={values.host_ig}
-                onChange={host_ig => {
-                  setValues({ ...values, host_ig });
-                }}
-                // label="Host Instagram page"
-              />
+                <InputField
+                  type="text"
+                  placeHolder="Link to the stream"
+                  value={values.url}
+                  onChange={url => {
+                    setValues({ ...values, url });
+                  }}
+                  required={true}
+                />
 
-              <InputField
-                type="text"
-                placeHolder="Host Facebook page"
-                value={values.host_fb}
-                onChange={host_fb => {
-                  setValues({ ...values, host_fb });
-                }}
-                // label="Host Facebook page"
-              />
+                <InputField
+                  type="text"
+                  placeHolder="Host Instagram page"
+                  value={values.host_ig}
+                  onChange={host_ig => {
+                    setValues({ ...values, host_ig });
+                  }}
+                />
 
-              <InputField
-                type="text"
-                placeHolder="Host Twitter account"
-                value={values.host_twitter}
-                onChange={host_twitter => {
-                  setValues({ ...values, host_twitter });
-                }}
-                // label="Host Twitter account"
-              />
+                <InputField
+                  type="text"
+                  placeHolder="Host Facebook page"
+                  value={values.host_fb}
+                  onChange={host_fb => {
+                    setValues({ ...values, host_fb });
+                  }}
+                />
 
-              <InputField
-                type="text"
-                placeHolder="Host website"
-                value={values.host_web}
-                onChange={host_web => {
-                  setValues({ ...values, host_web });
-                }}
-                // label="Host website"
-              />
+                <InputField
+                  type="text"
+                  placeHolder="Host Twitter account"
+                  value={values.host_twitter}
+                  onChange={host_twitter => {
+                    setValues({ ...values, host_twitter });
+                  }}
+                />
 
-              <Tags
-                values={values}
-                setValues={setValues}
-                errorMessages={errorMessages}
-                formError={formError}
-                setFormError={setFormError}
-              />
+                <InputField
+                  type="text"
+                  placeHolder="Host website"
+                  value={values.host_web}
+                  onChange={host_web => {
+                    setValues({ ...values, host_web });
+                  }}
+                />
 
-              {formError ? (
-                <div className="form-error small-margin-top">{formError}</div>
-              ) : null}
+                <Tags
+                  values={values}
+                  setValues={setValues}
+                  errorMessages={errorMessages}
+                  formError={formError}
+                  setFormError={setFormError}
+                />
 
-              <div className="popup__button medium-margin-top">
-                <button type="submit" className="boxed-button">
-                  Share
-                </button>
-              </div>
-            </form>
+                <ToggleField
+                  text="Save this as a new template"
+                  toggleOn={() => {
+                    setMakeTemplate(true);
+                    setValues({ ...values, from_template: true });
+                  }}
+                  toggleOff={() => {
+                    setMakeTemplate(false);
+                    delete values.from_template;
+                  }}
+                />
+
+                {formError ? (
+                  <div className="form-error small-margin-top">{formError}</div>
+                ) : null}
+
+                <div className="popup__button medium-margin-top">
+                  <button type="submit" className="boxed-button">
+                    Share
+                  </button>
+                </div>
+              </form>
+            </div>
+          ) : (
+            <div className="centered">
+              <Loader type="Grid" color="#6f00ff" height={100} width={100} />
+            </div>
+          )}
+        </span>
+        <span className="add-stream__hidden">
+          <div className="max-fr">
+            <label className="text-button-normal" htmlFor="add-stream-checkbox">
+              &larr; Back to form
+            </label>
+            <div />
           </div>
-        ) : (
-          <div className="centered">
-            <Loader
-              type="Grid"
-              color="#6f00ff"
-              height={100}
-              width={100}
-              timeout={3000} //3 secs
-            />
+          <div className="add-stream__templates">
+            {renderTemplates(templates)}
           </div>
-        )}
+        </span>
       </div>
     </div>
   );
@@ -317,8 +370,12 @@ const NewStream = ({ newStream, togglePopup }) => {
 
 const mapStateToProps = state => {
   return {
-    tags: state.tags
+    templates: state.templates
   };
 };
 
-export default connect(mapStateToProps, { newStream, togglePopup })(NewStream);
+export default connect(mapStateToProps, {
+  newStream,
+  togglePopup,
+  fetchTemplates
+})(NewStream);

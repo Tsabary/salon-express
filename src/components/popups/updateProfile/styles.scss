@@ -7,6 +7,10 @@
     gap: 2rem;
     align-items: center;
     margin-bottom: 3rem;
+    @include resize(1100px) {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
   }
 
   &__upload {

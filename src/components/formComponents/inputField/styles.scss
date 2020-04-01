@@ -2,19 +2,20 @@
 
 .input-field {
   &__input {
+    position: relative;
     width: 100%;
     height: min-content;
     font-family: $font, Arimo;
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     margin-top: 1rem;
-    padding: 1.5rem 3rem;
+    padding: .7rem 2.5rem;
     outline: none;
     border: none;
     background-color: white;
     box-shadow: 0 0.2rem 2rem rgb(228, 228, 228);
     border-radius: $borderRadius;
     display: block;
-    border-bottom: 2px solid $mainColor;
+    border-bottom: 2px solid transparent;
 
     transition: all 0.3s;
     &::-webkit-input-placeholder {
@@ -23,8 +24,12 @@
     &:invalid {
       border-bottom: 2px solid rgb(216, 6, 6);
     }
-    &:placeholder-shown {
-      border-bottom: 2px solid transparent;
+
+
+    &--required{
+      &:placeholder-shown {
+        border-bottom: 2px solid $mainColor;
+      }
     }
   }
   &__label {

@@ -30,18 +30,19 @@
     @include resize(800px) {
       height: 6rem;
       width: 6rem;
-      top: 5rem;
+      top: 4.5rem;
       left: 8rem;
     }
 
     @include resize(700px) {
       height: 5rem;
       width: 5rem;
-      top: 6rem;
+      top: 4rem;
       left: 6rem;
     }
 
     @include resize(600px) {
+      top: 3rem;
       left: 5rem;
     }
     @include resize(500px) {
@@ -63,18 +64,19 @@
     @include resize(800px) {
       height: 5.2rem;
       width: 5rem;
-      top: 5.5rem;
+      top: 5rem;
       left: 8.5rem;
     }
 
     @include resize(700px) {
       height: 4rem;
       width: 4rem;
-      top: 6.5rem;
+      top: 4.5rem;
       left: 6.5rem;
     }
 
     @include resize(600px) {
+      top: 3.5rem;
       left: 5.5rem;
     }
 

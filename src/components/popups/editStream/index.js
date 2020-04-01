@@ -3,11 +3,17 @@ import { connect } from "react-redux";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Loader from "react-loader-spinner";
+import Form from "react-bootstrap/Form";
 
 import { useToasts } from "react-toast-notifications";
 
 import { AuthContext } from "../../../providers/Auth";
-import { checkValidity, errorMessages } from "../../../utils/forms";
+import {
+  checkValidity,
+  errorMessages,
+  renderHours,
+  renderMinutes
+} from "../../../utils/forms";
 
 import { validateWordsLength } from "../../../utils";
 
@@ -25,6 +31,9 @@ const NewStream = ({
 }) => {
   const [values, setValues] = useState({});
 
+  const [hour, setHour] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+
   const { currentUserProfile } = useContext(AuthContext);
   const { addToast } = useToasts();
 
@@ -41,10 +50,18 @@ const NewStream = ({
     setOriginalTags(editedStream.tags || []);
   }, [editedStream]);
 
+  useEffect(() => {
+    if (values.start) {
+      const duration = hour * 3600000 + minutes * 60000;
+      const end = new Date(values.start.getTime() + duration);
+      setValues({ ...values, duration, end });
+    }
+  }, [hour, minutes]);
+
   const handleImageAsFile = e => {
     e.preventDefault();
     const image = e.target.files[0];
-    setImageAsFile(imageFile => image);
+    setImageAsFile(() => image);
     setSelectedImage(URL.createObjectURL(image));
   };
 
@@ -93,232 +110,196 @@ const NewStream = ({
 
   return (
     <div className="popup" id="edited-stream">
-      <div className="popup__container">
+      <div className="popup__close">
+        <div />
         <a
-          className="popup__close"
           href="#"
           onClick={() => {
             togglePopup();
             reset();
           }}
         >
-          <div />
           Close
         </a>
-
-        {!submitting ? (
-          <div>
-            <div className="popup__title">Share a Stream</div>
-            <form
-              onSubmit={e => {
-                console.log("nothing");
-              }}
-            >
-              <label htmlFor="edit-stream-img" className="add-stream__label">
-                <div className="cover-image__container clickable">
-                  <img
-                    className="cover-image__preview clickable"
-                    src={
-                      selectedImage || values.image || "./imgs/placeholder.jpg"
-                    }
-                  />
-                </div>
-              </label>
-              <input
-                id="edit-stream-img"
-                className="add-stream__img-input"
-                type="file"
-                accept="image/*" 
-                onChange={handleImageAsFile}
-              />
-              <InputField
-                type="text"
-                placeHolder="Title"
-                value={values.title}
-                onChange={title => {
-                  if (title.length < 60 && validateWordsLength(title, 25))
-                    setValues({ ...values, title });
-                }}
-                // label="Title"
-                // required={true}
-              />
-              <TextArea
-                type="text"
-                placeHolder="Extra details"
-                value={values.body}
-                onChange={body => {
-                  if (body.length < 300 && validateWordsLength(body, 25))
-                    setValues({ ...values, body });
-                }}
-                // label="Extra details"
-                // required={true}
-              />
-
-              <InputField
-                type="text"
-                placeHolder="Host name"
-                value={values.host_name}
-                onChange={host_name => {
-                  if (
-                    host_name.length < 20 &&
-                    validateWordsLength(host_name, 15)
-                  )
-                    setValues({ ...values, host_name });
-                }}
-                // label="Host name"
-                // required={true}
-              />
-
-              <div className="add-stream__date">
-                <DatePicker
-                  selected={
-                    !values.start_date
-                      ? null
-                      : Object.prototype.toString.call(values.start_date) ===
-                        "[object Date]"
-                      ? values.start_date
-                      : values.start_date.toDate()
-                  }
-                  onChange={start_date => {
-                    if (
-                      Object.prototype.toString.call(start_date) ===
-                      "[object Date]"
-                    ) {
-                      setValues({
-                        ...values,
-                        start_date,
-                        start_timestamp: start_date.getTime()
-                      });
-                    } else {
-                      delete values.start_date;
-                      delete values.start_timestamp;
-                    }
-                  }}
-                  showTimeSelect
-                  timeFormat="HH:mm"
-                  timeIntervals={15}
-                  timeCaption="time"
-                  dateFormat="MMMM d, yyyy h:mm aa"
-                  className="input-field__input"
-                  placeholderText="Click to select a date"
-                  minDate={new Date()}
-                  excludeOutOfBoundsTimes
-                />
-              </div>
-
-              <div className="add-stream__date">
-                <DatePicker
-                  selected={
-                    !values.end_date
-                      ? null
-                      : Object.prototype.toString.call(values.end_date) ===
-                        "[object Date]"
-                      ? values.end_date
-                      : values.end_date.toDate()
-                  }
-                  onChange={end_date => {
-                    if (
-                      Object.prototype.toString.call(end_date) ===
-                      "[object Date]"
-                    ) {
-                      setValues({
-                        ...values,
-                        end_date,
-                        end_timestamp: end_date.getTime()
-                      });
-                    } else {
-                      delete values.end_date;
-                      delete values.end_timestamp;
-                    }
-                  }}
-                  showTimeSelect
-                  timeFormat="HH:mm"
-                  timeIntervals={15}
-                  timeCaption="time"
-                  dateFormat="MMMM d, yyyy h:mm aa"
-                  className="input-field__input"
-                  placeholderText="Click to select a date"
-                  minDate={values.start_date}
-                  excludeOutOfBoundsTimes
-                />
-              </div>
-
-              <InputField
-                type="text"
-                placeHolder="Link to the stream"
-                value={values.url}
-                onChange={url => {
-                  setValues({ ...values, url });
-                }}
-                // label="Link to the stream"
-                // required={true}
-              />
-
-              <InputField
-                type="text"
-                placeHolder="Host Instagram page"
-                value={values.host_ig}
-                onChange={host_ig => {
-                  setValues({ ...values, host_ig });
-                }}
-                // label="Host Instagram page"
-              />
-
-              <InputField
-                type="text"
-                placeHolder="Host Facebook page"
-                value={values.host_fb}
-                onChange={host_fb => {
-                  setValues({ ...values, host_fb });
-                }}
-                // label="Host Facebook page"
-              />
-
-              <InputField
-                type="text"
-                placeHolder="Host website"
-                value={values.host_web}
-                onChange={host_web => {
-                  setValues({ ...values, host_web });
-                }}
-                // label="Host website"
-              />
-
-              <Tags
-                values={values}
-                setValues={setValues}
-                errorMessages={errorMessages}
-                formError={formError}
-                setFormError={setFormError}
-              />
-
-              {formError ? (
-                <div className="form-error small-margin-top">{formError}</div>
-              ) : null}
-
-              <div className="popup__button medium-margin-top">
-                <button
-                  type="button"
-                  className="boxed-button"
-                  onClick={handleSubmit}
-                >
-                  Update
-                </button>
-              </div>
-            </form>
-          </div>
-        ) : (
-          <div className="centered">
-            <Loader
-              type="Grid"
-              color="#6f00ff"
-              height={100}
-              width={100}
-              timeout={3000} //3 secs
-            />
-          </div>
-        )}
       </div>
+
+      {!submitting ? (
+        <div>
+          <div className="popup__title">Edit Stream</div>
+          <form
+            onSubmit={e => {
+              console.log("nothing");
+            }}
+            autoComplete="off"
+          >
+            <label htmlFor="edit-stream-img" className="add-stream__label">
+              <div className="cover-image__container clickable">
+                <img
+                  className="cover-image__preview clickable"
+                  src={
+                    selectedImage || values.image || "./imgs/placeholder.jpg"
+                  }
+                />
+              </div>
+            </label>
+            <input
+              id="edit-stream-img"
+              className="add-stream__img-input"
+              type="file"
+              accept="image/*"
+              onChange={handleImageAsFile}
+            />
+            <InputField
+              type="text"
+              placeHolder="Title"
+              value={values.title}
+              onChange={title => {
+                if (title.length < 60 && validateWordsLength(title, 25))
+                  setValues({ ...values, title });
+              }}
+              required={true}
+            />
+            <TextArea
+              type="text"
+              placeHolder="Extra details"
+              value={values.body}
+              onChange={body => {
+                if (body.length < 300 && validateWordsLength(body, 25))
+                  setValues({ ...values, body });
+              }}
+              required={true}
+            />
+
+            <InputField
+              type="text"
+              placeHolder="Host name"
+              value={values.host_name}
+              onChange={host_name => {
+                if (host_name.length < 30 && validateWordsLength(host_name, 15))
+                  setValues({ ...values, host_name });
+              }}
+              required={true}
+            />
+
+            <div className="add-stream__date">
+              <DatePicker
+                selected={
+                  !values.start
+                    ? null
+                    : Object.prototype.toString.call(values.start) ===
+                      "[object Date]"
+                    ? values.start
+                    : values.start.toDate()
+                }
+                onChange={start => {
+                  if (
+                    Object.prototype.toString.call(start) === "[object Date]"
+                  ) {
+                    setValues({
+                      ...values,
+                      start
+                    });
+                  } else {
+                    delete values.start;
+                  }
+                }}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                timeCaption="time"
+                dateFormat="MMMM d, yyyy h:mm aa"
+                className="input-field__input"
+                placeholderText="Click to select a date"
+                minDate={new Date()}
+                excludeOutOfBoundsTimes
+              />
+            </div>
+
+            <div className="fr-fr">
+              <Form.Control
+                as="select"
+                value={hour + " hours"}
+                bsPrefix="input-field__input form-drop"
+                onChange={v => setHour(v.target.value.split(" ")[0])}
+              >
+                {renderHours()}
+              </Form.Control>
+
+              <Form.Control
+                as="select"
+                value={minutes + " minutes"}
+                bsPrefix="input-field__input form-drop"
+                onChange={v => setMinutes(v.target.value.split(" ")[0])}
+              >
+                {renderMinutes()}
+              </Form.Control>
+            </div>
+
+            <InputField
+              type="text"
+              placeHolder="Link to the stream"
+              value={values.url}
+              onChange={url => {
+                setValues({ ...values, url });
+              }}
+              required={true}
+            />
+
+            <InputField
+              type="text"
+              placeHolder="Host Instagram page"
+              value={values.host_ig}
+              onChange={host_ig => {
+                setValues({ ...values, host_ig });
+              }}
+            />
+
+            <InputField
+              type="text"
+              placeHolder="Host Facebook page"
+              value={values.host_fb}
+              onChange={host_fb => {
+                setValues({ ...values, host_fb });
+              }}
+            />
+
+            <InputField
+              type="text"
+              placeHolder="Host website"
+              value={values.host_web}
+              onChange={host_web => {
+                setValues({ ...values, host_web });
+              }}
+            />
+
+            <Tags
+              values={values}
+              setValues={setValues}
+              errorMessages={errorMessages}
+              formError={formError}
+              setFormError={setFormError}
+            />
+
+            {formError ? (
+              <div className="form-error small-margin-top">{formError}</div>
+            ) : null}
+
+            <div className="popup__button medium-margin-top">
+              <button
+                type="button"
+                className="boxed-button"
+                onClick={handleSubmit}
+              >
+                Update
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : (
+        <div className="centered">
+          <Loader type="Grid" color="#6f00ff" height={100} width={100} />
+        </div>
+      )}
     </div>
   );
 };

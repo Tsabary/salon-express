@@ -14,10 +14,12 @@ import AuthOptions from "./authOptions";
 import UserOptions from "./userOptions";
 import FilterInput from "./filterInput";
 import MobileMenu from "./mobileMenu";
+import { SearchContext } from "../../providers/Search";
 
 const Header = ({ setCurrentPage }) => {
   const { currentUser } = useContext(AuthContext);
   const { page, setPage } = useContext(PageContext);
+  const { setSearchTerm} = useContext(SearchContext)
   const myHistory = useHistory(history);
 
   const renderAuth = () => {
@@ -33,6 +35,7 @@ const Header = ({ setCurrentPage }) => {
   };
 
   const handleChange = page => {
+    setSearchTerm(null)
     setCurrentPage(page);
     setPage(1);
     myHistory.push(`/`);
@@ -52,7 +55,11 @@ const Header = ({ setCurrentPage }) => {
       case 4:
         return <div className="header__center">My Channel</div>;
 
+      case 5:
+        return <FilterInput />;
+
       default:
+        console.log("defff")
         return <div />;
     }
   };
@@ -68,7 +75,12 @@ const Header = ({ setCurrentPage }) => {
           >
             Salon.
           </div>
-          <div className="header__title header__title-lean">S.</div>
+          <div
+            className="header__title header__title-lean"
+            onClick={handleChange}
+          >
+            S.
+          </div>
         </div>
         {page === 1 ? <FilterInput /> : <div />}
         <div className="header__auth">{renderAuth()}</div>

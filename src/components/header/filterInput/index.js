@@ -1,18 +1,35 @@
 import "./styles.scss";
 import React, { useState, useContext, useEffect } from "react";
 import { connect } from "react-redux";
+import { useHistory } from "react-router-dom";
+
+import history from "../../../history";
 
 import { fetchTags } from "../../../actions";
 import { SearchContext } from "../../../providers/Search";
+import { PageContext } from '../../../providers/Page';
 
 const FilterInput = ({ tags, fetchTags }) => {
+  const myHistory = useHistory(history);
+
   const { searchTerm, setSearchTerm } = useContext(SearchContext);
+  const { setPage } = useContext(PageContext);
+
   const [tagsSuggestions, setTagsSuggestions] = useState(null);
   const [tagInput, setTagInput] = useState("");
 
   useEffect(() => {
+    searchTerm ? handleChange(`/${searchTerm}`, 1) : handleChange("/", 1);
+  }, [searchTerm]);
+
+  useEffect(() => {
     if (!tags.length) fetchTags();
   }, []);
+
+  const handleChange = (path, page) => {
+    setPage(page);
+    myHistory.push(path);
+  };
 
   const filterTags = input => {
     return tags.filter(el => {
@@ -26,6 +43,7 @@ const FilterInput = ({ tags, fetchTags }) => {
   };
 
   const addTag = tag => {
+    setPage(5)
     setSearchTerm(tag);
     setTagInput("");
   };

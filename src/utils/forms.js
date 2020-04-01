@@ -1,3 +1,4 @@
+import React from "react";
 import validator from "validator";
 
 export const errorMessages = {
@@ -8,6 +9,7 @@ export const errorMessages = {
   url: "Please add link to this stream",
   urlInvalid: "Please make sure your stream's url is valid",
   startTime: "Please choose a starting time for this stream",
+  duration: "Please set the duration of this stream",
   endTime: "Please choose an end time for this stream",
   timeOrder: "Your stream end time is before its start time",
   tagsMin: "Please add at least 2 tags",
@@ -36,16 +38,12 @@ export const checkValidity = (values, setFormError, imageAsFile) => {
       setFormError(errorMessages.name);
       return false;
 
-    case !values.start_timestamp:
+    case !values.start:
       setFormError(errorMessages.startTime);
       return false;
 
-    case !values.end_timestamp:
-      setFormError(errorMessages.endTime);
-      return false;
-
-    case values.end_timestamp < values.start_timestamp:
-      setFormError(errorMessages.timeOrder);
+    case values.duration === 0:
+      setFormError(errorMessages.duration);
       return false;
 
     case !values.url:
@@ -85,3 +83,44 @@ export const trimURL = string => {
   return string.replace(/^https?:\/\//, "").replace(/^http?:\/\//, "");
 };
 
+export const renderHours = () => {
+  const hours = [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24
+  ];
+
+  return hours.map(h => {
+    return <option className="form-drop">{h} hours</option>;
+  });
+};
+
+export const renderMinutes = () => {
+  const minutes = [0, 15, 30, 45];
+
+  return minutes.map(m => {
+    return <option className="form-drop">{m} minutes</option>;
+  });
+};

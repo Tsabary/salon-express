@@ -106,13 +106,18 @@ const SignUp = ({ signUp, providerSignIn, togglePopup }) => {
 
   return (
     <div className="popup" id="sign-up">
-      <div className="popup__container">
-        <a className="popup__close" href="#" onClick={togglePopup}>
-          <div />
+       <div className="popup__close">
+        <div />
+        <a
+          href="#"
+          onClick={() => {
+            togglePopup();
+          }}
+        >
           Close
         </a>
-        {renderContent(submitting, formError)}
       </div>
+        {renderContent(submitting, formError)}
     </div>
   );
 };

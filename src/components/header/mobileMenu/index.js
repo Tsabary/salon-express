@@ -103,7 +103,9 @@ const Menu = ({ togglePopup, logOut }) => {
               )
             : renderMenuItems(["Explore"], page)}
           {currentUser ? (
-            <li className="navigation__item">Update Profile</li>
+            <a href="#update-profile" onClick={() => setIsMenuOpen(false)}>
+              <li className="navigation__item">Update Profile</li>
+            </a>
           ) : null}
           <li className="navigation__item" onClick={() => handleChange(6)}>
             Contact

@@ -1,7 +1,8 @@
 @import "./imports";
 
 a {
-  text-decoration: none;
+  text-decoration: none !important;
+  color: $grey;
 }
 
 h1 {
@@ -134,7 +135,7 @@ h3 {
   // background: $gradientColor;
   background-color: $mainColor;
   color: white;
-  padding: .7rem 5rem .9rem 5rem;
+  padding: 0.7rem 5rem 0.9rem 5rem;
   border-radius: 3px;
   box-shadow: 0 0.2rem 1rem rgb(170, 170, 170);
   border: none;
@@ -148,10 +149,8 @@ h3 {
 }
 
 .text-button {
-
-
   &-delete {
-    font-size: 1.8rem;
+    // font-size: 1.6rem;
     color: $greyDark;
     text-decoration: none;
     cursor: pointer;
@@ -161,7 +160,7 @@ h3 {
   }
 
   &-normal {
-    font-size: 1.8rem;
+    // font-size: 1.6rem;
     color: $greyDark;
     text-decoration: none;
     cursor: pointer;
@@ -267,15 +266,27 @@ h3 {
 
 .popup {
   display: none;
-  // width: calc(100% - 12rem);
+  min-height: 60%;
   max-width: 60%;
   justify-content: center;
   align-items: center;
   transition: all 0.2s;
   position: absolute;
-  margin: 12rem auto;
+  margin: 15rem auto;
   left: 0;
   right: 0;
+  overflow: hidden;
+  flex-direction: column;
+  z-index: 10000;
+  padding: 5rem 8rem;
+  border-radius: $borderRadius;
+  border: 1px $mainColor solid;
+  box-shadow: 0 0.2rem 9rem rgb(228, 228, 228);
+  background-color: white;
+
+  @include resize(600px) {
+    padding: 5rem;
+  }
 
   @include resize(800px) {
     max-width: 80%;
@@ -298,26 +309,12 @@ h3 {
     width: 100%;
     margin-top: 0rem;
     font-size: 1.4rem;
-    color: $greyDarkest;
-    cursor: pointer;
+    color: $greyDarkest !important;
     &:hover {
-      color: $mainColor;
+      color: $mainColor !important;
     }
   }
   &__container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    z-index: 10000;
-    margin: 3rem 2rem 8rem 2rem;
-    padding: 5rem 8rem;
-    border-radius: $borderRadius;
-    border: 1px $mainColor solid;
-    box-shadow: 0 0.2rem 9rem rgb(228, 228, 228);
-    background-color: white;
-    @include resize(600px) {
-      padding: 5rem;
-    }
   }
 
   &__title {
@@ -325,7 +322,7 @@ h3 {
     font-family: $fontBold, $fontHebrew;
     font-size: 5rem;
     color: $mainColor;
-    margin-bottom: 4rem;
+    // margin-bottom: 4rem;
     margin-top: 2rem;
   }
 
@@ -343,8 +340,6 @@ h3 {
   line-height: 6rem;
   text-align: center;
 
-
-
   // @include resize(800px) {
   //   font-size: 5rem;
   // }
@@ -357,13 +352,21 @@ h3 {
   @include resize(550px) {
     font-size: 3rem;
     line-height: 3.5rem;
-
   }
 
   @include resize(450px) {
     font-size: 2rem;
     line-height: 2.5rem;
+  }
+}
 
+.dropdown {
+  &__input {
+  }
+  &__options {
+    position: absolute;
+    top: 0;
+    border: blueviolet 1px solid;
   }
 }
 

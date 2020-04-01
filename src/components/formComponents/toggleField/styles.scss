@@ -11,8 +11,10 @@
     margin-right: 2rem;
     user-select: none;
     cursor: pointer;
+    color: $mainColor;
+
     &:hover {
-      color: $mainColor;
+      color: $mainColorLight;
     }
   }
 }

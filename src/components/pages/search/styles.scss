@@ -1,7 +1,8 @@
 @import "../../../styles/imports";
 
-.feed {
-  // @include padding;
+.search {
+  @include padding;
+  margin-top: 2rem;
   position: relative;
   display: grid;
 

@@ -8,7 +8,8 @@ import { breakpointColumnsObj } from "../../../constants";
 import {
   fetchFirstStreams,
   fetchMoreStreams,
-  togglePopup
+  togglePopup,
+  deleteTags
 } from "../../../actions";
 import Stream from "./stream";
 
@@ -19,7 +20,8 @@ const Feed = ({
   fetchFirstStreams,
   fetchMoreStreams,
   togglePopup,
-  popupShown
+  popupShown,
+  deleteTags
 }) => {
   const { currentUser, currentUserProfile } = useContext(AuthContext);
   const [lastVisible, setLastVisible] = useState(null);
@@ -27,16 +29,15 @@ const Feed = ({
   const timestampNow = Date.now();
 
   useEffect(() => {
+    //****DANGOROUS*****/
+    deleteTags();
+    //****DANGOROUS*****/
+
     fetchFirstStreams(setLastVisible, setReachedLast, timestampNow);
   }, []);
 
   const loadMore = () => {
-    fetchMoreStreams(
-      lastVisible,
-      setLastVisible,
-      setReachedLast,
-      timestampNow
-    );
+    fetchMoreStreams(lastVisible, setLastVisible, setReachedLast, timestampNow);
   };
 
   const renderItems = streams => {
@@ -58,7 +59,7 @@ const Feed = ({
         onClick={togglePopup}
         className="post-button"
         href={
-          currentUser && currentUser.emailVerified ? "#new-stream" : "#sign-up"
+          currentUser && currentUser.emailVerified ? "#add-stream" : "#sign-up"
         }
       >
         +
@@ -92,5 +93,6 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, {
   fetchFirstStreams,
   fetchMoreStreams,
-  togglePopup
+  togglePopup,
+  deleteTags
 })(Feed);

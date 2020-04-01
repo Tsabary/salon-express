@@ -10,6 +10,7 @@ import MyStreamsUpcomingReducer from "./MyStreamsUpcomingReducer";
 import MyStreamsPastReducer from "./MyStreamsPastReducer";
 import SubscriptionsReducer from "./SubscriptionsReducer";
 import SearchReducer from "./SearchReducer";
+import TemplatesReducer from './TemplatesReducer';
 
 export default combineReducers({
   // GLOBAL //
@@ -31,7 +32,10 @@ export default combineReducers({
 
   // SUBSCRIPTIONS
   subscriptions: SubscriptionsReducer,
-  
+
   // SEARCH
-  searchedStreams : SearchReducer
+  searchedStreams: SearchReducer,
+
+  // TEMPLATES
+  templates: TemplatesReducer
 });

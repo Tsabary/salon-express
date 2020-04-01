@@ -18,15 +18,15 @@
   }
 
   @include resize(700px) {
-    padding: 10rem 6rem;
+    padding: 8rem 6rem;
   }
 
   @include resize(600px) {
-    padding: 10rem 5rem;
+    padding: 6rem 5rem;
   }
 
   @include resize(500px) {
-    padding: 10rem 4rem;
+    padding: 5rem 4rem;
   }
 }
 
@@ -78,6 +78,7 @@
   &__visible {
     height: 100%;
     width: 100%;
+    transition: all 0.4s cubic-bezier(0.7, 0.1, 0.5, 0.1);
   }
 
   &__hidden {
@@ -87,5 +88,7 @@
     top: 0;
     left: 100%;
     background-color: white;
+    transition: all 0.4s cubic-bezier(0.7, 0.1, 0.5, 0.1);
+    padding: 5rem;
   }
 }

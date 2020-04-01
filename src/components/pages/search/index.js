@@ -16,6 +16,7 @@ import Stream from "../feed/stream";
 import Masonry from "react-masonry-css";
 
 const Search = ({
+  match,
   searchedStreams,
   fetchFirstSearchedStreams,
   fetchMoreSearchedStreams,
@@ -23,27 +24,27 @@ const Search = ({
   popupShown
 }) => {
   const { currentUser, currentUserProfile } = useContext(AuthContext);
-  const { searchTerm } = useContext(SearchContext);
+  // const { searchTerm } = useContext(SearchContext);
   const [lastVisible, setLastVisible] = useState(null);
   const [reachedLast, setReachedLast] = useState(true);
   const timestampNow = Date.now();
 
   useEffect(() => {
-    if (searchTerm) {
-      fetchFirstSearchedStreams(
-        setLastVisible,
-        searchTerm,
-        setReachedLast,
-        timestampNow
-      );
-    }
-  }, [searchTerm]);
+    // if (searchTerm) {
+    fetchFirstSearchedStreams(
+      setLastVisible,
+      match.params.id,
+      setReachedLast,
+      timestampNow
+    );
+    // }
+  }, []);
 
   const loadMore = () => {
     fetchMoreSearchedStreams(
       lastVisible,
       setLastVisible,
-      searchTerm,
+      match.params.id,
       setReachedLast,
       timestampNow
     );
@@ -62,7 +63,7 @@ const Search = ({
   };
 
   return (
-    <div className="feed">
+    <div className="search">
       <a
         style={{ display: popupShown ? "none" : "" }}
         onClick={togglePopup}

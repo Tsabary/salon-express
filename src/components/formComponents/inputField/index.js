@@ -18,15 +18,18 @@ const InputField = ({
   return (
     <div className="input-field">
       <input
-        className="input-field__input"
+        className={
+          required ? "input-field__input input-field__input--required" : "input-field__input"
+        }
         id={placeHolder}
         type={type}
         placeholder={placeHolder}
-        autoComplete="new-password"
+        // autocomplete="no"
+        // autoComplete="no"
         value={value || ""}
         onChange={e => handleChange(e.target.value)}
-        required={required}
-        pattern={pattern}
+        // required={required}
+        // pattern={pattern}
       />
       {label ? (
         <label htmlFor={placeHolder} className="input-field__label">

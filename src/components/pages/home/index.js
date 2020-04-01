@@ -1,9 +1,8 @@
 import "./styles.scss";
-import React, { useState, useContext, useEffect } from "react";
-import { SearchContext } from "../../../providers/Search";
+import React, { useContext } from "react";
 
 import Feed from "../feed";
-import Search from "../search";
+// import Search from "../search";
 import Subscriptions from "../subscriptions";
 import Calendar from "../calendar";
 import MyStreams from "../myStreams";
@@ -11,18 +10,14 @@ import { PageContext } from "../../../providers/Page";
 import { AuthContext } from "../../../providers/Auth";
 
 const Home = () => {
-  const { searchTerm } = useContext(SearchContext);
   const { currentUser } = useContext(AuthContext);
   const { page, setPage } = useContext(PageContext);
 
-  useEffect(() => {
-    console.log(searchTerm);
-  }, [searchTerm]);
-
-  const renderContent = (p, term) => {
+  const renderContent = p => {
     switch (p) {
       case 1:
-        return term ? <Search /> : <Feed />;
+        console.log("page 1")
+        return <Feed />;
 
       case 2:
         return <Subscriptions />;
@@ -32,6 +27,12 @@ const Home = () => {
 
       case 4:
         return <MyStreams />;
+
+      default:
+        console.log("page", page)
+
+      // case 5:
+      //   return <Search />;
     }
   };
 
@@ -73,7 +74,7 @@ const Home = () => {
         </ul>
       </div>
 
-      {renderContent(page, searchTerm)}
+      {renderContent(page)}
     </div>
   );
 };

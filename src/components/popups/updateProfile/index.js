@@ -5,14 +5,14 @@ import Loader from "react-loader-spinner";
 
 import { AuthContext } from "../../../providers/Auth";
 
-import { updateProfile } from "../../../actions";
+import { updateProfile, togglePopup } from "../../../actions";
 import { validateWordsLength } from "../../../utils";
 import { errorMessages } from "../../../utils/forms";
 
 import InputField from "../../formComponents/inputField";
 import validator from "validator";
 
-const UpdateProfile = ({ updateProfile }) => {
+const UpdateProfile = ({ updateProfile, togglePopup }) => {
   const { currentUserProfile, setCurrentUserProfile, currentUser } = useContext(
     AuthContext
   );
@@ -61,7 +61,6 @@ const UpdateProfile = ({ updateProfile }) => {
   };
 
   const handleSubmit = () => {
-    console.log(values.instagram);
     if (validateForm()) {
       setSubmitting(true);
       updateProfile(
@@ -82,11 +81,17 @@ const UpdateProfile = ({ updateProfile }) => {
 
   return (
     <div className="popup" id="update-profile">
-      <div className="popup__container">
-        <a className="popup__close" href="#">
-          <div />
+      <div className="popup__close">
+        <div />
+        <a
+          href="#"
+          onClick={() => {
+            togglePopup();
+          }}
+        >
           Close
         </a>
+      </div>
         {!submitting ? (
           <div>
             {/* <div className="popup__title">Update Profile</div> */}
@@ -127,7 +132,7 @@ const UpdateProfile = ({ updateProfile }) => {
                 placeHolder="Name"
                 value={values.name}
                 onChange={name => {
-                  if (name.length < 20 && validateWordsLength(name, 15))
+                  if (name.length < 30 && validateWordsLength(name, 15))
                     setValues({ ...values, name });
                 }}
                 // label="Name"
@@ -191,13 +196,11 @@ const UpdateProfile = ({ updateProfile }) => {
               color="#6f00ff"
               height={100}
               width={100}
-              timeout={3000} //3 secs
             />
           </div>
         )}
-      </div>
     </div>
   );
 };
 
-export default connect(null, { updateProfile })(UpdateProfile);
+export default connect(null, { updateProfile, togglePopup })(UpdateProfile);

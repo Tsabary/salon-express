@@ -80,6 +80,7 @@ const Tags = ({
     if (event.key === "Enter") {
       addTag(
         tagInput
+          .trim()
           .toLowerCase()
           .split(" ")
           .join("-")

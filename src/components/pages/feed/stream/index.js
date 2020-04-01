@@ -16,7 +16,8 @@ import {
   unattand,
   setEditedStream,
   follow,
-  unfollow
+  unfollow,
+  togglePopup
 } from "../../../../actions";
 
 const Stream = ({
@@ -27,25 +28,24 @@ const Stream = ({
   unattand,
   setEditedStream,
   follow,
-  unfollow
+  unfollow,
+  togglePopup
 }) => {
   const { setCurrentUserProfile } = useContext(AuthContext);
   const [copy, setCopy] = useState("Click to copy share URL");
   const [shareButton, setShareButton] = useState("Share");
   const [handlingFollow, setHandlingFollow] = useState(false);
 
+  const startDate =
+    Object.prototype.toString.call(stream.start) === "[object Date]"
+      ? stream.start
+      : stream.start.toDate();
+
   const event = {
     title: stream.title,
     description: `${stream.body} \r Stream URL: ${stream.url}`,
-    startTime:
-      Object.prototype.toString.call(stream.start_date) === "[object Date]"
-        ? stream.start_date
-        : stream.start_date.toDate(),
-
-    endTime:
-      Object.prototype.toString.call(stream.end_date) === "[object Date]"
-        ? stream.end_date
-        : stream.end_date.toDate()
+    startTime: startDate,
+    endTime: new Date(startDate.getTime() + stream.duration)
   };
 
   const renderTags = () => {
@@ -65,22 +65,17 @@ const Stream = ({
     }, 3000);
   };
 
+  
+
   return (
     <div
       className={
-        stream.start_timestamp < Date.now() && stream.end_timestamp > Date.now()
+        stream.start < Date.now() &&
+        stream.start + stream.duration > Date.now()
           ? "stream live"
           : "stream"
       }
     >
-      {/* <Helmet>
-        <meta charSet="utf-8" />
-        <title>{stream.title}</title>
-        <meta name="description" content={stream.body} />
-        <meta property="og:image" content={stream.image} />
-        <meta name="og:image" content={stream.image} />
-      </Helmet> */}
-
       <input
         className="stream-delete-checkbox"
         type="checkbox"
@@ -110,9 +105,14 @@ const Stream = ({
                     data-for={"disabled" + stream.id}
                   >
                     <use xlinkHref="../sprite.svg#stream"></use>
-                    </svg>
-                    
-                  <ReactTooltip id={"disabled" + stream.id} type="dark" effect="solid" place="right">
+                  </svg>
+
+                  <ReactTooltip
+                    id={"disabled" + stream.id}
+                    type="dark"
+                    effect="solid"
+                    place="right"
+                  >
                     RSVP to receive link
                   </ReactTooltip>
                 </>
@@ -163,19 +163,18 @@ const Stream = ({
               <div className="stream__title">{stream.title}</div>
               <div className="stream__host">Host: {stream.host_name}</div>
 
-              {Date.now() < stream.start_timestamp ? (
+              {Date.now() < stream.start ? (
                 <div className="stream__timestamp">
-                  Starts <Moment fromNow>{stream.start_timestamp}</Moment>
+                  Starts <Moment fromNow>{stream.start}</Moment>
                 </div>
-              ) : Date.now() < stream.end_timestamp &&
-                Date.now() > stream.start_timestamp ? (
+              ) : Date.now() < stream.start + stream.duration ? (
                 <div className="stream__live">Stream is live</div>
               ) : (
-                // <div className="stream__timestamp">
-                //   Ends <Moment fromNow>{stream.end_timestamp}</Moment>
-                // </div>
                 <div className="stream__timestamp">
-                  Ended <Moment fromNow>{stream.end_timestamp}</Moment>
+                  Ended{" "}
+                  <Moment fromNow>
+                    {stream.start + stream.duration}
+                  </Moment>
                 </div>
               )}
 
@@ -229,7 +228,6 @@ const Stream = ({
                   color="#ffffff"
                   height={20}
                   width={20}
-                  timeout={3000} //3 secs
                 />
               </div>
             ) : (
@@ -255,7 +253,6 @@ const Stream = ({
                   color="#6f00ff"
                   height={20}
                   width={20}
-                  timeout={3000} //3 secs
                 />
               </div>
             ) : (
@@ -278,13 +275,12 @@ const Stream = ({
             {shareButton}
           </div>
         </CopyToClipboard>
-        {/* <ReactTooltip id={`share${stream.id}`} type="dark" effect="solid">
-          {copy}
-        </ReactTooltip> */}
 
-        <div className="stream__button stream__button-line clickable">
-          <AddToCalendar event={event} />
-        </div>
+        <AddToCalendar
+          event={event}
+          buttonWrapperClass="stream__button stream__button-line clickable"
+          dropdownClass="stream__button stream__button-line clickable"
+        />
 
         {user.uid === stream.user_ID ? (
           <div className="stream__actions">
@@ -298,7 +294,10 @@ const Stream = ({
             <a
               className="stream-button stream-button__normal"
               href="#edited-stream"
-              onClick={() => setEditedStream(stream)}
+              onClick={() => {
+                setEditedStream(stream);
+                togglePopup();
+              }}
             >
               Edit
             </a>
@@ -309,16 +308,16 @@ const Stream = ({
       </span>
       <span className="stream__hidden">
         <div>Are you sure you want to delete this event?</div>
-        <div className="max-max small-margin-top">
+        <div className="stream__actions small-margin-top">
           <label
-            className="text-button-normal"
+            className="stream-button stream-button__normal"
             htmlFor={`stream-delete-checkbox` + stream.id}
           >
             Cancel
           </label>
 
           <label
-            className="text-button-delete"
+            className="stream-button stream-button__delete"
             htmlFor={`stream-delete-checkbox` + stream.id}
             onClick={() => removeStream(stream)}
           >
@@ -336,5 +335,6 @@ export default connect(null, {
   unattand,
   setEditedStream,
   follow,
-  unfollow
+  unfollow,
+  togglePopup
 })(Stream);

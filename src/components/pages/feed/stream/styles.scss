@@ -78,8 +78,8 @@
   }
 
   &__button {
-    margin: 0.5rem;
-    padding: 1rem;
+    margin: 0.5rem !important;
+    padding: 1rem !important;
     text-align: center;
     border-radius: $borderRadius;
     font-size: 1.2rem;
@@ -89,7 +89,6 @@
       border: 1px solid $mainColor;
       color: $mainColor;
       &:hover {
-        // border: 2px solid $mainColor;
         background: $mainColorTransparent;
       }
     }
@@ -153,16 +152,25 @@
 
   &-button {
     background-color: $mainColor;
-    color: white;
-    font-size: 1.2rem;
+    height: max-content;
+    color: white !important;
+    font-size: 1.2rem !important;
     border-radius: $borderRadius;
-    padding: 1rem;
+    padding: 1rem !important;
     cursor: pointer;
     transition: all 0.2s;
 
     &__delete {
       &:hover {
         background-color: red;
+      }
+    }
+
+    &__normal{
+      &:hover {
+        background-color: white;
+        color: $mainColor !important;
+        border: $border;
       }
     }
   }
@@ -190,10 +198,11 @@
 }
 
 .social {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   margin: 1.5rem;
-
+  grid-template-columns: max-content;
+  gap: 1rem;
+  height: max-content;
   &__icon {
     height: 3rem;
     width: 3rem;
@@ -204,7 +213,7 @@
       height: 3rem;
       width: 3rem;
       fill: $grey;
-      margin-bottom: .92rem;
+      margin-bottom: 0.92rem;
     }
 
     &--facebook {
@@ -260,5 +269,7 @@
 }
 
 .live {
-  border: 1px $mainColor solid;
+  // border: 1px $mainColor solid;
+  box-shadow: 0 0.2rem 3rem rgba($mainColor, .5);
+
 }
