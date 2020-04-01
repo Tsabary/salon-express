@@ -2,19 +2,22 @@ import "./styles.scss";
 import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
-import { ReactSVG } from "react-svg";
 
 import history from "../../history";
 
 import { setCurrentPage } from "../../actions";
 
 import { AuthContext } from "../../providers/Auth";
+import { PageContext } from "../../providers/Page";
+
 import AuthOptions from "./authOptions";
 import UserOptions from "./userOptions";
-import FilterInput from './filterInput';
+import FilterInput from "./filterInput";
+import MobileMenu from "./mobileMenu";
 
 const Header = ({ setCurrentPage }) => {
   const { currentUser } = useContext(AuthContext);
+  const { page, setPage } = useContext(PageContext);
   const myHistory = useHistory(history);
 
   const renderAuth = () => {
@@ -31,21 +34,50 @@ const Header = ({ setCurrentPage }) => {
 
   const handleChange = page => {
     setCurrentPage(page);
+    setPage(1);
     myHistory.push(`/`);
+  };
+
+  const renderCenter = p => {
+    switch (p) {
+      case 1:
+        return <FilterInput />;
+
+      case 2:
+        return <div className="header__center">Subscriptions</div>;
+
+      case 3:
+        return <div className="header__center">Calendar</div>;
+
+      case 4:
+        return <div className="header__center">My Channel</div>;
+
+      default:
+        return <div />;
+    }
   };
 
   return (
     <div className="header">
+      <MobileMenu />
       <div className="header-with-logo">
-        <div className="header__logo-container" onClick={handleChange}>
-          <div className="header__title">Rona</div>
+        <div className="header__logo-container">
+          <div
+            className="header__title header__title-full"
+            onClick={handleChange}
+          >
+            Salon.
+          </div>
+          <div className="header__title header__title-lean">S.</div>
         </div>
-        <FilterInput/>
+        {page === 1 ? <FilterInput /> : <div />}
         <div className="header__auth">{renderAuth()}</div>
       </div>
 
       <div className="header-without-logo">
-      <FilterInput/>
+        <div />
+        {renderCenter(page)}
+
         <div className="header__auth">{renderAuth()}</div>
       </div>
     </div>

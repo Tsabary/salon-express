@@ -17,33 +17,40 @@ import UpdateProfile from "./popups/updateProfile";
 import NewStream from "./popups/newStream";
 import EditedStream from "./popups/editStream";
 
+import Home from "./pages/home";
 import Feed from "./pages/feed";
 import MyStreams from "./pages/myStreams";
-import Calendar from './pages/calendar'
+import SingleStream from "./pages/singleStream";
+import Calendar from "./pages/calendar";
 import Contact from "./pages/contact";
+import { PageProvider } from "../providers/Page";
 
 const App = () => {
   return (
     <AuthProvider>
-      <SearchProvider>
-        <ToastProvider>
-          <Router history={history}>
-            <div className="app">
-              <SignUp />
-              <UpdateProfile />
-              <NewStream />
-              <EditedStream />
-              <Header />
-              <Switch>
-                <Route path="/" exact component={Feed} />
-                <Route path="/my-streams" exact component={MyStreams} />
-                <Route path="/calendar" exact component={Calendar} />
-                <Route path="/contact" exact component={Contact} />
-              </Switch>
-            </div>
-          </Router>
-        </ToastProvider>
-      </SearchProvider>
+      <PageProvider>
+        <SearchProvider>
+          <ToastProvider>
+            <Router history={history}>
+              <div className="app">
+                <SignUp />
+                <UpdateProfile />
+                <NewStream />
+                <EditedStream />
+                <Header />
+
+                <Switch>
+                  <Route path="/" exact component={Home} />
+                  {/* <Route path="/my-streams" exact component={MyStreams} /> */}
+                  <Route path="/stream/:id" exact component={SingleStream} />
+                  {/* <Route path="/calendar" exact component={Calendar} /> */}
+                  <Route path="/contact" exact component={Contact} />
+                </Switch>
+              </div>
+            </Router>
+          </ToastProvider>
+        </SearchProvider>
+      </PageProvider>
     </AuthProvider>
   );
 };

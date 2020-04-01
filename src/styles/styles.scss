@@ -55,6 +55,8 @@ h3 {
   width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
+  margin: auto;
 }
 
 .justify-end {
@@ -117,7 +119,6 @@ h3 {
   }
 
   &__container {
-    background-color: $greyLightest;
     width: 100%;
     padding-top: 52.35%;
     position: relative;
@@ -127,13 +128,13 @@ h3 {
 .boxed-button {
   height: min-content;
   width: max-content;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   user-select: none;
   font-family: $font;
   // background: $gradientColor;
   background-color: $mainColor;
   color: white;
-  padding: 1.5rem 5rem 1.7rem 5rem;
+  padding: .7rem 5rem .9rem 5rem;
   border-radius: 3px;
   box-shadow: 0 0.2rem 1rem rgb(170, 170, 170);
   border: none;
@@ -172,7 +173,7 @@ h3 {
 
 .round-image {
   object-fit: cover;
-  width: 100%;
+  width: 50;
   height: 100%;
   position: absolute;
   top: 0;
@@ -272,7 +273,7 @@ h3 {
   align-items: center;
   transition: all 0.2s;
   position: absolute;
-  margin: 8rem auto;
+  margin: 12rem auto;
   left: 0;
   right: 0;
 
@@ -310,7 +311,8 @@ h3 {
     z-index: 10000;
     margin: 3rem 2rem 8rem 2rem;
     padding: 5rem 8rem;
-    // border-radius: 3rem;
+    border-radius: $borderRadius;
+    border: 1px $mainColor solid;
     box-shadow: 0 0.2rem 9rem rgb(228, 228, 228);
     background-color: white;
     @include resize(600px) {
@@ -323,8 +325,8 @@ h3 {
     font-family: $fontBold, $fontHebrew;
     font-size: 5rem;
     color: $mainColor;
-    margin-bottom: 6rem;
-    margin-top: 3rem;
+    margin-bottom: 4rem;
+    margin-top: 2rem;
   }
 
   &__button {
@@ -338,7 +340,31 @@ h3 {
   font-family: $fontBold, $fontHebrew;
   color: $greyLight;
   font-size: 5rem;
+  line-height: 6rem;
   text-align: center;
+
+
+
+  // @include resize(800px) {
+  //   font-size: 5rem;
+  // }
+
+  @include resize(650px) {
+    font-size: 4rem;
+    line-height: 4.5rem;
+  }
+
+  @include resize(550px) {
+    font-size: 3rem;
+    line-height: 3.5rem;
+
+  }
+
+  @include resize(450px) {
+    font-size: 2rem;
+    line-height: 2.5rem;
+
+  }
 }
 
 .auth {
@@ -348,19 +374,19 @@ h3 {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.8rem;
-    font-family: $font;
+    font-size: 1.6rem;
     user-select: none;
+    font-family: $font;
+
     padding: 1.5rem 5rem 1.7rem 5rem;
     border-radius: $borderRadius;
-    box-shadow: 0 0.2rem 1rem rgb(170, 170, 170);
-    border: none;
+    // box-shadow: 0 0.2rem 1rem rgb(170, 170, 170);
+    border: 1px solid $mainColor;
     cursor: pointer;
     transition: all 0.2s;
 
     &:hover {
-      transform: translateY(-0.2rem);
-      box-shadow: 0 0.4rem 1.4rem rgb(170, 170, 170);
+      font-weight: 900;
     }
 
     &--google {

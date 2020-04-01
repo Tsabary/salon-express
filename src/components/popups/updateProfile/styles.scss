@@ -1,6 +1,41 @@
+@import "../../../styles/imports";
+
 .update-profile {
+  &__top {
+    display: grid;
+    grid-template-columns: 15rem 1fr;
+    gap: 2rem;
+    align-items: center;
+    margin-bottom: 3rem;
+  }
+
   &__upload {
     visibility: hidden;
+    display: none;
     opacity: 0;
+  }
+
+  &__message {
+    color: $greyDark;
+    font-size: 1.4rem;
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+  }
+
+  &__image {
+    &-preview {
+      object-fit: cover;
+      width: 15rem;
+      height: 15rem;
+    }
+
+    &-container {
+      // position: relative;
+      border-radius: 100%;
+      overflow: hidden;
+      width: 15rem;
+      height: 15rem;
+      border: $mainColor solid 2px;
+    }
   }
 }

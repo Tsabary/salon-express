@@ -1,14 +1,23 @@
 import "./styles.scss";
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
+
+import { AuthContext } from "../../../providers/Auth";
+
 import InputField from "../../formComponents/inputField";
 import TextArea from "../../formComponents/textArea";
 
 const Contact = () => {
+  const { currentUserProfile } = useContext(AuthContext);
   const [values, setValues] = useState({
     email: "",
     content: ""
   });
   const [sent, setSent] = useState(false);
+
+  useEffect(() => {
+    if (currentUserProfile)
+      setValues({ ...values, email: currentUserProfile.email });
+  }, [currentUserProfile]);
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -19,7 +28,7 @@ const Contact = () => {
     };
 
     window.emailjs
-      .send("gmail", "contact", variables, "user_fzDIZiprZ4VhK2PHjoxMi")
+      .send("gmail", "contact", variables, "user_hE0SyjVsZawiPWprq0Att")
       .then(res => {
         setSent(true);
         console.log("Email successfully sent!");
@@ -36,39 +45,42 @@ const Contact = () => {
 
   return (
     <div className="contact medium-margin-bottom">
-    <h2>
-      Do you have any questions? Suggestions?
-      <br />
-      Experiencing any bugs? We're here for you.
-    </h2>
+      <h2>
+        Do you have any questions? Suggestions?
+        <br />
+        Experiencing any bugs? We're here for you.
+      </h2>
 
-    {!sent ? (
-      <form onSubmit={handleSubmit} className="small-margin-top">
-        <InputField
-          type="email"
-          placeHolder="Email address"
-          value={values.email}
-          onChange={email => setValues({ ...values, email })}
-          label="Email"
-        />
+      {!sent ? (
+        <form onSubmit={handleSubmit} className="small-margin-top">
+          <InputField
+            type="email"
+            placeHolder="Email address"
+            value={values.email}
+            onChange={email => setValues({ ...values, email })}
+            label="Email"
+          />
 
-        <TextArea
-          type="text"
-          placeHolder="What would you like to tell us?"
-          value={values.content}
-          onChange={content => setValues({ ...values, content })}
-          label="What would you like to tell us?"
-        />
-        <button type="submit" className="boxed-button small-margin-top justify-end">
-          Send
-        </button>
-      </form>
-    ) : (
-      <div>
-        Thank you! We've received your message and would get in touch soon!
-      </div>
-    )}
-  </div>
+          <TextArea
+            type="text"
+            placeHolder="What would you like to tell us?"
+            value={values.content}
+            onChange={content => setValues({ ...values, content })}
+            label="What would you like to tell us?"
+          />
+          <button
+            type="submit"
+            className="boxed-button small-margin-top justify-end"
+          >
+            Send
+          </button>
+        </form>
+      ) : (
+        <div>
+          Thank you! We've received your message and would get in touch soon!
+        </div>
+      )}
+    </div>
   );
 };
 

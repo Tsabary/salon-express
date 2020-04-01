@@ -7,26 +7,68 @@
   width: 100%;
   padding: 5rem 10rem;
   margin-bottom: 5rem;
+  margin-top: 1rem;
+  &__center {
+    font-size: 8rem;
+    font-family: $fontBold;
+    color: $greyLight;
+    // background-color: $mainColor 1px solid;
+    // margin-bottom: 7rem;
+    margin-top: 1rem;
 
-  &-with-logo{
+    @include resize(1000px) {
+      font-size: 7rem;
+    }
+
+    @include resize(900px) {
+      font-size: 6rem;
+    }
+
+
+    @include resize(800px) {
+      font-size: 5rem;
+    }
+
+    @include resize(650px) {
+      font-size: 4rem;
+    }
+
+    @include resize(550px) {
+      font-size: 3rem;
+    }
+
+    @include resize(450px) {
+      font-size: 2rem;
+    }
+  }
+
+  &-with-logo {
     // width: 100%;
     display: grid;
     grid-template-columns: max-content 1fr max-content;
     align-items: start;
     gap: 4rem;
-    @include resize(700px) {
+    // @include resize(900px) {
+    //   grid-template-columns: 9rem 1fr max-content;
+    // }
+
+    @include resize(750px) {
       display: none;
     }
   }
 
-  &-without-logo{
-    // width: 100%;
+  &-without-logo {
     display: none;
-    grid-template-columns: 1fr max-content;
+    grid-template-columns: 7rem 1fr;
     align-items: start;
     gap: 4rem;
-    @include resize(700px) {
+    @include resize(750px) {
       display: grid;
+      grid-template-columns: 6rem 1fr;
+    }
+
+    @include resize(750px) {
+      grid-template-columns: 5rem 1fr;
     }
   }
 
@@ -55,14 +97,14 @@
     &-container {
       display: grid;
       grid-template-columns: repeat(2, min-content);
-      grid-gap: 3rem;
+      // grid-gap: 1rem;
       align-items: center;
       @include resize(700px) {
         display: none;
       }
     }
 
-    &-empty-holder{
+    &-empty-holder {
       display: none;
       @include resize(700px) {
         display: block;
@@ -75,16 +117,35 @@
     font-weight: 900;
     font-size: 4rem;
     text-align: center;
-    color: $mainColorBlack;
+    color: $mainColor;
     margin-top: 1rem;
     transition: all 0.2s;
+    cursor: pointer;
 
     @include resize(700px) {
       display: none;
     }
     &:hover {
       color: $mainColor;
-      cursor: pointer;
+      // cursor: default;
+    }
+
+    &-full {
+      @include resize(900px) {
+        display: none;
+      }
+    }
+
+    &-lean {
+      display: none;
+
+      @include resize(900px) {
+        display: block;
+      }
+
+      @include resize(750px) {
+        display: none;
+      }
     }
   }
 

@@ -1,24 +1,24 @@
 import {
-  FETCH_MY_STREAMS,
-  ADD_MY_STREAMS,
-  EDIT_MY_STREAMS,
-  DELETE_MY_STREAMS
+  FETCH_NEW_MY_STREAMS_PAST,
+  FETCH_MORE_MY_STREAMS_PAST,
+  EDIT_STREAM,
+  DELETE_STREAM
 } from "../actions/types";
 
 export default (state = [], action) => {
   switch (action.type) {
-    case FETCH_MY_STREAMS:
+    case FETCH_NEW_MY_STREAMS_PAST:
       return action.payload;
 
-    case ADD_MY_STREAMS:
-      return [...state, action.payload];
+    case FETCH_MORE_MY_STREAMS_PAST:
+      return [...state, ...action.payload];
 
-    case EDIT_MY_STREAMS:
+    case EDIT_STREAM:
       return state.map(stream =>
         stream.id === action.payload.id ? action.payload : stream
       );
 
-    case DELETE_MY_STREAMS:
+    case DELETE_STREAM:
       return state.filter(post => post.id !== action.payload);
 
     default:

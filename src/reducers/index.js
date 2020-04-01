@@ -1,18 +1,37 @@
 import { combineReducers } from "redux";
 import StreamsReducer from "./StreamsReducer";
 import PageReducer from "./PageReducer";
-import MyStreamsReducer from "./MyStreamsReducer";
 import PopupReducer from "./PopupReducer";
 import TagsReducer from "./TagsReducer";
 import EditedStreamReducer from "./EditedStreamReducer";
-import CalendarReducer from "./CalendarReducer";
+import CalendarUpcomingReducer from "./CalendarUpcomingReducer";
+import CalendarPastReducer from "./CalendarPastReducer";
+import MyStreamsUpcomingReducer from "./MyStreamsUpcomingReducer";
+import MyStreamsPastReducer from "./MyStreamsPastReducer";
+import SubscriptionsReducer from "./SubscriptionsReducer";
+import SearchReducer from "./SearchReducer";
 
 export default combineReducers({
-  streams: StreamsReducer,
-  myStreams: MyStreamsReducer,
-  page: PageReducer,
-  editedStream: EditedStreamReducer,
+  // GLOBAL //
   popupShown: PopupReducer,
+  page: PageReducer,
   tags: TagsReducer,
-  calendar : CalendarReducer
+  editedStream: EditedStreamReducer,
+
+  // EXPLORE
+  streams: StreamsReducer,
+
+  // MY STREAMS
+  myStreamsUpcoming: MyStreamsUpcomingReducer,
+  myStreamsPast: MyStreamsPastReducer,
+
+  // CALENDAR
+  calendarUpcoming: CalendarUpcomingReducer,
+  calendarPast: CalendarPastReducer,
+
+  // SUBSCRIPTIONS
+  subscriptions: SubscriptionsReducer,
+  
+  // SEARCH
+  searchedStreams : SearchReducer
 });

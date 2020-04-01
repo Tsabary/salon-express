@@ -28,9 +28,11 @@ const InputField = ({
         required={required}
         pattern={pattern}
       />
-      <label htmlFor={placeHolder} className="input-field__label">
-        {label}
-      </label>
+      {label ? (
+        <label htmlFor={placeHolder} className="input-field__label">
+          {label}
+        </label>
+      ) : null}
     </div>
   );
 };

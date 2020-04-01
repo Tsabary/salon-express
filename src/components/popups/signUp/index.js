@@ -5,9 +5,9 @@ import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
 import InputField from "../../formComponents/inputField";
-import { signUp, providerSignIn } from "../../../actions";
+import { signUp, providerSignIn, togglePopup } from "../../../actions";
 
-const SignUp = ({ signUp, providerSignIn }) => {
+const SignUp = ({ signUp, providerSignIn, togglePopup }) => {
   const [values, setValues] = useState({});
   const [submitting, setSubmitting] = useState(0);
   const [formError, setFormError] = useState("");
@@ -16,7 +16,9 @@ const SignUp = ({ signUp, providerSignIn }) => {
     event.preventDefault();
     window.scrollTo(0, 0);
     setSubmitting(1);
-    signUp(values.email, values.password, setSubmitting, setFormError);
+    signUp(values.email, values.password, setSubmitting, setFormError, () =>
+      togglePopup()
+    );
   };
 
   const renderContent = (state, error) => {
@@ -26,43 +28,39 @@ const SignUp = ({ signUp, providerSignIn }) => {
           <>
             <div className="popup__title">Join Us</div>
             <form onSubmit={handleSubmit}>
-              <div className="small-margin-top">
-                <InputField
-                  type="text"
-                  placeHolder="Full name"
-                  value={values.name}
-                  onChange={name => setValues({ ...values, name })}
-                  label="Full name"
-                />
-                <InputField
-                  type="email"
-                  placeHolder="Email address"
-                  value={values.email}
-                  onChange={email => setValues({ ...values, email })}
-                  label="Email"
-                />
-                <InputField
-                  type="password"
-                  placeHolder="Password"
-                  value={values.password}
-                  onChange={password => setValues({ ...values, password })}
-                  label="Password"
-                />
+              <div className="fr-fr">
+                <div className="tiny-margin-bottom">
+                  <InputField
+                    type="email"
+                    placeHolder="Email address"
+                    value={values.email}
+                    onChange={email => setValues({ ...values, email })}
+                  />
+                </div>
+
+                <div className="tiny-margin-bottom">
+                  <InputField
+                    type="password"
+                    placeHolder="Password"
+                    value={values.password}
+                    onChange={password => setValues({ ...values, password })}
+                  />
+                </div>
               </div>
 
               {error ? (
-                <div className="form-error small-margin-top">{formError}</div>
+                <div className="form-error tiny-margin-top">{formError}</div>
               ) : null}
 
               <button
                 type="submit"
-                className="auth__button auth__button--direct small-margin-top"
+                className="auth__button auth__button--direct"
               >
                 Submit
               </button>
 
               <div
-                className="auth__button auth__button--google  small-margin-top"
+                className="auth__button auth__button--google  tiny-margin-top"
                 onClick={() => {
                   providerSignIn("google");
                 }}
@@ -70,7 +68,7 @@ const SignUp = ({ signUp, providerSignIn }) => {
                 google
               </div>
               <div
-                className="auth__button auth__button--facebook small-margin-top"
+                className="auth__button auth__button--facebook tiny-margin-top"
                 onClick={() => {
                   providerSignIn("facebook");
                 }}
@@ -109,7 +107,7 @@ const SignUp = ({ signUp, providerSignIn }) => {
   return (
     <div className="popup" id="sign-up">
       <div className="popup__container">
-        <a className="popup__close" href="#">
+        <a className="popup__close" href="#" onClick={togglePopup}>
           <div />
           Close
         </a>
@@ -119,4 +117,4 @@ const SignUp = ({ signUp, providerSignIn }) => {
   );
 };
 
-export default connect(null, { signUp, providerSignIn })(SignUp);
+export default connect(null, { signUp, providerSignIn, togglePopup })(SignUp);

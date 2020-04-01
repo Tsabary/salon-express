@@ -33,7 +33,7 @@ const UserOptions = ({ logOut, resendVerification }) => {
             className="user-options__image"
             src={
               (currentUserProfile && currentUserProfile.avatar) ||
-              "../../../imgs/logo.jpeg"
+              "../imgs/avatar.png"
             }
           />
         </div>
@@ -52,13 +52,6 @@ const UserOptions = ({ logOut, resendVerification }) => {
       </div>
 
       <div className="user-options__options">
-        <Link className="user-options__option" to="/calendar">
-          Calendar
-        </Link>
-
-        <Link className="user-options__option" to="/my-streams">
-          My Streams
-        </Link>
 
         <a className="user-options__option" href="#update-profile">
           <TextButton text="Update Profile" />
@@ -68,10 +61,8 @@ const UserOptions = ({ logOut, resendVerification }) => {
           Contact
         </Link>
 
-    
-
         <div className="user-options__option" onClick={() => logOut()}>
-          <TextButton text="Log Out" />
+          Log Out
         </div>
       </div>
     </div>

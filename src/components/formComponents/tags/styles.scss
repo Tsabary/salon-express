@@ -10,37 +10,45 @@
   margin-bottom: 1rem;
   cursor: pointer;
   user-select: none;
-  &-suggestion{
+  transition: all .15s;
+  &-suggestion {
     background-color: white;
     color: $mainColor;
     border: $mainColor 1px solid;
-    &__count{
-      color: $grey;
 
+    &:hover{
+      border: $mainColor 2px solid;
+
+    }
+    &__count {
+      color: $grey;
     }
   }
 
-  &-selected{
+  &-selected {
     background-color: $mainColor;
     color: white;
   }
-
 }
 
 .tags {
   width: 100%;
-  // display: flex;
+  border-radius: $borderRadius;
+  background-color: white;
+  padding: 1rem 0 0 1rem;
 
   &__container {
     display: grid;
     gap: 2rem;
     grid-template-columns: 1fr max-content;
+    align-items: center;
   }
 
   &__submit {
     width: max-content;
     height: max-content;
     font-family: $font;
+    margin-top: 1rem;
     background-color: $mainColor;
     padding: 1rem 2rem;
     border-radius: $borderRadius;

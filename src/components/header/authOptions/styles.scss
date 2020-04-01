@@ -1,7 +1,21 @@
+@import '../../../styles/imports';
+
 .auth-options {
   display: grid;
-  grid-template-columns: repeat(2, max-content);
-  grid-gap: 3rem;
   width: max-content;
   align-items: center;
+
+  &__box {
+    @include resize(1100px) {
+      display: none;
+    }
+  }
+
+  &__text {
+    display: none;
+
+    // @include resize(1100px) {
+    //   display: block;
+    // }
+  }
 }

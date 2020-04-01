@@ -1,10 +1,9 @@
 @import "../../../styles/imports";
 
 .feed {
-  @include padding;
+  // @include padding;
   position: relative;
   display: grid;
-
   &__load-more {
     border-radius: $borderRadius;
     border: 1px solid $mainColor;
@@ -14,8 +13,8 @@
     background-color: white;
     cursor: pointer;
     margin: auto;
-    transition: all .1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    &:hover{
+    transition: all 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    &:hover {
       padding: 1.8rem 2.8rem;
     }
   }
@@ -25,15 +24,16 @@
   position: fixed;
   bottom: 5rem;
   right: 10rem;
-  z-index: 2000;
+  z-index: 200;
   height: 6rem;
   width: 6rem;
   // padding: 2.5rem 2.5rem;
   color: white;
   font-size: 3rem;
   border-radius: 35rem;
+  border: 1px rgba(white, 0.8) solid;
   transition: all 0.15s;
-  box-shadow: 0 0.2rem 0.5rem rgb(170, 170, 170);
+  box-shadow: 0 0.2rem 0.5rem rgba(78, 75, 75, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -57,11 +57,11 @@
 
   &:hover {
     transform: translateY(-0.2rem);
-    box-shadow: 0 0.4rem 1rem rgb(170, 170, 170);
+    box-shadow: 0 0.4rem 1rem rgba(78, 75, 75, 0.6);
   }
   &:active {
     transform: translateY(-0.15rem);
-    box-shadow: 0 0.4rem 0.7rem rgb(170, 170, 170);
+    box-shadow: 0 0.4rem 0.7rem rgba(78, 75, 75, 0.6);
   }
 }
 
@@ -73,7 +73,7 @@
   width: auto;
 }
 .my-masonry-grid_column {
-  // padding-left: 7rem; /* gutter size */
+  padding-left: 3rem; /* gutter size */
   background-clip: padding-box;
 }
 

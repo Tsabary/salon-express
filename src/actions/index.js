@@ -7,51 +7,58 @@ import {
   DELETE_STREAM,
   EDIT_STREAM,
 
-  // MY STREAMS //
-  FETCH_MY_STREAMS,
-  ADD_MY_STREAMS,
-  EDIT_MY_STREAMS,
-  DELETE_MY_STREAMS,
+  // SEARCHED STREAMS //
+  FETCH_NEW_SEARCHED_STREAMS,
+  FETCH_MORE_SEARCHED_STREAMS,
 
-  // CALENDAR //
-  FETCH_NEW_CALENDAR,
-  FETCH_MORE_CALENDAR,
-  ADD_TO_CALENDAR,
+  // MY STREAMS UPCOMING //
+  FETCH_NEW_MY_STREAMS_UPCOMING,
+  FETCH_MORE_MY_STREAMS_UPCOMING,
+
+  // MY STREAMS PAST //
+  FETCH_NEW_MY_STREAMS_PAST,
+  FETCH_MORE_MY_STREAMS_PAST,
+
+  // CALENDAR BOTH
   REMOVE_FROM_CALENDAR,
-  EDIT_CALENDAR,
+
+  // CALENDAR UPCOMING //
+  FETCH_NEW_CALENDAR_UPCOMING,
+  FETCH_MORE_CALENDAR_UPCOMING,
+  ADD_TO_CALENDAR_UPCOMING,
+
+  // CALENDAR PAST //
+  FETCH_NEW_CALENDAR_PAST,
+  FETCH_MORE_CALENDAR_PAST,
 
   // GLOBAL //
   SET_PAGE,
   TOGGLE_POPUP,
   FETCH_TAGS,
-  SET_EDITED_STREAM
+  SET_EDITED_STREAM,
+  FETCH_NEW_SUBSCRIPTIONS,
+  FETCH_MORE_SUBSCRIPTIONS
 } from "./types";
 
 const db = firebase.firestore();
 const storage = firebase.storage();
 
-// FETCHING ACTIONS //
+// EXPOLRE STREAMS //
 
 export const fetchFirstStreams = (
   setLastVisible,
-  tag,
-  setReachedLast
+  setReachedLast,
+  timestampNow
 ) => async dispatch => {
-  const data = tag
-    ? await db
-        .collection("streams")
-        .where("tags", "array-contains", tag)
-        .orderBy("start_timestamp")
-        .limit(25)
-        .get()
-    : await db
-        .collection("streams")
-        .orderBy("start_timestamp")
-        .limit(25)
-        .get();
+  const data = await db
+    .collection("streams")
+    .where("start_timestamp", ">", timestampNow)
+    .orderBy("start_timestamp")
+    .limit(25)
+    .get();
 
   setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 25) setReachedLast(true);
+  if (data.docs.length === 25) setReachedLast(false);
 
   dispatch({
     type: FETCH_NEW_STREAMS,
@@ -62,42 +69,14 @@ export const fetchFirstStreams = (
 export const fetchMoreStreams = (
   lastVisible,
   setLastVisible,
-  tag,
-  setReachedLast
-) => async dispatch => {
-  const data = tag
-    ? await db
-        .collection("streams")
-        .where("tags", "array-contains", tag)
-        .orderBy("start_timestamp")
-        .startAfter(lastVisible)
-        .limit(25)
-        .get()
-    : await db
-        .collection("streams")
-        .orderBy("start_timestamp")
-        .startAfter(lastVisible)
-        .limit(25)
-        .get();
-
-  setLastVisible(data.docs[data.docs.length - 1]);
-  if (!data.docs.length) setReachedLast(true);
-
-  dispatch({
-    type: FETCH_MORE_STREAMS,
-    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
-  });
-};
-
-export const fetchFirstCalendar = (
-  userID,
-  setLastVisible,
-  setReachedLast
+  setReachedLast,
+  timestampNow
 ) => async dispatch => {
   const data = await db
     .collection("streams")
-    .where("attendants", "array-contains", userID)
+    .where("start_timestamp", ">", timestampNow)
     .orderBy("start_timestamp")
+    .startAfter(lastVisible)
     .limit(25)
     .get();
 
@@ -105,12 +84,137 @@ export const fetchFirstCalendar = (
   if (data.docs.length < 25) setReachedLast(true);
 
   dispatch({
-    type: FETCH_NEW_CALENDAR,
+    type: FETCH_MORE_STREAMS,
     payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
   });
 };
 
-export const fetchMoreCalendar = (
+// SEARCHED STREAMS //
+
+export const fetchFirstSearchedStreams = (
+  setLastVisible,
+  tag,
+  setReachedLast,
+  timestampNow
+) => async dispatch => {
+  const data = await db
+    .collection("streams")
+    .where("tags", "array-contains", tag)
+    .where("start_timestamp", ">", timestampNow)
+    .orderBy("start_timestamp")
+    .limit(25)
+    .get();
+
+  setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length === 25) setReachedLast(false);
+
+  dispatch({
+    type: FETCH_NEW_SEARCHED_STREAMS,
+    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+  });
+};
+
+export const fetchMoreSearchedStreams = (
+  lastVisible,
+  setLastVisible,
+  tag,
+  setReachedLast,
+  timestampNow
+) => async dispatch => {
+  const data = await db
+    .collection("streams")
+    .where("tags", "array-contains", tag)
+    .where("start_timestamp", ">", timestampNow)
+    .orderBy("start_timestamp")
+    .startAfter(lastVisible)
+    .limit(25)
+    .get();
+
+  setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length < 25) setReachedLast(true);
+
+  dispatch({
+    type: FETCH_MORE_SEARCHED_STREAMS,
+    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+  });
+};
+
+// SUBSCRIPTIONS STREAMS //
+
+export const fetchFirstSubscriptionStreams = (
+  setLastVisible,
+  userUID,
+  setReachedLast,
+  timestampNow
+) => async dispatch => {
+  const data = await db
+    .collection("streams")
+    .where("followers", "array-contains", userUID)
+    .where("start_timestamp", ">", timestampNow)
+    .orderBy("start_timestamp")
+    .limit(25)
+    .get();
+
+  setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length === 25) setReachedLast(false);
+
+  dispatch({
+    type: FETCH_NEW_SUBSCRIPTIONS,
+    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+  });
+};
+
+export const fetchMoreSubscriptionStreams = (
+  lastVisible,
+  setLastVisible,
+  userUID,
+  setReachedLast,
+  timestampNow
+) => async dispatch => {
+  const data = db
+    .collection("streams")
+    .where("followers", "array-contains", userUID)
+    .where("start_timestamp", ">", timestampNow)
+    .orderBy("start_timestamp")
+    .startAfter(lastVisible)
+    .limit(25)
+    .get();
+
+  setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length < 25) setReachedLast(true);
+
+  dispatch({
+    type: FETCH_MORE_SUBSCRIPTIONS,
+    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+  });
+};
+
+// CALENDAR UPCOMING //
+
+export const fetchFirstCalendarUpcoming = (
+  userID,
+  setLastVisible,
+  setReachedLast
+) => async dispatch => {
+  const data = await db
+    .collection("streams")
+    .where("attendants", "array-contains", userID)
+    .where("start_timestamp", ">", Date.now())
+    .orderBy("start_timestamp", "asc")
+    .limit(25)
+    .get();
+
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length === 25) setReachedLast(false);
+
+  dispatch({
+    type: FETCH_NEW_CALENDAR_UPCOMING,
+    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+  });
+};
+
+export const fetchMoreCalendarUpcoming = (
   userID,
   lastVisible,
   setLastVisible,
@@ -119,31 +223,179 @@ export const fetchMoreCalendar = (
   const data = await db
     .collection("streams")
     .where("attendants", "array-contains", userID)
-    .orderBy("start_timestamp")
+    .where("start_timestamp", ">", Date.now())
+    .orderBy("start_timestamp", "asc")
     .startAfter(lastVisible)
-    .limit(25)
+    .limit(2)
     .get();
 
-  setLastVisible(data.docs[data.docs.length - 1]);
-  if (!data.docs.length) setReachedLast(true);
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length < 25) setReachedLast(true);
 
   dispatch({
-    type: FETCH_MORE_CALENDAR,
+    type: FETCH_MORE_CALENDAR_UPCOMING,
     payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
   });
 };
 
-export const fetchMyStreams = userID => async dispatch => {
+// CALENDAR PAST //
+
+export const fetchFirstCalendarPast = (
+  userID,
+  setLastVisible,
+  setReachedLast
+) => async dispatch => {
+  const data = await db
+    .collection("streams")
+    .where("attendants", "array-contains", userID)
+    .where("start_timestamp", "<", Date.now())
+    .orderBy("start_timestamp", "desc")
+    .limit(25)
+    .get();
+
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length === 25) setReachedLast(false);
+
+  dispatch({
+    type: FETCH_NEW_CALENDAR_PAST,
+    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+  });
+};
+
+export const fetchMoreCalendarPast = (
+  userID,
+  lastVisible,
+  setLastVisible,
+  setReachedLast
+) => async dispatch => {
+  const data = await db
+    .collection("streams")
+    .where("attendants", "array-contains", userID)
+    .where("start_timestamp", "<", Date.now())
+    .orderBy("start_timestamp", "desc")
+    .startAfter(lastVisible)
+    .limit(25)
+    .get();
+
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length < 25) setReachedLast(true);
+
+  dispatch({
+    type: FETCH_MORE_CALENDAR_PAST,
+    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+  });
+};
+
+// MY STREAMS UPCOMING //
+
+export const fetchFirstMyStreamsUpcoming = (
+  userID,
+  setLastVisible,
+  setReachedLast
+) => async dispatch => {
   const data = await db
     .collection("streams")
     .where("user_ID", "==", userID)
-    .orderBy("start_timestamp")
+    .where("start_timestamp", ">", Date.now())
+    .orderBy("start_timestamp", "asc")
+    .limit(25)
     .get();
 
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length === 25) setReachedLast(false);
+
   dispatch({
-    type: FETCH_MY_STREAMS,
+    type: FETCH_NEW_MY_STREAMS_UPCOMING,
     payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
   });
+};
+
+export const fetchMoreMyStreamsUpcoming = (
+  userID,
+  lastVisible,
+  setLastVisible,
+  setReachedLast
+) => async dispatch => {
+  const data = await db
+    .collection("streams")
+    .where("user_ID", "==", userID)
+    .where("start_timestamp", ">", Date.now())
+    .orderBy("start_timestamp", "asc")
+    .startAfter(lastVisible)
+    .limit(25)
+    .get();
+
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length < 25) setReachedLast(true);
+
+  dispatch({
+    type: FETCH_MORE_MY_STREAMS_UPCOMING,
+    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+  });
+};
+
+// MY STREAMS PAST //
+
+export const fetchFirstMyStreamsPast = (
+  userID,
+  setLastVisible,
+  setReachedLast
+) => async dispatch => {
+  const data = await db
+    .collection("streams")
+    .where("user_ID", "==", userID)
+    .where("start_timestamp", "<", Date.now())
+    .orderBy("start_timestamp", "desc")
+    .limit(25)
+    .get();
+
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length === 25) setReachedLast(false);
+
+  dispatch({
+    type: FETCH_NEW_MY_STREAMS_PAST,
+    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+  });
+};
+
+export const fetchMoreMyStreamsPast = (
+  userID,
+  lastVisible,
+  setLastVisible,
+  setReachedLast
+) => async dispatch => {
+  const data = await db
+    .collection("streams")
+    .where("user_ID", "==", userID)
+    .where("start_timestamp", "<", Date.now())
+    .orderBy("start_timestamp", "desc")
+    .startAfter(lastVisible)
+    .limit(25)
+    .get();
+
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length < 25) setReachedLast(true);
+
+  dispatch({
+    type: FETCH_MORE_MY_STREAMS_PAST,
+    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+  });
+};
+
+export const fetchSingleStream = (streamID, setStream) => async dispatch => {
+  const doc = await db
+    .collection("streams")
+    .doc(streamID)
+    .get();
+
+  setStream(doc.data());
 };
 
 // STREAMS //
@@ -188,9 +440,9 @@ export const newStream = (values, image, reset) => dispatch => {
 
           addTags(values.tags, newDoc.id, batch);
 
-          batch.commit().then(() => {
+          batch.commit().then(d => {
+            console.log("success", d);
             reset();
-            window.location.hash = "";
 
             dispatch({
               type: NEW_STREAM,
@@ -198,12 +450,7 @@ export const newStream = (values, image, reset) => dispatch => {
             });
 
             dispatch({
-              type: ADD_MY_STREAMS,
-              payload: stream
-            });
-
-            dispatch({
-              type: ADD_TO_CALENDAR,
+              type: ADD_TO_CALENDAR_UPCOMING,
               payload: stream
             });
           });
@@ -247,7 +494,6 @@ export const updateStream = (
           .child(imageName)
           .getDownloadURL()
           .then(fireBaseUrl => {
-            console.log(values.image_file_name);
             storage
               .ref()
               .child(`images/streams/${values.id}/${values.image_file_name}`)
@@ -272,16 +518,6 @@ export const updateStream = (
                 type: EDIT_STREAM,
                 payload: stream
               });
-
-              dispatch({
-                type: EDIT_MY_STREAMS,
-                payload: stream
-              });
-
-              dispatch({
-                type: EDIT_CALENDAR,
-                payload: stream
-              });
             });
           });
       }
@@ -297,7 +533,7 @@ export const updateStream = (
       window.location.hash = "";
 
       dispatch({
-        type: NEW_STREAM,
+        type: EDIT_STREAM,
         payload: values
       });
     });
@@ -305,25 +541,32 @@ export const updateStream = (
 };
 
 export const removeStream = stream => dispatch => {
-  db.collection("streams")
-    .doc(stream.id)
-    .delete();
+  const batch = db.batch();
 
-  dispatch({
-    type: DELETE_STREAM,
-    payload: stream.id
-  });
+  const doc = db.collection("streams").doc(stream.id);
+  batch.delete(doc);
 
-  dispatch({
-    type: DELETE_MY_STREAMS,
-    payload: stream.id
-  });
+  removeTags(stream.tags, stream.id, batch);
 
-  dispatch({
-    type: REMOVE_FROM_CALENDAR,
-    payload: stream.id
+  batch.commit().then(() => {
+    storage
+      .ref()
+      .child(`images/streams/${stream.id}/${stream.image_file_name}`)
+      .delete();
+
+    dispatch({
+      type: DELETE_STREAM,
+      payload: stream.id
+    });
+
+    dispatch({
+      type: REMOVE_FROM_CALENDAR,
+      payload: stream.id
+    });
   });
 };
+
+// STREAM ACTIONS //
 
 export const attand = (stream, userUID) => async dispatch => {
   await db
@@ -340,12 +583,7 @@ export const attand = (stream, userUID) => async dispatch => {
   });
 
   dispatch({
-    type: EDIT_MY_STREAMS,
-    payload: { ...stream, attendants: [...stream.attendants, userUID] }
-  });
-
-  dispatch({
-    type: ADD_TO_CALENDAR,
+    type: ADD_TO_CALENDAR_UPCOMING,
     payload: { ...stream, attendants: [...stream.attendants, userUID] }
   });
 };
@@ -368,7 +606,7 @@ export const unattand = (stream, userUID) => async dispatch => {
   });
 
   dispatch({
-    type: EDIT_MY_STREAMS,
+    type: EDIT_STREAM,
     payload: {
       ...stream,
       attendants: stream.attendants.filter(id => id !== userUID)
@@ -381,9 +619,104 @@ export const unattand = (stream, userUID) => async dispatch => {
   });
 };
 
+export const follow = (
+  user,
+  hostID,
+  setCurrentUserProfile,
+  cb
+) => async dispatch => {
+  const batch = db.batch();
+
+  const hostRef = db.collection("users").doc(hostID);
+  batch.set(
+    hostRef,
+    { followers: firebase.firestore.FieldValue.arrayUnion(user.uid) },
+    { merge: true }
+  );
+
+  const userRef = db.collection("users").doc(user.uid);
+  batch.set(
+    userRef,
+    { following: firebase.firestore.FieldValue.arrayUnion(hostID) },
+    { merge: true }
+  );
+
+  // Add current user to all the future events of this host
+  const futureHostEvents = await db
+    .collection("streams")
+    .where("user_ID", "==", hostID)
+    .where("start_timestamp", ">", Date.now())
+    .get();
+
+  futureHostEvents.docs.forEach(doc => {
+    let eventRef = db.collection("streams").doc(doc.id);
+    batch.set(
+      eventRef,
+      {
+        followers: firebase.firestore.FieldValue.arrayUnion(user.uid)
+      },
+      { merge: true }
+    );
+  });
+
+  batch.commit().then(() => {
+    setCurrentUserProfile({ ...user, following: [...user.following, hostID] });
+    cb();
+  });
+};
+
+export const unfollow = (
+  user,
+  hostID,
+  setCurrentUserProfile,
+  cb
+) => async dispatch => {
+  const batch = db.batch();
+
+  const hostRef = db.collection("users").doc(hostID);
+  batch.set(
+    hostRef,
+    { followers: firebase.firestore.FieldValue.arrayRemove(user.uid) },
+    { merge: true }
+  );
+
+  const userRef = db.collection("users").doc(user.uid);
+  batch.set(
+    userRef,
+    { following: firebase.firestore.FieldValue.arrayRemove(hostID) },
+    { merge: true }
+  );
+
+  // Remove current user to all the future events of this host
+  const futureHostEvents = await db
+    .collection("streams")
+    .where("user_ID", "==", hostID)
+    .where("start_timestamp", ">", Date.now())
+    .get();
+
+  futureHostEvents.docs.forEach(doc => {
+    let eventRef = db.collection("streams").doc(doc.id);
+    batch.set(
+      eventRef,
+      {
+        followers: firebase.firestore.FieldValue.arrayRemove(user.uid)
+      },
+      { merge: true }
+    );
+  });
+
+  batch.commit().then(() => {
+    setCurrentUserProfile({
+      ...user,
+      following: user.following.filter(id => id !== hostID)
+    });
+    cb();
+  });
+};
+
 // AUTH //
 
-export const signUp = (email, password, setSubmitting, setFormError) => () => {
+export const signUp = (email, password, setSubmitting, setFormError, togglePopup) => () => {
   firebase
     .auth()
     .createUserWithEmailAndPassword(email, password)
@@ -398,6 +731,7 @@ export const signUp = (email, password, setSubmitting, setFormError) => () => {
           .signInWithEmailAndPassword(email, password)
           .then(() => {
             setSubmitting(3);
+            togglePopup()
           })
           .catch(err => {
             console.log("login error:", err);
@@ -444,53 +778,63 @@ export const updateProfile = (
   image,
   updateLocaly
 ) => () => {
-  const curTS = Date.now();
-  const uploadTask = storage
-    .ref(`/images/avatars/${user.uid}/${curTS + image.name}`)
-    .put(image);
+  if (image) {
+    const curTS = Date.now();
+    const uploadTask = storage
+      .ref(`/images/avatars/${user.uid}/${curTS + image.name}`)
+      .put(image);
 
-  uploadTask.on(
-    "state_changed",
-    snapShot => {
-      //takes a snap shot of the process as it is happening
-      console.log(snapShot);
-    },
-    err => {
-      //catches the errors
-      console.log(err);
-    },
-    () => {
-      // gets the functions from storage refences the image storage in firebase by the children
-      // gets the download url then sets the image from firebase as the value for the imgUrl key:
-      storage
-        .ref(`/images/avatars/${user.uid}`)
-        .child(curTS + image.name)
-        .getDownloadURL()
-        .then(fireBaseUrl => {
-          if (profile && profile.avatar_file_name) {
-            storage
-              .ref()
-              .child(`images/avatars/${user.uid}/${profile.avatar_file_name}`)
-              .delete();
-          }
+    uploadTask.on(
+      "state_changed",
+      snapShot => {
+        //takes a snap shot of the process as it is happening
+        console.log(snapShot);
+      },
+      err => {
+        //catches the errors
+        console.log(err);
+      },
+      () => {
+        // gets the functions from storage refences the image storage in firebase by the children
+        // gets the download url then sets the image from firebase as the value for the imgUrl key:
+        storage
+          .ref(`/images/avatars/${user.uid}`)
+          .child(curTS + image.name)
+          .getDownloadURL()
+          .then(fireBaseUrl => {
+            if (profile && profile.avatar_file_name) {
+              storage
+                .ref()
+                .child(`images/avatars/${user.uid}/${profile.avatar_file_name}`)
+                .delete();
+            }
 
-          db.collection("users")
-            .doc(user.uid)
-            .set(
-              {
-                ...values,
-                avatar: fireBaseUrl,
-                avatar_file_name: curTS + image.name
-              },
-              { merge: true }
-            )
-            .then(() => {
-              updateLocaly();
-              window.location.hash = "";
-            });
-        });
-    }
-  );
+            db.collection("users")
+              .doc(user.uid)
+              .set(
+                {
+                  ...values,
+                  avatar: fireBaseUrl,
+                  avatar_file_name: curTS + image.name
+                },
+                { merge: true }
+              )
+              .then(() => {
+                updateLocaly();
+                window.location.hash = "";
+              });
+          });
+      }
+    );
+  } else {
+    db.collection("users")
+      .doc(user.uid)
+      .set(values, { merge: true })
+      .then(() => {
+        updateLocaly();
+        window.location.hash = "";
+      });
+  }
 };
 
 // GLOBAL //

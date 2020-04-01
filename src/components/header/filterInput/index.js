@@ -102,9 +102,7 @@ const FilterInput = ({ tags, fetchTags }) => {
         <div className="tags small-margin-top">
           {tagsSuggestions ? renderTagsSuggestions(tagsSuggestions) : null}
         </div>
-      ) : (
-        console.log(searchTerm + tagInput)
-      )}
+      ) : null}
     </div>
   );
 };

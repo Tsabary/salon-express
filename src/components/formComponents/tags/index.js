@@ -16,7 +16,6 @@ const Tags = ({
   const [tagsSuggestions, setTagsSuggestions] = useState(null);
 
   const renderTagsSuggestions = (suggestions, existing) => {
-
     return suggestions
       .filter(tag => {
         return !existing.includes(Object.keys(tag)[0]);
@@ -46,9 +45,7 @@ const Tags = ({
 
   const renderSuggestionsContainer = (suggestions, existing) => {
     return (
-      <div className="tags small-margin-top">
-        {renderTagsSuggestions(suggestions, existing)}
-      </div>
+      <div className="tags">{renderTagsSuggestions(suggestions, existing)}</div>
     );
   };
 
@@ -59,14 +56,14 @@ const Tags = ({
   };
 
   const handleTagInputChange = input => {
-    setTagInput(input);
+    if (input.length < 25) setTagInput(input);
     setTagsSuggestions(input ? filterTags(input) : null);
   };
 
   const addTag = newTag => {
     if (!(values && values.tags)) values.tags = [];
     if (values.tags.includes(newTag) || !newTag.length) return;
-    if (values.tags.length === 10) {
+    if (values.tags.length === 5) {
       setFormError(errorMessages.tagsMax);
       return;
     }
@@ -78,6 +75,7 @@ const Tags = ({
   };
 
   const handleKeyPress = event => {
+    console.log(event);
     event.stopPropagation();
     if (event.key === "Enter") {
       addTag(
@@ -114,11 +112,11 @@ const Tags = ({
       <div className="tags__container">
         <InputField
           type="text"
-          placeHolder="Add related tags (for example 'Party' or 'Yoga')"
+          placeHolder="Add 2-5 tags (for example 'Party' or 'Yoga')"
           value={tagInput}
           onChange={handleTagInputChange}
           onKeyDown={handleKeyPress}
-          label="Hit 'Enter' to save tags"
+          // label="Add between 2 to 5 tags"
         />
         <div
           className="tags__submit"

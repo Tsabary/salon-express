@@ -6,7 +6,7 @@
   box-shadow: 0 0.2rem 9rem rgb(228, 228, 228);
   background-color: white;
   padding: 0;
-  margin: 4rem;
+  margin-bottom: 3rem; /* gutter size */
   position: relative;
   overflow: hidden;
   transition: all 0.2s;
@@ -32,10 +32,16 @@
     color: $greyDarkest;
   }
 
+  &__live {
+    font-size: 1.4rem;
+    font-family: $fontBold;
+    color: $mainColor;
+  }
+
   &__tag {
     display: inline-block;
     font-size: 1.2rem;
-    padding: .6rem 0.8rem;
+    padding: 0.6rem 0.8rem;
     line-height: 1rem;
     border-radius: $borderRadius;
     width: max-content;
@@ -47,10 +53,16 @@
   &__host {
     font-size: 1.4rem;
     color: $grey;
+    // border-bottom: 1px solid $mainColor;
   }
   &__timestamp {
     font-size: 1.4rem;
     color: $grey;
+  }
+
+  &__attendants {
+    font-size: 1.4rem;
+    color: $mainColor;
   }
 
   &:hover {
@@ -65,20 +77,44 @@
     justify-content: stretch;
   }
 
-  &__attend {
-    background: $mainColor;
+  &__button {
     margin: 0.5rem;
     padding: 1rem;
-    color: white;
     text-align: center;
     border-radius: $borderRadius;
     font-size: 1.2rem;
-
     transition: all 0.2s;
 
-    &:hover {
-      transform: translateY(-0.1rem);
-      box-shadow: 0 0.1rem 0.2rem rgb(170, 170, 170);
+    &-line {
+      border: 1px solid $mainColor;
+      color: $mainColor;
+      &:hover {
+        // border: 2px solid $mainColor;
+        background: $mainColorTransparent;
+      }
+    }
+
+    &-full {
+      background: $mainColor;
+      color: white;
+    }
+
+    ul {
+      list-style-type: none;
+    }
+
+    li {
+      transition: all 0.2s;
+      &:hover {
+        font-size: 1.3rem;
+      }
+    }
+
+    a {
+      color: $mainColor;
+      &:visited {
+        color: $mainColor;
+      }
     }
   }
 
@@ -90,7 +126,6 @@
     text-align: center;
     border-radius: $borderRadius;
     font-size: 1.2rem;
-
   }
 
   &__follow {
@@ -110,24 +145,23 @@
 
   &__actions {
     text-align: center;
-    padding: .0 .5rem .5rem .5rem;
+    padding: 0 0.5rem 0.5rem 0.5rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: .5rem;
-  
+    gap: 0.5rem;
   }
 
-  &-button{
+  &-button {
     background-color: $mainColor;
     color: white;
     font-size: 1.2rem;
     border-radius: $borderRadius;
     padding: 1rem;
     cursor: pointer;
-    transition: all .2s;
+    transition: all 0.2s;
 
-    &__delete{
-      &:hover{
+    &__delete {
+      &:hover {
         background-color: red;
       }
     }
@@ -165,6 +199,13 @@
     width: 3rem;
     cursor: pointer;
     fill: $mainColor;
+
+    &-disabled {
+      height: 3rem;
+      width: 3rem;
+      fill: $grey;
+      margin-bottom: .92rem;
+    }
 
     &--facebook {
       &-icon {
@@ -216,4 +257,8 @@
       }
     }
   }
+}
+
+.live {
+  border: 1px $mainColor solid;
 }

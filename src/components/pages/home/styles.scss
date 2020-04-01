@@ -1,0 +1,92 @@
+@import "../../../styles/imports";
+
+$duration: 0.2s;
+$distance: 8px;
+$easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+.home {
+  // padding: 10rem 10rem;
+  @include padding;
+
+  @include resize(750px) {
+    margin-top: 5rem;
+  }
+
+  &__menu {
+    width: max-content;
+    margin-left: -2rem;
+    margin-bottom: 4rem;
+
+    @include resize(750px) {
+      display: none;
+    }
+
+    ul {
+      list-style-type: none;
+      margin: 0;
+      text-align: center;
+      margin-top: 10%;
+
+      li {
+        display: inline-block;
+        margin: 0 2rem;
+        font-size: 1.6rem;
+      }
+    }
+    a {
+      color: $grey;
+      position: relative;
+      text-decoration: none;
+      padding-bottom: 8px;
+
+      &:before,
+      &:after {
+        content: "";
+        position: absolute;
+        bottom: 2px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: $mainColor;
+      }
+      &:before {
+        opacity: 0;
+        transform: translateY(-$distance);
+        transition: transform 0s $easeOutBack, opacity 0s;
+      }
+      &:after {
+        opacity: 0;
+        transform: translateY($distance/2);
+        transition: transform $duration $easeOutBack, opacity $duration;
+      }
+      &:hover,
+      &:focus {
+        color: $mainColor;
+
+        &:before,
+        &:after {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        &:before {
+          transition: transform $duration $easeOutBack, opacity $duration;
+        }
+        &:after {
+          transition: transform 0s $duration $easeOutBack, opacity 0s $duration;
+        }
+      }
+    }
+  }
+}
+
+.default-active {
+  color: $mainColor;
+  display: inline-block;
+  margin-left: 2rem;
+  font-size: 1.6rem;
+  cursor: pointer;
+  border-bottom: $mainColor solid 2px;
+  line-height: 2.7rem;
+  margin-top: 2px;
+  margin-right: 2rem;
+}

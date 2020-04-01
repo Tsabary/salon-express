@@ -3,7 +3,7 @@ import React, { useEffect, useContext, useState } from "react";
 import { connect } from "react-redux";
 
 import { AuthContext } from "../../../providers/Auth";
-import { SearchContext } from "../../../providers/Search";
+import { breakpointColumnsObj } from "../../../constants";
 
 import {
   fetchFirstStreams,
@@ -22,31 +22,33 @@ const Feed = ({
   popupShown
 }) => {
   const { currentUser, currentUserProfile } = useContext(AuthContext);
-  const { searchTerm } = useContext(SearchContext);
   const [lastVisible, setLastVisible] = useState(null);
-  const [reachedLast, setReachedLast] = useState(false);
-
-  const loadMore = () => {
-    fetchMoreStreams(lastVisible, setLastVisible, setReachedLast);
-  };
+  const [reachedLast, setReachedLast] = useState(true);
+  const timestampNow = Date.now();
 
   useEffect(() => {
-    fetchFirstStreams(setLastVisible, searchTerm, setReachedLast);
-  }, [searchTerm]);
+    fetchFirstStreams(setLastVisible, setReachedLast, timestampNow);
+  }, []);
+
+  const loadMore = () => {
+    fetchMoreStreams(
+      lastVisible,
+      setLastVisible,
+      setReachedLast,
+      timestampNow
+    );
+  };
 
   const renderItems = streams => {
     return streams.map(stream => {
       return (
-        <Stream stream={stream} userUID={currentUser.uid} key={stream.id} />
+        <Stream
+          stream={stream}
+          user={currentUserProfile || { uid: "", following: [], followers: [] }}
+          key={stream.id}
+        />
       );
     });
-  };
-
-  const breakpointColumnsObj = {
-    default: 4,
-    1260: 3,
-    840: 2,
-    420: 1
   };
 
   return (

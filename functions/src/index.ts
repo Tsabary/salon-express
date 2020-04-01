@@ -5,7 +5,6 @@ admin.initializeApp(functions.config().firebase);
 const db = admin.firestore();
 // const defaultStorage = admin.storage();
 
-
 exports.userCreated = functions.auth.user().onCreate(user => {
   if (
     user.providerData &&
@@ -27,8 +26,12 @@ exports.userCreated = functions.auth.user().onCreate(user => {
         name: user.providerData[0].displayName
           ? user.providerData[0].displayName.split(" ")[0]
           : "",
-        avatar: user.providerData[0].photoURL ? user.providerData[0].photoURL : "",
-        email: user.email
+        avatar: user.providerData[0].photoURL
+          ? user.providerData[0].photoURL
+          : "",
+        email: user.email,
+        following: [],
+        followers: []
       })
     );
 
@@ -36,7 +39,9 @@ exports.userCreated = functions.auth.user().onCreate(user => {
   } else {
     return db.doc("users/" + user.uid).set({
       uid: user.uid,
-      email: user.email ? user.email : ""
+      email: user.email ? user.email : "",
+      following: [],
+      followers: []
     });
   }
 });

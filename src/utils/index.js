@@ -83,3 +83,7 @@ export function calcGeoDistance(post, cb) {
     cb(0);
   }
 }
+
+export const validateWordsLength = (string, limit) => {
+  return string.split(" ").every(word => word.length < limit);
+};
