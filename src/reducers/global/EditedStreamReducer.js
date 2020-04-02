@@ -1,4 +1,4 @@
-import { SET_EDITED_STREAM } from "../actions/types";
+import { SET_EDITED_STREAM } from "../../actions/types";
 
 export default (state = {}, action) => {
   switch (action.type) {

@@ -62,6 +62,7 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
     if (values.start) {
       const duration = hour * 3600000 + minutes * 60000;
       const end = new Date(values.start.getTime() + duration);
+      console.log(end);
       setValues({ ...values, duration, end });
     }
   }, [hour, minutes]);
@@ -276,6 +277,17 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
                   onChange={url => {
                     setValues({ ...values, url });
                   }}
+                  required={true}
+                />
+
+                <InputField
+                  type="text"
+                  placeHolder="Price in USD (leave empty if free)"
+                  value={values.price}
+                  onChange={price => {
+                    setValues({ ...values, price });
+                  }}
+                  isNumber={true}
                   required={true}
                 />
 

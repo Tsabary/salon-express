@@ -1,32 +1,31 @@
 import "./styles.scss";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { connect } from "react-redux";
 import { AuthContext } from "../../../providers/Auth";
 
 import {
-  fetchFirstCalendarLive,
-  fetchMoreCalendarLive,
-  fetchFirstCalendarUpcoming,
-  fetchMoreCalendarUpcoming,
-  fetchFirstCalendarPast,
-  fetchMoreCalendarPast
+  fetchFirstMineLive,
+  fetchMoreMineLive,
+  fetchFirstMineUpcoming,
+  fetchMoreMineUpcoming,
+  fetchFirstMinePast,
+  fetchMoreMinePast
 } from "../../../actions";
 import { breakpointColumnsObj } from "../../../constants";
-
 import Stream from "../../stream";
 import Masonry from "react-masonry-css";
 import { Redirect } from "react-router-dom";
 
-const Calendar = ({
-  calendarLive,
-  calendarUpcoming,
-  calendarPast,
-  fetchFirstCalendarLive,
-  fetchMoreCalendarLive,
-  fetchFirstCalendarUpcoming,
-  fetchMoreCalendarUpcoming,
-  fetchFirstCalendarPast,
-  fetchMoreCalendarPast
+const Mine = ({
+  mineLive,
+  mineUpcoming,
+  minePast,
+  fetchFirstMineLive,
+  fetchMoreMineLive,
+  fetchFirstMineUpcoming,
+  fetchMoreMineUpcoming,
+  fetchFirstMinePast,
+  fetchMoreMinePast
 }) => {
   const { currentUser, currentUserProfile } = useContext(AuthContext);
 
@@ -42,22 +41,26 @@ const Calendar = ({
   const dateNow = new Date();
 
   useEffect(() => {
-    if (currentUser && !calendarLive.length) {
-      fetchFirstCalendarLive(
+    if (currentUser && !mineLive.length) {
+      fetchFirstMineLive(
         currentUser.uid,
         setLastVisibleLive,
         setReachedLastLive,
         dateNow
       );
+    }
 
-      fetchFirstCalendarUpcoming(
+    if (currentUser && !mineUpcoming.length) {
+      fetchFirstMineUpcoming(
         currentUser.uid,
         setLastVisibleUpcoming,
         setReachedLastUpcoming,
         dateNow
       );
+    }
 
-      fetchFirstCalendarPast(
+    if (currentUser && !minePast.length) {
+      fetchFirstMinePast(
         currentUser.uid,
         setLastVisiblePast,
         setReachedLastPast,
@@ -75,8 +78,8 @@ const Calendar = ({
   };
 
   return currentUser ? (
-    <div className="calendar">
-      {calendarLive.length && currentUserProfile ? (
+    <div className="my-streams">
+      {mineLive.length && currentUserProfile ? (
         <>
           <div className="my-streams__header">Live</div>
 
@@ -85,14 +88,14 @@ const Calendar = ({
             className="my-masonry-grid"
             columnClassName="my-masonry-grid_column"
           >
-            {renderItems(calendarLive)}
+            {renderItems(mineLive)}
           </Masonry>
 
-          {calendarLive.length && !reachedLastLive ? (
+          {mineLive.length && !reachedLastLive ? (
             <div
               className="feed__load-more small-margin-top"
               onClick={() =>
-                fetchMoreCalendarLive(
+                fetchMoreMineLive(
                   currentUser.uid,
                   lastVisibleLive,
                   setLastVisibleLive,
@@ -107,7 +110,7 @@ const Calendar = ({
         </>
       ) : null}
 
-      {calendarUpcoming.length && currentUserProfile ? (
+      {mineUpcoming.length && currentUserProfile ? (
         <>
           <div className="my-streams__header">Coming Up</div>
 
@@ -116,14 +119,14 @@ const Calendar = ({
             className="my-masonry-grid"
             columnClassName="my-masonry-grid_column"
           >
-            {renderItems(calendarUpcoming)}
+            {renderItems(mineUpcoming)}
           </Masonry>
 
-          {calendarUpcoming.length && !reachedLastUpcoming ? (
+          {mineUpcoming.length && !reachedLastUpcoming ? (
             <div
               className="feed__load-more small-margin-top"
               onClick={() =>
-                fetchMoreCalendarUpcoming(
+                fetchMoreMineUpcoming(
                   currentUser.uid,
                   lastVisibleUpcoming,
                   setLastVisibleUpcoming,
@@ -138,7 +141,7 @@ const Calendar = ({
         </>
       ) : null}
 
-      {calendarPast.length && currentUserProfile ? (
+      {minePast.length && currentUserProfile ? (
         <>
           <div className="my-streams__header">Past</div>
 
@@ -147,14 +150,14 @@ const Calendar = ({
             className="my-masonry-grid"
             columnClassName="my-masonry-grid_column"
           >
-            {renderItems(calendarPast)}
+            {renderItems(minePast)}
           </Masonry>
 
-          {calendarPast.length && !reachedLastPast ? (
+          {minePast.length && !reachedLastPast ? (
             <div
               className="feed__load-more small-margin-top"
               onClick={() =>
-                fetchMoreCalendarPast(
+                fetchMoreMinePast(
                   currentUser.uid,
                   lastVisiblePast,
                   setLastVisiblePast,
@@ -169,7 +172,7 @@ const Calendar = ({
         </>
       ) : null}
 
-      {!calendarPast.length && !calendarUpcoming.length ? (
+      {!minePast.length && !mineUpcoming.length ? (
         <div className="empty-feed small-margin-top centered">
           Nothing to see here
         </div>
@@ -182,17 +185,17 @@ const Calendar = ({
 
 const mapStateToProps = state => {
   return {
-    calendarLive: state.calendarLive,
-    calendarUpcoming: state.calendarUpcoming,
-    calendarPast: state.calendarPast
+    mineLive: state.mineLive,
+    mineUpcoming: state.mineUpcoming,
+    minePast: state.minePast
   };
 };
 
 export default connect(mapStateToProps, {
-  fetchFirstCalendarLive,
-  fetchMoreCalendarLive,
-  fetchFirstCalendarUpcoming,
-  fetchMoreCalendarUpcoming,
-  fetchFirstCalendarPast,
-  fetchMoreCalendarPast
-})(Calendar);
+  fetchFirstMineLive,
+  fetchMoreMineLive,
+  fetchFirstMineUpcoming,
+  fetchMoreMineUpcoming,
+  fetchFirstMinePast,
+  fetchMoreMinePast
+})(Mine);

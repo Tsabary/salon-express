@@ -1,11 +1,11 @@
 import "./styles.scss";
 import React, { useContext } from "react";
 
-import Feed from "../feed";
+import Explore from "../explore";
 // import Search from "../search";
 import Subscriptions from "../subscriptions";
 import Calendar from "../calendar";
-import MyStreams from "../myStreams";
+import Mine from "../mine";
 import { PageContext } from "../../../providers/Page";
 import { AuthContext } from "../../../providers/Auth";
 
@@ -16,8 +16,7 @@ const Home = () => {
   const renderContent = p => {
     switch (p) {
       case 1:
-        console.log("page 1")
-        return <Feed />;
+        return <Explore />;
 
       case 2:
         return <Subscriptions />;
@@ -26,13 +25,8 @@ const Home = () => {
         return <Calendar />;
 
       case 4:
-        return <MyStreams />;
+        return <Mine />;
 
-      default:
-        console.log("page", page)
-
-      // case 5:
-      //   return <Search />;
     }
   };
 

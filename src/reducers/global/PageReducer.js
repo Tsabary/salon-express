@@ -1,4 +1,4 @@
-import { SET_PAGE } from "../actions/types";
+import { SET_PAGE } from "../../actions/types";
 
 export default (state = "", action) => {
   switch (action.type) {

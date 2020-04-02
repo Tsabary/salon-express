@@ -1,4 +1,4 @@
-@import "../../../../styles/imports";
+@import "../../styles/imports";
 
 .stream {
   min-width: 30rem;
@@ -30,6 +30,8 @@
   &__body {
     font-size: 1.4rem;
     color: $greyDarkest;
+    white-space: pre-line;
+
   }
 
   &__live {

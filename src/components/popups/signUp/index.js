@@ -26,7 +26,7 @@ const SignUp = ({ signUp, providerSignIn, togglePopup }) => {
       case 0:
         return (
           <>
-            <div className="popup__title">Join Us</div>
+            <div className="popup__title small-margin-bottom">Join Us</div>
             <form onSubmit={handleSubmit}>
               <div className="fr-fr">
                 <div className="tiny-margin-bottom">

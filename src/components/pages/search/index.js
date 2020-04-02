@@ -3,52 +3,53 @@ import React, { useEffect, useContext, useState } from "react";
 import { connect } from "react-redux";
 
 import { AuthContext } from "../../../providers/Auth";
-import { SearchContext } from "../../../providers/Search";
 import { breakpointColumnsObj } from "../../../constants";
 
 import {
-  fetchFirstSearchedStreams,
-  fetchMoreSearchedStreams,
+  fetchFirstSearchedLive,
+  fetchMoreSearchedLive,
+  fetchFirstSearchedUpcoming,
+  fetchMoreSearchedUpcoming,
   togglePopup
 } from "../../../actions";
-import Stream from "../feed/stream";
+import Stream from "../../stream";
 
 import Masonry from "react-masonry-css";
 
 const Search = ({
   match,
-  searchedStreams,
-  fetchFirstSearchedStreams,
-  fetchMoreSearchedStreams,
-  togglePopup,
-  popupShown
+  searchLive,
+  searchUpcoming,
+  fetchFirstSearchedLive,
+  fetchMoreSearchedLive,
+  fetchFirstSearchedUpcoming,
+  fetchMoreSearchedUpcoming
 }) => {
   const { currentUser, currentUserProfile } = useContext(AuthContext);
-  // const { searchTerm } = useContext(SearchContext);
-  const [lastVisible, setLastVisible] = useState(null);
-  const [reachedLast, setReachedLast] = useState(true);
-  const timestampNow = Date.now();
+  const [lastVisibleLive, setLastVisibleLive] = useState(null);
+  const [reachedLastLive, setReachedLastLive] = useState(true);
+  const [lastVisibleUpcoming, setLastVisibleUpcoming] = useState(null);
+  const [reachedLastUpcoming, setReachedLastUpcoming] = useState(true);
+  const dateNow = new Date();
 
   useEffect(() => {
-    // if (searchTerm) {
-    fetchFirstSearchedStreams(
-      setLastVisible,
-      match.params.id,
-      setReachedLast,
-      timestampNow
-    );
-    // }
-  }, []);
 
-  const loadMore = () => {
-    fetchMoreSearchedStreams(
-      lastVisible,
-      setLastVisible,
+    console.log(match.params.id)
+
+    fetchFirstSearchedLive(
+      setLastVisibleLive,
       match.params.id,
-      setReachedLast,
-      timestampNow
+      setReachedLastLive,
+      dateNow
     );
-  };
+
+    fetchFirstSearchedUpcoming(
+      setLastVisibleUpcoming,
+      match.params.id,
+      setReachedLastUpcoming,
+      dateNow
+    );
+  }, []);
 
   const renderItems = streams => {
     return streams.map(stream => {
@@ -64,30 +65,62 @@ const Search = ({
 
   return (
     <div className="search">
-      <a
-        style={{ display: popupShown ? "none" : "" }}
-        onClick={togglePopup}
-        className="post-button"
-        href={
-          currentUser && currentUser.emailVerified ? "#new-stream" : "#sign-up"
-        }
-      >
-        +
-      </a>
-      {!!searchedStreams.length ? (
-        <Masonry
-          breakpointCols={breakpointColumnsObj}
-          className="my-masonry-grid"
-          columnClassName="my-masonry-grid_column"
-        >
-          {renderItems(searchedStreams)}
-        </Masonry>
+      {searchLive.length ? (
+        <>
+          <div className="my-streams__header">Live</div>
+          <Masonry
+            breakpointCols={breakpointColumnsObj}
+            className="my-masonry-grid"
+            columnClassName="my-masonry-grid_column"
+          >
+            {renderItems(searchLive)}
+          </Masonry>
+          {searchLive.length && !reachedLastLive ? (
+            <div
+              className="feed__load-more"
+              onClick={() =>
+                fetchMoreSearchedLive(
+                  lastVisibleLive,
+                  setLastVisibleLive,
+                  match.params.id,
+                  setReachedLastLive,
+                  dateNow
+                )
+              }
+            >
+              Load More
+            </div>
+          ) : null}
+        </>
       ) : null}
 
-      {searchedStreams.length && !reachedLast ? (
-        <div className="feed__load-more" onClick={loadMore}>
-          Load More
-        </div>
+      {searchUpcoming.length ? (
+        <>
+          <div className="my-streams__header">Coming up</div>
+          <Masonry
+            breakpointCols={breakpointColumnsObj}
+            className="my-masonry-grid"
+            columnClassName="my-masonry-grid_column"
+          >
+            {renderItems(searchUpcoming)}
+          </Masonry>
+          {searchUpcoming.length && !reachedLastUpcoming ? (
+            <div
+              className="feed__load-more"
+              onClick={() =>
+                fetchMoreSearchedUpcoming(
+                  lastVisibleUpcoming,
+                  setLastVisibleUpcoming,
+                  match.params.id,
+                  setReachedLastUpcoming,
+                  dateNow
+                )
+              }
+            >
+              Load More
+            </div>
+          ) : null}
+        </>
       ) : null}
     </div>
   );
@@ -95,13 +128,16 @@ const Search = ({
 
 const mapStateToProps = state => {
   return {
-    searchedStreams: state.searchedStreams,
+    searchLive: state.searchLive,
+    searchUpcoming: state.searchUpcoming,
     popupShown: state.popupShown
   };
 };
 
 export default connect(mapStateToProps, {
-  fetchFirstSearchedStreams,
-  fetchMoreSearchedStreams,
+  fetchFirstSearchedLive,
+  fetchMoreSearchedLive,
+  fetchFirstSearchedUpcoming,
+  fetchMoreSearchedUpcoming,
   togglePopup
 })(Search);

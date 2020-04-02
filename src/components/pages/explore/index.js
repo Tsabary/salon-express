@@ -6,48 +6,42 @@ import { AuthContext } from "../../../providers/Auth";
 import { breakpointColumnsObj } from "../../../constants";
 
 import {
-  fetchFirstSubscriptionsLive,
-  fetchMoreSubscriptionsLive,
-  fetchFirstSubscriptionsUpcoming,
-  fetchMoreSubscriptionsUpcoming,
-  togglePopup
+  fetchFirstExploreLive,
+  fetchMoreExploreLive,
+  fetchFirstExploreUpcoming,
+  fetchMoreExploreUpcoming,
+  togglePopup,
+  deleteTags
 } from "../../../actions";
 import Stream from "../../stream";
 
 import Masonry from "react-masonry-css";
 
-const Subscriptions = ({
-  subscriptionsLive,
-  subscriptionsUpcoming,
-  fetchFirstSubscriptionsLive,
-  fetchMoreSubscriptionsLive,
-  fetchFirstSubscriptionsUpcoming,
-  fetchMoreSubscriptionsUpcoming
+const Feed = ({
+  exploreLive,
+  exploreUpcoming,
+  fetchFirstExploreLive,
+  fetchMoreExploreLive,
+  fetchFirstExploreUpcoming,
+  fetchMoreExploreUpcoming,
+  togglePopup,
+  popupShown
 }) => {
   const { currentUser, currentUserProfile } = useContext(AuthContext);
   const [lastVisibleLive, setLastVisibleLive] = useState(null);
   const [reachedLastLive, setReachedLastLive] = useState(true);
   const [lastVisibleUpcoming, setLastVisibleUpcoming] = useState(null);
   const [reachedLastUpcoming, setReachedLastUpcoming] = useState(true);
-
   const dateNow = new Date();
 
   useEffect(() => {
-    if (currentUser)
-      fetchFirstSubscriptionsLive(
-        setLastVisibleLive,
-        currentUser.uid,
-        setReachedLastLive,
-        dateNow
-      );
+    //****DANGOROUS*****/
+    // deleteTags();
+    //****DANGOROUS*****/
 
-    fetchFirstSubscriptionsUpcoming(
-      setLastVisibleUpcoming,
-      currentUser.uid,
-      setReachedLastUpcoming,
-      dateNow
-    );
-  }, [currentUser]);
+    fetchFirstExploreLive(setLastVisibleLive, setReachedLastLive, dateNow);
+    fetchFirstExploreUpcoming(setLastVisibleUpcoming, setReachedLastUpcoming, dateNow);
+  }, []);
 
   const renderItems = streams => {
     return streams.map(stream => {
@@ -63,24 +57,24 @@ const Subscriptions = ({
 
   return (
     <div className="feed">
-      {subscriptionsLive.length ? (
+      {exploreLive.length ? (
         <>
-          <div className="my-streams__header">Coming up</div>
+          <div className="my-streams__header">Live</div>
           <Masonry
             breakpointCols={breakpointColumnsObj}
             className="my-masonry-grid"
             columnClassName="my-masonry-grid_column"
           >
-            {renderItems(subscriptionsLive)}
+            {renderItems(exploreLive)}
           </Masonry>
-          {subscriptionsLive.length && !reachedLastLive ? (
+
+          {exploreLive.length && !reachedLastLive ? (
             <div
               className="feed__load-more"
               onClick={() =>
-                fetchMoreSubscriptionsLive(
+                fetchMoreExploreLive(
                   lastVisibleLive,
                   setLastVisibleLive,
-                  currentUser.uid,
                   setReachedLastLive,
                   dateNow
                 )
@@ -89,10 +83,11 @@ const Subscriptions = ({
               Load More
             </div>
           ) : null}
+
         </>
       ) : null}
 
-      {subscriptionsUpcoming.length ? (
+      {exploreUpcoming.length ? (
         <>
           <div className="my-streams__header">Coming up</div>
           <Masonry
@@ -100,16 +95,16 @@ const Subscriptions = ({
             className="my-masonry-grid"
             columnClassName="my-masonry-grid_column"
           >
-            {renderItems(subscriptionsUpcoming)}
+            {renderItems(exploreUpcoming)}
           </Masonry>
-          {subscriptionsUpcoming.length && !reachedLastUpcoming ? (
+
+          {exploreUpcoming.length && !reachedLastUpcoming ? (
             <div
               className="feed__load-more"
               onClick={() =>
-                fetchMoreSubscriptionsUpcoming(
+                fetchMoreExploreUpcoming(
                   lastVisibleUpcoming,
                   setLastVisibleUpcoming,
-                  currentUser.uid,
                   setReachedLastUpcoming,
                   dateNow
                 )
@@ -121,27 +116,35 @@ const Subscriptions = ({
         </>
       ) : null}
 
-      {!subscriptionsLive.length && !subscriptionsUpcoming.length ? (
-        <div className="empty-feed small-margin-top centered">
-          Start following hosts to see all their events
-        </div>
-      ) : null}
+      
+      {/* NEW STREAM BUTTON */}
+      <a
+        style={{ display: popupShown ? "none" : "" }}
+        onClick={togglePopup}
+        className="post-button"
+        href={
+          currentUser && currentUser.emailVerified ? "#add-stream" : "#sign-up"
+        }
+      >
+        +
+      </a>
     </div>
   );
 };
 
 const mapStateToProps = state => {
   return {
-    subscriptionsLive: state.subscriptionsLive,
-    subscriptionsUpcoming: state.subscriptionsUpcoming,
+    exploreLive: state.exploreLive,
+    exploreUpcoming: state.exploreUpcoming,
     popupShown: state.popupShown
   };
 };
 
 export default connect(mapStateToProps, {
-  fetchFirstSubscriptionsLive,
-  fetchMoreSubscriptionsLive,
-  fetchFirstSubscriptionsUpcoming,
-  fetchMoreSubscriptionsUpcoming,
-  togglePopup
-})(Subscriptions);
+  fetchFirstExploreLive,
+  fetchMoreExploreLive,
+  fetchFirstExploreUpcoming,
+  fetchMoreExploreUpcoming,
+  togglePopup,
+  deleteTags
+})(Feed);

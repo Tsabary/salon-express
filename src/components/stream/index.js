@@ -9,7 +9,7 @@ import ReactTooltip from "react-tooltip";
 import AddToCalendar from "react-add-to-calendar";
 import Loader from "react-loader-spinner";
 
-import { AuthContext } from "../../../../providers/Auth";
+import { AuthContext } from "../../providers/Auth";
 import {
   removeStream,
   attand,
@@ -18,7 +18,7 @@ import {
   follow,
   unfollow,
   togglePopup
-} from "../../../../actions";
+} from "../../actions";
 
 const Stream = ({
   stream,
@@ -41,11 +41,16 @@ const Stream = ({
       ? stream.start
       : stream.start.toDate();
 
+  const endDate =
+    Object.prototype.toString.call(stream.end) === "[object Date]"
+      ? stream.end
+      : stream.end.toDate();
+
   const event = {
     title: stream.title,
     description: `${stream.body} \r Stream URL: ${stream.url}`,
     startTime: startDate,
-    endTime: new Date(startDate.getTime() + stream.duration)
+    endTime: endDate
   };
 
   const renderTags = () => {
@@ -65,13 +70,10 @@ const Stream = ({
     }, 3000);
   };
 
-  
-
   return (
     <div
       className={
-        stream.start < Date.now() &&
-        stream.start + stream.duration > Date.now()
+        startDate.getTime() < Date.now() && endDate > Date.now()
           ? "stream live"
           : "stream"
       }
@@ -163,20 +165,28 @@ const Stream = ({
               <div className="stream__title">{stream.title}</div>
               <div className="stream__host">Host: {stream.host_name}</div>
 
-              {Date.now() < stream.start ? (
+              {stream.price ? (
+                <div className="stream__host">Price: {stream.price} USD</div>
+              ) : (
+                <div className="stream__live">FREE</div>
+              )}
+
+              {Date.now() < startDate.getTime() ? (
                 <div className="stream__timestamp">
-                  Starts <Moment fromNow>{stream.start}</Moment>
+                  Starts <Moment fromNow>{startDate}</Moment>
                 </div>
-              ) : Date.now() < stream.start + stream.duration ? (
+              ) : Date.now() < endDate.getTime() ? (
                 <div className="stream__live">Stream is live</div>
               ) : (
                 <div className="stream__timestamp">
                   Ended{" "}
                   <Moment fromNow>
-                    {stream.start + stream.duration}
+                    {startDate.getTime() + stream.duration}
                   </Moment>
                 </div>
               )}
+
+ 
 
               {stream.attendants.length > 5 || stream.user_ID === user.uid ? (
                 <div className="stream__attendants">

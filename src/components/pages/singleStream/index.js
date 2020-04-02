@@ -13,7 +13,7 @@ import { AuthContext } from "../../../providers/Auth";
 import { PageContext } from "../../../providers/Page";
 
 import { fetchSingleStream } from "../../../actions";
-import Stream from "../feed/stream";
+import Stream from "../../stream";
 
 const SingleStream = ({ match, streams, fetchSingleStream }) => {
   const myHistory = useHistory(history);

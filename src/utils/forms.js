@@ -42,6 +42,10 @@ export const checkValidity = (values, setFormError, imageAsFile) => {
       setFormError(errorMessages.startTime);
       return false;
 
+    case !values.end:
+      setFormError(errorMessages.duration);
+      return false;
+
     case values.duration === 0:
       setFormError(errorMessages.duration);
       return false;
@@ -113,7 +117,11 @@ export const renderHours = () => {
   ];
 
   return hours.map(h => {
-    return <option className="form-drop">{h} hours</option>;
+    return (
+      <option className="form-drop" key={h}>
+        {h} hours
+      </option>
+    );
   });
 };
 
@@ -121,6 +129,10 @@ export const renderMinutes = () => {
   const minutes = [0, 15, 30, 45];
 
   return minutes.map(m => {
-    return <option className="form-drop">{m} minutes</option>;
+    return (
+      <option className="form-drop" key={m}>
+        {m} minutes
+      </option>
+    );
   });
 };

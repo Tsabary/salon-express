@@ -1,17 +1,21 @@
 import {
-  FETCH_NEW_MY_STREAMS_PAST,
-  FETCH_MORE_MY_STREAMS_PAST,
+  FETCH_NEW_MINE_LIVE,
+  FETCH_MORE_MINE_LIVE,
+  NEW_STREAM_LIVE,
   EDIT_STREAM,
-  DELETE_STREAM
-} from "../actions/types";
+  DELETE_STREAM,
+} from "../../actions/types";
 
 export default (state = [], action) => {
   switch (action.type) {
-    case FETCH_NEW_MY_STREAMS_PAST:
+    case FETCH_NEW_MINE_LIVE:
       return action.payload;
 
-    case FETCH_MORE_MY_STREAMS_PAST:
+    case FETCH_MORE_MINE_LIVE:
       return [...state, ...action.payload];
+
+    case NEW_STREAM_LIVE:
+      return [...state, action.payload];
 
     case EDIT_STREAM:
       return state.map(stream =>

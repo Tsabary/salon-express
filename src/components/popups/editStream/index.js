@@ -247,6 +247,17 @@ const NewStream = ({
 
             <InputField
               type="text"
+              placeHolder="Price in USD (leave empty if free)"
+              value={values.price}
+              onChange={price => {
+                setValues({ ...values, price });
+              }}
+              isNumber={true}
+              required={true}
+            />
+
+            <InputField
+              type="text"
               placeHolder="Host Instagram page"
               value={values.host_ig}
               onChange={host_ig => {

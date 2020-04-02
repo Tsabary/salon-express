@@ -61,6 +61,7 @@ const Menu = ({ togglePopup, logOut }) => {
             type="radio"
             name="menu-items"
             checked={itemNumber(item) === p}
+            readOnly
           />
           <label
             htmlFor={smallHyphenedItem}
@@ -81,9 +82,10 @@ const Menu = ({ togglePopup, logOut }) => {
         className="navigation__checkbox"
         id="navi-toggle"
         checked={isMenuOpen}
+        readOnly
       />
       <label
-        for="navi-toggle"
+        htmlFor="navi-toggle"
         className="navigation__button"
         onClick={() => {
           setIsMenuOpen(!isMenuOpen);

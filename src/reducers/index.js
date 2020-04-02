@@ -1,16 +1,31 @@
 import { combineReducers } from "redux";
-import StreamsReducer from "./StreamsReducer";
-import PageReducer from "./PageReducer";
-import PopupReducer from "./PopupReducer";
-import TagsReducer from "./TagsReducer";
-import EditedStreamReducer from "./EditedStreamReducer";
-import CalendarUpcomingReducer from "./CalendarUpcomingReducer";
-import CalendarPastReducer from "./CalendarPastReducer";
-import MyStreamsUpcomingReducer from "./MyStreamsUpcomingReducer";
-import MyStreamsPastReducer from "./MyStreamsPastReducer";
-import SubscriptionsReducer from "./SubscriptionsReducer";
-import SearchReducer from "./SearchReducer";
-import TemplatesReducer from './TemplatesReducer';
+
+import TemplatesReducer from './global/TemplatesReducer';
+import PageReducer from "./global/PageReducer";
+import PopupReducer from "./global/PopupReducer";
+import TagsReducer from "./global/TagsReducer";
+import EditedStreamReducer from "./global/EditedStreamReducer";
+
+import ExploreLiveReducer from "./explore/ExploreLiveReducer";
+import ExploreUpcomingReducer from "./explore/ExploreUpcomingReducer";
+
+import SubscriptionsLiveReducer from "./subscription/SubscriptionsLiveReducer";
+import SubscriptionsUpcomingReducer from "./subscription/SubscriptionsUpcomingReducer";
+
+import CalendarLiveReducer from "./calendar/CalendarLiveReducer";
+import CalendarUpcomingReducer from "./calendar/CalendarUpcomingReducer";
+import CalendarPastReducer from "./calendar/CalendarPastReducer";
+
+import MineLiveReducer from "./mine/MineLiveReducer";
+import MineUpcomingReducer from "./mine/MineUpcomingReducer";
+import MinePastReducer from "./mine/MinePastReducer";
+
+
+
+
+
+import SearchLiveReducer from "./search/SearchLiveReducer";
+import SearchUpcomingReducer from "./search/SearchUpcomingReducer";
 
 export default combineReducers({
   // GLOBAL //
@@ -19,22 +34,27 @@ export default combineReducers({
   tags: TagsReducer,
   editedStream: EditedStreamReducer,
 
-  // EXPLORE
-  streams: StreamsReducer,
+  // EXPLORE //
+  exploreLive : ExploreLiveReducer,
+  exploreUpcoming: ExploreUpcomingReducer,
 
   // MY STREAMS
-  myStreamsUpcoming: MyStreamsUpcomingReducer,
-  myStreamsPast: MyStreamsPastReducer,
+  mineLive: MineLiveReducer,
+  mineUpcoming: MineUpcomingReducer,
+  minePast: MinePastReducer,
 
   // CALENDAR
+  calendarLive: CalendarLiveReducer,
   calendarUpcoming: CalendarUpcomingReducer,
   calendarPast: CalendarPastReducer,
 
   // SUBSCRIPTIONS
-  subscriptions: SubscriptionsReducer,
+  subscriptionsLive: SubscriptionsLiveReducer,
+  subscriptionsUpcoming: SubscriptionsUpcomingReducer,
 
   // SEARCH
-  searchedStreams: SearchReducer,
+  searchLive: SearchLiveReducer,
+  searchUpcoming: SearchUpcomingReducer,
 
   // TEMPLATES
   templates: TemplatesReducer

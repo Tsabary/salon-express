@@ -1,4 +1,4 @@
-import { TOGGLE_POPUP } from "../actions/types";
+import { TOGGLE_POPUP } from "../../actions/types";
 
 export default (state = false, action) => {
   switch (action.type) {
