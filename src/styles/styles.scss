@@ -32,6 +32,63 @@ h3 {
   margin-bottom: 1rem;
 }
 
+.feed {
+  position: relative;
+  display: grid;
+  &__load-more {
+    border-radius: $borderRadius;
+    border: 1px solid $mainColor;
+    color: $mainColor;
+    width: max-content;
+    padding: 1.5rem 2.5rem;
+    background-color: white;
+    cursor: pointer;
+    margin: auto;
+    transition: all 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    &:hover {
+      padding: 1.8rem 2.8rem;
+    }
+  }
+
+  &__header {
+    font-size: 8rem;
+    font-family: $fontBold;
+    color: $mainColor;
+    margin-top: 3rem;
+    margin-bottom: 7rem;
+
+    @include resize(1000px) {
+      font-size: 7rem;
+      margin-bottom: 6rem;
+      margin-top: 6rem;
+    }
+
+    @include resize(900px) {
+      font-size: 6rem;
+      margin-bottom: 5rem;
+      margin-top: 5rem;
+    }
+
+    @include resize(800px) {
+      font-size: 5rem;
+      margin-bottom: 4rem;
+      margin-top: 4rem;
+    }
+  }
+}
+
+.my-masonry-grid {
+  display: -webkit-box; /* Not needed if autoprefixing */
+  display: -ms-flexbox; /* Not needed if autoprefixing */
+  display: flex;
+  margin-left: -30px; /* gutter size offset */
+  width: auto;
+}
+.my-masonry-grid_column {
+  padding-left: 3rem; /* gutter size */
+  background-clip: padding-box;
+}
+
 .li {
   font-family: $font;
   font-size: 1.6rem;

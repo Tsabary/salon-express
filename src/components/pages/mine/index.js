@@ -1,4 +1,3 @@
-import "./styles.scss";
 import React, { useEffect, useContext, useState } from "react";
 import { connect } from "react-redux";
 import { AuthContext } from "../../../providers/Auth";
@@ -9,12 +8,10 @@ import {
   fetchFirstMineUpcoming,
   fetchMoreMineUpcoming,
   fetchFirstMinePast,
-  fetchMoreMinePast
+  fetchMoreMinePast,
 } from "../../../actions";
-import { breakpointColumnsObj } from "../../../constants";
-import Stream from "../../stream";
-import Masonry from "react-masonry-css";
-import { Redirect } from "react-router-dom";
+
+import { renderSection } from '../../../utils/feeds';
 
 const Mine = ({
   mineLive,
@@ -25,7 +22,7 @@ const Mine = ({
   fetchFirstMineUpcoming,
   fetchMoreMineUpcoming,
   fetchFirstMinePast,
-  fetchMoreMinePast
+  fetchMoreMinePast,
 }) => {
   const { currentUser, currentUserProfile } = useContext(AuthContext);
 
@@ -69,125 +66,58 @@ const Mine = ({
     }
   }, [currentUser]);
 
-  const renderItems = streams => {
-    return streams.map(stream => {
-      return (
-        <Stream stream={stream} user={currentUserProfile} key={stream.id} />
-      );
-    });
-  };
+  return (
+    <div className="feed">
+      {renderSection(
+        mineLive,
+        "Live Streams I'm hosting",
+        fetchMoreMineLive,
+        lastVisibleLive,
+        setLastVisibleLive,
+        reachedLastLive,
+        setReachedLastLive,
+        dateNow,
+        currentUserProfile
+      )}
 
-  return currentUser ? (
-    <div className="my-streams">
-      {mineLive.length && currentUserProfile ? (
-        <>
-          <div className="my-streams__header">Live</div>
+      {renderSection(
+        mineUpcoming,
+        "Coming Up Streams I'll Be Hosting",
+        fetchMoreMineUpcoming,
+        lastVisibleUpcoming,
+        setLastVisibleUpcoming,
+        reachedLastUpcoming,
+        setReachedLastUpcoming,
+        dateNow,
+        currentUserProfile
+      )}
 
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className="my-masonry-grid"
-            columnClassName="my-masonry-grid_column"
-          >
-            {renderItems(mineLive)}
-          </Masonry>
+      {renderSection(
+        minePast,
+        "Past Streams I've Hosted",
+        fetchMoreMinePast,
+        lastVisiblePast,
+        setLastVisiblePast,
+        reachedLastPast,
+        setReachedLastPast,
+        dateNow,
+        currentUserProfile
+      )}
 
-          {mineLive.length && !reachedLastLive ? (
-            <div
-              className="feed__load-more small-margin-top"
-              onClick={() =>
-                fetchMoreMineLive(
-                  currentUser.uid,
-                  lastVisibleLive,
-                  setLastVisibleLive,
-                  setReachedLastLive,
-                  dateNow
-                )
-              }
-            >
-              Load More
-            </div>
-          ) : null}
-        </>
-      ) : null}
-
-      {mineUpcoming.length && currentUserProfile ? (
-        <>
-          <div className="my-streams__header">Coming Up</div>
-
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className="my-masonry-grid"
-            columnClassName="my-masonry-grid_column"
-          >
-            {renderItems(mineUpcoming)}
-          </Masonry>
-
-          {mineUpcoming.length && !reachedLastUpcoming ? (
-            <div
-              className="feed__load-more small-margin-top"
-              onClick={() =>
-                fetchMoreMineUpcoming(
-                  currentUser.uid,
-                  lastVisibleUpcoming,
-                  setLastVisibleUpcoming,
-                  setReachedLastUpcoming,
-                  dateNow
-                )
-              }
-            >
-              Load More
-            </div>
-          ) : null}
-        </>
-      ) : null}
-
-      {minePast.length && currentUserProfile ? (
-        <>
-          <div className="my-streams__header">Past</div>
-
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className="my-masonry-grid"
-            columnClassName="my-masonry-grid_column"
-          >
-            {renderItems(minePast)}
-          </Masonry>
-
-          {minePast.length && !reachedLastPast ? (
-            <div
-              className="feed__load-more small-margin-top"
-              onClick={() =>
-                fetchMoreMinePast(
-                  currentUser.uid,
-                  lastVisiblePast,
-                  setLastVisiblePast,
-                  setReachedLastPast,
-                  dateNow
-                )
-              }
-            >
-              Load More
-            </div>
-          ) : null}
-        </>
-      ) : null}
-
-      {!minePast.length && !mineUpcoming.length ? (
+      {!minePast.length && !mineUpcoming.length && !mineLive.length ? (
         <div className="empty-feed small-margin-top centered">
           Nothing to see here
         </div>
       ) : null}
     </div>
-  ) : (
-    <Redirect to="/" />
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     mineLive: state.mineLive,
     mineUpcoming: state.mineUpcoming,
-    minePast: state.minePast
+    minePast: state.minePast,
   };
 };
 
@@ -197,5 +127,5 @@ export default connect(mapStateToProps, {
   fetchFirstMineUpcoming,
   fetchMoreMineUpcoming,
   fetchFirstMinePast,
-  fetchMoreMinePast
+  fetchMoreMinePast,
 })(Mine);

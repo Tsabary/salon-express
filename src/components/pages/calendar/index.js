@@ -1,4 +1,3 @@
-import "./styles.scss";
 import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import { AuthContext } from "../../../providers/Auth";
@@ -9,13 +8,10 @@ import {
   fetchFirstCalendarUpcoming,
   fetchMoreCalendarUpcoming,
   fetchFirstCalendarPast,
-  fetchMoreCalendarPast
+  fetchMoreCalendarPast,
 } from "../../../actions";
-import { breakpointColumnsObj } from "../../../constants";
 
-import Stream from "../../stream";
-import Masonry from "react-masonry-css";
-import { Redirect } from "react-router-dom";
+import { renderSection } from "../../../utils/feeds";
 
 const Calendar = ({
   calendarLive,
@@ -26,7 +22,7 @@ const Calendar = ({
   fetchFirstCalendarUpcoming,
   fetchMoreCalendarUpcoming,
   fetchFirstCalendarPast,
-  fetchMoreCalendarPast
+  fetchMoreCalendarPast,
 }) => {
   const { currentUser, currentUserProfile } = useContext(AuthContext);
 
@@ -66,108 +62,43 @@ const Calendar = ({
     }
   }, [currentUser]);
 
-  const renderItems = streams => {
-    return streams.map(stream => {
-      return (
-        <Stream stream={stream} user={currentUserProfile} key={stream.id} />
-      );
-    });
-  };
+  return (
+    <div className="feed">
+      {renderSection(
+        calendarLive,
+        "Live Streams I'm Into",
+        fetchMoreCalendarLive,
+        lastVisibleLive,
+        setLastVisibleLive,
+        reachedLastLive,
+        setReachedLastLive,
+        dateNow,
+        currentUserProfile
+      )}
 
-  return currentUser ? (
-    <div className="calendar">
-      {calendarLive.length && currentUserProfile ? (
-        <>
-          <div className="my-streams__header">Live</div>
+      {renderSection(
+        calendarUpcoming,
+        "Coming Up and I'm Going",
+        fetchMoreCalendarUpcoming,
+        lastVisibleUpcoming,
+        setLastVisibleUpcoming,
+        reachedLastUpcoming,
+        setReachedLastUpcoming,
+        dateNow,
+        currentUserProfile
+      )}
 
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className="my-masonry-grid"
-            columnClassName="my-masonry-grid_column"
-          >
-            {renderItems(calendarLive)}
-          </Masonry>
-
-          {calendarLive.length && !reachedLastLive ? (
-            <div
-              className="feed__load-more small-margin-top"
-              onClick={() =>
-                fetchMoreCalendarLive(
-                  currentUser.uid,
-                  lastVisibleLive,
-                  setLastVisibleLive,
-                  setReachedLastLive,
-                  dateNow
-                )
-              }
-            >
-              Load More
-            </div>
-          ) : null}
-        </>
-      ) : null}
-
-      {calendarUpcoming.length && currentUserProfile ? (
-        <>
-          <div className="my-streams__header">Coming Up</div>
-
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className="my-masonry-grid"
-            columnClassName="my-masonry-grid_column"
-          >
-            {renderItems(calendarUpcoming)}
-          </Masonry>
-
-          {calendarUpcoming.length && !reachedLastUpcoming ? (
-            <div
-              className="feed__load-more small-margin-top"
-              onClick={() =>
-                fetchMoreCalendarUpcoming(
-                  currentUser.uid,
-                  lastVisibleUpcoming,
-                  setLastVisibleUpcoming,
-                  setReachedLastUpcoming,
-                  dateNow
-                )
-              }
-            >
-              Load More
-            </div>
-          ) : null}
-        </>
-      ) : null}
-
-      {calendarPast.length && currentUserProfile ? (
-        <>
-          <div className="my-streams__header">Past</div>
-
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className="my-masonry-grid"
-            columnClassName="my-masonry-grid_column"
-          >
-            {renderItems(calendarPast)}
-          </Masonry>
-
-          {calendarPast.length && !reachedLastPast ? (
-            <div
-              className="feed__load-more small-margin-top"
-              onClick={() =>
-                fetchMoreCalendarPast(
-                  currentUser.uid,
-                  lastVisiblePast,
-                  setLastVisiblePast,
-                  setReachedLastPast,
-                  dateNow
-                )
-              }
-            >
-              Load More
-            </div>
-          ) : null}
-        </>
-      ) : null}
+      {renderSection(
+        calendarPast,
+        "Past Streams I Attended",
+        fetchMoreCalendarPast,
+        lastVisiblePast,
+        setLastVisiblePast,
+        reachedLastPast,
+        setReachedLastPast,
+        dateNow,
+        currentUserProfile
+      )}
 
       {!calendarPast.length && !calendarUpcoming.length ? (
         <div className="empty-feed small-margin-top centered">
@@ -175,16 +106,14 @@ const Calendar = ({
         </div>
       ) : null}
     </div>
-  ) : (
-    <Redirect to="/" />
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     calendarLive: state.calendarLive,
     calendarUpcoming: state.calendarUpcoming,
-    calendarPast: state.calendarPast
+    calendarPast: state.calendarPast,
   };
 };
 
@@ -194,5 +123,5 @@ export default connect(mapStateToProps, {
   fetchFirstCalendarUpcoming,
   fetchMoreCalendarUpcoming,
   fetchFirstCalendarPast,
-  fetchMoreCalendarPast
+  fetchMoreCalendarPast,
 })(Calendar);

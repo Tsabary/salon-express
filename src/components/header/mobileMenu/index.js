@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import history from "../../../history";
 import { AuthContext } from "../../../providers/Auth";
 
-import { setCurrentPage, togglePopup, logOut } from "../../../actions";
+import { togglePopup, logOut } from "../../../actions";
 import { PageContext } from "../../../providers/Page";
 
 const Menu = ({ togglePopup, logOut }) => {
@@ -139,4 +139,4 @@ const Menu = ({ togglePopup, logOut }) => {
   );
 };
 
-export default connect(null, { setCurrentPage, togglePopup, logOut })(Menu);
+export default connect(null, { togglePopup, logOut })(Menu);

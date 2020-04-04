@@ -16,7 +16,7 @@ export const MyHighlight = ({ body, items, style }) => {
 };
 
 export const multipleParagraphs = (array, style) => {
-  return array.map(paragraph => {
+  return array.map((paragraph) => {
     return (
       <MyHighlight
         key={paragraph.body}
@@ -28,7 +28,7 @@ export const multipleParagraphs = (array, style) => {
   });
 };
 
-export const addLineBreaks = string =>
+export const addLineBreaks = (string) =>
   string.split("|").map((text, index) => (
     <div key={`${text}-${index}`}>
       {text}
@@ -63,29 +63,6 @@ function calcDistance(lat1, lon1, lat2, lon2, unit) {
   }
 }
 
-export function calcGeoDistance(post, cb) {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      ({ coords: { latitude: lat, longitude: lng } }) => {
-        
-        cb(
-          calcDistance(
-            lat,
-            lng,
-            post._geoloc.lat,
-            post._geoloc.lng,
-            "K"
-          ).toFixed(1)
-        );
-      }
-    );
-  } else {
-    cb(0);
-  }
-}
-
 export const validateWordsLength = (string, limit) => {
-  return string.split(" ").every(word => word.length < limit);
+  return string.split(" ").every((word) => word.length < limit);
 };
-
-

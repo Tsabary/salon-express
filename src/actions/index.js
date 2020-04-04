@@ -58,17 +58,31 @@ import {
   FETCH_NEW_SEARCHED_STREAMS_UPCOMING,
   FETCH_MORE_SEARCHED_STREAMS_UPCOMING,
 
+  // STRANGER LIVE //
+  FETCH_NEW_STRANGER_LIVE,
+  FETCH_MORE_STRANGER_LIVE,
+
+  // STRANGER UPCOMING //
+  FETCH_NEW_STRANGER_UPCOMING,
+  FETCH_MORE_STRANGER_UPCOMING,
+
+  // STRANGER PAST //
+  FETCH_NEW_STRANGER_PAST,
+  FETCH_MORE_STRANGER_PAST,
+
+  // STRANGER PROFILE //
+  FETCH_STRANGER_PROFILE,
+
   // TEMPLATES //
   FETCH_TEMPLATES,
   NEW_TEMPLATE,
   DELETE_TEMPLATE,
 
   // GLOBAL //
-  SET_PAGE,
   TOGGLE_POPUP,
   FETCH_TAGS,
   SET_EDITED_STREAM,
-  ADD_TO_CALENDAR_LIVE
+  ADD_TO_CALENDAR_LIVE,
 } from "./types";
 
 const db = firebase.firestore();
@@ -80,7 +94,7 @@ export const fetchFirstExploreLive = (
   setLastVisible,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const dayAgo = new Date(dateNow.getTime() - 86400000);
 
   const data = await db
@@ -94,15 +108,15 @@ export const fetchFirstExploreLive = (
   setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length === 15) setReachedLast(false);
 
-  const all = data.docs ? data.docs.map(doc => doc.data()) : [];
+  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
 
-  const filteredStreams = all.filter(doc => {
+  const filteredStreams = all.filter((doc) => {
     return doc.end.toDate() > dateNow;
   });
 
   dispatch({
     type: FETCH_NEW_EXPLORE_LIVE,
-    payload: filteredStreams ? filteredStreams : []
+    payload: filteredStreams ? filteredStreams : [],
   });
 };
 
@@ -111,7 +125,7 @@ export const fetchMoreExploreLive = (
   setLastVisible,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const dayAgo = new Date(dateNow.getTime() - 86400000);
 
   const data = await db
@@ -126,15 +140,15 @@ export const fetchMoreExploreLive = (
   setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length < 15) setReachedLast(true);
 
-  const all = data.docs ? data.docs.map(doc => doc.data()) : [];
+  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
 
-  const filteredStreams = all.filter(doc => {
+  const filteredStreams = all.filter((doc) => {
     return doc.end.toDate() > dateNow;
   });
 
   dispatch({
     type: FETCH_MORE_EXPLORE_LIVE,
-    payload: filteredStreams ? filteredStreams : []
+    payload: filteredStreams ? filteredStreams : [],
   });
 };
 
@@ -144,7 +158,7 @@ export const fetchFirstExploreUpcoming = (
   setLastVisible,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const data = await db
     .collection("streams")
     .where("start", ">", dateNow)
@@ -157,7 +171,7 @@ export const fetchFirstExploreUpcoming = (
 
   dispatch({
     type: FETCH_NEW_EXPLORE_UPCOMING,
-    payload: data.docs ? data.docs.map(doc => doc.data()) : []
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
@@ -166,7 +180,7 @@ export const fetchMoreExploreUpcoming = (
   setLastVisible,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const data = await db
     .collection("streams")
     .where("start", ">", dateNow)
@@ -180,7 +194,7 @@ export const fetchMoreExploreUpcoming = (
 
   dispatch({
     type: FETCH_MORE_EXPLORE_UPCOMING,
-    payload: data.docs ? data.docs.map(doc => doc.data()) : []
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
@@ -191,7 +205,7 @@ export const fetchFirstSubscriptionsLive = (
   userUID,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const dayAgo = new Date(dateNow.getTime() - 86400000);
 
   const data = await db
@@ -206,15 +220,15 @@ export const fetchFirstSubscriptionsLive = (
   setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length === 15) setReachedLast(false);
 
-  const all = data.docs ? data.docs.map(doc => doc.data()) : [];
+  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
 
-  const filteredStreams = all.filter(doc => {
+  const filteredStreams = all.filter((doc) => {
     return doc.end.toDate() > dateNow;
   });
 
   dispatch({
     type: FETCH_NEW_SUBSCRIPTIONS_LIVE,
-    payload: filteredStreams ? filteredStreams : []
+    payload: filteredStreams ? filteredStreams : [],
   });
 };
 
@@ -224,7 +238,7 @@ export const fetchMoreSubscriptionsLive = (
   userUID,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const dayAgo = new Date(dateNow.getTime() - 86400000);
 
   const data = db
@@ -240,15 +254,15 @@ export const fetchMoreSubscriptionsLive = (
   setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length < 15) setReachedLast(true);
 
-  const all = data.docs ? data.docs.map(doc => doc.data()) : [];
+  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
 
-  const filteredStreams = all.filter(doc => {
+  const filteredStreams = all.filter((doc) => {
     return doc.end.toDate() > dateNow;
   });
 
   dispatch({
     type: FETCH_MORE_SUBSCRIPTIONS_LIVE,
-    payload: filteredStreams ? filteredStreams : []
+    payload: filteredStreams ? filteredStreams : [],
   });
 };
 
@@ -259,7 +273,7 @@ export const fetchFirstSubscriptionsUpcoming = (
   userUID,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const data = await db
     .collection("streams")
     .where("followers", "array-contains", userUID)
@@ -273,7 +287,7 @@ export const fetchFirstSubscriptionsUpcoming = (
 
   dispatch({
     type: FETCH_NEW_SUBSCRIPTIONS_UPCOMING,
-    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+    payload: !!data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
@@ -283,7 +297,7 @@ export const fetchMoreSubscriptionsUpcoming = (
   userUID,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const data = db
     .collection("streams")
     .where("followers", "array-contains", userUID)
@@ -298,7 +312,7 @@ export const fetchMoreSubscriptionsUpcoming = (
 
   dispatch({
     type: FETCH_MORE_SUBSCRIPTIONS_UPCOMING,
-    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+    payload: !!data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
@@ -309,7 +323,7 @@ export const fetchFirstCalendarLive = (
   setLastVisible,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const dayAgo = new Date(dateNow.getTime() - 86400000);
 
   const data = await db
@@ -325,15 +339,15 @@ export const fetchFirstCalendarLive = (
     setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length === 15) setReachedLast(false);
 
-  const all = data.docs ? data.docs.map(doc => doc.data()) : [];
+  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
 
-  const filteredStreams = all.filter(doc => {
+  const filteredStreams = all.filter((doc) => {
     return doc.end.toDate() > dateNow;
   });
 
   dispatch({
     type: FETCH_NEW_CALENDAR_LIVE,
-    payload: filteredStreams ? filteredStreams : []
+    payload: filteredStreams ? filteredStreams : [],
   });
 };
 
@@ -343,7 +357,7 @@ export const fetchMoreCalendarLive = (
   setLastVisible,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const dayAgo = new Date(dateNow.getTime() - 86400000);
 
   const data = await db
@@ -360,15 +374,15 @@ export const fetchMoreCalendarLive = (
     setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length < 15) setReachedLast(true);
 
-  const all = data.docs ? data.docs.map(doc => doc.data()) : [];
+  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
 
-  const filteredStreams = all.filter(doc => {
+  const filteredStreams = all.filter((doc) => {
     return doc.end.toDate() > dateNow;
   });
 
   dispatch({
     type: FETCH_MORE_CALENDAR_LIVE,
-    payload: filteredStreams ? filteredStreams : []
+    payload: filteredStreams ? filteredStreams : [],
   });
 };
 
@@ -379,7 +393,7 @@ export const fetchFirstCalendarUpcoming = (
   setLastVisible,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const data = await db
     .collection("streams")
     .where("attendants", "array-contains", userID)
@@ -394,7 +408,7 @@ export const fetchFirstCalendarUpcoming = (
 
   dispatch({
     type: FETCH_NEW_CALENDAR_UPCOMING,
-    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+    payload: !!data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
@@ -404,7 +418,7 @@ export const fetchMoreCalendarUpcoming = (
   setLastVisible,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const data = await db
     .collection("streams")
     .where("attendants", "array-contains", userID)
@@ -420,7 +434,7 @@ export const fetchMoreCalendarUpcoming = (
 
   dispatch({
     type: FETCH_MORE_CALENDAR_UPCOMING,
-    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+    payload: !!data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
@@ -431,7 +445,7 @@ export const fetchFirstCalendarPast = (
   setLastVisible,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const data = await db
     .collection("streams")
     .where("attendants", "array-contains", userID)
@@ -446,7 +460,7 @@ export const fetchFirstCalendarPast = (
 
   dispatch({
     type: FETCH_NEW_CALENDAR_PAST,
-    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+    payload: !!data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
@@ -456,7 +470,7 @@ export const fetchMoreCalendarPast = (
   setLastVisible,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const data = await db
     .collection("streams")
     .where("attendants", "array-contains", userID)
@@ -472,7 +486,7 @@ export const fetchMoreCalendarPast = (
 
   dispatch({
     type: FETCH_MORE_CALENDAR_PAST,
-    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+    payload: !!data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
@@ -483,7 +497,7 @@ export const fetchFirstMineLive = (
   setLastVisible,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const dayAgo = new Date(dateNow.getTime() - 86400000);
 
   const data = await db
@@ -499,15 +513,15 @@ export const fetchFirstMineLive = (
     setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length === 15) setReachedLast(false);
 
-  const all = data.docs ? data.docs.map(doc => doc.data()) : [];
+  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
 
-  const filteredStreams = all.filter(doc => {
+  const filteredStreams = all.filter((doc) => {
     return doc.end.toDate() > dateNow;
   });
 
   dispatch({
     type: FETCH_NEW_MINE_LIVE,
-    payload: filteredStreams ? filteredStreams : []
+    payload: filteredStreams ? filteredStreams : [],
   });
 };
 
@@ -517,7 +531,7 @@ export const fetchMoreMineLive = (
   setLastVisible,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const dayAgo = new Date(dateNow.getTime() - 86400000);
 
   const data = await db
@@ -534,15 +548,15 @@ export const fetchMoreMineLive = (
     setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length < 15) setReachedLast(true);
 
-  const all = data.docs ? data.docs.map(doc => doc.data()) : [];
+  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
 
-  const filteredStreams = all.filter(doc => {
+  const filteredStreams = all.filter((doc) => {
     return doc.end.toDate() > dateNow;
   });
 
   dispatch({
     type: FETCH_MORE_MINE_LIVE,
-    payload: filteredStreams ? filteredStreams : []
+    payload: filteredStreams ? filteredStreams : [],
   });
 };
 
@@ -553,7 +567,7 @@ export const fetchFirstMineUpcoming = (
   setLastVisible,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const data = await db
     .collection("streams")
     .where("user_ID", "==", userID)
@@ -568,7 +582,7 @@ export const fetchFirstMineUpcoming = (
 
   dispatch({
     type: FETCH_NEW_MINE_UPCOMING,
-    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+    payload: !!data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
@@ -578,7 +592,7 @@ export const fetchMoreMineUpcoming = (
   setLastVisible,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const data = await db
     .collection("streams")
     .where("user_ID", "==", userID)
@@ -594,7 +608,7 @@ export const fetchMoreMineUpcoming = (
 
   dispatch({
     type: FETCH_MORE_MINE_UPCOMING,
-    payload: data.docs ? data.docs.map(doc => doc.data()) : []
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
@@ -605,7 +619,7 @@ export const fetchFirstMinePast = (
   setLastVisible,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const data = await db
     .collection("streams")
     .where("user_ID", "==", userID)
@@ -620,7 +634,7 @@ export const fetchFirstMinePast = (
 
   dispatch({
     type: FETCH_NEW_MINE_PAST,
-    payload: data.docs ? data.docs.map(doc => doc.data()) : []
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
@@ -630,7 +644,7 @@ export const fetchMoreMinePast = (
   setLastVisible,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const data = await db
     .collection("streams")
     .where("user_ID", "==", userID)
@@ -646,7 +660,7 @@ export const fetchMoreMinePast = (
 
   dispatch({
     type: FETCH_MORE_MINE_PAST,
-    payload: data.docs ? data.docs.map(doc => doc.data()) : []
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
@@ -657,7 +671,7 @@ export const fetchFirstSearchedLive = (
   tag,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const dayAgo = new Date(dateNow.getTime() - 86400000);
 
   const data = await db
@@ -672,15 +686,15 @@ export const fetchFirstSearchedLive = (
   setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length === 15) setReachedLast(false);
 
-  const all = data.docs ? data.docs.map(doc => doc.data()) : [];
+  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
 
-  const filteredStreams = all.filter(doc => {
+  const filteredStreams = all.filter((doc) => {
     return doc.end.toDate() > dateNow;
   });
   console.log("new searched", filteredStreams);
   dispatch({
     type: FETCH_NEW_SEARCHED_STREAMS_LIVE,
-    payload: filteredStreams ? filteredStreams : []
+    payload: filteredStreams ? filteredStreams : [],
   });
 };
 
@@ -690,7 +704,7 @@ export const fetchMoreSearchedLive = (
   tag,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const dayAgo = new Date(dateNow.getTime() - 86400000);
 
   const data = await db
@@ -706,15 +720,15 @@ export const fetchMoreSearchedLive = (
   setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length < 15) setReachedLast(true);
 
-  const all = data.docs ? data.docs.map(doc => doc.data()) : [];
+  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
 
-  const filteredStreams = all.filter(doc => {
+  const filteredStreams = all.filter((doc) => {
     return doc.end.toDate() > dateNow;
   });
 
   dispatch({
     type: FETCH_MORE_SEARCHED_STREAMS_LIVE,
-    payload: filteredStreams ? filteredStreams : []
+    payload: filteredStreams ? filteredStreams : [],
   });
 };
 
@@ -725,7 +739,7 @@ export const fetchFirstSearchedUpcoming = (
   tag,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const data = await db
     .collection("streams")
     .where("tags", "array-contains", tag)
@@ -739,7 +753,7 @@ export const fetchFirstSearchedUpcoming = (
 
   dispatch({
     type: FETCH_NEW_SEARCHED_STREAMS_UPCOMING,
-    payload: data.docs ? data.docs.map(doc => doc.data()) : []
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
@@ -749,7 +763,7 @@ export const fetchMoreSearchedUpcoming = (
   tag,
   setReachedLast,
   dateNow
-) => async dispatch => {
+) => async (dispatch) => {
   const data = await db
     .collection("streams")
     .where("tags", "array-contains", tag)
@@ -764,24 +778,211 @@ export const fetchMoreSearchedUpcoming = (
 
   dispatch({
     type: FETCH_MORE_SEARCHED_STREAMS_UPCOMING,
-    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+    payload: !!data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+// MINE LIVE //
+
+export const fetchFirstStrangerLive = (
+  userID,
+  setLastVisible,
+  setReachedLast,
+  dateNow
+) => async (dispatch) => {
+  const dayAgo = new Date(dateNow.getTime() - 86400000);
+
+  const data = await db
+    .collection("streams")
+    .where("user_ID", "==", userID)
+    .where("start", "<", dateNow)
+    .where("start", ">", dayAgo)
+    .orderBy("start", "asc")
+    .limit(15)
+    .get();
+
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length === 15) setReachedLast(false);
+
+  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
+
+  const filteredStreams = all.filter((doc) => {
+    return doc.end.toDate() > dateNow;
+  });
+
+  dispatch({
+    type: FETCH_NEW_STRANGER_LIVE,
+    payload: filteredStreams ? filteredStreams : [],
+  });
+};
+
+export const fetchMoreStrangerLive = (
+  userID,
+  lastVisible,
+  setLastVisible,
+  setReachedLast,
+  dateNow
+) => async (dispatch) => {
+  const dayAgo = new Date(dateNow.getTime() - 86400000);
+
+  const data = await db
+    .collection("streams")
+    .where("user_ID", "==", userID)
+    .where("start", "<", dateNow)
+    .where("start", ">", dayAgo)
+    .orderBy("start", "asc")
+    .startAfter(lastVisible)
+    .limit(15)
+    .get();
+
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length < 15) setReachedLast(true);
+
+  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
+
+  const filteredStreams = all.filter((doc) => {
+    return doc.end.toDate() > dateNow;
+  });
+
+  dispatch({
+    type: FETCH_MORE_STRANGER_LIVE,
+    payload: filteredStreams ? filteredStreams : [],
+  });
+};
+
+// MINE UPCOMING //
+
+export const fetchFirstStrangerUpcoming = (
+  userID,
+  setLastVisible,
+  setReachedLast,
+  dateNow
+) => async (dispatch) => {
+  const data = await db
+    .collection("streams")
+    .where("user_ID", "==", userID)
+    .where("start", ">", dateNow)
+    .orderBy("start", "asc")
+    .limit(15)
+    .get();
+
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length === 15) setReachedLast(false);
+
+  dispatch({
+    type: FETCH_NEW_STRANGER_UPCOMING,
+    payload: !!data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+export const fetchMoreStrangerUpcoming = (
+  userID,
+  lastVisible,
+  setLastVisible,
+  setReachedLast,
+  dateNow
+) => async (dispatch) => {
+  const data = await db
+    .collection("streams")
+    .where("user_ID", "==", userID)
+    .where("start", ">", dateNow)
+    .orderBy("start", "asc")
+    .startAfter(lastVisible)
+    .limit(15)
+    .get();
+
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length < 15) setReachedLast(true);
+
+  dispatch({
+    type: FETCH_MORE_STRANGER_UPCOMING,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+// MINE PAST //
+
+export const fetchFirstStrangerPast = (
+  userID,
+  setLastVisible,
+  setReachedLast,
+  dateNow
+) => async (dispatch) => {
+  const data = await db
+    .collection("streams")
+    .where("user_ID", "==", userID)
+    .where("start", "<", dateNow)
+    .orderBy("start", "desc")
+    .limit(15)
+    .get();
+
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length === 15) setReachedLast(false);
+
+  dispatch({
+    type: FETCH_NEW_STRANGER_PAST,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+export const fetchMoreStrangerPast = (
+  userID,
+  lastVisible,
+  setLastVisible,
+  setReachedLast,
+  dateNow
+) => async (dispatch) => {
+  const data = await db
+    .collection("streams")
+    .where("user_ID", "==", userID)
+    .where("start", "<", dateNow)
+    .orderBy("start", "desc")
+    .startAfter(lastVisible)
+    .limit(15)
+    .get();
+
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length < 15) setReachedLast(true);
+
+  dispatch({
+    type: FETCH_MORE_STRANGER_PAST,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+export const fetchStrangerProfile = (strangerID) => async (dispatch) => {
+  const data = await db
+    .collection("users")
+    .where("username", "==", strangerID)
+    .get();
+
+  const profile = data.docs.map((doc) => doc.data())[0];
+
+  console.log(profile);
+
+  dispatch({
+    type: FETCH_STRANGER_PROFILE,
+    payload: profile,
   });
 };
 
 // SINGLE STREAM //
 
-export const fetchSingleStream = (streamID, setStream) => async dispatch => {
-  const doc = await db
-    .collection("streams")
-    .doc(streamID)
-    .get();
+export const fetchSingleStream = (streamID, setStream) => async (dispatch) => {
+  const doc = await db.collection("streams").doc(streamID).get();
 
   setStream(doc.data());
 };
 
 // STREAMS //
 
-const makeTemplate = (stream, batch) => async dispatch => {
+const makeTemplate = (stream, batch) => async (dispatch) => {
   const templateDoc = db.collection("templates").doc();
   const templateStream = { ...stream, id: templateDoc.id };
   delete templateStream.url;
@@ -791,19 +992,19 @@ const makeTemplate = (stream, batch) => async dispatch => {
   batch.set(templateDoc, templateStream).then(() => {
     dispatch({
       type: NEW_TEMPLATE,
-      payload: templateStream
+      payload: templateStream,
     });
   });
 };
 
-export const deleteTemplate = template => async dispatch => {
+export const deleteTemplate = (template) => async (dispatch) => {
   db.collection("templates")
     .doc(template.id)
     .delete()
     .then(() => {
       dispatch({
         type: DELETE_TEMPLATE,
-        payload: template.id
+        payload: template.id,
       });
     });
 };
@@ -814,27 +1015,27 @@ const dispatchNew = (reset, dispatch, stream) => {
   if (dateNow < stream.start) {
     dispatch({
       type: NEW_STREAM_UPCOMING,
-      payload: stream
+      payload: stream,
     });
 
     dispatch({
       type: ADD_TO_CALENDAR_UPCOMING,
-      payload: stream
+      payload: stream,
     });
   } else {
     dispatch({
       type: NEW_STREAM_LIVE,
-      payload: stream
+      payload: stream,
     });
 
     dispatch({
       type: ADD_TO_CALENDAR_LIVE,
-      payload: stream
+      payload: stream,
     });
   }
 };
 
-export const newStream = (values, image, isTemplate, reset) => dispatch => {
+export const newStream = (values, image, isTemplate, reset) => (dispatch) => {
   window.scrollTo(0, 0);
 
   const batch = db.batch();
@@ -850,11 +1051,11 @@ export const newStream = (values, image, isTemplate, reset) => dispatch => {
     //initiates the firebase side uploading
     uploadTask.on(
       "state_changed",
-      snapShot => {
+      (snapShot) => {
         //takes a snap shot of the process as it is happening
         console.log(snapShot);
       },
-      err => {
+      (err) => {
         //catches the errors
         console.log(err);
       },
@@ -865,12 +1066,12 @@ export const newStream = (values, image, isTemplate, reset) => dispatch => {
           .ref(`images/streams/${newDoc.id}`)
           .child(imageName)
           .getDownloadURL()
-          .then(fireBaseUrl => {
+          .then((fireBaseUrl) => {
             const stream = {
               ...values,
               image: fireBaseUrl,
               image_file_name: imageName,
-              id: newDoc.id
+              id: newDoc.id,
             };
 
             batch.set(newDoc, stream);
@@ -881,7 +1082,7 @@ export const newStream = (values, image, isTemplate, reset) => dispatch => {
               makeTemplate(stream, batch);
             }
 
-            batch.commit().then(d => {
+            batch.commit().then((d) => {
               dispatchNew(reset, dispatch, stream);
             });
           });
@@ -890,7 +1091,7 @@ export const newStream = (values, image, isTemplate, reset) => dispatch => {
   } else {
     const stream = {
       ...values,
-      id: newDoc.id
+      id: newDoc.id,
     };
 
     batch.set(newDoc, stream);
@@ -901,19 +1102,15 @@ export const newStream = (values, image, isTemplate, reset) => dispatch => {
       makeTemplate(stream, batch);
     }
 
-    batch.commit().then(d => {
+    batch.commit().then((d) => {
       dispatchNew(reset, dispatch, stream);
     });
   }
 };
 
-export const updateStream = (
-  values,
-  tagsToAdd,
-  tagsToRemove,
-  image,
-  reset
-) => dispatch => {
+export const updateStream = (values, tagsToAdd, tagsToRemove, image, reset) => (
+  dispatch
+) => {
   const batch = db.batch();
   const docRef = db.collection("streams").doc(values.id);
   if (image) {
@@ -926,11 +1123,11 @@ export const updateStream = (
     //initiates the firebase side uploading
     uploadTask.on(
       "state_changed",
-      snapShot => {
+      (snapShot) => {
         //takes a snap shot of the process as it is happening
         console.log(snapShot);
       },
-      err => {
+      (err) => {
         //catches the errors
         console.log(err);
       },
@@ -941,7 +1138,7 @@ export const updateStream = (
           .ref(`images/streams/${values.id}`)
           .child(imageName)
           .getDownloadURL()
-          .then(fireBaseUrl => {
+          .then((fireBaseUrl) => {
             if (!values.from_template) {
               storage
                 .ref()
@@ -952,7 +1149,7 @@ export const updateStream = (
             const stream = {
               ...values,
               image: fireBaseUrl,
-              image_file_name: imageName
+              image_file_name: imageName,
             };
 
             batch.set(docRef, stream);
@@ -966,7 +1163,7 @@ export const updateStream = (
 
               dispatch({
                 type: EDIT_STREAM,
-                payload: stream
+                payload: stream,
               });
             });
           });
@@ -984,13 +1181,13 @@ export const updateStream = (
 
       dispatch({
         type: EDIT_STREAM,
-        payload: values
+        payload: values,
       });
     });
   }
 };
 
-export const removeStream = stream => dispatch => {
+export const removeStream = (stream) => (dispatch) => {
   const batch = db.batch();
 
   const doc = db.collection("streams").doc(stream.id);
@@ -1008,19 +1205,19 @@ export const removeStream = stream => dispatch => {
 
     dispatch({
       type: DELETE_STREAM,
-      payload: stream.id
+      payload: stream.id,
     });
 
     dispatch({
       type: REMOVE_FROM_CALENDAR,
-      payload: stream.id
+      payload: stream.id,
     });
   });
 };
 
 // STREAM ACTIONS //
 
-export const attand = (stream, userUID) => async dispatch => {
+export const attand = (stream, userUID) => async (dispatch) => {
   await db
     .collection("streams")
     .doc(stream.id)
@@ -1031,16 +1228,16 @@ export const attand = (stream, userUID) => async dispatch => {
 
   dispatch({
     type: EDIT_STREAM,
-    payload: { ...stream, attendants: [...stream.attendants, userUID] }
+    payload: { ...stream, attendants: [...stream.attendants, userUID] },
   });
 
   dispatch({
     type: ADD_TO_CALENDAR_UPCOMING,
-    payload: { ...stream, attendants: [...stream.attendants, userUID] }
+    payload: { ...stream, attendants: [...stream.attendants, userUID] },
   });
 };
 
-export const unattand = (stream, userUID) => async dispatch => {
+export const unattand = (stream, userUID) => async (dispatch) => {
   await db
     .collection("streams")
     .doc(stream.id)
@@ -1053,30 +1250,25 @@ export const unattand = (stream, userUID) => async dispatch => {
     type: EDIT_STREAM,
     payload: {
       ...stream,
-      attendants: stream.attendants.filter(id => id !== userUID)
-    }
+      attendants: stream.attendants.filter((id) => id !== userUID),
+    },
   });
 
   dispatch({
     type: EDIT_STREAM,
     payload: {
       ...stream,
-      attendants: stream.attendants.filter(id => id !== userUID)
-    }
+      attendants: stream.attendants.filter((id) => id !== userUID),
+    },
   });
 
   dispatch({
     type: REMOVE_FROM_CALENDAR,
-    payload: stream.id
+    payload: stream.id,
   });
 };
 
-export const follow = (
-  user,
-  hostID,
-  setCurrentUserProfile,
-  cb
-) => async dispatch => {
+export const follow = (user, hostID, setCurrentUserProfile, cb) => async () => {
   const batch = db.batch();
 
   const hostRef = db.collection("users").doc(hostID);
@@ -1100,12 +1292,12 @@ export const follow = (
     .where("start", ">", new Date())
     .get();
 
-  futureHostEvents.docs.forEach(doc => {
+  futureHostEvents.docs.forEach((doc) => {
     let eventRef = db.collection("streams").doc(doc.id);
     batch.set(
       eventRef,
       {
-        followers: firebase.firestore.FieldValue.arrayUnion(user.uid)
+        followers: firebase.firestore.FieldValue.arrayUnion(user.uid),
       },
       { merge: true }
     );
@@ -1122,7 +1314,7 @@ export const unfollow = (
   hostID,
   setCurrentUserProfile,
   cb
-) => async dispatch => {
+) => async () => {
   const batch = db.batch();
 
   const hostRef = db.collection("users").doc(hostID);
@@ -1146,12 +1338,12 @@ export const unfollow = (
     .where("start", ">", new Date())
     .get();
 
-  futureHostEvents.docs.forEach(doc => {
+  futureHostEvents.docs.forEach((doc) => {
     let eventRef = db.collection("streams").doc(doc.id);
     batch.set(
       eventRef,
       {
-        followers: firebase.firestore.FieldValue.arrayRemove(user.uid)
+        followers: firebase.firestore.FieldValue.arrayRemove(user.uid),
       },
       { merge: true }
     );
@@ -1160,7 +1352,7 @@ export const unfollow = (
   batch.commit().then(() => {
     setCurrentUserProfile({
       ...user,
-      following: user.following.filter(id => id !== hostID)
+      following: user.following.filter((id) => id !== hostID),
     });
     cb();
   });
@@ -1178,11 +1370,11 @@ export const signUp = (
   firebase
     .auth()
     .createUserWithEmailAndPassword(email, password)
-    .then(result => {
+    .then((result) => {
       result.user.sendEmailVerification();
       setSubmitting(2);
     })
-    .catch(err => {
+    .catch((err) => {
       if (err.code === "auth/email-already-in-use") {
         firebase
           .auth()
@@ -1191,7 +1383,7 @@ export const signUp = (
             setSubmitting(3);
             togglePopup();
           })
-          .catch(err => {
+          .catch((err) => {
             console.log("login error:", err);
 
             if (err.code === "auth/wrong-password") {
@@ -1214,7 +1406,7 @@ export const resendVerification = () => () => {
   firebase.auth().currentUser.sendEmailVerification();
 };
 
-export const providerSignIn = provider => () => {
+export const providerSignIn = (provider) => () => {
   var googleProvider = new firebase.auth.GoogleAuthProvider();
   var facebookProvider = new firebase.auth.FacebookAuthProvider();
   switch (provider) {
@@ -1244,11 +1436,11 @@ export const updateProfile = (
 
     uploadTask.on(
       "state_changed",
-      snapShot => {
+      (snapShot) => {
         //takes a snap shot of the process as it is happening
         console.log(snapShot);
       },
-      err => {
+      (err) => {
         //catches the errors
         console.log(err);
       },
@@ -1259,7 +1451,7 @@ export const updateProfile = (
           .ref(`/images/avatars/${user.uid}`)
           .child(curTS + image.name)
           .getDownloadURL()
-          .then(fireBaseUrl => {
+          .then((fireBaseUrl) => {
             if (profile && profile.avatar_file_name) {
               storage
                 .ref()
@@ -1273,7 +1465,7 @@ export const updateProfile = (
                 {
                   ...values,
                   avatar: fireBaseUrl,
-                  avatar_file_name: curTS + image.name
+                  avatar_file_name: curTS + image.name,
                 },
                 { merge: true }
               )
@@ -1297,26 +1489,19 @@ export const updateProfile = (
 
 // GLOBAL //
 
-export const setCurrentPage = value => {
-  return {
-    type: SET_PAGE,
-    payload: value
-  };
-};
-
-export const setEditedStream = stream => {
+export const setEditedStream = (stream) => {
   return {
     type: SET_EDITED_STREAM,
-    payload: stream
+    payload: stream,
   };
 };
 
-export const fetchTags = () => async dispatch => {
+export const fetchTags = () => async (dispatch) => {
   const data = await db.collection("tags_count").get();
 
   const allTags = [];
 
-  data.docs.map(doc => {
+  data.docs.map((doc) => {
     for (let [key, value] of Object.entries(doc.data())) {
       allTags.push({ [key]: value });
     }
@@ -1324,11 +1509,11 @@ export const fetchTags = () => async dispatch => {
 
   dispatch({
     type: FETCH_TAGS,
-    payload: allTags
+    payload: allTags,
   });
 };
 
-export const fetchTemplates = userID => async dispatch => {
+export const fetchTemplates = (userID) => async (dispatch) => {
   const data = await db
     .collection("templates")
     .where("user_ID", "==", userID)
@@ -1336,23 +1521,23 @@ export const fetchTemplates = userID => async dispatch => {
 
   dispatch({
     type: FETCH_TEMPLATES,
-    payload: !!data.docs ? data.docs.map(doc => doc.data()) : []
+    payload: !!data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
 export const togglePopup = () => {
   return {
-    type: TOGGLE_POPUP
+    type: TOGGLE_POPUP,
   };
 };
 
 const removeTags = (tags, docID, batch) => {
-  tags.forEach(tag => {
+  tags.forEach((tag) => {
     const tagRef = db.collection("tags").doc(tag);
     batch.set(
       tagRef,
       {
-        streams: firebase.firestore.FieldValue.arrayRemove(docID)
+        streams: firebase.firestore.FieldValue.arrayRemove(docID),
       },
       { merge: true }
     );
@@ -1361,7 +1546,7 @@ const removeTags = (tags, docID, batch) => {
     batch.set(
       tagsCountRef,
       {
-        [tag]: firebase.firestore.FieldValue.increment(-1) || 0
+        [tag]: firebase.firestore.FieldValue.increment(-1) || 0,
       },
       { merge: true }
     );
@@ -1369,12 +1554,12 @@ const removeTags = (tags, docID, batch) => {
 };
 
 const addTags = (tags, docID, batch) => {
-  tags.forEach(tag => {
+  tags.forEach((tag) => {
     const tagRef = db.collection("tags").doc(tag);
     batch.set(
       tagRef,
       {
-        streams: firebase.firestore.FieldValue.arrayUnion(docID)
+        streams: firebase.firestore.FieldValue.arrayUnion(docID),
       },
       { merge: true }
     );
@@ -1383,7 +1568,7 @@ const addTags = (tags, docID, batch) => {
     batch.set(
       tagsCountRef,
       {
-        [tag]: firebase.firestore.FieldValue.increment(1) || 1
+        [tag]: firebase.firestore.FieldValue.increment(1) || 1,
       },
       { merge: true }
     );
@@ -1395,19 +1580,15 @@ const addTags = (tags, docID, batch) => {
 export const deleteTags = () => async () => {
   const tags = await db.collection("tags").get();
 
-  tags.docs.forEach(tag => {
+  tags.docs.forEach((tag) => {
     console.log(tag);
-    db.collection("tags")
-      .doc(tag.id)
-      .delete();
+    db.collection("tags").doc(tag.id).delete();
   });
 
   const tagsCount = await db.collection("tags_count").get();
 
-  tagsCount.docs.forEach(tag => {
+  tagsCount.docs.forEach((tag) => {
     console.log(tag);
-    db.collection("tags_count")
-      .doc(tag.id)
-      .delete();
+    db.collection("tags_count").doc(tag.id).delete();
   });
 };

@@ -15,7 +15,7 @@ import {
   renderMinutes
 } from "../../../utils/forms";
 
-import { validateWordsLength } from "../../../utils";
+import { validateWordsLength } from "../../../utils/strings";
 
 import { updateStream, togglePopup, setEditedStream } from "../../../actions";
 
@@ -253,7 +253,6 @@ const NewStream = ({
                 setValues({ ...values, price });
               }}
               isNumber={true}
-              required={true}
             />
 
             <InputField

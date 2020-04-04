@@ -20,7 +20,7 @@ import {
   renderMinutes
 } from "../../../utils/forms";
 
-import { validateWordsLength } from "../../../utils";
+import { validateWordsLength } from "../../../utils/strings";
 
 import InputField from "../../formComponents/inputField";
 import TextArea from "../../formComponents/textArea";
@@ -154,7 +154,14 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
         <span className="add-stream__visible">
           {!submitting ? (
             <div>
-              <div className="popup__title">Share a Stream</div>
+              <div
+                className="popup__title"
+                onClick={() =>
+                  console.log(checkValidity(values, setFormError, imageAsFile))
+                }
+              >
+                Share a Stream
+              </div>
               {templates.length ? (
                 <label
                   className="add-stream__template-button cenetered"
@@ -288,7 +295,6 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
                     setValues({ ...values, price });
                   }}
                   isNumber={true}
-                  required={true}
                 />
 
                 <InputField

@@ -1,26 +1,26 @@
 @import "../../../styles/imports";
 
-.search {
-  @include padding;
-  margin-top: 2rem;
-  position: relative;
-  display: grid;
+// .search {
+//   @include padding;
+//   margin-top: 2rem;
+//   position: relative;
+//   display: grid;
 
-  &__load-more {
-    border-radius: $borderRadius;
-    border: 1px solid $mainColor;
-    color: $mainColor;
-    width: max-content;
-    padding: 1.5rem 2.5rem;
-    background-color: white;
-    cursor: pointer;
-    margin: auto;
-    transition: all .1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    &:hover{
-      padding: 1.8rem 2.8rem;
-    }
-  }
-}
+//   &__load-more {
+//     border-radius: $borderRadius;
+//     border: 1px solid $mainColor;
+//     color: $mainColor;
+//     width: max-content;
+//     padding: 1.5rem 2.5rem;
+//     background-color: white;
+//     cursor: pointer;
+//     margin: auto;
+//     transition: all .1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+//     &:hover{
+//       padding: 1.8rem 2.8rem;
+//     }
+//   }
+// }
 
 // .post-button {
 //   position: fixed;

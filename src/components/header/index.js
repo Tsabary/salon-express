@@ -1,11 +1,8 @@
 import "./styles.scss";
 import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
-import { connect } from "react-redux";
 
 import history from "../../history";
-
-import { setCurrentPage } from "../../actions";
 
 import { AuthContext } from "../../providers/Auth";
 import { PageContext } from "../../providers/Page";
@@ -16,10 +13,10 @@ import FilterInput from "./filterInput";
 import MobileMenu from "./mobileMenu";
 import { SearchContext } from "../../providers/Search";
 
-const Header = ({ setCurrentPage }) => {
+const Header = () => {
   const { currentUser } = useContext(AuthContext);
   const { page, setPage } = useContext(PageContext);
-  const { setSearchTerm} = useContext(SearchContext)
+  const { setSearchTerm } = useContext(SearchContext);
   const myHistory = useHistory(history);
 
   const renderAuth = () => {
@@ -34,14 +31,13 @@ const Header = ({ setCurrentPage }) => {
     }
   };
 
-  const handleChange = page => {
-    setSearchTerm(null)
-    setCurrentPage(page);
+  const handleChange = () => {
+    setSearchTerm(null);
     setPage(1);
     myHistory.push(`/`);
   };
 
-  const renderCenter = p => {
+  const renderCenter = (p) => {
     switch (p) {
       case 1:
         return <FilterInput />;
@@ -59,7 +55,6 @@ const Header = ({ setCurrentPage }) => {
         return <FilterInput />;
 
       default:
-        console.log("defff")
         return <div />;
     }
   };
@@ -82,7 +77,7 @@ const Header = ({ setCurrentPage }) => {
             S.
           </div>
         </div>
-        {page === 1 ? <FilterInput /> : <div />}
+        {page === 1 || page === 5 ? <FilterInput /> : <div />}
         <div className="header__auth">{renderAuth()}</div>
       </div>
 
@@ -96,4 +91,4 @@ const Header = ({ setCurrentPage }) => {
   );
 };
 
-export default connect(null, { setCurrentPage })(Header);
+export default Header;

@@ -10,6 +10,9 @@ import AddToCalendar from "react-add-to-calendar";
 import Loader from "react-loader-spinner";
 
 import { AuthContext } from "../../providers/Auth";
+import { SearchContext } from "../../providers/Search";
+import { PageContext } from "../../providers/Page";
+
 import {
   removeStream,
   attand,
@@ -17,7 +20,7 @@ import {
   setEditedStream,
   follow,
   unfollow,
-  togglePopup
+  togglePopup,
 } from "../../actions";
 
 const Stream = ({
@@ -29,10 +32,12 @@ const Stream = ({
   setEditedStream,
   follow,
   unfollow,
-  togglePopup
+  togglePopup,
 }) => {
   const { setCurrentUserProfile } = useContext(AuthContext);
-  const [copy, setCopy] = useState("Click to copy share URL");
+  const { setSearchTerm } = useContext(SearchContext);
+  const { setPage } = useContext(PageContext);
+
   const [shareButton, setShareButton] = useState("Share");
   const [handlingFollow, setHandlingFollow] = useState(false);
 
@@ -50,13 +55,20 @@ const Stream = ({
     title: stream.title,
     description: `${stream.body} \r Stream URL: ${stream.url}`,
     startTime: startDate,
-    endTime: endDate
+    endTime: endDate,
   };
 
   const renderTags = () => {
-    return stream.tags.map(el => {
+    return stream.tags.map((el) => {
       return (
-        <div className="stream__tag" key={el}>
+        <div
+          className="stream__tag"
+          key={el}
+          onClick={() => {
+            setPage(5);
+            setSearchTerm(el);
+          }}
+        >
           {el}
         </div>
       );
@@ -66,7 +78,6 @@ const Stream = ({
   const shareButtonTimer = () => {
     setTimeout(() => {
       setShareButton("Share");
-      setCopy("Click to copy share URL");
     }, 3000);
   };
 
@@ -163,7 +174,10 @@ const Stream = ({
 
             <div className="stream__content">
               <div className="stream__title">{stream.title}</div>
-              <div className="stream__host">Host: {stream.host_name}</div>
+              <div className="stream__host">
+                Host:{" "}
+                <span className="stream__host-name">{stream.host_name}</span>{" "}
+              </div>
 
               {stream.price ? (
                 <div className="stream__host">Price: {stream.price} USD</div>
@@ -185,8 +199,6 @@ const Stream = ({
                   </Moment>
                 </div>
               )}
-
- 
 
               {stream.attendants.length > 5 || stream.user_ID === user.uid ? (
                 <div className="stream__attendants">
@@ -276,7 +288,6 @@ const Stream = ({
           data-tip
           data-for={`share${stream.id}`}
           onCopy={() => {
-            setCopy("Share URL copied!");
             shareButtonTimer();
             setShareButton("Share URL copied!");
           }}
@@ -346,5 +357,5 @@ export default connect(null, {
   setEditedStream,
   follow,
   unfollow,
-  togglePopup
+  togglePopup,
 })(Stream);

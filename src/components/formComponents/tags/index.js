@@ -56,8 +56,9 @@ const Tags = ({
   };
 
   const handleTagInputChange = input => {
-    if (input.length < 25) setTagInput(input);
-    setTagsSuggestions(input ? filterTags(input) : null);
+    const cleanTag = input.replace(/\P{L}+/gu, "");
+    if (cleanTag.length < 25) setTagInput(cleanTag);
+    setTagsSuggestions(cleanTag ? filterTags(cleanTag) : null);
   };
 
   const addTag = newTag => {

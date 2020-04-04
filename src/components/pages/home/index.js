@@ -1,15 +1,20 @@
 import "./styles.scss";
 import React, { useContext } from "react";
+import { connect } from "react-redux";
 
-import Explore from "../explore";
-// import Search from "../search";
-import Subscriptions from "../subscriptions";
-import Calendar from "../calendar";
-import Mine from "../mine";
+import { togglePopup } from '../../../actions';
+
 import { PageContext } from "../../../providers/Page";
 import { AuthContext } from "../../../providers/Auth";
 
-const Home = () => {
+import Explore from "../explore";
+import Subscriptions from "../subscriptions";
+import Calendar from "../calendar";
+import Mine from "../mine";
+
+
+
+const Home = ({popupShown, togglePopup}) => {
   const { currentUser } = useContext(AuthContext);
   const { page, setPage } = useContext(PageContext);
 
@@ -26,7 +31,6 @@ const Home = () => {
 
       case 4:
         return <Mine />;
-
     }
   };
 
@@ -69,8 +73,26 @@ const Home = () => {
       </div>
 
       {renderContent(page)}
+
+      {/* NEW STREAM BUTTON */}
+      <a
+        style={{ display: popupShown ? "none" : "" }}
+        onClick={togglePopup}
+        className="post-button"
+        href={
+          currentUser && currentUser.emailVerified ? "#add-stream" : "#sign-up"
+        }
+      >
+        +
+      </a>
     </div>
   );
 };
 
-export default Home;
+const mapStateToProps = state => {
+  return {
+    popupShown: state.popupShown
+  };
+};
+
+export default connect(mapStateToProps,{togglePopup})(Home) ;

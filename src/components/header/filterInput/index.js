@@ -19,7 +19,7 @@ const FilterInput = ({ tags, fetchTags }) => {
   const [tagInput, setTagInput] = useState("");
 
   useEffect(() => {
-    searchTerm ? handleChange(`/${searchTerm}`, 1) : handleChange("/", 1);
+    searchTerm ? handleChange(`/on/${searchTerm}`, 5) : handleChange("/", 1);
   }, [searchTerm]);
 
   useEffect(() => {

@@ -6,7 +6,7 @@ import Loader from "react-loader-spinner";
 import { AuthContext } from "../../../providers/Auth";
 
 import { updateProfile, togglePopup } from "../../../actions";
-import { validateWordsLength } from "../../../utils";
+import { validateWordsLength } from "../../../utils/strings";
 import { errorMessages } from "../../../utils/forms";
 
 import InputField from "../../formComponents/inputField";

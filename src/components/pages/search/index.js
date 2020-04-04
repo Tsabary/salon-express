@@ -33,9 +33,6 @@ const Search = ({
   const dateNow = new Date();
 
   useEffect(() => {
-
-    console.log(match.params.id)
-
     fetchFirstSearchedLive(
       setLastVisibleLive,
       match.params.id,
@@ -67,7 +64,7 @@ const Search = ({
     <div className="search">
       {searchLive.length ? (
         <>
-          <div className="my-streams__header">Live</div>
+          <div className="my-streams__header">Live on {match.params.id}</div>
           <Masonry
             breakpointCols={breakpointColumnsObj}
             className="my-masonry-grid"
@@ -96,7 +93,7 @@ const Search = ({
 
       {searchUpcoming.length ? (
         <>
-          <div className="my-streams__header">Coming up</div>
+          <div className="my-streams__header">Coming Up on {match.params.id}</div>
           <Masonry
             breakpointCols={breakpointColumnsObj}
             className="my-masonry-grid"

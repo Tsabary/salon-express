@@ -5,10 +5,6 @@ import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import history from "../../../history";
 
-// import Moment from "react-moment";
-// import { CopyToClipboard } from "react-copy-to-clipboard";
-// import ReactTooltip from "react-tooltip";
-
 import { AuthContext } from "../../../providers/Auth";
 import { PageContext } from "../../../providers/Page";
 
@@ -18,8 +14,7 @@ import Stream from "../../stream";
 const SingleStream = ({ match, streams, fetchSingleStream }) => {
   const myHistory = useHistory(history);
 
-  const { currentUser, currentUserProfile } = useContext(AuthContext);
-  // const { page, setPage } = useContext(PageContext);
+  const { currentUserProfile } = useContext(AuthContext);
 
   const { setPage } = useContext(PageContext);
   const [stream, setStream] = useState(null);
