@@ -5,6 +5,7 @@
 
   &__checkbox {
     visibility: hidden;
+    display: none;
     opacity: 0;
 
     &:checked + .toggle-button__label #component {

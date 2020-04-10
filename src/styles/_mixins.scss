@@ -79,6 +79,8 @@
     height: 100%;
     width: 100%;
     transition: all 0.4s cubic-bezier(0.7, 0.1, 0.5, 0.1);
+    overflow-x: hidden;
+    overflow-y: scroll;
   }
 
   &__hidden {
@@ -90,5 +92,7 @@
     background-color: white;
     transition: all 0.4s cubic-bezier(0.7, 0.1, 0.5, 0.1);
     padding: 5rem;
+    overflow-x: hidden;
+    overflow-y: scroll;
   }
 }

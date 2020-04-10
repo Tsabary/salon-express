@@ -1,13 +1,16 @@
 import "./styles.scss";
 import React, { useContext, useState } from "react";
 import { connect } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 import Moment from "react-moment";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { Helmet } from "react-helmet";
 import ReactTooltip from "react-tooltip";
 import AddToCalendar from "react-add-to-calendar";
-import Loader from "react-loader-spinner";
+import { ReactSVG } from "react-svg";
+import ShowMoreText from "react-show-more-text";
+
+import history from "../../history";
 
 import { AuthContext } from "../../providers/Auth";
 import { SearchContext } from "../../providers/Search";
@@ -18,28 +21,30 @@ import {
   attand,
   unattand,
   setEditedStream,
-  follow,
-  unfollow,
   togglePopup,
 } from "../../actions";
 
+import FollowBtn from "../followBtn";
+
 const Stream = ({
   stream,
-  user,
+  currentUserProfile,
   removeStream,
   attand,
   unattand,
   setEditedStream,
-  follow,
-  unfollow,
+
   togglePopup,
 }) => {
-  const { setCurrentUserProfile } = useContext(AuthContext);
+  const myHistory = useHistory(history);
+
+  // const { currentUserProfile } = useContext(AuthContext);
   const { setSearchTerm } = useContext(SearchContext);
   const { setPage } = useContext(PageContext);
 
   const [shareButton, setShareButton] = useState("Share");
-  const [handlingFollow, setHandlingFollow] = useState(false);
+
+  const dateNow = new Date();
 
   const startDate =
     Object.prototype.toString.call(stream.start) === "[object Date]"
@@ -56,6 +61,12 @@ const Stream = ({
     description: `${stream.body} \r Stream URL: ${stream.url}`,
     startTime: startDate,
     endTime: endDate,
+  };
+
+  const handleChange = (path) => {
+    setSearchTerm(null);
+    setPage(6);
+    myHistory.push(path);
   };
 
   const renderTags = () => {
@@ -97,12 +108,15 @@ const Stream = ({
       <span className="stream__visible">
         <div className="stream__top">
           <div className="cover-image__container">
-            <img className="cover-image__preview" src={stream.image} />
+            <img
+              className="cover-image__preview"
+              src={"https://" + stream.image}
+            />
           </div>
 
           <div className="stream__center">
             <div className="social">
-              {stream.attendants.includes(user.uid) ? (
+              {stream.attendants.includes(currentUserProfile.uid) ? (
                 <div className="social__icon--stream">
                   <a href={"https://" + stream.url} target="_blank">
                     <svg className="social__icon social__icon--stream-icon">
@@ -112,13 +126,11 @@ const Stream = ({
                 </div>
               ) : (
                 <>
-                  <svg
-                    className="social__icon-disabled"
-                    data-tip
-                    data-for={"disabled" + stream.id}
-                  >
-                    <use xlinkHref="../sprite.svg#stream"></use>
-                  </svg>
+                  <div data-tip data-for={"disabled" + stream.id}>
+                    <svg className="social__icon-disabled">
+                      <use xlinkHref="../sprite.svg#stream"></use>
+                    </svg>
+                  </div>
 
                   <ReactTooltip
                     id={"disabled" + stream.id}
@@ -126,7 +138,7 @@ const Stream = ({
                     effect="solid"
                     place="right"
                   >
-                    RSVP to receive link
+                    Attend to get access
                   </ReactTooltip>
                 </>
               )}
@@ -146,6 +158,46 @@ const Stream = ({
                   <a href={"https://" + stream.host_twitter} target="_blank">
                     <svg className="social__icon social__icon--twitter-icon">
                       <use xlinkHref="../sprite.svg#twitter"></use>
+                    </svg>
+                  </a>
+                </div>
+              ) : null}
+
+              {stream.host_soundcloud ? (
+                <div className="social__icon--soundcloud">
+                  <a href={"https://" + stream.host_soundcloud} target="_blank">
+                    <svg className="social__icon social__icon--soundcloud-icon">
+                      <use xlinkHref="../sprite.svg#soundcloud"></use>
+                    </svg>
+                  </a>
+                </div>
+              ) : null}
+
+              {stream.host_spotify ? (
+                <div className="social__icon--spotify">
+                  <a href={"https://" + stream.host_spotify} target="_blank">
+                    <svg className="social__icon social__icon--spotify-icon">
+                      <use xlinkHref="../sprite.svg#spotify"></use>
+                    </svg>
+                  </a>
+                </div>
+              ) : null}
+
+              {stream.host_youtube ? (
+                <div className="social__icon--youtube">
+                  <a href={"https://" + stream.host_youtube} target="_blank">
+                    <svg className="social__icon social__icon--youtube-icon">
+                      <use xlinkHref="../sprite.svg#youtube"></use>
+                    </svg>
+                  </a>
+                </div>
+              ) : null}
+
+              {stream.host_linkedin ? (
+                <div className="social__icon--twitter">
+                  <a href={"https://" + stream.host_linkedin} target="_blank">
+                    <svg className="social__icon social__icon--linkedin-icon">
+                      <use xlinkHref="../sprite.svg#linkedin"></use>
                     </svg>
                   </a>
                 </div>
@@ -175,15 +227,18 @@ const Stream = ({
             <div className="stream__content">
               <div className="stream__title">{stream.title}</div>
               <div className="stream__host">
-                Host:{" "}
-                <span className="stream__host-name">{stream.host_name}</span>{" "}
+                Posted by:{" "}
+                <span
+                  className="stream__host-name"
+                  onClick={() => handleChange(`/${stream.user_username}`)}
+                >
+                  {stream.user_username}
+                </span>
               </div>
 
-              {stream.price ? (
-                <div className="stream__host">Price: {stream.price} USD</div>
-              ) : (
-                <div className="stream__live">FREE</div>
-              )}
+              <div className="stream__live">
+                {stream.tips_link ? "TIPS WELCOME" : "FREE"}
+              </div>
 
               {Date.now() < startDate.getTime() ? (
                 <div className="stream__timestamp">
@@ -200,110 +255,108 @@ const Stream = ({
                 </div>
               )}
 
-              {stream.attendants.length > 5 || stream.user_ID === user.uid ? (
+              {stream.attendants.length > 5 ||
+              stream.user_ID === currentUserProfile.uid ? (
                 <div className="stream__attendants">
                   {stream.attendants.length} attending
                 </div>
               ) : null}
-              <div className="stream__body">{stream.body}</div>
+
+              <ShowMoreText
+                /* Default options */
+                lines={5}
+                more="Show more"
+                less="Show less"
+                anchorClass="stream__read-more"
+                // onClick={executeOnClick}
+                // expanded={false}
+                // width={}
+              >
+                {stream.body}
+              </ShowMoreText>
+
+              {/* <div className="stream__body">{stream.body}</div> */}
 
               {renderTags()}
             </div>
           </div>
         </div>
-        {user.uid &&
-        stream.attendants.includes(user.uid) &&
-        user.uid &&
-        user.uid !== stream.user_ID ? (
+
+        {endDate > dateNow &&
+        currentUserProfile.uid &&
+        stream.attendants.includes(currentUserProfile.uid) &&
+        currentUserProfile.uid !== stream.user_ID ? (
           <div
             className="stream__attending clickable"
-            onClick={() => unattand(stream, user.uid)}
+            onClick={() => unattand(stream, currentUserProfile.uid)}
           >
             Attending
           </div>
-        ) : user.uid && user.uid !== stream.user_ID ? (
+        ) : endDate > dateNow &&
+          currentUserProfile.uid &&
+          currentUserProfile.uid !== stream.user_ID ? (
           <div
             className="stream__button stream__button-full clickable"
-            onClick={() => attand(stream, user.uid)}
+            onClick={() => attand(stream, currentUserProfile.uid)}
           >
             Attend
           </div>
+        ) : endDate > dateNow ? (
+          <a href="#sign-up">
+            <div className="stream__button stream__button-full clickable">
+              Attend
+            </div>
+          </a>
         ) : null}
 
-        {!user.uid ||
-        user.uid === stream.user_ID ? null : !user.following.includes(
-            stream.user_ID
-          ) ? (
-          <div
-            className="stream__button stream__button-full clickable"
-            onClick={() => {
-              follow(user, stream.user_ID, setCurrentUserProfile, () =>
-                setHandlingFollow(false)
-              );
-              setHandlingFollow(true);
-            }}
-          >
-            {handlingFollow ? (
-              <div className="centered">
-                <Loader
-                  type="ThreeDots"
-                  color="#ffffff"
-                  height={20}
-                  width={20}
-                />
-              </div>
-            ) : (
-              "Follow Host"
-            )}
-          </div>
-        ) : (
-          <div
-            className="stream__button stream__button-line clickable"
-            onClick={() => {
-              {
-                unfollow(user, stream.user_ID, setCurrentUserProfile, () =>
-                  setHandlingFollow(false)
-                );
-                setHandlingFollow(true);
-              }
-            }}
-          >
-            {handlingFollow ? (
-              <div className="centered">
-                <Loader
-                  type="ThreeDots"
-                  color="#6f00ff"
-                  height={20}
-                  width={20}
-                />
-              </div>
-            ) : (
-              "Unfollow Host"
-            )}
-          </div>
-        )}
-
-        <CopyToClipboard
-          text={`https://salon.express/stream/${stream.id}`}
-          data-tip
-          data-for={`share${stream.id}`}
-          onCopy={() => {
-            shareButtonTimer();
-            setShareButton("Share URL copied!");
-          }}
-        >
-          <div className="stream__button stream__button-line clickable">
-            {shareButton}
-          </div>
-        </CopyToClipboard>
-
-        <AddToCalendar
-          event={event}
-          buttonWrapperClass="stream__button stream__button-line clickable"
-          dropdownClass="stream__button stream__button-line clickable"
+        <FollowBtn
+          currentUserProfile={currentUserProfile}
+          strangerID={stream.user_ID}
+          textFollow="Follow Host"
+          textUnfollow="Unfollow Host"
         />
 
-        {user.uid === stream.user_ID ? (
+        {endDate > dateNow ? (
+          <CopyToClipboard
+            text={`https://salon.express/stream/${stream.id}`}
+            data-tip
+            data-for={`share${stream.id}`}
+            onCopy={() => {
+              shareButtonTimer();
+              setShareButton("Share URL copied!");
+            }}
+          >
+            <div className="stream__button stream__button-line clickable">
+              {shareButton}
+            </div>
+          </CopyToClipboard>
+        ) : null}
+
+        {stream.tips_link ? (
+          <div className="stream__button stream__button-line clickable">
+            <div className="stream__paypal">
+              <div className="stream__paypal-svg">
+                <svg className="stream__donate-icon">
+                  <use xlinkHref="../sprite.svg#donate"></use>
+                </svg>
+
+                {/* <ReactSVG src="../../../svgs/paypal.svg" /> */}
+              </div>
+              <div className="stream__paypal-text">Leave a Tip</div>
+              <div />
+            </div>
+          </div>
+        ) : null}
+
+        {endDate > dateNow ? (
+          <AddToCalendar
+            event={event}
+            buttonWrapperClass="stream__button stream__button-line clickable"
+            dropdownClass="stream__button stream__button-line clickable"
+          />
+        ) : null}
+
+        {currentUserProfile.uid === stream.user_ID ? (
           <div className="stream__actions">
             <label
               className="stream-button stream-button__delete"
@@ -324,8 +377,6 @@ const Stream = ({
             </a>
           </div>
         ) : null}
-
-        {/* <div className="stream__follow clickable">Follow Host</div> */}
       </span>
       <span className="stream__hidden">
         <div>Are you sure you want to delete this event?</div>
@@ -355,7 +406,5 @@ export default connect(null, {
   attand,
   unattand,
   setEditedStream,
-  follow,
-  unfollow,
   togglePopup,
 })(Stream);

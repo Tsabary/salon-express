@@ -27,7 +27,7 @@ const SignUp = ({ signUp, providerSignIn, togglePopup }) => {
         return (
           <>
             <div className="popup__title small-margin-bottom">Join Us</div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} autoComplete="off">
               <div className="fr-fr">
                 <div className="tiny-margin-bottom">
                   <InputField

@@ -10,14 +10,14 @@ const Tags = ({
   setValues,
   errorMessages,
   formError,
-  setFormError
+  setFormError,
 }) => {
   const [tagInput, setTagInput] = useState("");
   const [tagsSuggestions, setTagsSuggestions] = useState(null);
 
   const renderTagsSuggestions = (suggestions, existing) => {
     return suggestions
-      .filter(tag => {
+      .filter((tag) => {
         return !existing.includes(Object.keys(tag)[0]);
       })
       .sort((a, b) => {
@@ -27,7 +27,7 @@ const Tags = ({
         return a[keyA] < b[keyB] ? 1 : -1;
       })
       .slice(0, 10)
-      .map(tag => {
+      .map((tag) => {
         const key = Object.keys(tag)[0];
         return (
           <div
@@ -49,19 +49,27 @@ const Tags = ({
     );
   };
 
-  const filterTags = input => {
-    return tags.filter(el => {
+  const filterTags = (input) => {
+    return tags.filter((el) => {
       return Object.keys(el)[0].startsWith(input);
     });
   };
 
-  const handleTagInputChange = input => {
-    const cleanTag = input.replace(/\P{L}+/gu, "");
+  const handleTagInputChange = (input) => {
+    const cleanTag = input.replace(/[^\p{L}\s]+/gu, '');
     if (cleanTag.length < 25) setTagInput(cleanTag);
     setTagsSuggestions(cleanTag ? filterTags(cleanTag) : null);
   };
 
-  const addTag = newTag => {
+  const handleKeyPress = (event) => {
+    event.stopPropagation();
+    if (event.key === "Enter") {
+      addTag(tagInput.trim().toLowerCase().split(" ").join("-"));
+      return false;
+    }
+  };
+
+  const addTag = (newTag) => {
     if (!(values && values.tags)) values.tags = [];
     if (values.tags.includes(newTag) || !newTag.length) return;
     if (values.tags.length === 5) {
@@ -70,33 +78,18 @@ const Tags = ({
     }
     setValues({
       ...values,
-      tags: [...values.tags, newTag]
+      tags: [...values.tags, newTag],
     });
     setTagInput("");
   };
 
-  const handleKeyPress = event => {
-    console.log(event);
-    event.stopPropagation();
-    if (event.key === "Enter") {
-      addTag(
-        tagInput
-          .trim()
-          .toLowerCase()
-          .split(" ")
-          .join("-")
-      );
-      return false;
-    }
-  };
-
-  const removeTag = tag => {
-    setValues({ ...values, tags: values.tags.filter(el => el !== tag) });
+  const removeTag = (tag) => {
+    setValues({ ...values, tags: values.tags.filter((el) => el !== tag) });
     if (formError === errorMessages.tagsMax) setFormError("");
   };
 
-  const renderTags = tags => {
-    return tags.map(el => {
+  const renderTags = (tags) => {
+    return tags.map((el) => {
       return (
         <div
           className="tag tag-selected"
@@ -123,12 +116,7 @@ const Tags = ({
         <div
           className="tags__submit"
           onClick={() =>
-            addTag(
-              tagInput
-                .toLowerCase()
-                .split(" ")
-                .join("-")
-            )
+            addTag(tagInput.trim().toLowerCase().split(" ").join("-"))
           }
         >
           &rarr;
@@ -149,7 +137,7 @@ const Tags = ({
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return { tags: state.tags };
 };
 

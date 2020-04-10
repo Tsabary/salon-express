@@ -11,7 +11,7 @@ import {
   fetchMoreMinePast,
 } from "../../../actions";
 
-import { renderSection } from '../../../utils/feeds';
+import { renderSection } from "../../../utils/feeds";
 
 const Mine = ({
   mineLive,
@@ -40,28 +40,28 @@ const Mine = ({
   useEffect(() => {
     if (currentUser && !mineLive.length) {
       fetchFirstMineLive(
-        currentUser.uid,
         setLastVisibleLive,
         setReachedLastLive,
-        dateNow
+        dateNow,
+        currentUser.uid
       );
     }
 
     if (currentUser && !mineUpcoming.length) {
       fetchFirstMineUpcoming(
-        currentUser.uid,
         setLastVisibleUpcoming,
         setReachedLastUpcoming,
-        dateNow
+        dateNow,
+        currentUser.uid
       );
     }
 
     if (currentUser && !minePast.length) {
       fetchFirstMinePast(
-        currentUser.uid,
         setLastVisiblePast,
         setReachedLastPast,
-        dateNow
+        dateNow,
+        currentUser.uid
       );
     }
   }, [currentUser]);

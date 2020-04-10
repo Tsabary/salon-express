@@ -20,8 +20,8 @@ export const AuthProvider = ({ children }) => {
         });
     } else {
       setCurrentUserProfile(null);
+      window.location.hash = "";
     }
-    window.location.hash = "";
   }, [currentUser]);
 
   return (

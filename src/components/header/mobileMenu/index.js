@@ -2,11 +2,14 @@ import "./styles.scss";
 import React, { useState, useContext } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
+
 import history from "../../../history";
+
 import { AuthContext } from "../../../providers/Auth";
+import { PageContext } from "../../../providers/Page";
 
 import { togglePopup, logOut } from "../../../actions";
-import { PageContext } from "../../../providers/Page";
+import { turnToLowerCaseWithHyphen } from '../../../utils/strings';
 
 const Menu = ({ togglePopup, logOut }) => {
   const { currentUser } = useContext(AuthContext);
@@ -14,17 +17,8 @@ const Menu = ({ togglePopup, logOut }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const myHistory = useHistory(history);
 
-  // const handleChange = (page, path) => {
-  //   setCurrentPage(page);
-  //   myHistory.push(page);
-  // };
 
-  const turnToLowerCaseWithHyphen = string => {
-    return string
-      .toLowerCase()
-      .split(" ")
-      .join("-");
-  };
+
 
   const itemNumber = item => {
     switch (item) {

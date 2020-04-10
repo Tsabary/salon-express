@@ -12,6 +12,14 @@
   transition: all 0.2s;
   cursor: default;
 
+  &__read-more {
+    color: $mainColor;
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
   &__content {
     padding: 1rem;
   }
@@ -32,6 +40,28 @@
     font-size: 1.4rem;
     color: $greyDarkest;
     white-space: pre-line;
+  }
+
+  &__donate-icon{
+    height: 2rem;
+    width: 2rem;
+    cursor: pointer;
+    fill: $mainColor;
+  }
+
+  &__paypal {
+    display: grid;
+    grid-template-columns: 1fr max-content 1fr;
+    gap: 2rem;
+    margin: auto;
+    width: max-content;
+    &-svg {
+      height: 2rem;
+      width: 2rem;
+    }
+    &-text {
+      width: max-content;
+    }
   }
 
   &__live {
@@ -228,7 +258,6 @@
       height: 3rem;
       width: 3rem;
       fill: $grey;
-      margin-bottom: 0.92rem;
     }
 
     &--facebook {
@@ -257,6 +286,36 @@
       }
       :hover .social__icon--twitter-icon {
         fill: $twitterColor;
+        transform: rotate(1080deg);
+      }
+    }
+
+    &--soundcloud {
+      &-icon {
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      :hover .social__icon--soundcloud-icon {
+        fill: $soundcloudColor;
+        transform: rotate(1080deg);
+      }
+    }
+
+    &--spotify {
+      &-icon {
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      :hover .social__icon--spotify-icon {
+        fill: $spotifyColor;
+        transform: rotate(1080deg);
+      }
+    }
+
+    &--youtube {
+      &-icon {
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      :hover .social__icon--youtube-icon {
+        fill: $youtubeColor;
         transform: rotate(1080deg);
       }
     }

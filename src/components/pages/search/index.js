@@ -3,131 +3,132 @@ import React, { useEffect, useContext, useState } from "react";
 import { connect } from "react-redux";
 
 import { AuthContext } from "../../../providers/Auth";
-import { breakpointColumnsObj } from "../../../constants";
+
+import { renderSection } from "../../../utils/feeds";
 
 import {
   fetchFirstSearchedLive,
   fetchMoreSearchedLive,
   fetchFirstSearchedUpcoming,
   fetchMoreSearchedUpcoming,
-  togglePopup
+  fetchFirstSearchedPast,
+  fetchMoreSearchedPast,
+  togglePopup,
 } from "../../../actions";
-import Stream from "../../stream";
-
-import Masonry from "react-masonry-css";
 
 const Search = ({
   match,
   searchLive,
   searchUpcoming,
+  searchPast,
   fetchFirstSearchedLive,
   fetchMoreSearchedLive,
   fetchFirstSearchedUpcoming,
-  fetchMoreSearchedUpcoming
+  fetchMoreSearchedUpcoming,
+  fetchFirstSearchedPast,
+  fetchMoreSearchedPast,
 }) => {
-  const { currentUser, currentUserProfile } = useContext(AuthContext);
+  const { currentUserProfile } = useContext(AuthContext);
+
   const [lastVisibleLive, setLastVisibleLive] = useState(null);
   const [reachedLastLive, setReachedLastLive] = useState(true);
+
   const [lastVisibleUpcoming, setLastVisibleUpcoming] = useState(null);
   const [reachedLastUpcoming, setReachedLastUpcoming] = useState(true);
+
+  const [lastVisiblePast, setLastVisiblePast] = useState(null);
+  const [reachedLastPast, setReachedLastPast] = useState(true);
+
   const dateNow = new Date();
 
   useEffect(() => {
     fetchFirstSearchedLive(
       setLastVisibleLive,
-      match.params.id,
       setReachedLastLive,
-      dateNow
+      dateNow,
+      match.params.id,
+      currentUserProfile && currentUserProfile.languages
+        ? currentUserProfile.languages
+        : null
     );
 
     fetchFirstSearchedUpcoming(
       setLastVisibleUpcoming,
-      match.params.id,
       setReachedLastUpcoming,
-      dateNow
+      dateNow,
+      match.params.id,
+      currentUserProfile && currentUserProfile.languages
+        ? currentUserProfile.languages
+        : null
     );
-  }, []);
 
-  const renderItems = streams => {
-    return streams.map(stream => {
-      return (
-        <Stream
-          stream={stream}
-          user={currentUserProfile || { uid: "", following: [], followers: [] }}
-          key={stream.id}
-        />
-      );
-    });
-  };
+    fetchFirstSearchedPast(
+      setLastVisiblePast,
+      setReachedLastPast,
+      dateNow,
+      match.params.id,
+      currentUserProfile && currentUserProfile.languages
+        ? currentUserProfile.languages
+        : null
+    );
+  }, [currentUserProfile]);
 
   return (
     <div className="search">
-      {searchLive.length ? (
-        <>
-          <div className="my-streams__header">Live on {match.params.id}</div>
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className="my-masonry-grid"
-            columnClassName="my-masonry-grid_column"
-          >
-            {renderItems(searchLive)}
-          </Masonry>
-          {searchLive.length && !reachedLastLive ? (
-            <div
-              className="feed__load-more"
-              onClick={() =>
-                fetchMoreSearchedLive(
-                  lastVisibleLive,
-                  setLastVisibleLive,
-                  match.params.id,
-                  setReachedLastLive,
-                  dateNow
-                )
-              }
-            >
-              Load More
-            </div>
-          ) : null}
-        </>
-      ) : null}
+      {renderSection(
+        searchLive,
+        `Live on ${match.params.id}`,
+        fetchMoreSearchedLive,
+        lastVisibleLive,
+        setLastVisibleLive,
+        reachedLastLive,
+        setReachedLastLive,
+        dateNow,
+        currentUserProfile,
+        match.params.id
+      )}
 
-      {searchUpcoming.length ? (
-        <>
-          <div className="my-streams__header">Coming Up on {match.params.id}</div>
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className="my-masonry-grid"
-            columnClassName="my-masonry-grid_column"
-          >
-            {renderItems(searchUpcoming)}
-          </Masonry>
-          {searchUpcoming.length && !reachedLastUpcoming ? (
-            <div
-              className="feed__load-more"
-              onClick={() =>
-                fetchMoreSearchedUpcoming(
-                  lastVisibleUpcoming,
-                  setLastVisibleUpcoming,
-                  match.params.id,
-                  setReachedLastUpcoming,
-                  dateNow
-                )
-              }
-            >
-              Load More
-            </div>
-          ) : null}
-        </>
+      {renderSection(
+        searchUpcoming,
+        `Coming Up on ${match.params.id}`,
+        fetchMoreSearchedUpcoming,
+        lastVisibleUpcoming,
+        setLastVisibleUpcoming,
+        reachedLastUpcoming,
+        setReachedLastUpcoming,
+        dateNow,
+        currentUserProfile,
+        match.params.id
+      )}
+
+      {renderSection(
+        searchUpcoming,
+        `Streams you've missed on ${match.params.id}`,
+        fetchMoreSearchedPast,
+        lastVisiblePast,
+        setLastVisiblePast,
+        reachedLastPast,
+        setReachedLastPast,
+        dateNow,
+        currentUserProfile,
+        match.params.id
+      )}
+
+      {!searchLive.length && !searchUpcoming.length && !searchPast.length ? (
+        <div className="empty-feed small-margin-top centered">
+          This is a fresh genre! Got info of a stream? Post about it!
+        </div>
       ) : null}
     </div>
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     searchLive: state.searchLive,
     searchUpcoming: state.searchUpcoming,
-    popupShown: state.popupShown
+    searchPast: state.searchPast,
+    popupShown: state.popupShown,
   };
 };
 
@@ -136,5 +137,7 @@ export default connect(mapStateToProps, {
   fetchMoreSearchedLive,
   fetchFirstSearchedUpcoming,
   fetchMoreSearchedUpcoming,
-  togglePopup
+  fetchFirstSearchedPast,
+  fetchMoreSearchedPast,
+  togglePopup,
 })(Search);

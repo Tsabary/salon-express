@@ -8,7 +8,9 @@ const renderItems = (streams, currentUserProfile) => {
     return (
       <Stream
         stream={stream}
-        user={currentUserProfile || { uid: "", following: [], followers: [] }}
+        currentUserProfile={
+          currentUserProfile || { uid: "", following: [], followers: [] }
+        }
         key={stream.id}
       />
     );
@@ -24,7 +26,8 @@ export const renderSection = (
   reachedLast,
   setReachedLast,
   dateNow,
-  currentUserProfile
+  currentUserProfile,
+  tag
 ) => {
   return streams.length ? (
     <>
@@ -46,7 +49,9 @@ export const renderSection = (
               setLastVisible,
               setReachedLast,
               dateNow,
-              currentUserProfile.uid
+              currentUserProfile ? currentUserProfile.uid : null,
+              tag,
+              currentUserProfile ? currentUserProfile.languages : null
             )
           }
         >

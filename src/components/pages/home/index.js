@@ -1,8 +1,8 @@
 import "./styles.scss";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { connect } from "react-redux";
 
-import { togglePopup } from '../../../actions';
+import { togglePopup } from "../../../actions";
 
 import { PageContext } from "../../../providers/Page";
 import { AuthContext } from "../../../providers/Auth";
@@ -12,13 +12,11 @@ import Subscriptions from "../subscriptions";
 import Calendar from "../calendar";
 import Mine from "../mine";
 
-
-
-const Home = ({popupShown, togglePopup}) => {
+const Home = ({ popupShown, togglePopup }) => {
   const { currentUser } = useContext(AuthContext);
   const { page, setPage } = useContext(PageContext);
 
-  const renderContent = p => {
+  const renderContent = (p) => {
     switch (p) {
       case 1:
         return <Explore />;
@@ -89,10 +87,10 @@ const Home = ({popupShown, togglePopup}) => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    popupShown: state.popupShown
+    popupShown: state.popupShown,
   };
 };
 
-export default connect(mapStateToProps,{togglePopup})(Home) ;
+export default connect(mapStateToProps, { togglePopup })(Home);

@@ -2,12 +2,9 @@ import "./styles.scss";
 import React, { useContext, useEffect, useState } from "react";
 import { connect } from "react-redux";
 
-import Masonry from "react-masonry-css";
-
 import { AuthContext } from "../../../providers/Auth";
-import { breakpointColumnsObj } from "../../../constants";
 
-import Stream from "../../stream";
+import { renderSection } from "../../../utils/feeds";
 
 import {
   fetchStrangerProfile,
@@ -18,6 +15,8 @@ import {
   fetchFirstStrangerPast,
   fetchMoreStrangerPast,
 } from "../../../actions";
+
+import FollowBtn from "../../followBtn";
 
 const Stranger = ({
   match,
@@ -47,152 +46,168 @@ const Stranger = ({
   const dateNow = new Date();
 
   useEffect(() => {
-    console.log("username", match.params.id)
-    if (match.params.id) {
-      fetchStrangerProfile(match.params.id);
-    }
+    if (match.params.id) fetchStrangerProfile(match.params.id);
   }, [match.params.id]);
 
   useEffect(() => {
-    console.log("strangerProfile", strangerProfile)
+    console.log(strangerProfile);
+    if (!strangerProfile) return;
 
-    if (strangerProfile && !strangerLive.length) {
-      console.log(strangerProfile.uid);
+    if (strangerProfile.uid && !strangerLive.length) {
       fetchFirstStrangerLive(
-        strangerProfile.uid,
         setLastVisibleLive,
         setReachedLastLive,
-        dateNow
+        dateNow,
+        strangerProfile.uid
       );
     }
 
-    if (strangerProfile && !strangerUpcoming.length) {
-      console.log(strangerProfile.uid);
-
+    if (strangerProfile.uid && !strangerUpcoming.length) {
       fetchFirstStrangerUpcoming(
-        strangerProfile.uid,
         setLastVisibleUpcoming,
         setReachedLastUpcoming,
-        dateNow
+        dateNow,
+        strangerProfile.uid
       );
     }
 
-    if (strangerProfile && !strangerPast.length) {
-      console.log(strangerProfile.uid);
-
+    if (strangerProfile.uid && !strangerPast.length) {
       fetchFirstStrangerPast(
-        strangerProfile.uid,
         setLastVisiblePast,
         setReachedLastPast,
-        dateNow
+        dateNow,
+        strangerProfile.uid
       );
     }
   }, [strangerProfile]);
 
-  const renderItems = (streams) => {
-    return streams.map((stream) => {
-      return (
-        <Stream
-          stream={stream}
-          user={currentUserProfile || { uid: "", following: [], followers: [] }}
-          key={stream.id}
-        />
-      );
-    });
-  };
+  return !strangerProfile ? null :(
+    <div className="stranger">
+      <div className="stranger__header">
+        <div>
+          <img
+            className="stranger__header-img"
+            src={
+              (strangerProfile && strangerProfile.avatar) ||
+              "../../imgs/logo.jpeg"
+            }
+          />
+        </div>
+        <div className="stranger__header-body">
+          <div className="max-max">
+            <div className="stranger__header-name">
+              {strangerProfile && strangerProfile.name}
+            </div>
+            {strangerProfile &&
+            strangerProfile.username !== strangerProfile.uid ? (
+              <div className="stranger__header-username">
+                A.K.A {strangerProfile && strangerProfile.username}
+              </div>
+            ) : null}
+          </div>
+          <div className="stranger__header-tagline">
+            {strangerProfile && strangerProfile.tagline}
+          </div>
 
-  return (
-    <div className="my-streams">
-      {strangerLive.length ? (
-        <>
-          <div className="my-streams__header">Live Streams by {strangerProfile.name}</div>
+          <div className="stranger__header-mentees">
+            {/* {strangerProfile && !strangerProfile.followers
+              ? null
+              : strangerProfile &&  strangerProfile.followers.length === 1
+              ? "1 mentee"
+              : strangerProfile.followers.length + "mentees"} */}
+          </div>
+        </div>
 
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className="my-masonry-grid"
-            columnClassName="my-masonry-grid_column"
-          >
-            {renderItems(strangerLive)}
-          </Masonry>
+        {currentUserProfile ? (
+          <FollowBtn
+            currentUserProfile={currentUserProfile}
+            strangerID={strangerProfile.uid}
+            textFollow="Follow"
+            textUnfollow="Unfollow"
+          
+          />
+        ) : <div/>}
 
-          {strangerLive.length && !reachedLastLive ? (
-            <div
-              className="feed__load-more small-margin-top"
-              onClick={() =>
-                fetchMoreStrangerLive(
-                  strangerProfile.uid,
-                  lastVisibleLive,
-                  setLastVisibleLive,
-                  setReachedLastLive,
-                  dateNow
-                )
-              }
-            >
-              Load More
+        <div className="stranger__header-social">
+          {strangerProfile && strangerProfile.instagram ? (
+            <div className="social__icon--instagram">
+              <a href={"https://" + strangerProfile.instagram} target="_blank">
+                <svg className="social__icon social__icon--instagram-icon">
+                  <use xlinkHref="../sprite.svg#instagram"></use>
+                </svg>
+              </a>
             </div>
           ) : null}
-        </>
-      ) : null}
 
-      {strangerUpcoming.length ? (
-        <>
-          <div className="my-streams__header">Coming Up Streams by {strangerProfile.name}</div>
-
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className="my-masonry-grid"
-            columnClassName="my-masonry-grid_column"
-          >
-            {renderItems(strangerUpcoming)}
-          </Masonry>
-
-          {strangerUpcoming.length && !reachedLastUpcoming ? (
-            <div
-              className="feed__load-more small-margin-top"
-              onClick={() =>
-                fetchMoreStrangerUpcoming(
-                  strangerProfile.uid,
-                  lastVisibleUpcoming,
-                  setLastVisibleUpcoming,
-                  setReachedLastUpcoming,
-                  dateNow
-                )
-              }
-            >
-              Load More
+          {strangerProfile && strangerProfile.twitter ? (
+            <div className="social__icon--twitter">
+              <a href={"https://" + strangerProfile.twitter} target="_blank">
+                <svg className="social__icon social__icon--twitter-icon">
+                  <use xlinkHref="../sprite.svg#twitter"></use>
+                </svg>
+              </a>
             </div>
           ) : null}
-        </>
-      ) : null}
 
-      {strangerPast.length ? (
-        <>
-          <div className="my-streams__header">Past Streams by {strangerProfile.name}</div>
-
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className="my-masonry-grid"
-            columnClassName="my-masonry-grid_column"
-          >
-            {renderItems(strangerPast)}
-          </Masonry>
-
-          {strangerPast.length && !reachedLastPast ? (
-            <div
-              className="feed__load-more small-margin-top"
-              onClick={() =>
-                fetchMoreStrangerPast(
-                  strangerProfile.uid,
-                  lastVisiblePast,
-                  setLastVisiblePast,
-                  setReachedLastPast,
-                  dateNow
-                )
-              }
-            >
-              Load More
+          {strangerProfile && strangerProfile.facebook ? (
+            <div className="social__icon--facebook">
+              <a href={"https://" + strangerProfile.facebook} target="_blank">
+                <svg className="social__icon social__icon--facebook-icon">
+                  <use xlinkHref="../sprite.svg#facebook"></use>
+                </svg>
+              </a>
             </div>
           ) : null}
+
+          {strangerProfile && strangerProfile.website ? (
+            <div className="social__icon--web">
+              <a href={"https://" + strangerProfile.website} target="_blank">
+                <svg className="social__icon social__icon--web-icon">
+                  <use xlinkHref="../sprite.svg#web"></use>
+                </svg>
+              </a>
+            </div>
+          ) : null}
+        </div>
+      </div>
+
+      {strangerProfile ? (
+        <>
+          {renderSection(
+            strangerLive,
+            `Live Streams by ${strangerProfile.name}`,
+            fetchMoreStrangerLive,
+            lastVisibleLive,
+            setLastVisibleLive,
+            reachedLastLive,
+            setReachedLastLive,
+            dateNow,
+            currentUserProfile
+          )}
+
+          {renderSection(
+            strangerUpcoming,
+            `Coming Up Streams by ${strangerProfile.name}`,
+            fetchMoreStrangerUpcoming,
+            lastVisibleUpcoming,
+            setLastVisibleUpcoming,
+            reachedLastUpcoming,
+            setReachedLastUpcoming,
+            dateNow,
+            currentUserProfile
+          )}
+
+          {renderSection(
+            strangerPast,
+            `Past Streams by ${strangerProfile.name}`,
+            fetchMoreStrangerPast,
+            lastVisiblePast,
+            setLastVisiblePast,
+            reachedLastPast,
+            setReachedLastPast,
+            dateNow,
+            currentUserProfile
+          )}
         </>
       ) : null}
 

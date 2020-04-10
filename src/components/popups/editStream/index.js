@@ -12,30 +12,39 @@ import {
   checkValidity,
   errorMessages,
   renderHours,
-  renderMinutes
+  renderMinutes,
+  trimURL,
 } from "../../../utils/forms";
 
 import { validateWordsLength } from "../../../utils/strings";
+import {
+  renderLanguageOptions,
+  getLanguageCode,
+  getLanguageName,
+} from "../../../utils/languages";
 
 import { updateStream, togglePopup, setEditedStream } from "../../../actions";
 
 import InputField from "../../formComponents/inputField";
 import TextArea from "../../formComponents/textArea";
 import Tags from "../../formComponents/tags";
+import ToggleField from "../../formComponents/toggleField";
 
 const NewStream = ({
   editedStream,
   updateStream,
   togglePopup,
-  setEditedStream
+  setEditedStream,
 }) => {
-  const [values, setValues] = useState({});
+  const { currentUserProfile } = useContext(AuthContext);
+  const { addToast } = useToasts();
+
+  const [values, setValues] = useState(null);
+
+  const languageChoiceDefault = "What language would it be in?";
 
   const [hour, setHour] = useState(0);
   const [minutes, setMinutes] = useState(0);
-
-  const { currentUserProfile } = useContext(AuthContext);
-  const { addToast } = useToasts();
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageAsFile, setImageAsFile] = useState("");
@@ -46,19 +55,43 @@ const NewStream = ({
   const [originalTags, setOriginalTags] = useState([]);
 
   useEffect(() => {
+    if (values && values.start) {
+      const startDate =
+        Object.prototype.toString.call(editedStream.start) === "[object Date]"
+          ? editedStream.start
+          : editedStream.start.toDate();
+
+      setValues({ ...values, start: startDate });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (values && values.duration) {
+      setHour(Math.floor(values.duration / 3600000));
+      setMinutes((values.duration % 3600000) / 60000);
+    }
+  }, [values]);
+
+  useEffect(() => {
     setValues(editedStream);
     setOriginalTags(editedStream.tags || []);
   }, [editedStream]);
 
   useEffect(() => {
-    if (values.start) {
+    if (values && values.start) {
+      const startDate =
+        Object.prototype.toString.call(editedStream.start) === "[object Date]"
+          ? editedStream.start
+          : editedStream.start.toDate();
+
       const duration = hour * 3600000 + minutes * 60000;
-      const end = new Date(values.start.getTime() + duration);
+
+      const end = new Date(startDate.getTime() + duration);
       setValues({ ...values, duration, end });
     }
   }, [hour, minutes]);
 
-  const handleImageAsFile = e => {
+  const handleImageAsFile = (e) => {
     e.preventDefault();
     const image = e.target.files[0];
     setImageAsFile(() => image);
@@ -75,8 +108,9 @@ const NewStream = ({
     setValues({
       user_ID: currentUserProfile.uid,
       user_name: currentUserProfile.name,
+      user_username: currentUserProfile.username,
       user_avatar: currentUserProfile.avatar,
-      attendants: [currentUserProfile.uid]
+      attendants: [currentUserProfile.uid],
     });
 
     setSelectedImage(null);
@@ -92,15 +126,26 @@ const NewStream = ({
     setFormError(null);
     setSubmitting(true);
 
+    const streamObj = {};
+
+    const valuesKeys = Object.keys(values);
+    valuesKeys.forEach((key) => {
+      if (typeof values[key] === "string") {
+        streamObj[key] = trimURL(values[key]);
+      } else {
+        streamObj[key] = values[key];
+      }
+    });
+
     updateStream(
-      { ...values, id: editedStream.id },
-      values.tags.filter(tag => !originalTags.includes(tag)),
-      originalTags.filter(tag => !values.tags.includes(tag)),
+      streamObj,
+      values.tags.filter((tag) => !originalTags.includes(tag)),
+      originalTags.filter((tag) => !values.tags.includes(tag)),
       imageAsFile,
       () => {
         addToast("Event updated", {
           appearance: "success",
-          autoDismiss: true
+          autoDismiss: true,
         });
         togglePopup();
         reset();
@@ -108,7 +153,7 @@ const NewStream = ({
     );
   };
 
-  return (
+  return !values ? null : (
     <div className="popup" id="edited-stream">
       <div className="popup__close">
         <div />
@@ -127,21 +172,35 @@ const NewStream = ({
         <div>
           <div className="popup__title">Edit Stream</div>
           <form
-            onSubmit={e => {
+            onSubmit={(e) => {
               console.log("nothing");
             }}
+            className="small-margin-top"
             autoComplete="off"
           >
-            <label htmlFor="edit-stream-img" className="add-stream__label">
-              <div className="cover-image__container clickable">
+            <label
+              htmlFor="edit-stream-img"
+              className="cover-image__container clickable"
+            >
+              {selectedImage ? (
+                <img
+                  className="cover-image__preview clickable"
+                  src={selectedImage}
+                />
+              ) : (
                 <img
                   className="cover-image__preview clickable"
                   src={
-                    selectedImage || values.image || "./imgs/placeholder.jpg"
+                    !values.image
+                      ? "./imgs/placeholder.jpg"
+                      : values.image.includes("firebase")
+                      ? "https://" + values.image
+                      : values.image
                   }
                 />
-              </div>
+              )}
             </label>
+
             <input
               id="edit-stream-img"
               className="add-stream__img-input"
@@ -153,7 +212,7 @@ const NewStream = ({
               type="text"
               placeHolder="Title"
               value={values.title}
-              onChange={title => {
+              onChange={(title) => {
                 if (title.length < 60 && validateWordsLength(title, 25))
                   setValues({ ...values, title });
               }}
@@ -163,23 +222,23 @@ const NewStream = ({
               type="text"
               placeHolder="Extra details"
               value={values.body}
-              onChange={body => {
-                if (body.length < 300 && validateWordsLength(body, 25))
+              onChange={(body) => {
+                if (body.length < 400 && validateWordsLength(body, 25))
                   setValues({ ...values, body });
               }}
               required={true}
             />
 
-            <InputField
+            {/* <InputField
               type="text"
               placeHolder="Host name"
               value={values.host_name}
-              onChange={host_name => {
+              onChange={(host_name) => {
                 if (host_name.length < 30 && validateWordsLength(host_name, 15))
                   setValues({ ...values, host_name });
               }}
               required={true}
-            />
+            /> */}
 
             <div className="add-stream__date">
               <DatePicker
@@ -191,13 +250,13 @@ const NewStream = ({
                     ? values.start
                     : values.start.toDate()
                 }
-                onChange={start => {
+                onChange={(start) => {
                   if (
                     Object.prototype.toString.call(start) === "[object Date]"
                   ) {
                     setValues({
                       ...values,
-                      start
+                      start,
                     });
                   } else {
                     delete values.start;
@@ -205,11 +264,11 @@ const NewStream = ({
                 }}
                 showTimeSelect
                 timeFormat="HH:mm"
-                timeIntervals={15}
+                timeIntervals={30}
                 timeCaption="time"
                 dateFormat="MMMM d, yyyy h:mm aa"
                 className="input-field__input"
-                placeholderText="Click to select a date"
+                placeholderText="Starting time (in your timezone)"
                 minDate={new Date()}
                 excludeOutOfBoundsTimes
               />
@@ -220,7 +279,7 @@ const NewStream = ({
                 as="select"
                 value={hour + " hours"}
                 bsPrefix="input-field__input form-drop"
-                onChange={v => setHour(v.target.value.split(" ")[0])}
+                onChange={(v) => setHour(v.target.value.split(" ")[0])}
               >
                 {renderHours()}
               </Form.Control>
@@ -229,7 +288,7 @@ const NewStream = ({
                 as="select"
                 value={minutes + " minutes"}
                 bsPrefix="input-field__input form-drop"
-                onChange={v => setMinutes(v.target.value.split(" ")[0])}
+                onChange={(v) => setMinutes(v.target.value.split(" ")[0])}
               >
                 {renderMinutes()}
               </Form.Control>
@@ -239,7 +298,7 @@ const NewStream = ({
               type="text"
               placeHolder="Link to the stream"
               value={values.url}
-              onChange={url => {
+              onChange={(url) => {
                 setValues({ ...values, url });
               }}
               required={true}
@@ -247,19 +306,45 @@ const NewStream = ({
 
             <InputField
               type="text"
+              placeHolder="Link for tips and donations"
+              value={values.tips_link}
+              onChange={(tips_link) => {
+                setValues({ ...values, tips_link });
+              }}
+            />
+
+            {values.language ? (
+              <Form.Control
+                as="select"
+                bsPrefix="input-field__input form-drop"
+                value={getLanguageName(values.language)}
+                onChange={(choice) => {
+                  if (choice.target.value !== languageChoiceDefault)
+                    setValues({
+                      ...values,
+                      language: getLanguageCode(choice.target.value),
+                    });
+                }}
+              >
+                {renderLanguageOptions(languageChoiceDefault)}
+              </Form.Control>
+            ) : null}
+
+            {/* <InputField
+              type="text"
               placeHolder="Price in USD (leave empty if free)"
               value={values.price}
-              onChange={price => {
+              onChange={(price) => {
                 setValues({ ...values, price });
               }}
               isNumber={true}
-            />
+            /> */}
 
             <InputField
               type="text"
               placeHolder="Host Instagram page"
               value={values.host_ig}
-              onChange={host_ig => {
+              onChange={(host_ig) => {
                 setValues({ ...values, host_ig });
               }}
             />
@@ -268,8 +353,53 @@ const NewStream = ({
               type="text"
               placeHolder="Host Facebook page"
               value={values.host_fb}
-              onChange={host_fb => {
+              onChange={(host_fb) => {
                 setValues({ ...values, host_fb });
+              }}
+            />
+
+            <InputField
+              type="text"
+              placeHolder="Host Twitter account"
+              value={values.host_twitter}
+              onChange={(host_twitter) => {
+                setValues({ ...values, host_twitter });
+              }}
+            />
+
+            <InputField
+              type="text"
+              placeHolder="Host Soundcloud account"
+              value={values.host_soundcloud}
+              onChange={(host_soundcloud) => {
+                setValues({ ...values, host_soundcloud });
+              }}
+            />
+
+            <InputField
+              type="text"
+              placeHolder="Host Spotify account"
+              value={values.host_spotify}
+              onChange={(host_spotify) => {
+                setValues({ ...values, host_spotify });
+              }}
+            />
+
+            <InputField
+              type="text"
+              placeHolder="Host Youtube account"
+              value={values.host_youtube}
+              onChange={(host_youtube) => {
+                setValues({ ...values, host_youtube });
+              }}
+            />
+
+            <InputField
+              type="text"
+              placeHolder="Host LinkedIn account"
+              value={values.host_linkedin}
+              onChange={(host_linkedin) => {
+                setValues({ ...values, host_linkedin });
               }}
             />
 
@@ -277,7 +407,7 @@ const NewStream = ({
               type="text"
               placeHolder="Host website"
               value={values.host_web}
-              onChange={host_web => {
+              onChange={(host_web) => {
                 setValues({ ...values, host_web });
               }}
             />
@@ -314,15 +444,15 @@ const NewStream = ({
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     tags: state.tags,
-    editedStream: state.editedStream
+    editedStream: state.editedStream,
   };
 };
 
 export default connect(mapStateToProps, {
   updateStream,
   togglePopup,
-  setEditedStream
+  setEditedStream,
 })(NewStream);

@@ -1,8 +1,10 @@
 import "./styles.scss";
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-
 import { connect } from "react-redux";
+
+import { Helmet } from "react-helmet";
+
 import history from "../../../history";
 
 import { AuthContext } from "../../../providers/Auth";
@@ -12,7 +14,7 @@ import { fetchSingleStream } from "../../../actions";
 import Stream from "../../stream";
 
 const SingleStream = ({ match, streams, fetchSingleStream }) => {
-  const myHistory = useHistory(history);
+  // const myHistory = useHistory(history);
 
   const { currentUserProfile } = useContext(AuthContext);
 
@@ -26,13 +28,13 @@ const SingleStream = ({ match, streams, fetchSingleStream }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTime(time => time - 1);
+      setTime((time) => time - 1);
     }, 1000);
     return () => clearInterval(interval);
   });
 
   useEffect(() => {
-    const filteredStreams = streams.filter(str => str.id === match.params.id);
+    const filteredStreams = streams.filter((str) => str.id === match.params.id);
     setPage(null);
     filteredStreams[0]
       ? setStream(filteredStreams[0])
@@ -40,13 +42,15 @@ const SingleStream = ({ match, streams, fetchSingleStream }) => {
   }, []);
 
   const goHome = () => {
-    // setCurrentPage(page);
-    setPage(1);
-    myHistory.push(`/`);
+    console.log("this shit");
+    // setPage(1);
+    // myHistory.push(`/`);
   };
 
   return (
     <div className="single-stream">
+
+
       {stream && currentUserProfile ? (
         <Stream stream={stream} user={currentUserProfile} key={stream.id} />
       ) : (
@@ -59,9 +63,9 @@ const SingleStream = ({ match, streams, fetchSingleStream }) => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    streams: state.streams
+    streams: state.streams,
   };
 };
 

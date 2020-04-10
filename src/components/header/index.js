@@ -19,6 +19,12 @@ const Header = () => {
   const { setSearchTerm } = useContext(SearchContext);
   const myHistory = useHistory(history);
 
+  const handleChange = () => {
+    setSearchTerm(null);
+    setPage(1);
+    myHistory.push(`/`);
+  };
+
   const renderAuth = () => {
     switch (true) {
       case !!currentUser:
@@ -29,12 +35,6 @@ const Header = () => {
       default:
         return null;
     }
-  };
-
-  const handleChange = () => {
-    setSearchTerm(null);
-    setPage(1);
-    myHistory.push(`/`);
   };
 
   const renderCenter = (p) => {

@@ -16,7 +16,7 @@ const Template = ({ template, setTemplate, deleteTemplate }) => {
         <div className="cover-image__container">
           <img
             className="cover-image__preview clickable"
-            src={template.image}
+            src={"https://" + template.image}
           />
         </div>
         <div>

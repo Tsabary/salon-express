@@ -1,0 +1,77 @@
+@import "../../../styles/imports";
+
+.stranger {
+  @include padding;
+
+  @include resize(750px) {
+    margin-top: 5rem;
+  }
+
+  &__header {
+    width: 100%;
+    background-color: white;
+    border-radius: $borderRadius;
+    border: 1px solid $mainColor;
+    padding: 4rem;
+    margin-top: 3rem;
+    cursor: default;
+    display: grid;
+    gap: 5rem;
+    grid-template-columns: max-content 1fr;
+    align-items: center;
+
+    &-img {
+      border-radius: 100%;
+      overflow: hidden;
+      width: 15rem;
+      height: 15rem;
+      border: white solid 0.4rem;
+      object-fit: cover;
+      box-shadow: 1rem 1rem 0 $mainColor;
+    }
+    &-body {
+      display: flex;
+      flex-direction: column;
+      // margin-left: 5rem;
+    }
+
+    &-name {
+      color: $mainColor;
+      font-family: $fontBold;
+      font-size: 3rem;
+    }
+
+    &-username {
+      color: $grey;
+      font-family: $fontBold;
+      font-size: 3rem;
+    }
+
+    &-follow {
+      width: 100%;
+      text-align: center;
+      color: $mainColor;
+      border-radius: $borderRadius;
+      border: 1px solid $mainColor;
+      padding: 0.2rem 1rem;
+    }
+
+    &-tagline {
+      color: $grey;
+      font-size: 2rem;
+      margin-top: 2rem;
+    }
+
+    &-mentees {
+      color: $mainColor;
+      font-size: 2rem;
+      margin-top: 2rem;
+    }
+
+    &-social {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(6, max-content);
+    }
+  }
+}

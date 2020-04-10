@@ -5,7 +5,6 @@
   position: relative;
   padding: 2rem 3rem;
   border-radius: $borderRadius;
-  overflow: hidden;
 
   &__title {
     font-family: $fontBold;
@@ -58,6 +57,8 @@
     grid-template-columns: 15rem 1fr;
     gap: 2rem;
     height: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
   }
 
   &__hidden {
@@ -66,5 +67,7 @@
     justify-content: center;
     padding: 5rem;
     text-align: center;
+    overflow-x: hidden;
+    overflow-y: hidden;
   }
 }

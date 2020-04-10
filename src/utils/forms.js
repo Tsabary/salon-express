@@ -8,6 +8,7 @@ export const errorMessages = {
   image: "Please add an image for this stream",
   url: "Please add link to this stream",
   urlInvalid: "Please make sure your stream's url is valid",
+  language: "Please a language for this stream",
   startTime: "Please choose a starting time for this stream",
   duration: "Please set the duration of this stream",
   endTime: "Please choose an end time for this stream",
@@ -17,10 +18,17 @@ export const errorMessages = {
   web: "Please enter a valid URL for your website",
   ig: "Please enter a valid URL for your Instagram account",
   fb: "Please enter a valid URL for your Facebook page",
-  twitter: "Please enter a valid URL for your Twitter account"
+  twitter: "Please enter a valid URL for your Twitter account",
+  linkedin: "Please enter a valid URL for your LinkedIn account",
+  tips: "Please enter a valid PayPal payment link",
 };
 
-export const checkValidity = (values, setFormError, imageAsFile) => {
+export const checkValidity = (
+  values,
+  setFormError,
+  imageAsFile,
+  tipsWelcome
+) => {
   switch (true) {
     case !imageAsFile && !values.image:
       setFormError(errorMessages.image);
@@ -34,9 +42,9 @@ export const checkValidity = (values, setFormError, imageAsFile) => {
       setFormError(errorMessages.body);
       return false;
 
-    case !values.host_name:
-      setFormError(errorMessages.name);
-      return false;
+    // case !values.host_name:
+    //   setFormError(errorMessages.name);
+    //   return false;
 
     case !values.start:
       setFormError(errorMessages.startTime);
@@ -58,6 +66,10 @@ export const checkValidity = (values, setFormError, imageAsFile) => {
       setFormError(errorMessages.urlInvalid);
       return false;
 
+    case !values.language:
+      setFormError(errorMessages.language);
+      return false;
+
     case values.host_ig && !validator.isURL(values.host_ig):
       setFormError(errorMessages.ig);
       return false;
@@ -70,8 +82,17 @@ export const checkValidity = (values, setFormError, imageAsFile) => {
       setFormError(errorMessages.twitter);
       return false;
 
+    case values.host_linkedin && !validator.isURL(values.host_linkedin):
+      setFormError(errorMessages.linkedin);
+      return false;
+
     case values.host_web && !validator.isURL(values.host_web):
       setFormError(errorMessages.web);
+      return false;
+
+    case (tipsWelcome && !values.tips_link) ||
+      (values.tips_link && !validator.isURL(values.tips_link)):
+      setFormError(errorMessages.tips);
       return false;
 
     case (values && !values.tags) || (values.tags && values.tags.length < 2):
@@ -83,8 +104,12 @@ export const checkValidity = (values, setFormError, imageAsFile) => {
   }
 };
 
-export const trimURL = string => {
-  return string.replace(/^https?:\/\//, "").replace(/^http?:\/\//, "");
+export const trimURL = (string) => {
+  const newString = string
+    ? string.replace(/^https?:\/\//, "").replace(/^http?:\/\//, "")
+    : string;
+  console.log("newString", newString);
+  return newString;
 };
 
 export const renderHours = () => {
@@ -113,10 +138,10 @@ export const renderHours = () => {
     21,
     22,
     23,
-    24
+    24,
   ];
 
-  return hours.map(h => {
+  return hours.map((h) => {
     return (
       <option className="form-drop" key={h}>
         {h} hours
@@ -128,7 +153,7 @@ export const renderHours = () => {
 export const renderMinutes = () => {
   const minutes = [0, 15, 30, 45];
 
-  return minutes.map(m => {
+  return minutes.map((m) => {
     return (
       <option className="form-drop" key={m}>
         {m} minutes

@@ -1,8 +1,39 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if true;
+
+    match /followers/{mentor}{
+      allow read: if true;
+      allow write, delete: if false;
     }
+
+    match /streams/{stream}{
+      allow read: if true;
+      allow create: if request.auth.uid == request.resource.data.user_ID;
+      allow update: if request.auth != null;
+      allow delete: if request.auth.uid == resource.data.user_ID;
+    }
+
+    match /tags/{tag}{
+      allow read: if true;
+      allow write, delete: if false;
+    }
+  
+    match /tags_count/{tag}{
+      allow read: if true;
+      allow write, delete: if false;
+    }
+
+    match /templates/{template}{
+      allow read, delete: if request.auth.uid == resource.data.user_ID;
+      allow write: if request.auth.uid == request.resource.data.user_ID;
+    }
+
+    match /users/{userID}{
+      allow read: if true;
+      allow write: if request.auth.uid == request.resource.data.uid;
+      allow delete: if false;
+    }
+
   }
 }

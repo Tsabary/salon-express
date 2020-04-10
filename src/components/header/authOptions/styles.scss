@@ -6,7 +6,7 @@
   align-items: center;
 
   &__box {
-    @include resize(1100px) {
+    @include resize(750px) {
       display: none;
     }
   }

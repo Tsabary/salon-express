@@ -35,6 +35,7 @@ export const addLineBreaks = (string) =>
       <br />
     </div>
   ));
+
 // calculate distance between two geopoints
 function calcDistance(lat1, lon1, lat2, lon2, unit) {
   if (lat1 == lat2 && lon1 == lon2) {
@@ -65,4 +66,8 @@ function calcDistance(lat1, lon1, lat2, lon2, unit) {
 
 export const validateWordsLength = (string, limit) => {
   return string.split(" ").every((word) => word.length < limit);
+};
+
+export const turnToLowerCaseWithHyphen = (string) => {
+  return string.toLowerCase().split(" ").join("-");
 };

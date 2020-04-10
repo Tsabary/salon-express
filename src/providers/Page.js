@@ -16,3 +16,14 @@ export const PageProvider = ({ children }) => {
     </PageContext.Provider>
   );
 };
+
+/**
+ * PAGES:
+ * 1. EXPLORE
+ * 2. SUBSCRIPTION
+ * 3. CALENDAR
+ * 4. MY STREAMS
+ * 5. TAG FILTER
+ * 6. PROFILE
+ * 7. CONTACT
+ */

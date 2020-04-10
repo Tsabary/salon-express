@@ -40,24 +40,24 @@ const Calendar = ({
   useEffect(() => {
     if (currentUser && !calendarLive.length) {
       fetchFirstCalendarLive(
-        currentUser.uid,
         setLastVisibleLive,
         setReachedLastLive,
-        dateNow
+        dateNow,
+        currentUser.uid
       );
 
       fetchFirstCalendarUpcoming(
-        currentUser.uid,
         setLastVisibleUpcoming,
         setReachedLastUpcoming,
-        dateNow
+        dateNow,
+        currentUser.uid
       );
 
       fetchFirstCalendarPast(
-        currentUser.uid,
         setLastVisiblePast,
         setReachedLastPast,
-        dateNow
+        dateNow,
+        currentUser.uid
       );
     }
   }, [currentUser]);

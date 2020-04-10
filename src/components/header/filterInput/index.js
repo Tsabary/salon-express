@@ -7,7 +7,7 @@ import history from "../../../history";
 
 import { fetchTags } from "../../../actions";
 import { SearchContext } from "../../../providers/Search";
-import { PageContext } from '../../../providers/Page';
+import { PageContext } from "../../../providers/Page";
 
 const FilterInput = ({ tags, fetchTags }) => {
   const myHistory = useHistory(history);
@@ -19,7 +19,7 @@ const FilterInput = ({ tags, fetchTags }) => {
   const [tagInput, setTagInput] = useState("");
 
   useEffect(() => {
-    searchTerm ? handleChange(`/on/${searchTerm}`, 5) : handleChange("/", 1);
+    if (searchTerm) handleChange(`/on/${searchTerm}`, 5);
   }, [searchTerm]);
 
   useEffect(() => {
@@ -31,24 +31,24 @@ const FilterInput = ({ tags, fetchTags }) => {
     myHistory.push(path);
   };
 
-  const filterTags = input => {
-    return tags.filter(el => {
+  const filterTags = (input) => {
+    return tags.filter((el) => {
       return Object.keys(el)[0].startsWith(input);
     });
   };
 
-  const handleTagInputChange = input => {
+  const handleTagInputChange = (input) => {
     setTagInput(input);
     if (!!tags.length) setTagsSuggestions(input ? filterTags(input) : null);
   };
 
-  const addTag = tag => {
-    setPage(5)
+  const addTag = (tag) => {
+    setPage(5);
     setSearchTerm(tag);
     setTagInput("");
   };
 
-  const renderTagsSuggestions = suggestions => {
+  const renderTagsSuggestions = (suggestions) => {
     return suggestions
       .sort((a, b) => {
         const keyA = Object.keys(a)[0];
@@ -57,7 +57,7 @@ const FilterInput = ({ tags, fetchTags }) => {
         return a[keyA] < b[keyB] ? 1 : -1;
       })
       .slice(0, 5)
-      .map(tag => {
+      .map((tag) => {
         const key = Object.keys(tag)[0];
         return (
           <div
@@ -73,21 +73,17 @@ const FilterInput = ({ tags, fetchTags }) => {
       });
   };
 
-  const handleKeyPress = event => {
+  const handleKeyPress = (event) => {
     event.stopPropagation();
     if (event.key === "Enter") {
-      addTag(
-        tagInput
-          .toLowerCase()
-          .split(" ")
-          .join("-")
-      );
+      addTag(tagInput.toLowerCase().split(" ").join("-"));
       return false;
     }
   };
 
   const clearTag = () => {
     setSearchTerm(null);
+    handleChange(`/`, 1)
   };
 
   return (
@@ -104,12 +100,9 @@ const FilterInput = ({ tags, fetchTags }) => {
             placeholder="Filter streams by tag"
             autoComplete="new-password"
             value={tagInput}
-            onChange={e =>
+            onChange={(e) =>
               handleTagInputChange(
-                e.target.value
-                  .toLowerCase()
-                  .split(" ")
-                  .join("-")
+                e.target.value.toLowerCase().split(" ").join("-")
               )
             }
             onKeyDown={handleKeyPress}
@@ -125,9 +118,9 @@ const FilterInput = ({ tags, fetchTags }) => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    tags: state.tags
+    tags: state.tags,
   };
 };
 

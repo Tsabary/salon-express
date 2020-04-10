@@ -7,9 +7,11 @@ import EditedStreamReducer from "./global/EditedStreamReducer";
 
 import ExploreLiveReducer from "./explore/ExploreLiveReducer";
 import ExploreUpcomingReducer from "./explore/ExploreUpcomingReducer";
+import ExplorePastReducer from "./explore/ExplorePastReducer";
 
 import SubscriptionsLiveReducer from "./subscription/SubscriptionsLiveReducer";
 import SubscriptionsUpcomingReducer from "./subscription/SubscriptionsUpcomingReducer";
+import SubscriptionsPastReducer from "./subscription/SubscriptionsPastReducer";
 
 import CalendarLiveReducer from "./calendar/CalendarLiveReducer";
 import CalendarUpcomingReducer from "./calendar/CalendarUpcomingReducer";
@@ -21,6 +23,7 @@ import MinePastReducer from "./mine/MinePastReducer";
 
 import SearchLiveReducer from "./search/SearchLiveReducer";
 import SearchUpcomingReducer from "./search/SearchUpcomingReducer";
+import SearchPastReducer from "./search/SearchPastReducer";
 
 import StrangerLiveReducer from "./stranger/StrangerLiveReducer";
 import StrangerUpcomingReducer from "./stranger/StrangerUpcomingReducer";
@@ -36,6 +39,7 @@ export default combineReducers({
   // EXPLORE //
   exploreLive: ExploreLiveReducer,
   exploreUpcoming: ExploreUpcomingReducer,
+  explorePast: ExplorePastReducer,
 
   // MY STREAMS
   mineLive: MineLiveReducer,
@@ -50,15 +54,18 @@ export default combineReducers({
   // SUBSCRIPTIONS
   subscriptionsLive: SubscriptionsLiveReducer,
   subscriptionsUpcoming: SubscriptionsUpcomingReducer,
+  subscriptionsPast: SubscriptionsPastReducer,
 
   // SEARCH
   searchLive: SearchLiveReducer,
   searchUpcoming: SearchUpcomingReducer,
+  searchPast: SearchPastReducer,
 
   // STRANGER //
   strangerLive: StrangerLiveReducer,
   strangerUpcoming: StrangerUpcomingReducer,
   strangerPast: StrangerPastReducer,
+  
   strangerProfile: StrangerProfileReducer,
 
   // TEMPLATES
