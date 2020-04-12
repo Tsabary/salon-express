@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { AuthContext } from "../../../providers/Auth";
 
 import { renderSection } from "../../../utils/feeds";
+import { capitalizeAndRemoveHyphens } from "../../../utils/strings";
 
 import {
   fetchFirstSearchedLive,
@@ -77,7 +78,9 @@ const Search = ({
     <div className="search">
       {renderSection(
         searchLive,
-        `Live on ${match.params.id}`,
+        `Live Practice Sessions on ${capitalizeAndRemoveHyphens(
+          match.params.id
+        )}`,
         fetchMoreSearchedLive,
         lastVisibleLive,
         setLastVisibleLive,
@@ -90,7 +93,9 @@ const Search = ({
 
       {renderSection(
         searchUpcoming,
-        `Coming Up on ${match.params.id}`,
+        `Future Practice Sessions on ${capitalizeAndRemoveHyphens(
+          match.params.id
+        )}`,
         fetchMoreSearchedUpcoming,
         lastVisibleUpcoming,
         setLastVisibleUpcoming,
@@ -102,8 +107,10 @@ const Search = ({
       )}
 
       {renderSection(
-        searchUpcoming,
-        `Streams you've missed on ${match.params.id}`,
+        searchPast,
+        `Practice Sessions I've Missed on ${capitalizeAndRemoveHyphens(
+          match.params.id
+        )}`,
         fetchMoreSearchedPast,
         lastVisiblePast,
         setLastVisiblePast,
@@ -116,7 +123,7 @@ const Search = ({
 
       {!searchLive.length && !searchUpcoming.length && !searchPast.length ? (
         <div className="empty-feed small-margin-top centered">
-          This is a fresh genre! Got info of a stream? Post about it!
+          This is a fresh topic! Want to talk about it? Host a practice session!
         </div>
       ) : null}
     </div>

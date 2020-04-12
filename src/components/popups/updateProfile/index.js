@@ -26,7 +26,7 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
   const [formError, setFormError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const languageChoiceDefault = "Choose the languages you speak";
+  const languageChoiceDefault = "Choose the languages you speak and learn";
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageAsFile, setImageAsFile] = useState("");
@@ -46,7 +46,6 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
   const validateForm = () => {
     switch (true) {
       case values.instagram && !validator.isURL(values.instagram):
-        console.log("ig invalid");
         setFormError(errorMessages.ig);
         return false;
 
@@ -56,6 +55,22 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
 
       case values.twitter && !validator.isURL(values.twitter):
         setFormError(errorMessages.twitter);
+        return false;
+
+      case values.soundcloud && !validator.isURL(values.soundcloud):
+        setFormError(errorMessages.soundcloud);
+        return false;
+
+      case values.spotify && !validator.isURL(values.spotify):
+        setFormError(errorMessages.spotify);
+        return false;
+
+      case values.youtube && !validator.isURL(values.youtube):
+        setFormError(errorMessages.youtube);
+        return false;
+
+      case values.linkedin && !validator.isURL(values.linkedin):
+        setFormError(errorMessages.linkedin);
         return false;
 
       case values.website && !validator.isURL(values.website):
@@ -82,6 +97,8 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
             avatar: selectedImage || currentUserProfile.avatar,
           });
           setSubmitting(false);
+          togglePopup(false);
+
         }
       );
     }
@@ -113,7 +130,7 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
         <a
           href="#"
           onClick={() => {
-            togglePopup();
+            togglePopup(false);
           }}
         >
           Close
@@ -147,11 +164,9 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
               </span>
 
               <div className="update-profile__message">
-                We use the following details to auto-fill your form when you
-                post a new event. If you are posting your own content, fill
-                these fields to save yourself the effort. If you are posting
-                streams hosted by others, leave these fields empty, as you will
-                need to delete them from every new submission.
+                The following info would appear in your profile. You don't have to include any
+                of these details, but they might help others form initial small
+                talk in your first interaction.
               </div>
             </div>
 
@@ -187,10 +202,10 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
             <InputField
               type="text"
               placeHolder="Brief description of yourself"
-              value={values.tagline}
-              onChange={(tagline) => {
-                if (tagline.length < 120 && validateWordsLength(tagline, 20))
-                  setValues({ ...values, tagline });
+              value={values.description}
+              onChange={(description) => {
+                if (description.length < 120 && validateWordsLength(description, 20))
+                  setValues({ ...values, description });
               }}
               required={true}
             />

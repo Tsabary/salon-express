@@ -7,14 +7,24 @@ import { connect } from "react-redux";
 import { follow, unfollow } from "../../actions";
 import { AuthContext } from "../../providers/Auth";
 
-const FollowBtn = ({ follow, unfollow, currentUserProfile, strangerID, textFollow, textUnfollow }) => {
+const FollowBtn = ({
+  follow,
+  unfollow,
+  currentUserProfile,
+  strangerID,
+  textFollow,
+  textUnfollow,
+}) => {
   const { setCurrentUserProfile } = useContext(AuthContext);
 
   const [handlingFollow, setHandlingFollow] = useState(false);
 
-  return !currentUserProfile.uid ||
-    currentUserProfile.uid ===
-      strangerID ? <div/> : !currentUserProfile.following.includes(strangerID) ? (
+  return !currentUserProfile ||
+    (currentUserProfile && !currentUserProfile.uid) ||
+    (currentUserProfile && currentUserProfile.uid === strangerID) ? (
+    <div className="follow-btn__empty" />
+  ) : currentUserProfile &&
+    !currentUserProfile.following.includes(strangerID) ? (
     <div
       className="stream__button stream__button-full clickable"
       onClick={() => {

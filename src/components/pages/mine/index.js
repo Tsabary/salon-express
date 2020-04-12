@@ -70,7 +70,7 @@ const Mine = ({
     <div className="feed">
       {renderSection(
         mineLive,
-        "Live Streams I'm hosting",
+        "Live Practice Sessions I'm hosting",
         fetchMoreMineLive,
         lastVisibleLive,
         setLastVisibleLive,
@@ -82,7 +82,7 @@ const Mine = ({
 
       {renderSection(
         mineUpcoming,
-        "Coming Up Streams I'll Be Hosting",
+        "Future Practice Sessions I'll Be Hosting",
         fetchMoreMineUpcoming,
         lastVisibleUpcoming,
         setLastVisibleUpcoming,
@@ -94,7 +94,7 @@ const Mine = ({
 
       {renderSection(
         minePast,
-        "Past Streams I've Hosted",
+        "Past Practice Sessions I've Hosted",
         fetchMoreMinePast,
         lastVisiblePast,
         setLastVisiblePast,
@@ -106,7 +106,7 @@ const Mine = ({
 
       {!minePast.length && !mineUpcoming.length && !mineLive.length ? (
         <div className="empty-feed small-margin-top centered">
-          Nothing to see here
+          Nothing to see here. Host your fitst practice session!
         </div>
       ) : null}
     </div>

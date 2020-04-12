@@ -20,6 +20,14 @@
     grid-template-columns: max-content 1fr;
     align-items: center;
 
+    @include resize(900px) {
+      gap: 3rem;
+    }
+
+    @include resize(700px) {
+      grid-template-columns: 1fr;
+    }
+
     &-img {
       border-radius: 100%;
       overflow: hidden;
@@ -35,16 +43,33 @@
       // margin-left: 5rem;
     }
 
+    &-names {
+      display: grid;
+      grid-template-columns: repeat(2, max-content);
+      gap: 2rem;
+
+      @include resize(900px) {
+        grid-template-columns: max-content;
+        gap: 1rem;
+      }
+    }
+
     &-name {
       color: $mainColor;
       font-family: $fontBold;
       font-size: 3rem;
+      @include resize(900px) {
+        font-size: 2.5rem;
+      }
     }
 
     &-username {
       color: $grey;
       font-family: $fontBold;
       font-size: 3rem;
+      @include resize(900px) {
+        font-size: 2.5rem;
+      }
     }
 
     &-follow {
@@ -58,6 +83,12 @@
 
     &-tagline {
       color: $grey;
+      font-size: 2rem;
+      margin-top: 2rem;
+    }
+
+    &-languages{
+      color: $mainColor;
       font-size: 2rem;
       margin-top: 2rem;
     }

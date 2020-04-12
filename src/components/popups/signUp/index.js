@@ -12,12 +12,12 @@ const SignUp = ({ signUp, providerSignIn, togglePopup }) => {
   const [submitting, setSubmitting] = useState(0);
   const [formError, setFormError] = useState("");
 
-  const handleSubmit = event => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     window.scrollTo(0, 0);
     setSubmitting(1);
     signUp(values.email, values.password, setSubmitting, setFormError, () =>
-      togglePopup()
+      togglePopup(false)
     );
   };
 
@@ -34,7 +34,7 @@ const SignUp = ({ signUp, providerSignIn, togglePopup }) => {
                     type="email"
                     placeHolder="Email address"
                     value={values.email}
-                    onChange={email => setValues({ ...values, email })}
+                    onChange={(email) => setValues({ ...values, email })}
                   />
                 </div>
 
@@ -43,7 +43,7 @@ const SignUp = ({ signUp, providerSignIn, togglePopup }) => {
                     type="password"
                     placeHolder="Password"
                     value={values.password}
-                    onChange={password => setValues({ ...values, password })}
+                    onChange={(password) => setValues({ ...values, password })}
                   />
                 </div>
               </div>
@@ -62,7 +62,10 @@ const SignUp = ({ signUp, providerSignIn, togglePopup }) => {
               <div
                 className="auth__button auth__button--google  tiny-margin-top"
                 onClick={() => {
-                  providerSignIn("google");
+                  providerSignIn("google", () => {
+                    togglePopup(false);
+                    window.location.hash = "";
+                  });
                 }}
               >
                 google
@@ -70,7 +73,10 @@ const SignUp = ({ signUp, providerSignIn, togglePopup }) => {
               <div
                 className="auth__button auth__button--facebook tiny-margin-top"
                 onClick={() => {
-                  providerSignIn("facebook");
+                  providerSignIn("facebook", () => {
+                    togglePopup(false);
+                    window.location.hash = "";
+                  });
                 }}
               >
                 facebook
@@ -106,18 +112,18 @@ const SignUp = ({ signUp, providerSignIn, togglePopup }) => {
 
   return (
     <div className="popup" id="sign-up">
-       <div className="popup__close">
+      <div className="popup__close">
         <div />
         <a
           href="#"
           onClick={() => {
-            togglePopup();
+            togglePopup(false);
           }}
         >
           Close
         </a>
       </div>
-        {renderContent(submitting, formError)}
+      {renderContent(submitting, formError)}
     </div>
   );
 };

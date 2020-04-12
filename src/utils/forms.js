@@ -8,7 +8,10 @@ export const errorMessages = {
   image: "Please add an image for this stream",
   url: "Please add link to this stream",
   urlInvalid: "Please make sure your stream's url is valid",
-  language: "Please a language for this stream",
+  practice_language: "Please choose the language you want to practice",
+  base_language: "Please choose the base language for this conference",
+  level:
+    "Please choose the level of knowledge participants should have in the practiced language",
   startTime: "Please choose a starting time for this stream",
   duration: "Please set the duration of this stream",
   endTime: "Please choose an end time for this stream",
@@ -42,10 +45,6 @@ export const checkValidity = (
       setFormError(errorMessages.body);
       return false;
 
-    // case !values.host_name:
-    //   setFormError(errorMessages.name);
-    //   return false;
-
     case !values.start:
       setFormError(errorMessages.startTime);
       return false;
@@ -58,36 +57,24 @@ export const checkValidity = (
       setFormError(errorMessages.duration);
       return false;
 
-    case !values.url:
-      setFormError(errorMessages.url);
+    // case !values.url:
+    //   setFormError(errorMessages.url);
+    //   return false;
+
+    // case !validator.isURL(values.url):
+    //   setFormError(errorMessages.urlInvalid);
+    //   return false;
+
+    case !values.practice_language:
+      setFormError(errorMessages.practice_language);
       return false;
 
-    case !validator.isURL(values.url):
-      setFormError(errorMessages.urlInvalid);
+    case !values.base_language:
+      setFormError(errorMessages.base_language);
       return false;
 
-    case !values.language:
-      setFormError(errorMessages.language);
-      return false;
-
-    case values.host_ig && !validator.isURL(values.host_ig):
-      setFormError(errorMessages.ig);
-      return false;
-
-    case values.host_fb && !validator.isURL(values.host_fb):
-      setFormError(errorMessages.fb);
-      return false;
-
-    case values.host_twitter && !validator.isURL(values.host_twitter):
-      setFormError(errorMessages.twitter);
-      return false;
-
-    case values.host_linkedin && !validator.isURL(values.host_linkedin):
-      setFormError(errorMessages.linkedin);
-      return false;
-
-    case values.host_web && !validator.isURL(values.host_web):
-      setFormError(errorMessages.web);
+    case !values.level:
+      setFormError(errorMessages.level);
       return false;
 
     case (tipsWelcome && !values.tips_link) ||
@@ -100,6 +87,7 @@ export const checkValidity = (
       return false;
 
     default:
+      setFormError(null);
       return true;
   }
 };

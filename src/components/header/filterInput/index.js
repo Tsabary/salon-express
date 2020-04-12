@@ -97,7 +97,7 @@ const FilterInput = ({ tags, fetchTags }) => {
           <input
             className="filter-input__input"
             type="text"
-            placeholder="Filter streams by tag"
+            placeholder="Filter classes by topic"
             autoComplete="new-password"
             value={tagInput}
             onChange={(e) =>

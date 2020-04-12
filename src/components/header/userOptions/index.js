@@ -52,8 +52,11 @@ const UserOptions = ({ logOut, resendVerification, togglePopup }) => {
       </div>
 
       <div className="user-options__options">
-
-        <a className="user-options__option" href="#update-profile" onClick={togglePopup}>
+        <a
+          className="user-options__option"
+          href="#update-profile"
+          onClick={() => togglePopup(true)}
+        >
           <TextButton text="Update Profile" />
         </a>
 
@@ -68,4 +71,6 @@ const UserOptions = ({ logOut, resendVerification, togglePopup }) => {
     </div>
   );
 };
-export default connect(null, { logOut, resendVerification, togglePopup })(UserOptions);
+export default connect(null, { logOut, resendVerification, togglePopup })(
+  UserOptions
+);

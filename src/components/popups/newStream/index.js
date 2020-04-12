@@ -43,7 +43,8 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
 
   const [makeTemplate, setMakeTemplate] = useState(false);
 
-  const languageChoiceDefault = "What language would it be in?";
+  const practiceLanguageDefault = "What language do you want to practice?";
+  const baseLanguageDefault = "What should be the base language?";
 
   const [hour, setHour] = useState(0);
   const [minutes, setMinutes] = useState(0);
@@ -68,30 +69,12 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
   }, [currentUserProfile]);
 
   useEffect(() => {
-    console.log("outside effect 1 dur", values.duration);
-    console.log("outside effect 1 hou", hour);
-    console.log("outside effect 1 min", minutes);
-
     if (values.start) {
       const duration = hour * 3600000 + minutes * 60000;
       const end = new Date(values.start.getTime() + duration);
       setValues({ ...values, end, duration });
-      console.log("inside effect 1 dur", values.duration);
     }
   }, [hour, minutes, values.start]);
-
-  // useEffect(() => {
-  //   console.log("outside effect 2", values.duration)
-
-  //   if (values.duration !== 0 ) {
-  //     const hour = Math.floor(values.duration / 3600000);
-  //     const minutes = Math.floor((values.duration % 3600000) / 60000);
-  //     setHour(hour);
-  //     setMinutes(minutes);
-  //     console.log("inside effect 2", values.duration)
-
-  //   }
-  // }, [values.duration]);
 
   const reset = () => {
     setValues({
@@ -109,6 +92,7 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
       host_web: currentUserProfile.website || "",
       attendants: [currentUserProfile.uid],
       duration: 0,
+      level: 1,
     });
 
     setSelectedImage(null);
@@ -141,7 +125,7 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
         appearance: "success",
         autoDismiss: true,
       });
-      togglePopup();
+      togglePopup(false);
       reset();
       window.location.hash = "";
     });
@@ -170,7 +154,7 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
         <a
           href="#"
           onClick={() => {
-            togglePopup();
+            togglePopup(false);
             reset();
           }}
         >
@@ -194,7 +178,7 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
                   console.log(values);
                 }}
               >
-                Share a Stream
+                Host a practice Session
               </div>
               {templates.length ? (
                 <label
@@ -261,19 +245,7 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
                   }}
                   required={true}
                 />
-                {/* <InputField
-                  type="text"
-                  placeHolder="Host name"
-                  value={values.host_name}
-                  onChange={(host_name) => {
-                    if (
-                      host_name.length < 30 &&
-                      validateWordsLength(host_name, 15)
-                    )
-                      setValues({ ...values, host_name });
-                  }}
-                  required={true}
-                /> */}
+
                 <div className="add-stream__date">
                   <DatePicker
                     selected={values.start}
@@ -320,7 +292,7 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
                     {renderMinutes()}
                   </Form.Control>
                 </div>
-                <InputField
+                {/* <InputField
                   type="text"
                   placeHolder="Link to the stream"
                   value={values.url}
@@ -328,115 +300,75 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
                     setValues({ ...values, url });
                   }}
                   required={true}
-                />
-                <div className="fr-max">
-                  <InputField
-                    type="text"
-                    placeHolder="Link for tips and donations"
-                    value={values.tips_link}
-                    onChange={(tips_link) => {
-                      setValues({ ...values, tips_link });
-                    }}
-                  />
-                  <a
-                    className="info"
-                    href="https://www.paypal.me/"
-                    target="_blank"
-                  />
-                </div>
+                /> */}
+
                 <Form.Control
                   as="select"
                   bsPrefix="input-field__input form-drop"
                   value={
-                    values.language ? getLanguageName(values.language) : null
+                    values.practice_language
+                      ? getLanguageName(values.practice_language)
+                      : undefined
                   }
                   onChange={(choice) => {
-                    if (choice.target.value !== languageChoiceDefault)
+                    if (choice.target.value !== practiceLanguageDefault)
                       setValues({
                         ...values,
-                        language: getLanguageCode(choice.target.value),
+                        practice_language: getLanguageCode(choice.target.value),
                       });
                   }}
                 >
-                  {renderLanguageOptions(languageChoiceDefault)}
+                  {renderLanguageOptions(practiceLanguageDefault)}
                 </Form.Control>
-                {/* <InputField
-                  type="text"
-                  placeHolder="Price in USD (leave empty if free)"
-                  value={values.price}
-                  onChange={(price) => {
-                    setValues({ ...values, price });
-                  }}
-                  isNumber={true}
-                /> */}
-                <InputField
-                  type="text"
-                  placeHolder="Host Instagram page"
-                  value={values.host_ig}
-                  onChange={(host_ig) => {
-                    setValues({ ...values, host_ig });
-                  }}
-                />
-                <InputField
-                  type="text"
-                  placeHolder="Host Facebook page"
-                  value={values.host_fb}
-                  onChange={(host_fb) => {
-                    setValues({ ...values, host_fb });
-                  }}
-                />
-                <InputField
-                  type="text"
-                  placeHolder="Host Twitter account"
-                  value={values.host_twitter}
-                  onChange={(host_twitter) => {
-                    setValues({ ...values, host_twitter });
-                  }}
-                />
 
-                <InputField
-                  type="text"
-                  placeHolder="Host Soundcloud account"
-                  value={values.host_soundcloud}
-                  onChange={(host_soundcloud) => {
-                    setValues({ ...values, host_soundcloud });
+                <Form.Control
+                  as="select"
+                  bsPrefix="input-field__input form-drop"
+                  value={
+                    values.base_language
+                      ? getLanguageName(values.base_language)
+                      : undefined
+                  }
+                  onChange={(choice) => {
+                    if (choice.target.value !== baseLanguageDefault)
+                      setValues({
+                        ...values,
+                        base_language: getLanguageCode(choice.target.value),
+                      });
                   }}
-                />
+                >
+                  {renderLanguageOptions(baseLanguageDefault)}
+                </Form.Control>
 
-                <InputField
-                  type="text"
-                  placeHolder="Host Spotify account"
-                  value={values.host_spotify}
-                  onChange={(host_spotify) => {
-                    setValues({ ...values, host_spotify });
-                  }}
-                />
+                <Form.Control
+                  as="select"
+                  value={values.level}
+                  bsPrefix="input-field__input form-drop  clickable"
+                  onChange={(v) =>
+                    setValues({
+                      ...values,
+                      level:
+                        v.target.value === "Beginner"
+                          ? 1
+                          : v.target.value === "Mid-Level"
+                          ? 3
+                          : 5,
+                    })
+                  }
+                >
+                  <option className="form-drop" key="beginner">
+                    Beginner
+                  </option>
 
-                <InputField
-                  type="text"
-                  placeHolder="Host Youtube account"
-                  value={values.host_youtube}
-                  onChange={(host_youtube) => {
-                    setValues({ ...values, host_youtube });
-                  }}
-                />
+                  <option className="form-drop" key="midlevel">
+                    Mid-Level
+                  </option>
 
-                <InputField
-                  type="text"
-                  placeHolder="Host LinkedIn account"
-                  value={values.host_linkedin}
-                  onChange={(host_linkedin) => {
-                    setValues({ ...values, host_linkedin });
-                  }}
-                />
-                <InputField
-                  type="text"
-                  placeHolder="Host website"
-                  value={values.host_web}
-                  onChange={(host_web) => {
-                    setValues({ ...values, host_web });
-                  }}
-                />
+                  <option className="form-drop" key="advanced">
+                    Advanced
+                  </option>
+                </Form.Control>
+
                 <Tags
                   values={values}
                   setValues={setValues}
@@ -444,17 +376,7 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
                   formError={formError}
                   setFormError={setFormError}
                 />
-                {/* <ToggleField
-                  text="Are tips welcome?"
-                  toggleOn={() => {
-                    setTipsWelcome(true);
-                  }}
-                  toggleOff={() => {
-                    setTipsWelcome(false);
-                    delete values.tips_link;
-                  }}
-                  id="tipsWelcomedNew" 
-                />*/}
+
                 <ToggleField
                   text="Save this as a new template"
                   toggleOn={() => {

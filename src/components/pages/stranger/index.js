@@ -17,6 +17,7 @@ import {
 } from "../../../actions";
 
 import FollowBtn from "../../followBtn";
+import { getLanguageName } from "../../../utils/languages";
 
 const Stranger = ({
   match,
@@ -81,7 +82,7 @@ const Stranger = ({
     }
   }, [strangerProfile]);
 
-  return !strangerProfile ? null :(
+  return !strangerProfile ? null : (
     <div className="stranger">
       <div className="stranger__header">
         <div>
@@ -94,7 +95,7 @@ const Stranger = ({
           />
         </div>
         <div className="stranger__header-body">
-          <div className="max-max">
+          <div className="stranger__header-names">
             <div className="stranger__header-name">
               {strangerProfile && strangerProfile.name}
             </div>
@@ -106,27 +107,28 @@ const Stranger = ({
             ) : null}
           </div>
           <div className="stranger__header-tagline">
-            {strangerProfile && strangerProfile.tagline}
+            {strangerProfile && strangerProfile.description}
           </div>
-
-          <div className="stranger__header-mentees">
-            {/* {strangerProfile && !strangerProfile.followers
-              ? null
-              : strangerProfile &&  strangerProfile.followers.length === 1
-              ? "1 mentee"
-              : strangerProfile.followers.length + "mentees"} */}
+          <div className="stranger__header-languages">
+            {strangerProfile && strangerProfile.languages
+              ? `Languages: ${strangerProfile.languages
+                  .map((lan) => getLanguageName(lan))
+                  .join(", ")}`
+              : null}
           </div>
         </div>
 
-        {currentUserProfile ? (
+        {currentUserProfile &&
+        currentUserProfile.uid !== strangerProfile.uid ? (
           <FollowBtn
             currentUserProfile={currentUserProfile}
             strangerID={strangerProfile.uid}
             textFollow="Follow"
             textUnfollow="Unfollow"
-          
           />
-        ) : <div/>}
+        ) : (
+          <div />
+        )}
 
         <div className="stranger__header-social">
           {strangerProfile && strangerProfile.instagram ? (
@@ -159,11 +161,51 @@ const Stranger = ({
             </div>
           ) : null}
 
+          {strangerProfile && strangerProfile.soundcloud ? (
+            <div className="social__icon--soundcloud">
+              <a href={"https://" + strangerProfile.soundcloud} target="_blank">
+                <svg className="social__icon social__icon--soundcloud-icon">
+                  <use xlinkHref="../sprite.svg#soundcloud"></use>
+                </svg>
+              </a>
+            </div>
+          ) : null}
+
+          {strangerProfile && strangerProfile.spotify ? (
+            <div className="social__icon--spotify">
+              <a href={"https://" + strangerProfile.spotify} target="_blank">
+                <svg className="social__icon social__icon--spotify-icon">
+                  <use xlinkHref="../sprite.svg#spotify"></use>
+                </svg>
+              </a>
+            </div>
+          ) : null}
+
+          {strangerProfile && strangerProfile.youtube ? (
+            <div className="social__icon--youtube">
+              <a href={"https://" + strangerProfile.youtube} target="_blank">
+                <svg className="social__icon social__icon--youtube-icon">
+                  <use xlinkHref="../sprite.svg#youtube"></use>
+                </svg>
+              </a>
+            </div>
+          ) : null}
+
+          {strangerProfile && strangerProfile.linkedin ? (
+            <div className="social__icon--linkedin">
+              <a href={"https://" + strangerProfile.linkedin} target="_blank">
+                <svg className="social__icon social__icon--linkedin-icon">
+                  <use xlinkHref="../sprite.svg#linkedin"></use>
+                </svg>
+              </a>
+            </div>
+          ) : null}
+
           {strangerProfile && strangerProfile.website ? (
-            <div className="social__icon--web">
+            <div className="social__icon--website">
               <a href={"https://" + strangerProfile.website} target="_blank">
-                <svg className="social__icon social__icon--web-icon">
-                  <use xlinkHref="../sprite.svg#web"></use>
+                <svg className="social__icon social__icon--website-icon">
+                  <use xlinkHref="../sprite.svg#website"></use>
                 </svg>
               </a>
             </div>
@@ -175,7 +217,7 @@ const Stranger = ({
         <>
           {renderSection(
             strangerLive,
-            `Live Streams by ${strangerProfile.name}`,
+            `Live Practice Sessions Hosted by ${strangerProfile.name}`,
             fetchMoreStrangerLive,
             lastVisibleLive,
             setLastVisibleLive,
@@ -187,7 +229,7 @@ const Stranger = ({
 
           {renderSection(
             strangerUpcoming,
-            `Coming Up Streams by ${strangerProfile.name}`,
+            `Future Practice Sessions Hosted by ${strangerProfile.name}`,
             fetchMoreStrangerUpcoming,
             lastVisibleUpcoming,
             setLastVisibleUpcoming,
@@ -199,7 +241,7 @@ const Stranger = ({
 
           {renderSection(
             strangerPast,
-            `Past Streams by ${strangerProfile.name}`,
+            `Practice Sessions Hosted I've Missed with ${strangerProfile.name}`,
             fetchMoreStrangerPast,
             lastVisiblePast,
             setLastVisiblePast,
@@ -240,5 +282,3 @@ export default connect(mapStateToProps, {
   fetchFirstStrangerPast,
   fetchMoreStrangerPast,
 })(Stranger);
-
-//////////////////language choice and filrter/////////////////

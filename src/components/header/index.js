@@ -68,13 +68,13 @@ const Header = () => {
             className="header__title header__title-full"
             onClick={handleChange}
           >
-            Salon.
+            Class.
           </div>
           <div
             className="header__title header__title-lean"
             onClick={handleChange}
           >
-            S.
+            C.
           </div>
         </div>
         {page === 1 || page === 5 ? <FilterInput /> : <div />}

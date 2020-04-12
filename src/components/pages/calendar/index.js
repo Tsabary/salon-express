@@ -66,7 +66,7 @@ const Calendar = ({
     <div className="feed">
       {renderSection(
         calendarLive,
-        "Live Streams I'm Into",
+        "Live Practice Sessions I'm Into",
         fetchMoreCalendarLive,
         lastVisibleLive,
         setLastVisibleLive,
@@ -78,7 +78,7 @@ const Calendar = ({
 
       {renderSection(
         calendarUpcoming,
-        "Coming Up and I'm Going",
+        "Practice Sessions I'll be Attending",
         fetchMoreCalendarUpcoming,
         lastVisibleUpcoming,
         setLastVisibleUpcoming,
@@ -90,7 +90,7 @@ const Calendar = ({
 
       {renderSection(
         calendarPast,
-        "Past Streams I Attended",
+        "Practice Sessions I've Attended",
         fetchMoreCalendarPast,
         lastVisiblePast,
         setLastVisiblePast,
@@ -102,7 +102,7 @@ const Calendar = ({
 
       {!calendarPast.length && !calendarUpcoming.length ? (
         <div className="empty-feed small-margin-top centered">
-          Nothing to see here
+          Nothing to see here. Attend your first practice session!
         </div>
       ) : null}
     </div>

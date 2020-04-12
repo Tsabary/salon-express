@@ -71,3 +71,8 @@ export const validateWordsLength = (string, limit) => {
 export const turnToLowerCaseWithHyphen = (string) => {
   return string.toLowerCase().split(" ").join("-");
 };
+
+export const capitalizeAndRemoveHyphens = string => {
+  return string.split("-").map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(" ");
+
+}

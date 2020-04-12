@@ -65,7 +65,7 @@ const Subscriptions = ({
     <div className="feed">
       {renderSection(
         subscriptionsLive,
-        "Live Streams by Artists you Follow",
+        "Live Practice Sessions by Students I Follow",
         fetchMoreSubscriptionsLive,
         lastVisibleLive,
         setLastVisibleLive,
@@ -77,7 +77,7 @@ const Subscriptions = ({
 
       {renderSection(
         subscriptionsUpcoming,
-        "Coming Up by Artists you Follow",
+        "Future Practice Sessions by Students I Follow",
         fetchMoreSubscriptionsUpcoming,
         lastVisibleUpcoming,
         setLastVisibleUpcoming,
@@ -89,7 +89,7 @@ const Subscriptions = ({
 
       {renderSection(
         subscriptionsPast,
-        "Streams you've missed by Artists you Follow",
+        "Practice Sessions I've missed by Students I Follow",
         fetchMoreSubscriptionsPast,
         lastVisiblePast,
         setLastVisiblePast,
@@ -99,9 +99,11 @@ const Subscriptions = ({
         currentUserProfile
       )}
 
-      {!subscriptionsLive.length && !subscriptionsUpcoming.length  && !subscriptionsPast.length ? (
+      {!subscriptionsLive.length &&
+      !subscriptionsUpcoming.length &&
+      !subscriptionsPast.length ? (
         <div className="empty-feed small-margin-top centered">
-          Start following artists to see all their events
+          Start following other students to join practice sessions they host
         </div>
       ) : null}
     </div>

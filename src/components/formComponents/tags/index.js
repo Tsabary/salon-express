@@ -107,7 +107,7 @@ const Tags = ({
       <div className="tags__container">
         <InputField
           type="text"
-          placeHolder="Add 2-5 tags (for example 'Party' or 'Yoga')"
+          placeHolder="Add 2-5 tags that are related to the topic of the conversation"
           value={tagInput}
           onChange={handleTagInputChange}
           onKeyDown={handleKeyPress}

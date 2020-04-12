@@ -117,7 +117,7 @@ export const fetchFirstExploreLive = (
     languages && languages.length
       ? await db
           .collection("streams")
-          .where("language", "in", [...languages, "lir"])
+          // .where("practice_language", "in", [...languages, "lir"])
           .where("start", "<", dateNow)
           .where("start", ">", dayAgo)
           .orderBy("start")
@@ -161,7 +161,7 @@ export const fetchMoreExploreLive = (
     languages && languages.length
       ? await db
           .collection("streams")
-          .where("language", "in", [...languages, "lir"])
+          // .where("practice_language", "in", [...languages, "lir"])
           .where("start", "<", dateNow)
           .where("start", ">", dayAgo)
           .orderBy("start")
@@ -202,11 +202,15 @@ export const fetchFirstExploreUpcoming = (
   dateNow,
   languages
 ) => async (dispatch) => {
+
+  console.log(languages)
+
+
   const data =
     languages && languages.length
       ? await db
           .collection("streams")
-          .where("language", "in", [...languages, "lir"])
+          // .where("practice_language", "in", [...languages, "lir"])
           .where("start", ">", dateNow)
           .orderBy("start")
           .limit(15)
@@ -240,7 +244,7 @@ export const fetchMoreExploreUpcoming = (
     languages && languages.length
       ? await db
           .collection("streams")
-          .where("language", "in", [...languages, "lir"])
+          // .where("practice_language", "in", [...languages, "lir"])
           .where("start", ">", dateNow)
           .orderBy("start")
           .startAfter(lastVisible)
@@ -277,7 +281,7 @@ export const fetchFirstExplorePast = (
     languages && languages.length
       ? await db
           .collection("streams")
-          .where("language", "in", [...languages, "lir"])
+          // .where("practice_language", "in", [...languages, "lir"])
           .where("end", "<", dateNow)
           .orderBy("end", "desc")
           .limit(15)
@@ -311,7 +315,7 @@ export const fetchMoreExplorePast = (
     languages && languages.length
       ? await db
           .collection("streams")
-          .where("language", "in", [...languages, "lir"])
+          // .where("practice_language", "in", [...languages, "lir"])
           .where("end", "<", dateNow)
           .orderBy("end", "desc")
           .startAfter(lastVisible)
@@ -909,7 +913,7 @@ export const fetchFirstSearchedLive = (
   const filteredStreams = all.filter((doc) => {
     return doc.end.toDate() > dateNow;
   });
-  console.log("new searched", filteredStreams);
+
   dispatch({
     type: FETCH_NEW_SEARCHED_STREAMS_LIVE,
     payload: filteredStreams ? filteredStreams : [],
@@ -931,7 +935,7 @@ export const fetchMoreSearchedLive = (
     languages && languages.length
       ? await db
           .collection("streams")
-          .where("language", "in", [...languages, "lir"])
+          // .where("practice_language", "in", [...languages, "lir"])
           .where("tags", "array-contains", tag)
           .where("start", "<", dateNow)
           .where("start", ">", dayAgo)
@@ -979,7 +983,7 @@ export const fetchFirstSearchedUpcoming = (
     languages && languages.length
       ? await db
           .collection("streams")
-          .where("language", "in", [...languages, "lir"])
+          // .where("practice_language", "in", [...languages, "lir"])
           .where("tags", "array-contains", tag)
           .where("start", ">", dateNow)
           .orderBy("start")
@@ -1015,7 +1019,7 @@ export const fetchMoreSearchedUpcoming = (
     languages && languages.length
       ? await db
           .collection("streams")
-          .where("language", "in", [...languages, "lir"])
+          // .where("practice_language", "in", [...languages, "lir"])
           .where("tags", "array-contains", tag)
           .where("start", ">", dateNow)
           .orderBy("start")
@@ -1055,7 +1059,7 @@ export const fetchFirstSearchedPast = (
     languages && languages.length
       ? await db
           .collection("streams")
-          .where("language", "in", [...languages, "lir"])
+          // .where("practice_language", "in", [...languages, "lir"])
           .where("tags", "array-contains", tag)
           .where("end", "<", dateNow)
           .orderBy("end", "desc")
@@ -1091,7 +1095,7 @@ export const fetchMoreSearchedPast = (
     languages && languages.length
       ? await db
           .collection("streams")
-          .where("language", "in", [...languages, "lir"])
+          // .where("practice_language", "in", [...languages, "lir"])
           .where("tags", "array-contains", tag)
           .where("end", "<", dateNow)
           .orderBy("end", "desc")
@@ -1210,9 +1214,14 @@ export const fetchFirstStrangerUpcoming = (
     setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length === 15) setReachedLast(false);
 
+  console.log(
+    "stranger upcoming",
+    data.docs.map((doc) => doc.data())
+  );
+
   dispatch({
     type: FETCH_NEW_STRANGER_UPCOMING,
-    payload: !!data.docs ? data.docs.map((doc) => doc.data()) : [],
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
@@ -1318,8 +1327,11 @@ export const fetchSingleStream = (streamID, setStream) => async () => {
   const doc = await db.collection("streams").doc(streamID).get();
 
   analytics.logEvent("direct_stream_navigation");
-
-  setStream(doc.data());
+  if (doc.data()) {
+    setStream(doc.data());
+  } else {
+    setStream("empty");
+  }
 };
 
 // TEMPLATES //
@@ -1721,7 +1733,7 @@ export const signUp = (
           .signInWithEmailAndPassword(email, password)
           .then(() => {
             setSubmitting(3);
-            togglePopup();
+            togglePopup(false);
 
             analytics.logEvent("email_signup");
           })
@@ -1748,7 +1760,7 @@ export const resendVerification = () => () => {
   firebase.auth().currentUser.sendEmailVerification();
 };
 
-export const providerSignIn = (provider) => () => {
+export const providerSignIn = (provider, cb) => () => {
   var googleProvider = new firebase.auth.GoogleAuthProvider();
   var facebookProvider = new firebase.auth.FacebookAuthProvider();
   switch (provider) {
@@ -1758,6 +1770,8 @@ export const providerSignIn = (provider) => () => {
         .signInWithPopup(googleProvider)
         .then(() => {
           analytics.logEvent("google_signup");
+          cb();
+          console.log("google sigin in success");
         });
 
       break;
@@ -1767,6 +1781,8 @@ export const providerSignIn = (provider) => () => {
         .signInWithPopup(facebookProvider)
         .then(() => {
           analytics.logEvent("facebook_signup");
+          cb();
+          console.log("facebook sigin in success");
         });
 
       break;
@@ -1869,9 +1885,10 @@ export const fetchTags = () => async (dispatch) => {
   });
 };
 
-export const togglePopup = () => {
+export const togglePopup = (value) => {
   return {
     type: TOGGLE_POPUP,
+    payload: value,
   };
 };
 

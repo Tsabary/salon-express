@@ -28,7 +28,6 @@ import { updateStream, togglePopup, setEditedStream } from "../../../actions";
 import InputField from "../../formComponents/inputField";
 import TextArea from "../../formComponents/textArea";
 import Tags from "../../formComponents/tags";
-import ToggleField from "../../formComponents/toggleField";
 
 const NewStream = ({
   editedStream,
@@ -41,7 +40,8 @@ const NewStream = ({
 
   const [values, setValues] = useState(null);
 
-  const languageChoiceDefault = "What language would it be in?";
+  const practiceLanguageDefault = "What language do you want to practice?";
+  const baseLanguageDefault = "What should be the base language?";
 
   const [hour, setHour] = useState(0);
   const [minutes, setMinutes] = useState(0);
@@ -147,7 +147,7 @@ const NewStream = ({
           appearance: "success",
           autoDismiss: true,
         });
-        togglePopup();
+        togglePopup(false);
         reset();
       }
     );
@@ -160,7 +160,7 @@ const NewStream = ({
         <a
           href="#"
           onClick={() => {
-            togglePopup();
+            togglePopup(false);
             reset();
           }}
         >
@@ -170,7 +170,7 @@ const NewStream = ({
 
       {!submitting ? (
         <div>
-          <div className="popup__title">Edit Stream</div>
+          <div className="popup__title">Edit Practice Session</div>
           <form
             onSubmit={(e) => {
               console.log("nothing");
@@ -229,17 +229,6 @@ const NewStream = ({
               required={true}
             />
 
-            {/* <InputField
-              type="text"
-              placeHolder="Host name"
-              value={values.host_name}
-              onChange={(host_name) => {
-                if (host_name.length < 30 && validateWordsLength(host_name, 15))
-                  setValues({ ...values, host_name });
-              }}
-              required={true}
-            /> */}
-
             <div className="add-stream__date">
               <DatePicker
                 selected={
@@ -293,7 +282,7 @@ const NewStream = ({
                 {renderMinutes()}
               </Form.Control>
             </div>
-
+            {/* 
             <InputField
               type="text"
               placeHolder="Link to the stream"
@@ -302,115 +291,74 @@ const NewStream = ({
                 setValues({ ...values, url });
               }}
               required={true}
-            />
-
-            <InputField
-              type="text"
-              placeHolder="Link for tips and donations"
-              value={values.tips_link}
-              onChange={(tips_link) => {
-                setValues({ ...values, tips_link });
-              }}
-            />
-
-            {values.language ? (
-              <Form.Control
-                as="select"
-                bsPrefix="input-field__input form-drop"
-                value={getLanguageName(values.language)}
-                onChange={(choice) => {
-                  if (choice.target.value !== languageChoiceDefault)
-                    setValues({
-                      ...values,
-                      language: getLanguageCode(choice.target.value),
-                    });
-                }}
-              >
-                {renderLanguageOptions(languageChoiceDefault)}
-              </Form.Control>
-            ) : null}
-
-            {/* <InputField
-              type="text"
-              placeHolder="Price in USD (leave empty if free)"
-              value={values.price}
-              onChange={(price) => {
-                setValues({ ...values, price });
-              }}
-              isNumber={true}
             /> */}
 
-            <InputField
-              type="text"
-              placeHolder="Host Instagram page"
-              value={values.host_ig}
-              onChange={(host_ig) => {
-                setValues({ ...values, host_ig });
+            <Form.Control
+              as="select"
+              bsPrefix="input-field__input form-drop"
+              value={
+                values.practice_language
+                  ? getLanguageName(values.practice_language)
+                  : undefined
+              }
+              onChange={(choice) => {
+                if (choice.target.value !== practiceLanguageDefault)
+                  setValues({
+                    ...values,
+                    practice_language: getLanguageCode(choice.target.value),
+                  });
               }}
-            />
+            >
+              {renderLanguageOptions(practiceLanguageDefault)}
+            </Form.Control>
 
-            <InputField
-              type="text"
-              placeHolder="Host Facebook page"
-              value={values.host_fb}
-              onChange={(host_fb) => {
-                setValues({ ...values, host_fb });
+            <Form.Control
+              as="select"
+              bsPrefix="input-field__input form-drop"
+              value={
+                values.base_language
+                  ? getLanguageName(values.base_language)
+                  : undefined
+              }
+              onChange={(choice) => {
+                if (choice.target.value !== baseLanguageDefault)
+                  setValues({
+                    ...values,
+                    base_language: getLanguageCode(choice.target.value),
+                  });
               }}
-            />
+            >
+              {renderLanguageOptions(baseLanguageDefault)}
+            </Form.Control>
 
-            <InputField
-              type="text"
-              placeHolder="Host Twitter account"
-              value={values.host_twitter}
-              onChange={(host_twitter) => {
-                setValues({ ...values, host_twitter });
-              }}
-            />
+            <Form.Control
+              as="select"
+              value={values.level}
+              bsPrefix="input-field__input form-drop  clickable"
+              onChange={(v) =>
+                setValues({
+                  ...values,
+                  level:
+                    v.target.value === "Beginner"
+                      ? 1
+                      : v.target.value === "Mid-Level"
+                      ? 3
+                      : 5,
+                })
+              }
+            >
+              <option className="form-drop" key="beginner">
+                Beginner
+              </option>
 
-            <InputField
-              type="text"
-              placeHolder="Host Soundcloud account"
-              value={values.host_soundcloud}
-              onChange={(host_soundcloud) => {
-                setValues({ ...values, host_soundcloud });
-              }}
-            />
+              <option className="form-drop" key="midlevel">
+                Mid-Level
+              </option>
 
-            <InputField
-              type="text"
-              placeHolder="Host Spotify account"
-              value={values.host_spotify}
-              onChange={(host_spotify) => {
-                setValues({ ...values, host_spotify });
-              }}
-            />
-
-            <InputField
-              type="text"
-              placeHolder="Host Youtube account"
-              value={values.host_youtube}
-              onChange={(host_youtube) => {
-                setValues({ ...values, host_youtube });
-              }}
-            />
-
-            <InputField
-              type="text"
-              placeHolder="Host LinkedIn account"
-              value={values.host_linkedin}
-              onChange={(host_linkedin) => {
-                setValues({ ...values, host_linkedin });
-              }}
-            />
-
-            <InputField
-              type="text"
-              placeHolder="Host website"
-              value={values.host_web}
-              onChange={(host_web) => {
-                setValues({ ...values, host_web });
-              }}
-            />
+              <option className="form-drop" key="advanced">
+                Advanced
+              </option>
+            </Form.Control>
 
             <Tags
               values={values}

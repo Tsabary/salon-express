@@ -83,7 +83,7 @@ const Menu = ({ togglePopup, logOut }) => {
         className="navigation__button"
         onClick={() => {
           setIsMenuOpen(!isMenuOpen);
-          togglePopup();
+          togglePopup(false);
         }}
       >
         <span className="navigation__icon">&nbsp;</span>

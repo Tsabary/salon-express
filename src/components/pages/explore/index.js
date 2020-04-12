@@ -69,7 +69,7 @@ const Feed = ({
     <div className="feed">
       {renderSection(
         exploreLive,
-        "Live Everywhere",
+        "Live Practice Sessions",
         fetchMoreExploreLive,
         lastVisibleLive,
         setLastVisibleLive,
@@ -81,7 +81,7 @@ const Feed = ({
 
       {renderSection(
         exploreUpcoming,
-        "Coming Up Everywhere",
+        "Practice Sessions Coming Up",
         fetchMoreExploreUpcoming,
         lastVisibleUpcoming,
         setLastVisibleUpcoming,
@@ -93,7 +93,7 @@ const Feed = ({
 
       {renderSection(
         explorePast,
-        "Streams you've missed",
+        "Practice Sessions I've Missed",
         fetchMoreExplorePast,
         lastVisiblePast,
         setLastVisiblePast,

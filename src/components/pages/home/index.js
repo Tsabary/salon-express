@@ -75,7 +75,7 @@ const Home = ({ popupShown, togglePopup }) => {
       {/* NEW STREAM BUTTON */}
       <a
         style={{ display: popupShown ? "none" : "" }}
-        onClick={togglePopup}
+        onClick={() => togglePopup(true)}
         className="post-button"
         href={
           currentUser && currentUser.emailVerified ? "#add-stream" : "#sign-up"

@@ -2,17 +2,11 @@ import "./styles.scss";
 import React, { useState, useEffect } from "react";
 
 const ToggleButton = ({ id, toggleOn, toggleOff, isChecked }) => {
-  // console.log(id, isChecked);
 
   const [checked, setChecked] = useState(isChecked);
 
-  // useEffect(() => {
-  //   setChecked(isChecked)
-  // },[isChecked])
-
   useEffect(() => {
     checked ? toggleOn() : toggleOff();
-    console.log(checked);
   }, [checked]);
 
   return (
