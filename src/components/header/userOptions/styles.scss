@@ -72,6 +72,8 @@
     text-align: end;
     width: max-content;
     color: $greyDark;
+    text-decoration: none !important;
+
     cursor: pointer;
     &:hover ~ .user-options__option {
       opacity: 1;
@@ -81,6 +83,8 @@
       opacity: 1;
       visibility: visible;
       color: $mainColor;
+      text-decoration: none !important;
+
     }
   }
 

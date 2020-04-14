@@ -98,7 +98,6 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
           });
           setSubmitting(false);
           togglePopup(false);
-
         }
       );
     }
@@ -128,6 +127,7 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
       <div className="popup__close">
         <div />
         <a
+          className="popup__close-text"
           href="#"
           onClick={() => {
             togglePopup(false);
@@ -164,9 +164,9 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
               </span>
 
               <div className="update-profile__message">
-                The following info would appear in your profile. You don't have to include any
-                of these details, but they might help others form initial small
-                talk in your first interaction.
+                The following info would appear in your profile. You don't have
+                to include any of these details, but they might help others form
+                initial small talk in your first interaction.
               </div>
             </div>
 
@@ -204,7 +204,10 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
               placeHolder="Brief description of yourself"
               value={values.description}
               onChange={(description) => {
-                if (description.length < 120 && validateWordsLength(description, 20))
+                if (
+                  description.length < 120 &&
+                  validateWordsLength(description, 20)
+                )
                   setValues({ ...values, description });
               }}
               required={true}

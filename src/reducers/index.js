@@ -1,6 +1,5 @@
 import { combineReducers } from "redux";
 
-import TemplatesReducer from "./global/TemplatesReducer";
 import PopupReducer from "./global/PopupReducer";
 import TagsReducer from "./global/TagsReducer";
 import EditedStreamReducer from "./global/EditedStreamReducer";
@@ -30,10 +29,18 @@ import StrangerUpcomingReducer from "./stranger/StrangerUpcomingReducer";
 import StrangerPastReducer from "./stranger/StrangerPastReducer";
 import StrangerProfileReducer from "./stranger/StrangerProfileReducer";
 
+import TemplatesReducer from "./global/TemplatesReducer";
+
+import QuestionsReducer from "./global/QuestionsReducer";
+
+import PositionsReducer from './careers/PositionsReducer';
+
+
 export default combineReducers({
   // GLOBAL //
   popupShown: PopupReducer,
   tags: TagsReducer,
+  questions: QuestionsReducer,
   editedStream: EditedStreamReducer,
 
   // EXPLORE //
@@ -65,9 +72,12 @@ export default combineReducers({
   strangerLive: StrangerLiveReducer,
   strangerUpcoming: StrangerUpcomingReducer,
   strangerPast: StrangerPastReducer,
-  
+
   strangerProfile: StrangerProfileReducer,
 
-  // TEMPLATES
-  templates: TemplatesReducer
+  // TEMPLATES //
+  templates: TemplatesReducer,
+
+  // CAREERS //
+  positions : PositionsReducer
 });

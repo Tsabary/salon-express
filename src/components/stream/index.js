@@ -56,8 +56,10 @@ const Stream = ({
 
   const event = {
     title: stream.title,
-    description: `${stream.body} \r Stream URL: ${
+    description: `${stream.body} \r Link to the Classroom: ${
       "https://meet.jit.si/ClassExpress-" + stream.id
+    } \r Link to the practice details: https://class.express/practice/${
+      stream.id
     }`,
     startTime: startDate,
     endTime: endDate,
@@ -117,13 +119,13 @@ const Stream = ({
           <div className="stream__content">
             {startDate.getTime() > Date.now() ? (
               <div className="stream__timestamp">
-                {startDate.getDay() !== new Date().getDay() ? (
+                {startDate.getTime() < Date.now() + 3600000 ? (
                   <span>
-                    <Moment format="DD/MM/YYYY HH:mm">{startDate}</Moment>
+                    Starts <Moment fromNow>{startDate}</Moment>
                   </span>
                 ) : (
                   <span>
-                    Starts <Moment fromNow>{startDate}</Moment>
+                    <Moment format="DD/MM/YYYY HH:mm">{startDate}</Moment>
                   </span>
                 )}
               </div>
@@ -143,7 +145,7 @@ const Stream = ({
                 className="stream__host-name"
                 onClick={() => handleChange(`/${stream.user_username}`)}
               >
-                {stream.user_username}
+                {stream.user_name}
               </span>
             </div>
 
@@ -174,11 +176,13 @@ const Stream = ({
               </div>
             </div>
 
-            {stream.attendants.length > 2 ||
+            {stream.attendants.length >= 2 ||
             (currentUserProfile &&
               stream.user_ID === currentUserProfile.uid) ? (
               <div className="stream__attendants">
-                {stream.attendants.length} attending
+                {endDate > dateNow
+                  ? `${stream.attendants.length} attending`
+                  : `${stream.attendants.length} attended`}
               </div>
             ) : null}
 
@@ -199,7 +203,16 @@ const Stream = ({
           </div>
         </div>
 
-        {currentUserProfile &&
+        <a
+          href={"https://meet.jit.si/ClassExpress-" + stream.id}
+          target="_blank"
+        >
+          <div className="stream__button stream__button-full clickable">
+            Join Practice
+          </div>
+        </a>
+
+        {/* {currentUserProfile &&
         stream.attendants.includes(currentUserProfile.uid) ? (
           <a
             href={"https://meet.jit.si/ClassExpress-" + stream.id}
@@ -228,7 +241,7 @@ const Stream = ({
               Attend to get access
             </ReactTooltip>
           </>
-        )}
+        )} */}
 
         {!currentUserProfile || !currentUserProfile.uid ? (
           <a href="#sign-up">

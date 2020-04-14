@@ -4,30 +4,27 @@ import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import history from "../../history";
 
-import { setCurrentPage } from "../../actions";
-import SocialLinks from "../social";
+import tnc from "../../documents/tnc.pdf";
+import pp from "../../documents/pp.pdf";
 
-const Footer = ({ setCurrentPage }) => {
+const Footer = () => {
   const myHistory = useHistory(history);
 
   const handleChange = (page, path) => {
-    setCurrentPage(page);
     myHistory.push(`/${path}`);
     window.scrollTo(0, 0);
   };
 
-  const renderMenuItems = items => {
-    return items.map(group => {
+  const renderMenuItems = (items) => {
+    return items.map((group) => {
       return (
         <div className="footer__section-contents" key={group.title}>
-          <div className="footer__section-title" key={group.title}>
-            {group.title}
-          </div>
-          {group.pages.map(page => {
+          <div className="footer__section-title">{group.title}</div>
+          {group.pages.map((page) => {
             return (
               <div
                 className="footer__section-item"
-                key={page}
+                key={page.title}
                 onClick={() => handleChange(page.title, page.path)}
               >
                 {page.title}
@@ -41,43 +38,46 @@ const Footer = ({ setCurrentPage }) => {
 
   return (
     <div className="footer">
-      <div className="footer__section">
-        <div className="footer__logo">Ask Billie</div>
+      {/* <div className="footer__section footer__left-cul">
+        <div className="footer__logo">Saasketeer</div>
         <div className="footer__rights">All rights reserved</div>
-      </div>
+      </div> */}
 
       {renderMenuItems([
         {
           title: "Pages",
           pages: [
             { title: "Home", path: "" },
-            { title: "About", path: "about" }
-          ]
+            { title: "FAQ", path: "frequently-asked-questions" },
+          ],
         },
 
         {
           title: "Company",
           pages: [
             { title: "Careers", path: "careers" },
-            { title: "Contact", path: "contact" }
-          ]
+            { title: "Contact", path: "contact" },
+          ],
         },
-
-        {
-          title: "Support",
-          pages: [
-            { title: "Privacy Policy", path: "privacy-Policy" },
-            { title: "Terms and Conditions", path: "terms-and-conditions" }
-          ]
-        }
       ])}
 
       <div className="footer__section-contents">
+        <div className="footer__section-title">Support</div>
+        <a className="footer__section-item" href={pp} target="_blank">
+          Privacy Policy
+        </a>
+
+        <a className="footer__section-item" href={tnc} target="_blank">
+          Terms and Conditions
+        </a>
+      </div>
+
+      {/* <div className="footer__section-contents">
         <div className="footer__section-title">Stay in touch</div>
         <SocialLinks />
-      </div>
+      </div> */}
     </div>
   );
 };
 
-export default connect(null, { setCurrentPage })(Footer);
+export default connect(null)(Footer);

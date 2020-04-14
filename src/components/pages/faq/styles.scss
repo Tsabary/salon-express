@@ -1,0 +1,40 @@
+@import "../../../styles/imports";
+
+.about {
+  @include padding;
+
+  &__container {
+    margin-top: 3rem;
+    border: $border;
+    border-radius: $borderRadius;
+    padding: 4rem;
+  }
+
+  &__title {
+    font-size: 3rem;
+    color: $mainColor;
+    font-family: $fontBold;
+    text-align: center;
+    margin: auto;
+  }
+}
+
+.question {
+  &__title {
+    width: max-content;
+    font-size: 1.8rem;
+    color: $mainColor;
+    margin-top: 1rem;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__body {
+    font-size: 1.6rem;
+    line-height: 3rem;
+    color: $greyDark;
+  }
+}

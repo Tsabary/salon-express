@@ -35,5 +35,11 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    match /questions/{uquestionID}{
+      allow read: if true;
+      allow write: if request.auth.uid == "PPryp7ws2lekKx1mePChgH0Sh3t1";
+      allow delete: if false;
+    }
+
   }
 }

@@ -91,10 +91,15 @@ import {
   NEW_TEMPLATE,
   DELETE_TEMPLATE,
 
+  // CAREERS //
+  FETCH_POSITIONS,
+  FETCH_SINGLE_POSITION,
+
   // GLOBAL //
   TOGGLE_POPUP,
   FETCH_TAGS,
   SET_EDITED_STREAM,
+  FETCH_QUESTIONS,
 } from "./types";
 
 import { trimURL } from "../utils/forms";
@@ -202,9 +207,7 @@ export const fetchFirstExploreUpcoming = (
   dateNow,
   languages
 ) => async (dispatch) => {
-
-  console.log(languages)
-
+  console.log(languages);
 
   const data =
     languages && languages.length
@@ -1707,6 +1710,54 @@ export const unfollow = (
     analytics.logEvent("unfollow");
 
     cb();
+  });
+};
+
+// FAQ //
+
+export const fetchQuestions = () => async (dispatch) => {
+  console.log("data");
+
+  const data = await db
+    .collection("questions")
+    .orderBy("placement", "asc")
+    .get();
+
+  dispatch({
+    type: FETCH_QUESTIONS,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+export const addQuestion = (values, userUID, cb) => () => {
+  if (userUID !== "PPryp7ws2lekKx1mePChgH0Sh3t1") return;
+  const docRef = db.collection("questions").doc();
+  docRef.set({ ...values, id: docRef.id }).then(() => {
+    cb();
+  });
+};
+
+// CAREERS //
+export const fetchPositions = () => async (dispatch) => {
+  const data = await db.collection("positions").get();
+
+  dispatch({
+    type: FETCH_POSITIONS,
+    payload: !!data.docs
+      ? data.docs.map((doc) => {
+          return doc.data();
+        })
+      : [],
+  });
+};
+
+
+export const fetchSinglePosition = (id) => async (dispatch) => {
+  const data = await db.collection("positions").doc(id).get();
+
+  dispatch({
+    type: FETCH_SINGLE_POSITION,
+    payload: data.data() ? data.data() : {},
   });
 };
 

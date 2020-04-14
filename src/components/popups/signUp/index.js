@@ -115,6 +115,7 @@ const SignUp = ({ signUp, providerSignIn, togglePopup }) => {
       <div className="popup__close">
         <div />
         <a
+          className="popup__close-text"
           href="#"
           onClick={() => {
             togglePopup(false);

@@ -143,18 +143,30 @@
     border-radius: $borderRadius;
     font-size: 1.2rem;
     transition: all 0.2s;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: none;
+    }
 
     &-line {
       border: 1px solid $mainColor;
       color: $mainColor;
+      text-decoration: none;
       &:hover {
         background: $mainColorTransparent;
+        text-decoration: none;
       }
     }
 
     &-full {
       background: $mainColor;
-      color: white;
+      color: white !important;
+      text-decoration: none;
+      &:hover {
+        color: white !important;
+        text-decoration: none;
+      }
     }
 
     ul {
@@ -218,6 +230,7 @@
     padding: 1rem !important;
     cursor: pointer;
     transition: all 0.2s;
+    text-decoration: none;
 
     &__delete {
       &:hover {
@@ -226,10 +239,13 @@
     }
 
     &__normal {
+      text-decoration: none;
+
       &:hover {
         background-color: white;
         color: $mainColor !important;
         border: $border;
+        text-decoration: none;
       }
     }
   }

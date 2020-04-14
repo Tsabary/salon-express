@@ -8,13 +8,7 @@ import Form from "react-bootstrap/Form";
 import { useToasts } from "react-toast-notifications";
 
 import { AuthContext } from "../../../providers/Auth";
-import {
-  checkValidity,
-  errorMessages,
-  renderHours,
-  renderMinutes,
-  trimURL,
-} from "../../../utils/forms";
+import { checkValidity, errorMessages, trimURL } from "../../../utils/forms";
 
 import { validateWordsLength } from "../../../utils/strings";
 import {
@@ -39,12 +33,10 @@ const NewStream = ({
   const { addToast } = useToasts();
 
   const [values, setValues] = useState(null);
+  const [startTime, setStartTime] = useState(null);
 
   const practiceLanguageDefault = "What language do you want to practice?";
   const baseLanguageDefault = "What should be the base language?";
-
-  const [hour, setHour] = useState(0);
-  const [minutes, setMinutes] = useState(0);
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageAsFile, setImageAsFile] = useState("");
@@ -54,42 +46,32 @@ const NewStream = ({
 
   const [originalTags, setOriginalTags] = useState([]);
 
-  useEffect(() => {
-    if (values && values.start) {
-      const startDate =
-        Object.prototype.toString.call(editedStream.start) === "[object Date]"
-          ? editedStream.start
-          : editedStream.start.toDate();
-
-      setValues({ ...values, start: startDate });
-    }
-  }, []);
 
   useEffect(() => {
-    if (values && values.duration) {
-      setHour(Math.floor(values.duration / 3600000));
-      setMinutes((values.duration % 3600000) / 60000);
-    }
-  }, [values]);
-
-  useEffect(() => {
-    setValues(editedStream);
+    if (!editedStream.start) return;
+    const startDate = editedStream.start.toDate();
+    setValues({ ...editedStream, start: startDate });
     setOriginalTags(editedStream.tags || []);
+    setStartTime(startDate);
   }, [editedStream]);
 
   useEffect(() => {
-    if (values && values.start) {
-      const startDate =
-        Object.prototype.toString.call(editedStream.start) === "[object Date]"
-          ? editedStream.start
-          : editedStream.start.toDate();
-
-      const duration = hour * 3600000 + minutes * 60000;
-
-      const end = new Date(startDate.getTime() + duration);
-      setValues({ ...values, duration, end });
+    if (currentUserProfile) {
+      reset();
     }
-  }, [hour, minutes]);
+  }, [currentUserProfile]);
+
+  // Set the end date whenever the start date is set
+  useEffect(() => {
+    if (
+      values &&
+      values.start &&
+      Object.prototype.toString.call(values.start) === "[object Date]"
+    ) {
+      const end = new Date(values.start.getTime() + 2700000);
+      setValues({ ...values, end });
+    }
+  }, [startTime]);
 
   const handleImageAsFile = (e) => {
     e.preventDefault();
@@ -98,12 +80,7 @@ const NewStream = ({
     setSelectedImage(URL.createObjectURL(image));
   };
 
-  useEffect(() => {
-    if (currentUserProfile) {
-      reset();
-    }
-  }, [currentUserProfile]);
-
+  // Reset the form
   const reset = () => {
     setValues({
       user_ID: currentUserProfile.uid,
@@ -119,6 +96,7 @@ const NewStream = ({
     setEditedStream({});
   };
 
+  // Handle the form submittion
   const handleSubmit = () => {
     if (!checkValidity(values, setFormError, imageAsFile)) {
       return;
@@ -158,6 +136,7 @@ const NewStream = ({
       <div className="popup__close">
         <div />
         <a
+          className="popup__close-text"
           href="#"
           onClick={() => {
             togglePopup(false);
@@ -229,7 +208,7 @@ const NewStream = ({
               required={true}
             />
 
-            <div className="add-stream__date">
+            <div className="add-stream__date clickable">
               <DatePicker
                 selected={
                   !values.start
@@ -247,6 +226,7 @@ const NewStream = ({
                       ...values,
                       start,
                     });
+                    setStartTime(start);
                   } else {
                     delete values.start;
                   }
@@ -262,36 +242,6 @@ const NewStream = ({
                 excludeOutOfBoundsTimes
               />
             </div>
-
-            <div className="fr-fr">
-              <Form.Control
-                as="select"
-                value={hour + " hours"}
-                bsPrefix="input-field__input form-drop"
-                onChange={(v) => setHour(v.target.value.split(" ")[0])}
-              >
-                {renderHours()}
-              </Form.Control>
-
-              <Form.Control
-                as="select"
-                value={minutes + " minutes"}
-                bsPrefix="input-field__input form-drop"
-                onChange={(v) => setMinutes(v.target.value.split(" ")[0])}
-              >
-                {renderMinutes()}
-              </Form.Control>
-            </div>
-            {/* 
-            <InputField
-              type="text"
-              placeHolder="Link to the stream"
-              value={values.url}
-              onChange={(url) => {
-                setValues({ ...values, url });
-              }}
-              required={true}
-            /> */}
 
             <Form.Control
               as="select"

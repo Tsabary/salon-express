@@ -34,41 +34,56 @@ const Home = ({ popupShown, togglePopup }) => {
 
   return (
     <div className="home">
-      <div className="home__menu">
-        <ul>
-          {page === 1 ? (
-            <div className="default-active">Explore</div>
-          ) : (
-            <li onClick={() => setPage(1)}>
-              <a href="#">Explore</a>
-            </li>
-          )}
+      {!currentUser ? (
+        <div className="home__welcome">
+          Welcome to <span className="bold-700">Class Express</span>, where you
+          can discover group video language practice sessions. Join sessions,
+          talk to other like minded people from around the world, and practice
+          the language you're learning! -{" "}
+          <a href="#sign-up" className="bold-700">
+            Sign Up
+          </a>{" "}
+          to start practicing - it's <span className="bold-700">FREE</span>.
+        </div>
+      ) : null}
 
-          {page === 2 && currentUser ? (
-            <div className="default-active">Subscriptions</div>
-          ) : currentUser ? (
-            <li onClick={() => setPage(2)}>
-              <a href="#">Subscriptions</a>
-            </li>
-          ) : null}
+      {currentUser ? (
+        <div className="home__menu">
+          <ul>
+            {page === 1  && currentUser ? (
+              <div className="default-active">Explore</div>
+            ) : (
+              <li onClick={() => setPage(1)}>
+                <a href="#">Explore</a>
+              </li>
+            )}
 
-          {page === 3 && currentUser ? (
-            <div className="default-active">Calendar</div>
-          ) : currentUser ? (
-            <li onClick={() => setPage(3)}>
-              <a href="#">Calendar</a>
-            </li>
-          ) : null}
+            {page === 2 && currentUser ? (
+              <div className="default-active">Subscriptions</div>
+            ) : currentUser ? (
+              <li onClick={() => setPage(2)}>
+                <a href="#">Subscriptions</a>
+              </li>
+            ) : null}
 
-          {page === 4 && currentUser ? (
-            <div className="default-active">My Streams</div>
-          ) : currentUser ? (
-            <li onClick={() => setPage(4)}>
-              <a href="#">My Streams</a>
-            </li>
-          ) : null}
-        </ul>
-      </div>
+            {page === 3 && currentUser ? (
+              <div className="default-active">Calendar</div>
+            ) : currentUser ? (
+              <li onClick={() => setPage(3)}>
+                <a href="#">Calendar</a>
+              </li>
+            ) : null}
+
+            {page === 4 && currentUser ? (
+              <div className="default-active">My Streams</div>
+            ) : currentUser ? (
+              <li onClick={() => setPage(4)}>
+                <a href="#">My Streams</a>
+              </li>
+            ) : null}
+          </ul>
+        </div>
+      ) : null}
 
       {renderContent(page)}
 
@@ -81,7 +96,7 @@ const Home = ({ popupShown, togglePopup }) => {
           currentUser && currentUser.emailVerified ? "#add-stream" : "#sign-up"
         }
       >
-        +
+        New Session
       </a>
     </div>
   );

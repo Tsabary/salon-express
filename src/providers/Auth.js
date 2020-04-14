@@ -7,7 +7,9 @@ export const AuthContext = React.createContext();
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [currentUserProfile, setCurrentUserProfile] = useState(null);
-  firebase.auth().onAuthStateChanged(setCurrentUser);
+  firebase.auth().onAuthStateChanged(state => {
+    setCurrentUser(state)
+  });
 
   useEffect(() => {
     if (currentUser) {
@@ -20,7 +22,6 @@ export const AuthProvider = ({ children }) => {
         });
     } else {
       setCurrentUserProfile(null);
-      window.location.hash = "";
     }
   }, [currentUser]);
 

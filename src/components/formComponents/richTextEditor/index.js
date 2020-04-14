@@ -48,7 +48,7 @@ import "../../../../node_modules/draft-js-divider-plugin/lib/plugin.css";
 import createLinkPlugin from "draft-js-anchor-plugin";
 import "../../../../node_modules/draft-js-anchor-plugin/lib/plugin.css";
 
-import { fetchAllUsers } from "../../../actions";
+import {  } from "../../../actions";
 
 ///create the emoji plugin and extract it's components///
 const emojiPlugin = createEmojiPlugin();
@@ -157,7 +157,7 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps, { fetchAllUsers })(RichTextEditor);
+export default connect(mapStateToProps, {  })(RichTextEditor);
 
 ///mention plugin and style imports///
 // import createMentionPlugin, {

@@ -1,4 +1,4 @@
-@import '../../../styles/imports';
+@import "../../../styles/imports";
 
 .auth-options {
   display: grid;
@@ -6,6 +6,12 @@
   align-items: center;
 
   &__box {
+    text-decoration: none !important;
+
+    &:hover {
+      text-decoration: none !important;
+    }
+
     @include resize(750px) {
       display: none;
     }
@@ -13,9 +19,10 @@
 
   &__text {
     display: none;
+    text-decoration: none !important;
 
-    // @include resize(1100px) {
-    //   display: block;
-    // }
+    &:hover {
+      text-decoration: none !important;
+    }
   }
 }

@@ -1,0 +1,20 @@
+@import "../../../styles/imports";
+
+.add-question {
+  @include padding;
+
+  &__container {
+    margin-top: 3rem;
+    border: $border;
+    border-radius: $borderRadius;
+    padding: 4rem;
+  }
+
+  &__title{
+    font-size: 3rem;
+    color: $mainColor;
+    font-family: $fontBold;
+    text-align: center;
+    margin: auto;
+  }
+}

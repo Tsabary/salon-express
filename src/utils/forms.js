@@ -29,8 +29,7 @@ export const errorMessages = {
 export const checkValidity = (
   values,
   setFormError,
-  imageAsFile,
-  tipsWelcome
+  imageAsFile
 ) => {
   switch (true) {
     case !imageAsFile && !values.image:
@@ -77,10 +76,6 @@ export const checkValidity = (
       setFormError(errorMessages.level);
       return false;
 
-    case (tipsWelcome && !values.tips_link) ||
-      (values.tips_link && !validator.isURL(values.tips_link)):
-      setFormError(errorMessages.tips);
-      return false;
 
     case (values && !values.tags) || (values.tags && values.tags.length < 2):
       setFormError(errorMessages.tagsMin);

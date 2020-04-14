@@ -10,7 +10,7 @@ const Contact = () => {
   const { currentUserProfile } = useContext(AuthContext);
   const [values, setValues] = useState({
     email: "",
-    content: ""
+    content: "",
   });
   const [sent, setSent] = useState(false);
 
@@ -19,21 +19,21 @@ const Contact = () => {
       setValues({ ...values, email: currentUserProfile.email });
   }, [currentUserProfile]);
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     const variables = {
       message_html: values.content,
-      from_email: values.email
+      from_email: values.email,
     };
 
     window.emailjs
       .send("gmail", "contact", variables, "user_hE0SyjVsZawiPWprq0Att")
-      .then(res => {
+      .then((res) => {
         setSent(true);
         console.log("Email successfully sent!");
       })
-      .catch(err =>
+      .catch((err) =>
         console.error(
           "Oh well, you failed. Here some thoughts on the error that occured:",
           err
@@ -45,7 +45,7 @@ const Contact = () => {
 
   return (
     <div className="contact medium-margin-bottom">
-      <h2>
+      <h2 className="small-margin-top">
         Do you have any questions? Suggestions?
         <br />
         Experiencing any bugs? We're here for you.
@@ -57,23 +57,24 @@ const Contact = () => {
             type="email"
             placeHolder="Email address"
             value={values.email}
-            onChange={email => setValues({ ...values, email })}
-            label="Email"
+            onChange={(email) => setValues({ ...values, email })}
           />
 
           <TextArea
             type="text"
             placeHolder="What would you like to tell us?"
             value={values.content}
-            onChange={content => setValues({ ...values, content })}
-            label="What would you like to tell us?"
+            onChange={(content) => setValues({ ...values, content })}
           />
-          <button
-            type="submit"
-            className="boxed-button small-margin-top justify-end"
-          >
-            Send
-          </button>
+          <div className="fr-max">
+            <div />
+            <button
+              type="submit"
+              className="boxed-button small-margin-top justify-end"
+            >
+              Send
+            </button>
+          </div>
         </form>
       ) : (
         <div>

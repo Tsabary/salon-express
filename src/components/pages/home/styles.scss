@@ -11,6 +11,15 @@ $easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     margin-top: 5rem;
   }
 
+  &__welcome {
+    border: $border;
+    border-radius: $borderRadius;
+    padding: 2rem;
+    font-size: 1.8rem;
+    margin-top: 3rem;
+    color: $mainColor;
+  }
+
   &__menu {
     width: max-content;
     margin-left: -2rem;
@@ -79,7 +88,6 @@ $easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
 }
 
-
 .default-active {
   color: $mainColor;
   display: inline-block;
@@ -92,17 +100,14 @@ $easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   margin-right: 2rem;
 }
 
-
 .post-button {
   position: fixed;
   bottom: 5rem;
   right: 10rem;
   z-index: 200;
-  height: 6rem;
-  width: 6rem;
-  // padding: 2.5rem 2.5rem;
+  padding: 1rem 2rem;
   color: white;
-  font-size: 3rem;
+  font-size: 1.6rem;
   border-radius: 35rem;
   border: 1px rgba(white, 0.8) solid;
   transition: all 0.15s;
@@ -111,6 +116,7 @@ $easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   align-items: center;
   justify-content: center;
   background-color: $mainColor;
+  text-decoration: none !important;
 
   @include resize(800px) {
     right: 8rem;
@@ -132,10 +138,60 @@ $easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     transform: translateY(-0.2rem);
     box-shadow: 0 0.4rem 1rem rgba(78, 75, 75, 0.6);
     color: white !important;
+    text-decoration: none !important;
   }
   &:active {
     transform: translateY(-0.15rem);
     box-shadow: 0 0.4rem 0.7rem rgba(78, 75, 75, 0.6);
+    color: white !important;
   }
 }
 
+// .post-button {
+//   position: fixed;
+//   bottom: 5rem;
+//   right: 10rem;
+//   z-index: 200;
+//   height: 6rem;
+//   width: 6rem;
+//   // padding: 2.5rem 2.5rem;
+//   color: white;
+//   font-size: 3rem;
+//   border-radius: 35rem;
+//   border: 1px rgba(white, 0.8) solid;
+//   transition: all 0.15s;
+//   box-shadow: 0 0.2rem 0.5rem rgba(78, 75, 75, 0.5);
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   background-color: $mainColor;
+//   text-decoration: none !important;
+
+//   @include resize(800px) {
+//     right: 8rem;
+//   }
+
+//   @include resize(700px) {
+//     right: 6rem;
+//   }
+
+//   @include resize(600px) {
+//     right: 5rem;
+//   }
+
+//   @include resize(500px) {
+//     right: 4rem;
+//   }
+
+//   &:hover {
+//     transform: translateY(-0.2rem);
+//     box-shadow: 0 0.4rem 1rem rgba(78, 75, 75, 0.6);
+//     color: white !important;
+//     text-decoration: none !important;
+//   }
+//   &:active {
+//     transform: translateY(-0.15rem);
+//     box-shadow: 0 0.4rem 0.7rem rgba(78, 75, 75, 0.6);
+//     color: white !important;
+//   }
+// }

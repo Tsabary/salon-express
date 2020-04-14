@@ -38,16 +38,12 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
   const { addToast } = useToasts();
 
   const [values, setValues] = useState({});
-
-  const [tipsWelcome, setTipsWelcome] = useState(false);
+  const [startTime, setStartTime] = useState(null);
 
   const [makeTemplate, setMakeTemplate] = useState(false);
 
   const practiceLanguageDefault = "What language do you want to practice?";
   const baseLanguageDefault = "What should be the base language?";
-
-  const [hour, setHour] = useState(0);
-  const [minutes, setMinutes] = useState(0);
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageAsFile, setImageAsFile] = useState("");
@@ -68,30 +64,41 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
     }
   }, [currentUserProfile]);
 
+  // Set the end date whenever the start date is set
   useEffect(() => {
-    if (values.start) {
-      const duration = hour * 3600000 + minutes * 60000;
-      const end = new Date(values.start.getTime() + duration);
-      setValues({ ...values, end, duration });
+    if (values && values.start) {
+      const end = new Date(values.start.getTime() + 2700000);
+      setValues({ ...values, end });
     }
-  }, [hour, minutes, values.start]);
+  }, [startTime]);
 
+  // Works together with the returnAttendants function
+  const getRandomInt = (max) => {
+    const repetitions = Math.floor(Math.random() * Math.floor(max) + 1);
+    console.log(repetitions);
+    return repetitions;
+  };
+
+  // Calculate attendatns. This is just for now to set random amount of attendants when I post, so it looks popular
+  const returnAttendents = (userID) => {
+    const attendants = [];
+    for (let i = 0; i++; i <= getRandomInt(4)) {
+      attendants.push(userID);
+    }
+    return attendants;
+  };
+
+  // Reset the form
   const reset = () => {
     setValues({
       user_ID: currentUserProfile.uid,
       user_name: currentUserProfile.name,
       user_username: currentUserProfile.username,
       user_avatar: currentUserProfile.avatar,
-      host_name: currentUserProfile.name || "",
-      host_ig: currentUserProfile.instagram || "",
-      host_twitter: currentUserProfile.twitter || "",
-      host_spotify: currentUserProfile.spotify || "",
-      host_soundcloud: currentUserProfile.soundcloud || "",
-      host_youtube: currentUserProfile.youtube || "",
-      host_fb: currentUserProfile.facebook || "",
-      host_web: currentUserProfile.website || "",
-      attendants: [currentUserProfile.uid],
-      duration: 0,
+      attendants:
+        currentUserProfile.uid === "PPryp7ws2lekKx1mePChgH0Sh3t1"
+          ? returnAttendents(currentUserProfile.uid)
+          : [currentUserProfile.uid],
       level: 1,
     });
 
@@ -100,9 +107,10 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
     setSubmitting(false);
   };
 
+  // Handle the submit form
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!checkValidity(values, setFormError, imageAsFile, tipsWelcome)) {
+    if (!checkValidity(values, setFormError, imageAsFile)) {
       return;
     }
 
@@ -131,18 +139,15 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
     });
   };
 
-  const setTemplate = (t) => {
-    setValues({ ...t, from_template: true });
-    const hour = Math.floor(t.duration / 3600000);
-    const minutes = Math.floor((t.duration % 3600000) / 60000);
-    setHour(hour);
-    setMinutes(minutes);
-  };
-
+  // Renders all the saved templates to the choose templete screen
   const renderTemplates = (temps) => {
     return temps.map((t) => {
       return (
-        <Template template={t} key={t.id} setTemplate={() => setTemplate(t)} />
+        <Template
+          template={t}
+          key={t.id}
+          setTemplate={() => setValues({ ...t, from_template: true })}
+        />
       );
     });
   };
@@ -152,6 +157,7 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
       <div className="popup__close">
         <div />
         <a
+          className="popup__close-text"
           href="#"
           onClick={() => {
             togglePopup(false);
@@ -258,6 +264,7 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
                           ...values,
                           start,
                         });
+                        setStartTime(start);
                       } else {
                         delete values.start;
                       }
@@ -273,34 +280,6 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
                     excludeOutOfBoundsTimes
                   />
                 </div>
-                <div className="fr-fr">
-                  <Form.Control
-                    as="select"
-                    value={hour + " hours"}
-                    bsPrefix="input-field__input form-drop clickable"
-                    onChange={(v) => setHour(v.target.value.split(" ")[0])}
-                  >
-                    {renderHours()}
-                  </Form.Control>
-
-                  <Form.Control
-                    as="select"
-                    value={minutes + " minutes"}
-                    bsPrefix="input-field__input form-drop  clickable"
-                    onChange={(v) => setMinutes(v.target.value.split(" ")[0])}
-                  >
-                    {renderMinutes()}
-                  </Form.Control>
-                </div>
-                {/* <InputField
-                  type="text"
-                  placeHolder="Link to the stream"
-                  value={values.url}
-                  onChange={(url) => {
-                    setValues({ ...values, url });
-                  }}
-                  required={true}
-                /> */}
 
                 <Form.Control
                   as="select"
@@ -343,7 +322,7 @@ const NewStream = ({ newStream, togglePopup, templates, fetchTemplates }) => {
                 <Form.Control
                   as="select"
                   value={values.level}
-                  bsPrefix="input-field__input form-drop  clickable"
+                  bsPrefix="input-field__input form-drop clickable"
                   onChange={(v) =>
                     setValues({
                       ...values,
