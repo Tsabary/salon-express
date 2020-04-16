@@ -1,244 +1,82 @@
 import firebase from "../firebase";
 import {
-  // ALL STREAMS //
-  NEW_STREAM_LIVE,
-  NEW_STREAM_UPCOMING,
-  DELETE_STREAM,
-  EDIT_STREAM,
+  // GLOBAL //
+  TOGGLE_POPUP,
+  FETCH_TAGS,
+  SET_EDITED_ROOM,
+  FETCH_QUESTIONS,
 
-  // EXPLORE LIVE //
-  FETCH_NEW_EXPLORE_LIVE,
-  FETCH_MORE_EXPLORE_LIVE,
+  // ROOMS //
+  NEW_ROOM,
+  DELETE_ROOM,
+  EDIT_ROOM,
 
-  // EXPLORE UPCOMING //
-  FETCH_NEW_EXPLORE_UPCOMING,
-  FETCH_MORE_EXPLORE_UPCOMING,
+  // EXPLORE //
+  FETCH_NEW_EXPLORE,
+  FETCH_MORE_EXPLORE,
 
-  // EXPLORE UPCOMING //
-  FETCH_NEW_EXPLORE_PAST,
-  FETCH_MORE_EXPLORE_PAST,
+  // FAVORITES //
+  FETCH_NEW_FAVORITES,
+  FETCH_MORE_FAVORITES,
+  ADD_TO_FAVORITES,
+  REMOVE_FROM_FAVORITES,
 
-  // SUBSCRIPTIONS LIVE //
-  FETCH_MORE_SUBSCRIPTIONS_LIVE,
-  FETCH_NEW_SUBSCRIPTIONS_LIVE,
+  // MY ROOMS //
+  FETCH_NEW_MY_ROOMS,
+  FETCH_MORE_MY_ROOMS,
 
-  // SUBSCRIPTIONS UPCOMING //
-  FETCH_NEW_SUBSCRIPTIONS_UPCOMING,
-  FETCH_MORE_SUBSCRIPTIONS_UPCOMING,
-
-  // SUBSCRIPTIONS PAST //
-  FETCH_NEW_SUBSCRIPTIONS_PAST,
-  FETCH_MORE_SUBSCRIPTIONS_PAST,
-
-  // CALENDAR BOTH
-  REMOVE_FROM_CALENDAR,
-
-  // CALENDAR LIVE //
-  FETCH_NEW_CALENDAR_LIVE,
-  FETCH_MORE_CALENDAR_LIVE,
-  ADD_TO_CALENDAR_LIVE,
-
-  // CALENDAR UPCOMING //
-  FETCH_NEW_CALENDAR_UPCOMING,
-  FETCH_MORE_CALENDAR_UPCOMING,
-  ADD_TO_CALENDAR_UPCOMING,
-
-  // CALENDAR PAST //
-  FETCH_NEW_CALENDAR_PAST,
-  FETCH_MORE_CALENDAR_PAST,
-
-  // MINE LIVE //
-  FETCH_NEW_MINE_LIVE,
-  FETCH_MORE_MINE_LIVE,
-
-  // MINE UPCOMING //
-  FETCH_NEW_MINE_UPCOMING,
-  FETCH_MORE_MINE_UPCOMING,
-
-  // MINE PAST //
-  FETCH_NEW_MINE_PAST,
-  FETCH_MORE_MINE_PAST,
-
-  // SEARCHED STREAMS LIVE //
-  FETCH_NEW_SEARCHED_STREAMS_LIVE,
-  FETCH_MORE_SEARCHED_STREAMS_LIVE,
-
-  // SEARCHED STREAMS UPCOMING //
-  FETCH_NEW_SEARCHED_STREAMS_UPCOMING,
-  FETCH_MORE_SEARCHED_STREAMS_UPCOMING,
-
-  // SEARCHED STREAMS PAST //
-  FETCH_NEW_SEARCHED_STREAMS_PAST,
-  FETCH_MORE_SEARCHED_STREAMS_PAST,
-
-  // STRANGER LIVE //
-  FETCH_NEW_STRANGER_LIVE,
-  FETCH_MORE_STRANGER_LIVE,
-
-  // STRANGER UPCOMING //
-  FETCH_NEW_STRANGER_UPCOMING,
-  FETCH_MORE_STRANGER_UPCOMING,
-
-  // STRANGER PAST //
-  FETCH_NEW_STRANGER_PAST,
-  FETCH_MORE_STRANGER_PAST,
+  // SEARCHED LIVE //
+  FETCH_NEW_SEARCHED,
+  FETCH_MORE_SEARCHED,
 
   // STRANGER PROFILE //
   FETCH_STRANGER_PROFILE,
 
-  // TEMPLATES //
-  FETCH_TEMPLATES,
-  NEW_TEMPLATE,
-  DELETE_TEMPLATE,
-
   // CAREERS //
   FETCH_POSITIONS,
   FETCH_SINGLE_POSITION,
-
-  // GLOBAL //
-  TOGGLE_POPUP,
-  FETCH_TAGS,
-  SET_EDITED_STREAM,
-  FETCH_QUESTIONS,
 } from "./types";
-
-import { trimURL } from "../utils/forms";
 
 const db = firebase.firestore();
 const storage = firebase.storage();
 const analytics = firebase.analytics();
 
-// EXPLORE LIVE //
+// EXPLORE //
 
-export const fetchFirstExploreLive = (
+export const fetchFirstExplore = (
   setLastVisible,
   setReachedLast,
-  dateNow,
   languages
 ) => async (dispatch) => {
-  const dayAgo = new Date(dateNow.getTime() - 86400000);
-
   const data =
     languages && languages.length
       ? await db
-          .collection("streams")
-          // .where("practice_language", "in", [...languages, "lir"])
-          .where("start", "<", dateNow)
-          .where("start", ">", dayAgo)
-          .orderBy("start")
-          .limit(15)
+          .collection("rooms")
+          .where("listed", "==", true)
+          .orderBy("last_visit", "desc")
+          // .where("language", "in", [...languages, "lir"])
+          .limit(90)
           .get()
       : await db
-          .collection("streams")
-          .where("start", "<", dateNow)
-          .where("start", ">", dayAgo)
-          .orderBy("start")
-          .limit(15)
+          .collection("rooms")
+          .where("listed", "==", true)
+          .orderBy("last_visit", "desc")
+          .limit(90)
           .get();
 
   setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
-
-  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
-
-  const filteredStreams = all.filter((doc) => {
-    return doc.end.toDate() > dateNow;
-  });
+  if (data.docs.length === 90) setReachedLast(false);
 
   dispatch({
-    type: FETCH_NEW_EXPLORE_LIVE,
-    payload: filteredStreams ? filteredStreams : [],
-  });
-};
-
-export const fetchMoreExploreLive = (
-  lastVisible,
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  currentUserProfile,
-  tag,
-  languages
-) => async (dispatch) => {
-  const dayAgo = new Date(dateNow.getTime() - 86400000);
-
-  const data =
-    languages && languages.length
-      ? await db
-          .collection("streams")
-          // .where("practice_language", "in", [...languages, "lir"])
-          .where("start", "<", dateNow)
-          .where("start", ">", dayAgo)
-          .orderBy("start")
-          .startAfter(lastVisible)
-          .limit(15)
-          .get()
-      : await db
-          .collection("streams")
-          .where("start", "<", dateNow)
-          .where("start", ">", dayAgo)
-          .orderBy("start")
-          .startAfter(lastVisible)
-          .limit(15)
-          .get();
-
-  setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
-
-  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
-
-  const filteredStreams = all.filter((doc) => {
-    return doc.end.toDate() > dateNow;
-  });
-
-  analytics.logEvent("fetch_more_explore_live");
-
-  dispatch({
-    type: FETCH_MORE_EXPLORE_LIVE,
-    payload: filteredStreams ? filteredStreams : [],
-  });
-};
-
-// EXPOLRE UPCOMING //
-
-export const fetchFirstExploreUpcoming = (
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  languages
-) => async (dispatch) => {
-  console.log(languages);
-
-  const data =
-    languages && languages.length
-      ? await db
-          .collection("streams")
-          // .where("practice_language", "in", [...languages, "lir"])
-          .where("start", ">", dateNow)
-          .orderBy("start")
-          .limit(15)
-          .get()
-      : await db
-          .collection("streams")
-          .where("start", ">", dateNow)
-          .orderBy("start")
-          .limit(15)
-          .get();
-
-  setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
-
-  dispatch({
-    type: FETCH_NEW_EXPLORE_UPCOMING,
+    type: FETCH_NEW_EXPLORE,
     payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
-export const fetchMoreExploreUpcoming = (
+export const fetchMoreExplore = (
   lastVisible,
   setLastVisible,
   setReachedLast,
-  dateNow,
   currentUserProfile,
   tag,
   languages
@@ -246,774 +84,171 @@ export const fetchMoreExploreUpcoming = (
   const data =
     languages && languages.length
       ? await db
-          .collection("streams")
-          // .where("practice_language", "in", [...languages, "lir"])
-          .where("start", ">", dateNow)
-          .orderBy("start")
+          .collection("rooms")
+          .where("listed", "==", true)
+          .orderBy("last_visit", "desc")
+          // .where("language", "in", [...languages, "lir"])
           .startAfter(lastVisible)
-          .limit(15)
+          .limit(90)
           .get()
       : await db
-          .collection("streams")
-          .where("start", ">", dateNow)
-          .orderBy("start")
+          .collection("rooms")
+          .where("listed", "==", true)
+          .orderBy("last_visit", "desc")
           .startAfter(lastVisible)
-          .limit(15)
+          .limit(90)
           .get();
 
   setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
+  if (data.docs.length < 90) setReachedLast(true);
 
-  analytics.logEvent("fetch_more_explore_upcoming");
+  analytics.logEvent("fetch_more_explore");
 
   dispatch({
-    type: FETCH_MORE_EXPLORE_UPCOMING,
+    type: FETCH_MORE_EXPLORE,
     payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
-// EXPOLRE PAST //
+// FAVORITES //
 
-export const fetchFirstExplorePast = (
+export const fetchFirstFavorites = (
   setLastVisible,
   setReachedLast,
-  dateNow,
-  languages
+  userID
 ) => async (dispatch) => {
-  const data =
-    languages && languages.length
-      ? await db
-          .collection("streams")
-          // .where("practice_language", "in", [...languages, "lir"])
-          .where("end", "<", dateNow)
-          .orderBy("end", "desc")
-          .limit(15)
-          .get()
-      : await db
-          .collection("streams")
-          .where("end", "<", dateNow)
-          .orderBy("end", "desc")
-          .limit(15)
-          .get();
+  const data = await db
+    .collection("rooms")
+    .where("favorites", "array-contains", userID)
+    .orderBy("last_visit", "desc")
+    .limit(90)
+    .get();
 
-  setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length === 90) setReachedLast(false);
 
   dispatch({
-    type: FETCH_NEW_EXPLORE_PAST,
+    type: FETCH_NEW_FAVORITES,
     payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
-export const fetchMoreExplorePast = (
+export const fetchMoreFavorites = (
   lastVisible,
   setLastVisible,
   setReachedLast,
-  dateNow,
-  currentUserProfile,
+  userID
+) => async (dispatch) => {
+  const data = await db
+    .collection("rooms")
+    .where("favorites", "array-contains", userID)
+    .orderBy("last_visit", "desc")
+    .startAfter(lastVisible)
+    .limit(90)
+    .get();
+
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length < 90) setReachedLast(true);
+
+  analytics.logEvent("fetch_more_favorites");
+
+  dispatch({
+    type: FETCH_MORE_FAVORITES,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+// MINE //
+
+export const fetchFirstMyRooms = (
+  setLastVisible,
+  setReachedLast,
+  userID
+) => async (dispatch) => {
+  const data = await db
+    .collection("rooms")
+    .where("user_ID", "==", userID)
+    .orderBy("last_visit", "desc")
+    .limit(90)
+    .get();
+
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length === 90) setReachedLast(false);
+
+  dispatch({
+    type: FETCH_NEW_MY_ROOMS,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+export const fetchMoreMyRooms = (
+  lastVisible,
+  setLastVisible,
+  setReachedLast,
+  userID
+) => async (dispatch) => {
+  const data = await db
+    .collection("rooms")
+    .where("user_ID", "==", userID)
+    .orderBy("last_visit", "desc")
+    .startAfter(lastVisible)
+    .limit(90)
+    .get();
+
+  if (data.docs[data.docs.length - 1])
+    setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length < 90) setReachedLast(true);
+
+  analytics.logEvent("fetch_more_my_rooms");
+
+  dispatch({
+    type: FETCH_MORE_MY_ROOMS,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+// SEARCHED //
+
+export const fetchFirstSearched = (
+  setLastVisible,
+  setReachedLast,
   tag,
   languages
 ) => async (dispatch) => {
   const data =
     languages && languages.length
       ? await db
-          .collection("streams")
-          // .where("practice_language", "in", [...languages, "lir"])
-          .where("end", "<", dateNow)
-          .orderBy("end", "desc")
-          .startAfter(lastVisible)
-          .limit(15)
+          .collection("rooms")
+          // .where("language", "in", [...languages, "lir"])
+          .where("tags", "array-contains", tag)
+          .orderBy("last_visit", "desc")
+          .limit(90)
           .get()
       : await db
-          .collection("streams")
-          .where("end", "<", dateNow)
-          .orderBy("end", "desc")
-          .startAfter(lastVisible)
-          .limit(15)
+          .collection("rooms")
+          .where("tags", "array-contains", tag)
+          .orderBy("last_visit", "desc")
+          .limit(90)
           .get();
 
   setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
+  if (data.docs.length === 90) setReachedLast(false);
 
-  analytics.logEvent("fetch_more_explore_past");
+  analytics.logEvent("search", { term: tag });
 
   dispatch({
-    type: FETCH_MORE_EXPLORE_PAST,
+    type: FETCH_NEW_SEARCHED,
     payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
-// SUBSCRIPTIONS LIVE //
-
-export const fetchFirstSubscriptionsLive = (
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userUID
-) => async (dispatch) => {
-  const dayAgo = new Date(dateNow.getTime() - 86400000);
-
-  const data = await db
-    .collection("streams")
-    .where("followers", "array-contains", userUID)
-    .where("start", "<", dateNow)
-    .where("start", ">", dayAgo)
-    .orderBy("start")
-    .limit(15)
-    .get();
-
-  setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
-
-  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
-
-  const filteredStreams = all.filter((doc) => {
-    return doc.end.toDate() > dateNow;
-  });
-
-  dispatch({
-    type: FETCH_NEW_SUBSCRIPTIONS_LIVE,
-    payload: filteredStreams ? filteredStreams : [],
-  });
-};
-
-export const fetchMoreSubscriptionsLive = (
+export const fetchMoreSearched = (
   lastVisible,
   setLastVisible,
   setReachedLast,
-  dateNow,
-  userUID
-) => async (dispatch) => {
-  const dayAgo = new Date(dateNow.getTime() - 86400000);
-
-  const data = db
-    .collection("streams")
-    .where("followers", "array-contains", userUID)
-    .where("start", "<", dateNow)
-    .where("start", ">", dayAgo)
-    .orderBy("start")
-    .startAfter(lastVisible)
-    .limit(15)
-    .get();
-
-  setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
-
-  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
-
-  const filteredStreams = all.filter((doc) => {
-    return doc.end.toDate() > dateNow;
-  });
-
-  analytics.logEvent("fetch_more_subscriptions_live");
-
-  dispatch({
-    type: FETCH_MORE_SUBSCRIPTIONS_LIVE,
-    payload: filteredStreams ? filteredStreams : [],
-  });
-};
-
-// SUBSCRIPTIONS UPCOMING //
-
-export const fetchFirstSubscriptionsUpcoming = (
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userUID
-) => async (dispatch) => {
-  const data = await db
-    .collection("streams")
-    .where("followers", "array-contains", userUID)
-    .where("start", ">", dateNow)
-    .orderBy("start")
-    .limit(15)
-    .get();
-
-  setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
-
-  dispatch({
-    type: FETCH_NEW_SUBSCRIPTIONS_UPCOMING,
-    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
-};
-
-export const fetchMoreSubscriptionsUpcoming = (
-  lastVisible,
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userUID
-) => async (dispatch) => {
-  const data = db
-    .collection("streams")
-    .where("followers", "array-contains", userUID)
-    .where("start", ">", dateNow)
-    .orderBy("start")
-    .startAfter(lastVisible)
-    .limit(15)
-    .get();
-
-  setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
-
-  analytics.logEvent("fetch_more_subscriptions_upcoming");
-
-  dispatch({
-    type: FETCH_MORE_SUBSCRIPTIONS_UPCOMING,
-    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
-};
-
-// SUBSCRIPTIONS PAST //
-
-export const fetchFirstSubscriptionsPast = (
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userUID
-) => async (dispatch) => {
-  const data = await db
-    .collection("streams")
-    .where("followers", "array-contains", userUID)
-    .where("end", "<", dateNow)
-    .orderBy("end", "desc")
-    .limit(15)
-    .get();
-
-  setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
-
-  dispatch({
-    type: FETCH_NEW_SUBSCRIPTIONS_PAST,
-    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
-};
-
-export const fetchMoreSubscriptionsPast = (
-  lastVisible,
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userUID
-) => async (dispatch) => {
-  const data = db
-    .collection("streams")
-    .where("followers", "array-contains", userUID)
-    .where("end", "<", dateNow)
-    .orderBy("end", "desc")
-    .startAfter(lastVisible)
-    .limit(15)
-    .get();
-
-  setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
-
-  analytics.logEvent("fetch_more_subscriptions_past");
-
-  dispatch({
-    type: FETCH_MORE_SUBSCRIPTIONS_PAST,
-    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
-};
-
-// CALENDAR LIVE //
-
-export const fetchFirstCalendarLive = (
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const dayAgo = new Date(dateNow.getTime() - 86400000);
-
-  const data = await db
-    .collection("streams")
-    .where("attendants", "array-contains", userID)
-    .where("start", "<", dateNow)
-    .where("start", ">", dayAgo)
-    .orderBy("start", "asc")
-    .limit(15)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
-
-  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
-
-  const filteredStreams = all.filter((doc) => {
-    return doc.end.toDate() > dateNow;
-  });
-
-  dispatch({
-    type: FETCH_NEW_CALENDAR_LIVE,
-    payload: filteredStreams ? filteredStreams : [],
-  });
-};
-
-export const fetchMoreCalendarLive = (
-  lastVisible,
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const dayAgo = new Date(dateNow.getTime() - 86400000);
-
-  const data = await db
-    .collection("streams")
-    .where("attendants", "array-contains", userID)
-    .where("start", "<", dateNow)
-    .where("start", ">", dayAgo)
-    .orderBy("start", "asc")
-    .startAfter(lastVisible)
-    .limit(2)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
-
-  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
-
-  const filteredStreams = all.filter((doc) => {
-    return doc.end.toDate() > dateNow;
-  });
-
-  analytics.logEvent("fetch_more_calendar_live");
-
-  dispatch({
-    type: FETCH_MORE_CALENDAR_LIVE,
-    payload: filteredStreams ? filteredStreams : [],
-  });
-};
-
-// CALENDAR UPCOMING //
-
-export const fetchFirstCalendarUpcoming = (
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const data = await db
-    .collection("streams")
-    .where("attendants", "array-contains", userID)
-    .where("start", ">", dateNow)
-    .orderBy("start", "asc")
-    .limit(15)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
-
-  dispatch({
-    type: FETCH_NEW_CALENDAR_UPCOMING,
-    payload: !!data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
-};
-
-export const fetchMoreCalendarUpcoming = (
-  lastVisible,
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const data = await db
-    .collection("streams")
-    .where("attendants", "array-contains", userID)
-    .where("start", ">", dateNow)
-    .orderBy("start", "asc")
-    .startAfter(lastVisible)
-    .limit(2)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
-
-  analytics.logEvent("fetch_more_calendar_upcoming");
-
-  dispatch({
-    type: FETCH_MORE_CALENDAR_UPCOMING,
-    payload: !!data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
-};
-
-// CALENDAR PAST //
-
-export const fetchFirstCalendarPast = (
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const data = await db
-    .collection("streams")
-    .where("attendants", "array-contains", userID)
-    .where("start", "<", dateNow)
-    .orderBy("start", "desc")
-    .limit(15)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
-
-  dispatch({
-    type: FETCH_NEW_CALENDAR_PAST,
-    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
-};
-
-export const fetchMoreCalendarPast = (
-  lastVisible,
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const data = await db
-    .collection("streams")
-    .where("attendants", "array-contains", userID)
-    .where("end", "<", dateNow)
-    .orderBy("end", "desc")
-    .startAfter(lastVisible)
-    .limit(15)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
-
-  analytics.logEvent("fetch_more_calendar_past");
-
-  dispatch({
-    type: FETCH_MORE_CALENDAR_PAST,
-    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
-};
-
-// MINE LIVE //
-
-export const fetchFirstMineLive = (
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const dayAgo = new Date(dateNow.getTime() - 86400000);
-
-  const data = await db
-    .collection("streams")
-    .where("user_ID", "==", userID)
-    .where("start", "<", dateNow)
-    .where("start", ">", dayAgo)
-    .orderBy("start", "asc")
-    .limit(15)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
-
-  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
-
-  const filteredStreams = all.filter((doc) => {
-    return doc.end.toDate() > dateNow;
-  });
-
-  dispatch({
-    type: FETCH_NEW_MINE_LIVE,
-    payload: filteredStreams ? filteredStreams : [],
-  });
-};
-
-export const fetchMoreMineLive = (
-  lastVisible,
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const dayAgo = new Date(dateNow.getTime() - 86400000);
-
-  const data = await db
-    .collection("streams")
-    .where("user_ID", "==", userID)
-    .where("start", "<", dateNow)
-    .where("start", ">", dayAgo)
-    .orderBy("start", "asc")
-    .startAfter(lastVisible)
-    .limit(15)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
-
-  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
-
-  const filteredStreams = all.filter((doc) => {
-    return doc.end.toDate() > dateNow;
-  });
-
-  analytics.logEvent("fetch_more_mine_live");
-
-  dispatch({
-    type: FETCH_MORE_MINE_LIVE,
-    payload: filteredStreams ? filteredStreams : [],
-  });
-};
-
-// MINE UPCOMING //
-
-export const fetchFirstMineUpcoming = (
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const data = await db
-    .collection("streams")
-    .where("user_ID", "==", userID)
-    .where("start", ">", dateNow)
-    .orderBy("start", "asc")
-    .limit(15)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
-
-  dispatch({
-    type: FETCH_NEW_MINE_UPCOMING,
-    payload: !!data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
-};
-
-export const fetchMoreMineUpcoming = (
-  lastVisible,
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const data = await db
-    .collection("streams")
-    .where("user_ID", "==", userID)
-    .where("start", ">", dateNow)
-    .orderBy("start", "asc")
-    .startAfter(lastVisible)
-    .limit(15)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
-
-  analytics.logEvent("fetch_more_mine_upcoming");
-
-  dispatch({
-    type: FETCH_MORE_MINE_UPCOMING,
-    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
-};
-
-// MINE PAST //
-
-export const fetchFirstMinePast = (
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const data = await db
-    .collection("streams")
-    .where("user_ID", "==", userID)
-    .where("end", "<", dateNow)
-    .orderBy("end", "desc")
-    .limit(15)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
-
-  dispatch({
-    type: FETCH_NEW_MINE_PAST,
-    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
-};
-
-export const fetchMoreMinePast = (
-  lastVisible,
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const data = await db
-    .collection("streams")
-    .where("user_ID", "==", userID)
-    .where("end", "<", dateNow)
-    .orderBy("end", "desc")
-    .startAfter(lastVisible)
-    .limit(15)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
-
-  analytics.logEvent("fetch_more_mine_past");
-
-  dispatch({
-    type: FETCH_MORE_MINE_PAST,
-    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
-};
-
-// SEARCHED LIVE //
-
-export const fetchFirstSearchedLive = (
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  tag,
-  languages
-) => async (dispatch) => {
-  const dayAgo = new Date(dateNow.getTime() - 86400000);
-
-  const data =
-    languages && languages.length
-      ? await db
-          .collection("streams")
-          .where("language", "in", [...languages, "lir"])
-          .where("tags", "array-contains", tag)
-          .where("start", "<", dateNow)
-          .where("start", ">", dayAgo)
-          .orderBy("start")
-          .limit(15)
-          .get()
-      : await db
-          .collection("streams")
-          .where("tags", "array-contains", tag)
-          .where("start", "<", dateNow)
-          .where("start", ">", dayAgo)
-          .orderBy("start")
-          .limit(15)
-          .get();
-
-  setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
-
-  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
-
-  const filteredStreams = all.filter((doc) => {
-    return doc.end.toDate() > dateNow;
-  });
-
-  dispatch({
-    type: FETCH_NEW_SEARCHED_STREAMS_LIVE,
-    payload: filteredStreams ? filteredStreams : [],
-  });
-};
-
-export const fetchMoreSearchedLive = (
-  lastVisible,
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID,
-  tag,
-  languages
-) => async (dispatch) => {
-  const dayAgo = new Date(dateNow.getTime() - 86400000);
-
-  const data =
-    languages && languages.length
-      ? await db
-          .collection("streams")
-          // .where("practice_language", "in", [...languages, "lir"])
-          .where("tags", "array-contains", tag)
-          .where("start", "<", dateNow)
-          .where("start", ">", dayAgo)
-          .orderBy("start")
-          .startAfter(lastVisible)
-          .limit(15)
-          .get()
-      : await db
-          .collection("streams")
-          .where("tags", "array-contains", tag)
-          .where("start", "<", dateNow)
-          .where("start", ">", dayAgo)
-          .orderBy("start")
-          .startAfter(lastVisible)
-          .limit(15)
-          .get();
-
-  setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
-
-  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
-
-  const filteredStreams = all.filter((doc) => {
-    return doc.end.toDate() > dateNow;
-  });
-
-  analytics.logEvent("fetch_more_searched_live");
-
-  dispatch({
-    type: FETCH_MORE_SEARCHED_STREAMS_LIVE,
-    payload: filteredStreams ? filteredStreams : [],
-  });
-};
-
-// SEARCHED UPCOMING //
-
-export const fetchFirstSearchedUpcoming = (
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  tag,
-  languages
-) => async (dispatch) => {
-  const data =
-    languages && languages.length
-      ? await db
-          .collection("streams")
-          // .where("practice_language", "in", [...languages, "lir"])
-          .where("tags", "array-contains", tag)
-          .where("start", ">", dateNow)
-          .orderBy("start")
-          .limit(15)
-          .get()
-      : await db
-          .collection("streams")
-          .where("tags", "array-contains", tag)
-          .where("start", ">", dateNow)
-          .orderBy("start")
-          .limit(15)
-          .get();
-
-  setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
-
-  dispatch({
-    type: FETCH_NEW_SEARCHED_STREAMS_UPCOMING,
-    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
-};
-
-export const fetchMoreSearchedUpcoming = (
-  lastVisible,
-  setLastVisible,
-  setReachedLast,
-  dateNow,
   userID,
   tag,
   languages
@@ -1021,294 +256,107 @@ export const fetchMoreSearchedUpcoming = (
   const data =
     languages && languages.length
       ? await db
-          .collection("streams")
-          // .where("practice_language", "in", [...languages, "lir"])
+          .collection("rooms")
+          // .where("language", "in", [...languages, "lir"])
           .where("tags", "array-contains", tag)
-          .where("start", ">", dateNow)
-          .orderBy("start")
+          .orderBy("last_visit", "desc")
           .startAfter(lastVisible)
-          .limit(15)
+          .limit(90)
           .get()
       : await db
-          .collection("streams")
+          .collection("rooms")
           .where("tags", "array-contains", tag)
-          .where("start", ">", dateNow)
-          .orderBy("start")
+          .orderBy("last_visit", "desc")
           .startAfter(lastVisible)
           .limit(15)
           .get();
 
   setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
+  if (data.docs.length < 90) setReachedLast(true);
 
-  analytics.logEvent("fetch_more_searched_upcoming");
-
-  dispatch({
-    type: FETCH_MORE_SEARCHED_STREAMS_UPCOMING,
-    payload: !!data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
-};
-
-// SEARCHED PAST //
-
-export const fetchFirstSearchedPast = (
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  tag,
-  languages
-) => async (dispatch) => {
-  const data =
-    languages && languages.length
-      ? await db
-          .collection("streams")
-          // .where("practice_language", "in", [...languages, "lir"])
-          .where("tags", "array-contains", tag)
-          .where("end", "<", dateNow)
-          .orderBy("end", "desc")
-          .limit(15)
-          .get()
-      : await db
-          .collection("streams")
-          .where("tags", "array-contains", tag)
-          .where("end", "<", dateNow)
-          .orderBy("end", "desc")
-          .limit(15)
-          .get();
-
-  setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
+  analytics.logEvent("fetch_more_searched");
 
   dispatch({
-    type: FETCH_NEW_SEARCHED_STREAMS_PAST,
+    type: FETCH_MORE_SEARCHED,
     payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
-export const fetchMoreSearchedPast = (
-  lastVisible,
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID,
-  tag,
-  languages
-) => async (dispatch) => {
-  const data =
-    languages && languages.length
-      ? await db
-          .collection("streams")
-          // .where("practice_language", "in", [...languages, "lir"])
-          .where("tags", "array-contains", tag)
-          .where("end", "<", dateNow)
-          .orderBy("end", "desc")
-          .startAfter(lastVisible)
-          .limit(15)
-          .get()
-      : await db
-          .collection("streams")
-          .where("tags", "array-contains", tag)
-          .where("end", "<", dateNow)
-          .orderBy("end", "desc")
-          .startAfter(lastVisible)
-          .limit(15)
-          .get();
+// ROOM //
 
-  setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
-
-  analytics.logEvent("fetch_more_searched_past");
-
-  dispatch({
-    type: FETCH_MORE_SEARCHED_STREAMS_PAST,
-    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
-};
-
-// STRANGER LIVE //
-
-export const fetchFirstStrangerLive = (
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const dayAgo = new Date(dateNow.getTime() - 86400000);
-
-  const data = await db
-    .collection("streams")
-    .where("user_ID", "==", userID)
-    .where("start", "<", dateNow)
-    .where("start", ">", dayAgo)
-    .orderBy("start", "asc")
-    .limit(15)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
-
-  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
-
-  const filteredStreams = all.filter((doc) => {
-    return doc.end.toDate() > dateNow;
-  });
-
-  dispatch({
-    type: FETCH_NEW_STRANGER_LIVE,
-    payload: filteredStreams ? filteredStreams : [],
-  });
-};
-
-export const fetchMoreStrangerLive = (
-  lastVisible,
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const dayAgo = new Date(dateNow.getTime() - 86400000);
-
-  const data = await db
-    .collection("streams")
-    .where("user_ID", "==", userID)
-    .where("start", "<", dateNow)
-    .where("start", ">", dayAgo)
-    .orderBy("start", "asc")
-    .startAfter(lastVisible)
-    .limit(15)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
-
-  const all = data.docs ? data.docs.map((doc) => doc.data()) : [];
-
-  const filteredStreams = all.filter((doc) => {
-    return doc.end.toDate() > dateNow;
-  });
-
-  analytics.logEvent("fetch_more_stranger_live");
-
-  dispatch({
-    type: FETCH_MORE_STRANGER_LIVE,
-    payload: filteredStreams ? filteredStreams : [],
-  });
-};
-
-// STRANGER UPCOMING //
-
-export const fetchFirstStrangerUpcoming = (
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const data = await db
-    .collection("streams")
-    .where("user_ID", "==", userID)
-    .where("start", ">", dateNow)
-    .orderBy("start", "asc")
-    .limit(15)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
-
-  console.log(
-    "stranger upcoming",
-    data.docs.map((doc) => doc.data())
+export const logGuestEntry = (room) => () => {
+  const roomRef = db.collection("rooms").doc(room.id);
+  roomRef.set(
+    {
+      last_visit: new Date(),
+      visitors_count: firebase.firestore.FieldValue.increment(1),
+    },
+    { merge: true }
   );
-
-  dispatch({
-    type: FETCH_NEW_STRANGER_UPCOMING,
-    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
+  analytics.logEvent("room_entered");
 };
 
-export const fetchMoreStrangerUpcoming = (
-  lastVisible,
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const data = await db
-    .collection("streams")
-    .where("user_ID", "==", userID)
-    .where("start", ">", dateNow)
-    .orderBy("start", "asc")
-    .startAfter(lastVisible)
-    .limit(15)
-    .get();
+// FAVORITES LIST //
 
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
+export const addToFavorites = (currentUserProfile, room) => async (
+  dispatch
+) => {
+  db.collection("rooms")
+    .doc(room.id)
+    .set(
+      {
+        favorites: firebase.firestore.FieldValue.arrayUnion(
+          currentUserProfile.uid
+        ),
+        favorites_count: firebase.firestore.FieldValue.increment(1),
+      },
+      { merge: true }
+    )
+    .then(() => {
+      analytics.logEvent("favorites_added");
 
-  analytics.logEvent("fetch_more_stranger_upcoming");
-
-  dispatch({
-    type: FETCH_MORE_STRANGER_UPCOMING,
-    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
+      dispatch({
+        type: ADD_TO_FAVORITES,
+        payload: {
+          ...room,
+          favorites: room.favorites
+            ? [...room.favorites, currentUserProfile.uid]
+            : [currentUserProfile.uid],
+        },
+      });
+    });
 };
 
-// STRANGER PAST //
+export const removeFromFavorites = (currentUserProfile, room) => async (
+  dispatch
+) => {
+  db.collection("rooms")
+    .doc(room.id)
+    .set(
+      {
+        favorites: firebase.firestore.FieldValue.arrayRemove(
+          currentUserProfile.uid
+        ),
+        favorites_count: firebase.firestore.FieldValue.increment(-1),
+      },
+      { merge: true }
+    )
+    .then(() => {
+      analytics.logEvent("favorites_removed");
 
-export const fetchFirstStrangerPast = (
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const data = await db
-    .collection("streams")
-    .where("user_ID", "==", userID)
-    .where("end", "<", dateNow)
-    .orderBy("end", "desc")
-    .limit(15)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length === 15) setReachedLast(false);
-
-  dispatch({
-    type: FETCH_NEW_STRANGER_PAST,
-    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
+      dispatch({
+        type: REMOVE_FROM_FAVORITES,
+        payload: {
+          ...room,
+          favorites: room.favorites.filter(
+            (r) => r.id !== currentUserProfile.id
+          ),
+        },
+      });
+    });
 };
 
-export const fetchMoreStrangerPast = (
-  lastVisible,
-  setLastVisible,
-  setReachedLast,
-  dateNow,
-  userID
-) => async (dispatch) => {
-  const data = await db
-    .collection("streams")
-    .where("user_ID", "==", userID)
-    .where("end", "<", dateNow)
-    .orderBy("end", "desc")
-    .startAfter(lastVisible)
-    .limit(15)
-    .get();
-
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
-  if (data.docs.length < 15) setReachedLast(true);
-
-  analytics.logEvent("fetch_more_stranger_past");
-
-  dispatch({
-    type: FETCH_MORE_STRANGER_PAST,
-    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
-};
+// STRANGER //
 
 export const fetchStrangerProfile = (strangerUsername) => async (dispatch) => {
   const data = await db
@@ -1318,345 +366,143 @@ export const fetchStrangerProfile = (strangerUsername) => async (dispatch) => {
 
   const profile = data.docs.map((doc) => doc.data())[0];
 
+  analytics.logEvent("stranger_profile_visitor");
+
   dispatch({
     type: FETCH_STRANGER_PROFILE,
     payload: profile ? profile : null,
   });
 };
 
-// SINGLE STREAM //
+// SINGLE ROOM //
 
-export const fetchSingleStream = (streamID, setStream) => async () => {
-  const doc = await db.collection("streams").doc(streamID).get();
+export const fetchSingleRoom = (roomID, setRoom) => async (dispatch) => {
+  const doc = await db.collection("rooms").doc(roomID).get();
 
-  analytics.logEvent("direct_stream_navigation");
+  analytics.logEvent("room_direct_navigation");
   if (doc.data()) {
-    setStream(doc.data());
-  } else {
-    setStream("empty");
+    setRoom(doc.data())
+    // dispatch({
+    //   type: NEW_ROOM,
+    //   payload: doc.data(),
+    // });
   }
 };
 
-// TEMPLATES //
-
-export const fetchTemplates = (userID) => async (dispatch) => {
+export const fetchRoomComments = (roomID, setComments) => async () => {
   const data = await db
-    .collection("templates")
-    .where("user_ID", "==", userID)
+    .collection("comments")
+    .orderBy("created_on", "desc")
+    .where("room_ID", "==", roomID)
     .get();
 
-  dispatch({
-    type: FETCH_TEMPLATES,
-    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
-  });
+  if (data.docs) {
+    setComments(data.docs.map((doc) => doc.data()));
+  }
 };
 
-export const deleteTemplate = (template) => async (dispatch) => {
-  db.collection("templates")
-    .doc(template.id)
-    .delete()
-    .then(() => {
-      analytics.logEvent("template_deleted");
+export const associateWithRoom = (room, associate) => async (dispatch) => {
 
+  const newRoom = { ...room, associate };
+  console.log("associate with room", newRoom);
+  db.collection("rooms")
+    .doc(room.id)
+    .set({ associate }, { merge: true })
+    .then(() => {
       dispatch({
-        type: DELETE_TEMPLATE,
-        payload: template.id,
+        type: EDIT_ROOM,
+        payload: newRoom,
       });
     });
 };
 
-const dispatchNew = (reset, dispatch, stream) => {
-  reset();
-  const dateNow = new Date();
-  if (dateNow < stream.start) {
-    dispatch({
-      type: NEW_STREAM_UPCOMING,
-      payload: stream,
-    });
+export const keepRoomListed = (room, listed) => async (dispatch) => {
+  const newRoom = { ...room, listed };
 
-    dispatch({
-      type: ADD_TO_CALENDAR_UPCOMING,
-      payload: stream,
+  db.collection("rooms")
+    .doc(room.id)
+    .set({ listed }, { merge: true })
+    .then(() => {
+      dispatch({
+        type: EDIT_ROOM,
+        payload: newRoom,
+      });
     });
-  } else {
-    dispatch({
-      type: NEW_STREAM_LIVE,
-      payload: stream,
-    });
-
-    dispatch({
-      type: ADD_TO_CALENDAR_LIVE,
-      payload: stream,
-    });
-  }
 };
 
-export const newStream = (values, image, isTemplate, reset) => (dispatch) => {
+export const newRoom = (values, reset) => (dispatch) => {
   window.scrollTo(0, 0);
 
   const batch = db.batch();
-  const newDoc = db.collection("streams").doc();
-  let templateStream;
+  const newDoc = db.collection("rooms").doc();
 
-  if (image) {
-    const imageName = Date.now() + image.name;
+  const room = {
+    ...values,
+    last_visit: new Date(),
+    id: newDoc.id,
+  };
 
-    const uploadTask = storage
-      .ref(`/images/streams/${newDoc.id}/${imageName}`)
-      .put(image);
+  batch.set(newDoc, room);
 
-    //initiates the firebase side uploading
-    uploadTask.on(
-      "state_changed",
-      (snapShot) => {
-        //takes a snap shot of the process as it is happening
-      },
-      (err) => {
-        //catches the errors
-      },
-      () => {
-        // gets the functions from storage refences the image storage in firebase by the children
-        // gets the download url then sets the image from firebase as the value for the imgUrl key:
-        storage
-          .ref(`images/streams/${newDoc.id}`)
-          .child(imageName)
-          .getDownloadURL()
-          .then((fireBaseUrl) => {
-            const stream = {
-              ...values,
-              image: trimURL(fireBaseUrl),
-              image_file_name: imageName,
-              id: newDoc.id,
-            };
-
-            batch.set(newDoc, stream);
-
-            // addTags(values.tags, newDoc.id, batch);
-
-            if (isTemplate) {
-              // makeTemplate(stream, batch);
-              // console.log("should definitely make template");
-
-              const templateDoc = db.collection("templates").doc();
-              templateStream = { ...stream, id: templateDoc.id };
-              delete templateStream.start;
-              delete templateStream.end;
-
-              batch.set(templateDoc, templateStream);
-            }
-            console.log("should make template", isTemplate);
-
-            batch.commit().then((d) => {
-              dispatchNew(reset, dispatch, stream);
-              analytics.logEvent("new_stream");
-
-              if (isTemplate) {
-                dispatch({
-                  type: NEW_TEMPLATE,
-                  payload: templateStream,
-                });
-              }
-            });
-          });
-      }
-    );
-  } else {
-    const stream = {
-      ...values,
-      id: newDoc.id,
-    };
-
-    batch.set(newDoc, stream);
-
-    // addTags(values.tags, newDoc.id, batch);
-
-    if (isTemplate) {
-      // makeTemplate(stream, batch);
-
-      const templateDoc = db.collection("templates").doc();
-      templateStream = { ...stream, id: templateDoc.id };
-      delete templateStream.start;
-      delete templateStream.end;
-
-      batch.set(templateDoc, templateStream);
-    }
-
-    batch.commit().then((d) => {
-      dispatchNew(reset, dispatch, stream);
-      analytics.logEvent("new_stream");
-
-      if (isTemplate) {
-        dispatch({
-          type: NEW_TEMPLATE,
-          payload: templateStream,
-        });
-      }
+  batch.commit().then((d) => {
+    analytics.logEvent("room_opened", {
+      language: values.language,
+      tags: values.tags,
     });
-  }
-};
 
-export const updateStream = (values, tagsToAdd, tagsToRemove, image, reset) => (
-  dispatch
-) => {
-  const batch = db.batch();
-  const docRef = db.collection("streams").doc(values.id);
-  if (image) {
-    const imageName = Date.now() + image.name;
-
-    const uploadTask = storage
-      .ref(`/images/streams/${values.id}/${imageName}`)
-      .put(image);
-
-    //initiates the firebase side uploading
-    uploadTask.on(
-      "state_changed",
-      (snapShot) => {
-        //takes a snap shot of the process as it is happening
-        console.log(snapShot);
-      },
-      (err) => {
-        //catches the errors
-        console.log(err);
-      },
-      () => {
-        // gets the functions from storage refences the image storage in firebase by the children
-        // gets the download url then sets the image from firebase as the value for the imgUrl key:
-        storage
-          .ref(`images/streams/${values.id}`)
-          .child(imageName)
-          .getDownloadURL()
-          .then((fireBaseUrl) => {
-            if (!values.from_template) {
-              storage
-                .ref()
-                .child(`images/streams/${values.id}/${values.image_file_name}`)
-                .delete();
-            }
-
-            const stream = {
-              ...values,
-              image: trimURL(fireBaseUrl),
-              image_file_name: imageName,
-            };
-
-            batch.set(docRef, stream);
-
-            batch.commit().then(() => {
-              reset();
-              window.location.hash = "";
-              analytics.logEvent("update_stream");
-
-              dispatch({
-                type: EDIT_STREAM,
-                payload: stream,
-              });
-            });
-          });
-      }
-    );
-  } else {
-    batch.set(docRef, values);
-
-    batch.commit().then(() => {
-      reset();
-      window.location.hash = "";
-      analytics.logEvent("update_stream");
-
-      dispatch({
-        type: EDIT_STREAM,
-        payload: values,
-      });
-    });
-  }
-};
-
-export const removeStream = (stream) => (dispatch) => {
-  const batch = db.batch();
-
-  const doc = db.collection("streams").doc(stream.id);
-  batch.delete(doc);
-
-  // removeTags(stream.tags, stream.id, batch);
-
-  batch.commit().then(() => {
-    if (!stream.from_template) {
-      storage
-        .ref()
-        .child(`images/streams/${stream.id}/${stream.image_file_name}`)
-        .delete();
-    }
-
-    analytics.logEvent("delete_stream");
+    reset();
 
     dispatch({
-      type: DELETE_STREAM,
-      payload: stream.id,
-    });
-
-    dispatch({
-      type: REMOVE_FROM_CALENDAR,
-      payload: stream.id,
+      type: NEW_ROOM,
+      payload: room,
     });
   });
 };
 
-// STREAM ACTIONS //
+export const updateRoom = (values, tagsToAdd, tagsToRemove, reset) => (
+  dispatch
+) => {
+  const batch = db.batch();
+  const docRef = db.collection("rooms").doc(values.id);
 
-export const attand = (stream, userUID) => async (dispatch) => {
-  await db
-    .collection("streams")
-    .doc(stream.id)
-    .set(
-      { attendants: firebase.firestore.FieldValue.arrayUnion(userUID) },
-      { merge: true }
-    )
-    .then(() => {
-      analytics.logEvent("attend");
+  batch.set(docRef, values);
 
-      dispatch({
-        type: EDIT_STREAM,
-        payload: { ...stream, attendants: [...stream.attendants, userUID] },
-      });
+  batch.commit().then(() => {
+    reset();
+    window.location.hash = "";
+    analytics.logEvent("room_updated");
 
-      dispatch({
-        type: ADD_TO_CALENDAR_UPCOMING,
-        payload: { ...stream, attendants: [...stream.attendants, userUID] },
-      });
+    dispatch({
+      type: EDIT_ROOM,
+      payload: values,
     });
+  });
 };
 
-export const unattand = (stream, userUID) => async (dispatch) => {
-  await db
-    .collection("streams")
-    .doc(stream.id)
-    .set(
-      { attendants: firebase.firestore.FieldValue.arrayRemove(userUID) },
-      { merge: true }
-    )
-    .then(() => {
-      analytics.logEvent("unattend");
+export const removeRoom = (room) => (dispatch) => {
+  const batch = db.batch();
 
-      dispatch({
-        type: EDIT_STREAM,
-        payload: {
-          ...stream,
-          attendants: stream.attendants.filter((id) => id !== userUID),
-        },
-      });
+  const doc = db.collection("rooms").doc(room.id);
+  batch.delete(doc);
 
-      dispatch({
-        type: EDIT_STREAM,
-        payload: {
-          ...stream,
-          attendants: stream.attendants.filter((id) => id !== userUID),
-        },
-      });
+  batch.commit().then(() => {
+    analytics.logEvent("room_deleted");
 
-      dispatch({
-        type: REMOVE_FROM_CALENDAR,
-        payload: stream.id,
-      });
+    dispatch({
+      type: DELETE_ROOM,
+      payload: room.id,
     });
+  });
+};
+
+export const newComment = (values, cb) => async () => {
+  console.log(values);
+  const commentDoc = await db.collection("comments").doc();
+  const comment = { ...values, created_on: new Date(), id: commentDoc.id };
+
+  commentDoc.set(comment).then(() => {
+    cb();
+  });
 };
 
 export const follow = (
@@ -1716,8 +562,6 @@ export const unfollow = (
 // FAQ //
 
 export const fetchQuestions = () => async (dispatch) => {
-  console.log("data");
-
   const data = await db
     .collection("questions")
     .orderBy("placement", "asc")
@@ -1750,7 +594,6 @@ export const fetchPositions = () => async (dispatch) => {
       : [],
   });
 };
-
 
 export const fetchSinglePosition = (id) => async (dispatch) => {
   const data = await db.collection("positions").doc(id).get();
@@ -1786,7 +629,7 @@ export const signUp = (
             setSubmitting(3);
             togglePopup(false);
 
-            analytics.logEvent("email_signup");
+            analytics.logEvent("signup_email");
           })
           .catch((err) => {
             console.log("login error:", err);
@@ -1804,7 +647,12 @@ export const signUp = (
 };
 
 export const logOut = () => () => {
-  firebase.auth().signOut();
+  firebase
+    .auth()
+    .signOut()
+    .then(() => {
+      analytics.logEvent("logout");
+    });
 };
 
 export const resendVerification = () => () => {
@@ -1820,9 +668,9 @@ export const providerSignIn = (provider, cb) => () => {
         .auth()
         .signInWithPopup(googleProvider)
         .then(() => {
-          analytics.logEvent("google_signup");
+          analytics.logEvent("signup_google");
           cb();
-          console.log("google sigin in success");
+          console.log("google signin in success");
         });
 
       break;
@@ -1831,9 +679,9 @@ export const providerSignIn = (provider, cb) => () => {
         .auth()
         .signInWithPopup(facebookProvider)
         .then(() => {
-          analytics.logEvent("facebook_signup");
+          analytics.logEvent("signup_facebook");
           cb();
-          console.log("facebook sigin in success");
+          console.log("facebook signin in success");
         });
 
       break;
@@ -1912,10 +760,10 @@ export const updateProfile = (
 
 // GLOBAL //
 
-export const setEditedStream = (stream) => {
+export const setEditedRoom = (room) => {
   return {
-    type: SET_EDITED_STREAM,
-    payload: stream,
+    type: SET_EDITED_ROOM,
+    payload: room,
   };
 };
 
@@ -1943,7 +791,7 @@ export const togglePopup = (value) => {
   };
 };
 
-// DANGAROUS STREAMS //
+// DANGAROUS ROOMS //
 
 // export const deleteTags = () => async () => {
 //   const tags = await db.collection("tags").get();
@@ -1958,5 +806,48 @@ export const togglePopup = (value) => {
 //   tagsCount.docs.forEach((tag) => {
 //     console.log(tag);
 //     db.collection("tags_count").doc(tag.id).delete();
+//   });
+// };
+
+// export const addNameToRooms = () => async () => {
+//   const data = await db.collection("rooms").get();
+//   if (!data.docs) return;
+
+//   data.docs.forEach(async (d) => {
+//     const doc = d.data();
+
+//     const user = await db.collection("users").doc(doc.user_ID).get();
+//     console.log(user);
+
+//     await db.collection("rooms").doc(d.id).set(
+//       {
+//         user_avatar: user.data().avatar,
+//         user_username: user.data().username,
+//         user_name: user.data().name,
+//         associate: false,
+//       },
+//       {
+//         merge: true,
+//       }
+//     );
+//   });
+// };
+
+// export const addFieldsToRooms = () => async () => {
+//   const data = await db.collection("rooms").get();
+//   if (!data.docs) return;
+
+//   data.docs.forEach(async (d) => {
+//     const doc = d.data();
+
+//     await db.collection("rooms").doc(d.id).set(
+//       {
+//         listed: true,
+//         associate: false,
+//       },
+//       {
+//         merge: true,
+//       }
+//     );
 //   });
 // };

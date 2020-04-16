@@ -8,10 +8,14 @@
   }
   &__checkbox {
     display: none;
+    visibility: hidden;
+    opacity: 0;
   }
 
   &__radio {
     display: none;
+    visibility: hidden;
+    opacity: 0;
   }
 
   &__button {
@@ -92,6 +96,8 @@
     top: 0;
     left: 0;
     z-index: 1500;
+    display: none;
+    visibility: hidden;
     opacity: 0;
     transition: all, 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
@@ -115,9 +121,9 @@
     flex-direction: column;
     cursor: pointer;
 
-    @include resize(600px){
+    @include resize(600px) {
       font-size: 4rem;
-line-height: 3rem;
+      line-height: 3rem;
     }
 
     &:hover {
@@ -160,6 +166,8 @@ line-height: 3rem;
 
   &__checkbox:checked ~ &__nav {
     opacity: 1;
+    visibility: visible;
+    display: block;
     width: 100%;
   }
 

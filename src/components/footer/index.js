@@ -4,6 +4,8 @@ import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import history from "../../history";
 
+import firebase from "../../firebase";
+
 import tnc from "../../documents/tnc.pdf";
 import pp from "../../documents/pp.pdf";
 
@@ -11,6 +13,7 @@ const Footer = () => {
   const myHistory = useHistory(history);
 
   const handleChange = (page, path) => {
+    firebase.analytics().logEvent("footer_navigation", { page });
     myHistory.push(`/${path}`);
     window.scrollTo(0, 0);
   };
@@ -63,11 +66,25 @@ const Footer = () => {
 
       <div className="footer__section-contents">
         <div className="footer__section-title">Support</div>
-        <a className="footer__section-item" href={pp} target="_blank">
+        <a
+          className="footer__section-item"
+          href={pp}
+          target="_blank"
+          onClick={firebase
+            .analytics()
+            .logEvent("footer_navigation", { page: "Privacy Policy" })}
+        >
           Privacy Policy
         </a>
 
-        <a className="footer__section-item" href={tnc} target="_blank">
+        <a
+          className="footer__section-item"
+          href={tnc}
+          target="_blank"
+          onClick={firebase
+            .analytics()
+            .logEvent("footer_navigation", { page: "Terms and Conditions" })}
+        >
           Terms and Conditions
         </a>
       </div>

@@ -4,11 +4,11 @@ a {
   text-decoration: none !important;
 }
 
-details summary{
+details summary {
   outline: none;
   border: none;
   &::-webkit-details-marker {
-    display:none;
+    display: none;
   }
 }
 
@@ -82,7 +82,7 @@ h3 {
       font-size: 5rem;
       line-height: 6rem;
       margin-bottom: 4rem;
-      // margin-top: 4rem;
+      width: min-content;
     }
   }
 }
@@ -234,7 +234,14 @@ h3 {
     transform: translateY(-0.2rem);
     box-shadow: 0 0.4rem 1.4rem rgb(170, 170, 170);
   }
+
+  &:active {
+    border: none;
+    outline: none;
+  }
 }
+
+
 
 .text-button {
   &-delete {
@@ -255,6 +262,15 @@ h3 {
     &:hover {
       color: $mainColor;
     }
+  }
+
+  &-mobile{
+    color: $mainColor;
+    background: transparent;
+    box-shadow: 0px 0px 0px transparent;
+    border: none;
+    text-shadow: 0px 0px 0px transparent;
+    outline: none;
   }
 }
 
@@ -527,6 +543,11 @@ h3 {
 .max-max {
   @include gridVariation;
   grid-template-columns: repeat(2, max-content);
+}
+
+.fr-max-max-fr {
+  @include gridVariation;
+  grid-template-columns: 1fr repeat(2, max-content) 1fr;
 }
 
 .fr-max-max {

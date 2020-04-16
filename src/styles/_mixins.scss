@@ -18,15 +18,15 @@
   }
 
   @include resize(700px) {
-    padding: 8rem 6rem;
+    padding: 8rem 5rem;
   }
 
   @include resize(600px) {
-    padding: 6rem 5rem;
+    padding: 6rem 4rem;
   }
 
   @include resize(500px) {
-    padding: 5rem 4rem;
+    padding: 5rem 3rem;
   }
 }
 

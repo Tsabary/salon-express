@@ -3,11 +3,15 @@ import React, { useState, useContext, useEffect } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 
+import firebase from "../../../firebase";
+
 import history from "../../../history";
 
 import { fetchTags } from "../../../actions";
 import { SearchContext } from "../../../providers/Search";
 import { PageContext } from "../../../providers/Page";
+
+import InputField from "../../formComponents/inputField";
 
 const FilterInput = ({ tags, fetchTags }) => {
   const myHistory = useHistory(history);
@@ -46,6 +50,7 @@ const FilterInput = ({ tags, fetchTags }) => {
     setPage(5);
     setSearchTerm(tag);
     setTagInput("");
+    firebase.analytics().logEvent("search_from_input");
   };
 
   const renderTagsSuggestions = (suggestions) => {
@@ -83,35 +88,44 @@ const FilterInput = ({ tags, fetchTags }) => {
 
   const clearTag = () => {
     setSearchTerm(null);
-    handleChange(`/`, 1)
+    handleChange(`/`, 1);
   };
 
   return (
     <div className="filter-input">
-      <div className="filter-input__input-container">
-        {searchTerm ? (
-          <div className="filter-input__tag" onClick={clearTag}>
-            {searchTerm}
-          </div>
-        ) : (
-          <input
-            className="filter-input__input"
-            type="text"
-            placeholder="Filter classes by topic"
-            autoComplete="new-password"
-            value={tagInput}
-            onChange={(e) =>
-              handleTagInputChange(
-                e.target.value.toLowerCase().split(" ").join("-")
-              )
-            }
-            onKeyDown={handleKeyPress}
-          />
-        )}
-      </div>
-      {!searchTerm && tagInput ? (
-        <div className="tags small-margin-top">
-          {tagsSuggestions ? renderTagsSuggestions(tagsSuggestions) : null}
+      {searchTerm ? (
+        <div className="filter-input__tag" onClick={clearTag}>
+          {searchTerm}
+        </div>
+      ) : (
+        <InputField
+          type="text"
+          placeHolder="Filter rooms by topic"
+          value={tagInput}
+          onChange={(e) => {
+            handleTagInputChange(
+              e.toLowerCase().split(" ").join("-")
+            );
+          }}
+        />
+
+        // <input
+        //   className="filter-input__input"
+        //   type="text"
+        //   placeholder="Filter rooms by topic"
+        //   autoComplete="new-password"
+        //   value={tagInput}
+        //   onChange={(e) =>
+        //     handleTagInputChange(
+        //       e.target.value.toLowerCase().split(" ").join("-")
+        //     )
+        //   }
+        //   onKeyDown={handleKeyPress}
+        // />
+      )}
+      {!searchTerm && tagInput && tagsSuggestions ? (
+        <div className="filter-input__tags">
+          {renderTagsSuggestions(tagsSuggestions)}
         </div>
       ) : null}
     </div>

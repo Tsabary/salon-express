@@ -9,10 +9,7 @@
   // margin-bottom: 5rem;
   // margin-top: 1rem;
 
-// background-color: yellowgreen;
-
-
-
+  // background-color: yellowgreen;
 
   &__center {
     font-size: 8rem;
@@ -29,7 +26,6 @@
     @include resize(900px) {
       font-size: 6rem;
     }
-
 
     @include resize(800px) {
       font-size: 5rem;
@@ -119,24 +115,30 @@
   }
 
   &__title {
-    font-family: $fontBold, $fontHebrew;
-    font-weight: 900;
-    font-size: 4rem;
     text-align: center;
-    color: $mainColor;
-    margin-top: 1rem;
-    transition: all 0.2s;
-    cursor: pointer;
-
     @include resize(700px) {
       display: none;
     }
     &:hover {
       color: $mainColor;
-      // cursor: default;
+    }
+    &-main {
+      font-family: $fontBold, $fontHebrew;
+      font-weight: 900;
+      font-size: 4rem;
+      text-align: center;
+      color: $mainColor;
+      transition: all 0.2s;
+    }
+
+    &-sub {
+      color: $mainColor;
+      margin-top: -0.5rem;
+      margin-left: 0.3rem;
     }
 
     &-full {
+      cursor: pointer;
       @include resize(900px) {
         display: none;
       }
@@ -144,6 +146,8 @@
 
     &-lean {
       display: none;
+      margin-top: 1rem;
+      cursor: pointer;
 
       @include resize(900px) {
         display: block;

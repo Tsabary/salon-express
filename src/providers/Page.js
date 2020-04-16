@@ -22,7 +22,7 @@ export const PageProvider = ({ children }) => {
  * 1. EXPLORE
  * 2. SUBSCRIPTION
  * 3. CALENDAR
- * 4. MY STREAMS
+ * 4. MY ROOMS
  * 5. TAG FILTER
  * 6. PROFILE
  * 7. CONTACT

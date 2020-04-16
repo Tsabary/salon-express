@@ -26,7 +26,7 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
   const [formError, setFormError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const languageChoiceDefault = "Choose the languages you speak and learn";
+  const languageChoiceDefault = "Choose the languages you speak";
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageAsFile, setImageAsFile] = useState("");
@@ -162,149 +162,150 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
                   onChange={handleImageAsFile}
                 />
               </span>
-
+{/* 
               <div className="update-profile__message">
                 The following info would appear in your profile. You don't have
                 to include any of these details, but they might help others form
                 initial small talk in your first interaction.
-              </div>
+              </div> */}
             </div>
 
-            <InputField
-              type="text"
-              placeHolder="Name"
-              value={values.name}
-              onChange={(name) => {
-                if (name.length < 30 && validateWordsLength(name, 15))
-                  setValues({ ...values, name });
-              }}
-              required={true}
-            />
+            <div className="update-profile__fields">
+              <InputField
+                type="text"
+                placeHolder="Name"
+                value={values.name}
+                onChange={(name) => {
+                  if (name.length < 30 && validateWordsLength(name, 15))
+                    setValues({ ...values, name });
+                }}
+                required={true}
+              />
 
-            <InputField
-              type="text"
-              placeHolder="Username"
-              value={values.username !== values.uid ? values.username : null}
-              onChange={(username) => {
-                if (
-                  username.length < 30 &&
-                  validateWordsLength(username, 30) &&
-                  /^[a-z0-9]+$/.test(username)
-                )
-                  setValues({
-                    ...values,
-                    username: username.trim().toLowerCase(),
-                  });
-              }}
-              required={true}
-            />
+              <InputField
+                type="text"
+                placeHolder="Username"
+                value={values.username !== values.uid ? values.username : null}
+                onChange={(username) => {
+                  if (
+                    username.length < 30 &&
+                    validateWordsLength(username, 30) &&
+                    /^[a-z0-9]+$/.test(username)
+                  )
+                    setValues({
+                      ...values,
+                      username: username.trim().toLowerCase(),
+                    });
+                }}
+                required={true}
+              />
 
-            <InputField
-              type="text"
-              placeHolder="Brief description of yourself"
-              value={values.description}
-              onChange={(description) => {
-                if (
-                  description.length < 120 &&
-                  validateWordsLength(description, 20)
-                )
-                  setValues({ ...values, description });
-              }}
-              required={true}
-            />
+              <InputField
+                type="text"
+                placeHolder="Brief description of yourself"
+                value={values.description}
+                onChange={(description) => {
+                  if (
+                    description.length < 120 &&
+                    validateWordsLength(description, 20)
+                  )
+                    setValues({ ...values, description });
+                }}
+                required={true}
+              />
 
-            <InputField
-              type="text"
-              placeHolder="Your Instagram page"
-              value={values.instagram}
-              onChange={(instagram) => {
-                setValues({ ...values, instagram });
-              }}
-            />
+              <InputField
+                type="text"
+                placeHolder="Your Instagram page"
+                value={values.instagram}
+                onChange={(instagram) => {
+                  setValues({ ...values, instagram });
+                }}
+              />
 
-            <InputField
-              type="text"
-              placeHolder="Your Facebook page"
-              value={values.facebook}
-              onChange={(facebook) => {
-                setValues({ ...values, facebook });
-              }}
-            />
+              <InputField
+                type="text"
+                placeHolder="Your Facebook page"
+                value={values.facebook}
+                onChange={(facebook) => {
+                  setValues({ ...values, facebook });
+                }}
+              />
 
-            <InputField
-              type="text"
-              placeHolder="Your Twitter"
-              value={values.twitter}
-              onChange={(twitter) => {
-                setValues({ ...values, twitter });
-              }}
-            />
+              <InputField
+                type="text"
+                placeHolder="Your Twitter"
+                value={values.twitter}
+                onChange={(twitter) => {
+                  setValues({ ...values, twitter });
+                }}
+              />
 
-            <InputField
-              type="text"
-              placeHolder="Your SoundCloud"
-              value={values.soundcloud}
-              onChange={(soundcloud) => {
-                setValues({ ...values, soundcloud });
-              }}
-            />
+              <InputField
+                type="text"
+                placeHolder="Your LinkedIn"
+                value={values.linkedin}
+                onChange={(linkedin) => {
+                  setValues({ ...values, linkedin });
+                }}
+              />
 
-            <InputField
-              type="text"
-              placeHolder="Your Spotify"
-              value={values.spotify}
-              onChange={(spotify) => {
-                setValues({ ...values, spotify });
-              }}
-            />
+              <InputField
+                type="text"
+                placeHolder="Your website"
+                value={values.website}
+                onChange={(website) => {
+                  setValues({ ...values, website });
+                }}
+              />
 
-            <InputField
-              type="text"
-              placeHolder="Your Youtube"
-              value={values.youtube}
-              onChange={(youtube) => {
-                setValues({ ...values, youtube });
-              }}
-            />
+              {/* <InputField
+                type="text"
+                placeHolder="Your SoundCloud"
+                value={values.soundcloud}
+                onChange={(soundcloud) => {
+                  setValues({ ...values, soundcloud });
+                }}
+              />
 
-            <InputField
-              type="text"
-              placeHolder="Your LinkedIn"
-              value={values.linkedin}
-              onChange={(linkedin) => {
-                setValues({ ...values, linkedin });
-              }}
-            />
+              <InputField
+                type="text"
+                placeHolder="Your Spotify"
+                value={values.spotify}
+                onChange={(spotify) => {
+                  setValues({ ...values, spotify });
+                }}
+              />
 
-            <InputField
-              type="text"
-              placeHolder="Your website"
-              value={values.website}
-              onChange={(website) => {
-                setValues({ ...values, website });
-              }}
-            />
+              <InputField
+                type="text"
+                placeHolder="Your Youtube"
+                value={values.youtube}
+                onChange={(youtube) => {
+                  setValues({ ...values, youtube });
+                }}
+              /> */}
 
-            <Form.Control
-              as="select"
-              bsPrefix="input-field__input form-drop"
-              onChange={(choice) => {
-                if (
-                  choice.target.value !== languageChoiceDefault ||
-                  values.languages.length >= 10
-                )
-                  setValues({
-                    ...values,
-                    languages: [
-                      ...values.languages,
-                      getLanguageCode(choice.target.value),
-                    ],
-                  });
-              }}
-            >
-              {renderLanguageOptions(languageChoiceDefault)}
-            </Form.Control>
-
+              <Form.Control
+                as="select"
+                bsPrefix="input-field__input form-drop"
+                onChange={(choice) => {
+                  if (
+                    choice.target.value !== languageChoiceDefault ||
+                    values.languages.length >= 10
+                  )
+                    setValues({
+                      ...values,
+                      languages: [
+                        ...values.languages,
+                        getLanguageCode(choice.target.value),
+                      ],
+                    });
+                }}
+              >
+                {renderLanguageOptions(languageChoiceDefault)}
+              </Form.Control>
+            </div>
             <div className="small-margin-top">
               {values.languages ? renderLanguages(values.languages) : null}
             </div>

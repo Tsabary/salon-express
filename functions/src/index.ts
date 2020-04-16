@@ -1,10 +1,15 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import algoliasearch from "algoliasearch";
 
 admin.initializeApp(functions.config().firebase);
 
 const db = admin.firestore();
-// const defaultStorage = admin.storage();
+
+const ALGOLIA_ID = functions.config().algoliasalon.id;
+const ALGOLIA_ADMIN_KEY = functions.config().algoliasalon.key;
+const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
+const index = client.initIndex("rooms");
 
 // USER CREATED //
 
@@ -20,15 +25,11 @@ exports.userCreated = functions.auth.user().onCreate((user) => {
     );
   }
 
-  const userFollowersRef = db.collection("followers").doc(user.uid);
-  batch.set(userFollowersRef, { list: [] });
-
   const userProfileRef = db.doc("users/" + user.uid);
 
   batch.set(userProfileRef, {
     uid: user.uid,
     email: user.email,
-    following: [],
     languages: [],
     username: user.uid,
     name:
@@ -59,103 +60,54 @@ exports.userUpdate = functions.firestore
     if (!profile || !profileOld || profile === profileOld) return;
 
     // If the user changed their username, change the user name in all of that user's posts- past or future
-    if (profile.username !== profileOld.username) {
-      const data = await db
-        .collection("streams")
-        .where("user_username", "==", profileOld.username)
-        .get();
+    if (
+      profile.username !== profileOld.username ||
+      profile.name !== profileOld.name ||
+      profile.avatar !== profileOld.avatar
+    ) {
+      console.log("begin update");
 
-      data.docs.map((doc) => {
-        const stream = doc.data();
-        const streamRef = db.collection("streams").doc(stream.id);
+      const roomsData = await db
+        .collection("rooms")
+        .where("user_ID", "==", profile.uid)
+        .get();
+      
+      console.log("roomsDataLength", roomsData.docs.length)
+
+      roomsData.docs.map((doc) => {
+        const room = doc.data();
+        const roomRef = db.collection("rooms").doc(room.id);
+
+        console.log("room", room.id);
 
         batch.set(
-          streamRef,
-          { user_username: profile.username },
-          { merge: true }
-        );
-      });
-    }
-
-    // If the new list of mentors is longer, let's find the new mentor and add ourselves to their followers list
-    if (profile.following.length > profileOld.following.length) {
-      const mentorID = profile.following.filter(
-        (id: string) => !profileOld.following.includes(id)
-      )[0];
-
-      const mentorFollowersDoc = db.collection("followers").doc(mentorID);
-
-      batch.set(
-        mentorFollowersDoc,
-        { list: admin.firestore.FieldValue.arrayUnion(context.params.userID) },
-        { merge: true }
-      );
-    }
-
-    // If the new list of mentors is shorter, let's find the mentor we stopped following and remove ourselves from their followers list
-    if (profile.following.length < profileOld.following.length) {
-      const mentorID = profileOld.following.filter(
-        (id: string) => !profile.following.includes(id)
-      )[0];
-
-      const mentorFollowersDoc = db.collection("followers").doc(mentorID);
-
-      batch.set(
-        mentorFollowersDoc,
-        { list: admin.firestore.FieldValue.arrayRemove(context.params.userID) },
-        { merge: true }
-      );
-    }
-
-    return batch.commit();
-  });
-
-// FOLLOWERS DOC UPDATED //
-
-exports.followersUpdate = functions.firestore
-  .document("followers/{mentorID}")
-  .onUpdate(async (change, context) => {
-    const newList = change.after.data();
-    const oldList = change.before.data();
-
-    const batch = db.batch();
-
-    if (!oldList || !newList) return;
-
-    const futureStreams = await db
-      .collection("streams")
-      .where("user_ID", "==", context.params.mentorID)
-      .where("start", ">", new Date())
-      .get();
-
-    if (newList.list.length > oldList.list.length) {
-      // New List is longer - add new follower to all future posts
-      const followerID = newList.list.filter(
-        (id: string) => !oldList.list.includes(id)
-      )[0];
-
-      futureStreams.docs.forEach((doc) => {
-        const docRef = db.collection("streams").doc(doc.data().id);
-        return batch.set(
-          docRef,
+          roomRef,
           {
-            followers: admin.firestore.FieldValue.arrayUnion(followerID),
+            user_username: profile.username,
+            user_name: profile.name,
+            user_avatar: profile.avatar,
           },
           { merge: true }
         );
       });
-    } else {
-      // New List is short - remove follower from all future posts
-      const followerID = oldList.list.filter(
-        (id: string) => !newList.list.includes(id)
-      )[0];
 
-      futureStreams.docs.forEach((doc) => {
-        const docRef = db.collection("streams").doc(doc.data().id);
-        return batch.set(
-          docRef,
+      const commentsData = await db
+        .collection("comments")
+        .where("user_ID", "==", profile.uid)
+        .get();
+
+      commentsData.docs.map((doc) => {
+        const comment = doc.data();
+        const commentRef = db.collection("comments").doc(comment.id);
+
+        console.log("comment", comment.id);
+
+        batch.set(
+          commentRef,
           {
-            followers: admin.firestore.FieldValue.arrayRemove(followerID),
+            user_username: profile.username,
+            user_name: profile.name,
+            user_avatar: profile.avatar,
           },
           { merge: true }
         );
@@ -165,26 +117,26 @@ exports.followersUpdate = functions.firestore
     return batch.commit();
   });
 
-// STREAM CREATED //
 
-exports.streamCreated = functions.firestore
-  .document("streams/{streamID}")
+// ROOM CREATED //
+
+exports.roomCreated = functions.firestore
+  .document("rooms/{roomID}")
   .onCreate((snap, context) => {
-    const stream = snap.data();
+    const room = snap.data();
     const batch = db.batch();
+    const promises: any = [];
 
-    if (!stream) return;
+    if (!room) return;
 
-    // For every tag in the stream, add the stream ID to the list of streams using that tag, and increase the usage count for that tag
-    stream.tags.forEach((tag: string) => {
-      // Adding the stream ID to the list of streams using that tag
+    // For every tag in the room, add the room ID to the list of rooms using that tag, and increase the usage count for that tag
+    room.tags.forEach((tag: string) => {
+      // Adding the room ID to the list of rooms using that tag
       const tagRef = db.collection("tags").doc(tag);
       batch.set(
         tagRef,
         {
-          streams: admin.firestore.FieldValue.arrayUnion(
-            context.params.streamID
-          ),
+          rooms: admin.firestore.FieldValue.arrayUnion(context.params.roomID),
         },
         { merge: true }
       );
@@ -199,42 +151,60 @@ exports.streamCreated = functions.firestore
         { merge: true }
       );
     });
+    promises.push(batch.commit());
 
-    return batch.commit();
+    if (room) {
+      promises.push(
+        index.saveObject({
+          objectID: room.id,
+          language: room.language,
+          tags: room.tags,
+          title: room.title,
+          user_ID: room.user_ID,
+          visitors_count: room.visitors_count,
+          last_visit: room.last_visit,
+          created_on: room.created_on,
+          favorites_count: room.favorites_count,
+        })
+      );
+    }
+
+    return Promise.all(promises);
   });
 
-// STREAM UPDATE //
+// ROOM UPDATE //
 
-exports.streamUpdated = functions.firestore
-  .document("streams/{streamID}")
+exports.roomUpdated = functions.firestore
+  .document("rooms/{roomID}")
   .onUpdate((change, context) => {
-    const newStream = change.after.data();
-    const oldStream = change.before.data();
+    const newRoom = change.after.data();
+    const oldRoom = change.before.data();
 
     const batch = db.batch();
+    const promises: any = [];
 
-    if (!newStream || !oldStream || newStream === oldStream) return;
+    if (!newRoom || !oldRoom || newRoom === oldRoom) return;
 
     // let's check if there are any tag mismatch between the new and old list
     if (
-      !newStream.tags.every((tag: string) => oldStream.tags.includes(tag)) ||
-      !oldStream.tags.every((tag: string) => newStream.tags.includes(tag))
+      !newRoom.tags.every((tag: string) => oldRoom.tags.includes(tag)) ||
+      !oldRoom.tags.every((tag: string) => newRoom.tags.includes(tag))
     ) {
       console.log("not all tags are the same");
       // Filter and create a new array of all the tags that we've removed from a post
-      const tagsToRemove = oldStream.tags.filter(
-        (tag: string) => !newStream.tags.includes(tag)
+      const tagsToRemove = oldRoom.tags.filter(
+        (tag: string) => !newRoom.tags.includes(tag)
       );
 
-      // For every tag we've removed, remove the stream ID from the list of streams using that tag, and lower the usage count for that tag
+      // For every tag we've removed, remove the room ID from the list of rooms using that tag, and lower the usage count for that tag
       tagsToRemove.forEach((tag: string) => {
-        // Removing the stream ID from the list of streams using that tag
+        // Removing the room ID from the list of rooms using that tag
         const tagRef = db.collection("tags").doc(tag);
         batch.set(
           tagRef,
           {
-            streams: admin.firestore.FieldValue.arrayRemove(
-              context.params.streamID
+            rooms: admin.firestore.FieldValue.arrayRemove(
+              context.params.roomID
             ),
           },
           { merge: true }
@@ -252,20 +222,18 @@ exports.streamUpdated = functions.firestore
       });
 
       // Filter and create a new array of all the tags that we've added to a post
-      const tagsToAdd = newStream.tags.filter(
-        (tag: string) => !oldStream.tags.includes(tag)
+      const tagsToAdd = newRoom.tags.filter(
+        (tag: string) => !oldRoom.tags.includes(tag)
       );
 
-      // For every tag we've added, add the stream ID to the list of streams using that tag, and increase the usage count for that tag
+      // For every tag we've added, add the room ID to the list of rooms using that tag, and increase the usage count for that tag
       tagsToAdd.forEach((tag: string) => {
-        // Adding the stream ID to the list of streams using that tag
+        // Adding the room ID to the list of rooms using that tag
         const tagRef = db.collection("tags").doc(tag);
         batch.set(
           tagRef,
           {
-            streams: admin.firestore.FieldValue.arrayUnion(
-              context.params.streamID
-            ),
+            rooms: admin.firestore.FieldValue.arrayUnion(context.params.roomID),
           },
           { merge: true }
         );
@@ -284,29 +252,46 @@ exports.streamUpdated = functions.firestore
       console.log("all tags are the same");
     }
 
-    return batch.commit();
+    promises.push(batch.commit());
+
+    if (newRoom) {
+      promises.push(
+        index.saveObject({
+          objectID: newRoom.id,
+          language: newRoom.language,
+          tags: newRoom.tags,
+          title: newRoom.title,
+          user_ID: newRoom.user_ID,
+          visitors_count: newRoom.visitors_count,
+          last_visit: newRoom.last_visit,
+          created_on: newRoom.created_on,
+          favorites_count: newRoom.favorites_count,
+        })
+      );
+    }
+
+    return Promise.all(promises);
   });
 
-// STREAM DELETED //
+// ROOM DELETED //
 
-exports.streamDeleted = functions.firestore
-  .document("streams/{streamID}")
+exports.roomDeleted = functions.firestore
+  .document("rooms/{roomID}")
   .onDelete((snap, context) => {
-    const stream = snap.data();
+    const room = snap.data();
     const batch = db.batch();
+    const promises: any = [];
 
-    if (!stream) return;
+    if (!room) return;
 
-    // For every tag in the stream, add the stream ID to the list of streams using that tag, and increase the usage count for that tag
-    stream.tags.forEach((tag: string) => {
-      // Removing the stream ID from the list of streams using that tag
+    // For every tag in the room, add the room ID to the list of rooms using that tag, and increase the usage count for that tag
+    room.tags.forEach((tag: string) => {
+      // Removing the room ID from the list of rooms using that tag
       const tagRef = db.collection("tags").doc(tag);
       batch.set(
         tagRef,
         {
-          streams: admin.firestore.FieldValue.arrayRemove(
-            context.params.streamID
-          ),
+          rooms: admin.firestore.FieldValue.arrayRemove(context.params.roomID),
         },
         { merge: true }
       );
@@ -322,5 +307,9 @@ exports.streamDeleted = functions.firestore
       );
     });
 
-    return batch.commit();
+    promises.push(batch.commit());
+
+    promises.push(index.deleteObject(room.id));
+
+    return Promise.all(promises);
   });

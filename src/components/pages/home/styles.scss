@@ -5,6 +5,7 @@ $distance: 8px;
 $easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
 .home {
+  background-color: $bgColor;
   @include padding;
 
   @include resize(750px) {
@@ -28,6 +29,8 @@ $easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     @include resize(750px) {
       display: none;
+      visibility: hidden;
+      opacity: 0;
     }
 
     ul {
@@ -123,15 +126,15 @@ $easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
 
   @include resize(700px) {
-    right: 6rem;
-  }
-
-  @include resize(600px) {
     right: 5rem;
   }
 
-  @include resize(500px) {
+  @include resize(600px) {
     right: 4rem;
+  }
+
+  @include resize(500px) {
+    right: 3rem;
   }
 
   &:hover {

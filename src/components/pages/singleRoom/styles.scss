@@ -1,0 +1,74 @@
+@import "../../../styles/imports";
+
+.single-room {
+  @include padding;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4rem;
+
+  @include resize(1200px) {
+    grid-template-columns: 1fr;
+  }
+
+  @include resize(500px) {
+    margin-top: 1rem;
+  }
+
+  &__comment {
+    &--text {
+      display: none;
+      @include resize(750px){
+        display: block;
+      }
+    }
+
+    &--boxed {
+      @include resize(750px){
+        display: none;
+      }
+    }
+  }
+
+  &__box {
+    margin: 4rem auto;
+    // max-width: 35rem;
+  }
+  &__comments {
+    width: 100%;
+    margin: 4rem auto;
+    border-radius: $borderRadius;
+    box-shadow: 0 0.2rem 9rem rgb(228, 228, 228);
+    background-color: white;
+    padding: 3rem;
+    @include resize(1200px){
+      margin: 0 auto;
+    }
+
+    @include resize(650px){
+      padding: 2rem;
+    }
+
+  }
+
+  &__founder {
+    &-container {
+      border-radius: $borderRadius;
+      box-shadow: 0 0.2rem 9rem rgb(228, 228, 228);
+      background-color: white;
+      padding: 3rem;
+    }
+
+    &-admin {
+      text-transform: capitalize;
+      color: $mainColor;
+      font-family: $fontBold;
+    }
+    &-name {
+      color: $greyDark;
+
+      &:hover {
+        color: $mainColor;
+      }
+    }
+  }
+}

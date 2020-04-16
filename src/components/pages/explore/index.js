@@ -4,61 +4,18 @@ import { connect } from "react-redux";
 import { AuthContext } from "../../../providers/Auth";
 import { renderSection } from "../../../utils/feeds";
 
-import {
-  fetchFirstExploreLive,
-  fetchMoreExploreLive,
-  fetchFirstExploreUpcoming,
-  fetchMoreExploreUpcoming,
-  fetchFirstExplorePast,
-  fetchMoreExplorePast,
-} from "../../../actions";
+import { fetchFirstExplore, fetchMoreExplore } from "../../../actions";
 
-const Feed = ({
-  exploreLive,
-  exploreUpcoming,
-  explorePast,
-  fetchFirstExploreLive,
-  fetchMoreExploreLive,
-  fetchFirstExploreUpcoming,
-  fetchMoreExploreUpcoming,
-  fetchFirstExplorePast,
-  fetchMoreExplorePast,
-}) => {
+const Feed = ({ explore, fetchFirstExplore, fetchMoreExplore }) => {
   const { currentUserProfile } = useContext(AuthContext);
 
-  const [lastVisibleLive, setLastVisibleLive] = useState(null);
-  const [reachedLastLive, setReachedLastLive] = useState(true);
-
-  const [lastVisibleUpcoming, setLastVisibleUpcoming] = useState(null);
-  const [reachedLastUpcoming, setReachedLastUpcoming] = useState(true);
-
-  const [lastVisiblePast, setLastVisiblePast] = useState(null);
-  const [reachedLastPast, setReachedLastPast] = useState(true);
-
-  const dateNow = new Date();
+  const [lastVisible, setLastVisible] = useState(null);
+  const [reachedLast, setReachedLast] = useState(true);
 
   useEffect(() => {
-    fetchFirstExploreLive(
-      setLastVisibleLive,
-      setReachedLastLive,
-      dateNow,
-      currentUserProfile && currentUserProfile.languages
-        ? currentUserProfile.languages
-        : null
-    );
-    fetchFirstExploreUpcoming(
-      setLastVisibleUpcoming,
-      setReachedLastUpcoming,
-      dateNow,
-      currentUserProfile && currentUserProfile.languages
-        ? currentUserProfile.languages
-        : null
-    );
-
-    fetchFirstExplorePast(
-      setLastVisiblePast,
-      setReachedLastPast,
-      dateNow,
+    fetchFirstExplore(
+      setLastVisible,
+      setReachedLast,
       currentUserProfile && currentUserProfile.languages
         ? currentUserProfile.languages
         : null
@@ -68,38 +25,13 @@ const Feed = ({
   return (
     <div className="feed">
       {renderSection(
-        exploreLive,
-        "Live Practice Sessions",
-        fetchMoreExploreLive,
-        lastVisibleLive,
-        setLastVisibleLive,
-        reachedLastLive,
-        setReachedLastLive,
-        dateNow,
-        currentUserProfile
-      )}
-
-      {renderSection(
-        exploreUpcoming,
-        "Practice Sessions Coming Up",
-        fetchMoreExploreUpcoming,
-        lastVisibleUpcoming,
-        setLastVisibleUpcoming,
-        reachedLastUpcoming,
-        setReachedLastUpcoming,
-        dateNow,
-        currentUserProfile
-      )}
-
-      {renderSection(
-        explorePast,
-        "Practice Sessions I've Missed",
-        fetchMoreExplorePast,
-        lastVisiblePast,
-        setLastVisiblePast,
-        reachedLastPast,
-        setReachedLastPast,
-        dateNow,
+        explore,
+        "Explore Rooms",
+        fetchMoreExplore,
+        lastVisible,
+        setLastVisible,
+        reachedLast,
+        setReachedLast,
         currentUserProfile
       )}
     </div>
@@ -108,17 +40,11 @@ const Feed = ({
 
 const mapStateToProps = (state) => {
   return {
-    exploreLive: state.exploreLive,
-    exploreUpcoming: state.exploreUpcoming,
-    explorePast: state.explorePast,
+    explore: state.explore,
   };
 };
 
 export default connect(mapStateToProps, {
-  fetchFirstExploreLive,
-  fetchMoreExploreLive,
-  fetchFirstExploreUpcoming,
-  fetchMoreExploreUpcoming,
-  fetchFirstExplorePast,
-  fetchMoreExplorePast,
+  fetchFirstExplore,
+  fetchMoreExplore,
 })(Feed);

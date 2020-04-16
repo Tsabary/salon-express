@@ -2,15 +2,16 @@ import "./styles.scss";
 import React, { useContext, useEffect } from "react";
 import { connect } from "react-redux";
 
+import firebase from "../../../firebase";
+
 import { togglePopup } from "../../../actions";
 
 import { PageContext } from "../../../providers/Page";
 import { AuthContext } from "../../../providers/Auth";
 
 import Explore from "../explore";
-import Subscriptions from "../subscriptions";
-import Calendar from "../calendar";
-import Mine from "../mine";
+import Favorites from "../favorites";
+import MyRooms from "../myRooms";
 
 const Home = ({ popupShown, togglePopup }) => {
   const { currentUser } = useContext(AuthContext);
@@ -22,63 +23,72 @@ const Home = ({ popupShown, togglePopup }) => {
         return <Explore />;
 
       case 2:
-        return <Subscriptions />;
+        return <Favorites />;
 
       case 3:
-        return <Calendar />;
-
-      case 4:
-        return <Mine />;
+        return <MyRooms />;
     }
   };
 
   return (
     <div className="home">
       {!currentUser ? (
-        <div className="home__welcome">
-          Welcome to <span className="bold-700">Class Express</span>, where you
-          can discover group video language practice sessions. Join sessions,
-          talk to other like minded people from around the world, and practice
-          the language you're learning! -{" "}
+        <div className="home__welcome small-margin-bottom">
+          Welcome to <span className="bold-700">Salon Express</span>, where you
+          can discover public group video chats. Join sessions, and connect to
+          other like minded people from around the world.{" "}
           <a href="#sign-up" className="bold-700">
             Sign Up
           </a>{" "}
-          to start practicing - it's <span className="bold-700">FREE</span>.
+          to join sessions - it's <span className="bold-700">FREE</span>.
         </div>
       ) : null}
 
       {currentUser ? (
         <div className="home__menu">
           <ul>
-            {page === 1  && currentUser ? (
+            {page === 1 && currentUser ? (
               <div className="default-active">Explore</div>
             ) : (
-              <li onClick={() => setPage(1)}>
+              <li
+                onClick={() => {
+                  setPage(1);
+                  firebase
+                    .analytics()
+                    .logEvent("home_navigation", { feed: "Explore" });
+                }}
+              >
                 <a href="#">Explore</a>
               </li>
             )}
 
             {page === 2 && currentUser ? (
-              <div className="default-active">Subscriptions</div>
+              <div className="default-active">Favorites</div>
             ) : currentUser ? (
-              <li onClick={() => setPage(2)}>
-                <a href="#">Subscriptions</a>
+              <li
+                onClick={() => {
+                  setPage(2);
+                  firebase
+                    .analytics()
+                    .logEvent("home_navigation", { feed: "Favorites" });
+                }}
+              >
+                <a href="#">Favorites</a>
               </li>
             ) : null}
 
             {page === 3 && currentUser ? (
-              <div className="default-active">Calendar</div>
+              <div className="default-active">My Rooms</div>
             ) : currentUser ? (
-              <li onClick={() => setPage(3)}>
-                <a href="#">Calendar</a>
-              </li>
-            ) : null}
-
-            {page === 4 && currentUser ? (
-              <div className="default-active">My Streams</div>
-            ) : currentUser ? (
-              <li onClick={() => setPage(4)}>
-                <a href="#">My Streams</a>
+              <li
+                onClick={() => {
+                  setPage(3);
+                  firebase
+                    .analytics()
+                    .logEvent("home_navigation", { feed: "My Rooms" });
+                }}
+              >
+                <a href="#">My Rooms</a>
               </li>
             ) : null}
           </ul>
@@ -87,16 +97,19 @@ const Home = ({ popupShown, togglePopup }) => {
 
       {renderContent(page)}
 
-      {/* NEW STREAM BUTTON */}
+      {/* NEW ROOM BUTTON */}
       <a
         style={{ display: popupShown ? "none" : "" }}
-        onClick={() => togglePopup(true)}
+        onClick={() => {
+          togglePopup(true);
+          firebase.analytics().logEvent("room_open_button_click");
+        }}
         className="post-button"
         href={
-          currentUser && currentUser.emailVerified ? "#add-stream" : "#sign-up"
+          currentUser && currentUser.emailVerified ? "#add-room" : "#sign-up"
         }
       >
-        New Session
+        New Room
       </a>
     </div>
   );

@@ -74,5 +74,8 @@ export const turnToLowerCaseWithHyphen = (string) => {
 
 export const capitalizeAndRemoveHyphens = string => {
   return string.split("-").map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(" ");
+}
 
+export const capitalizeSentances = string => {
+  return string.split(".").map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(". ");
 }

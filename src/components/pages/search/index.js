@@ -8,122 +8,53 @@ import { renderSection } from "../../../utils/feeds";
 import { capitalizeAndRemoveHyphens } from "../../../utils/strings";
 
 import {
-  fetchFirstSearchedLive,
-  fetchMoreSearchedLive,
-  fetchFirstSearchedUpcoming,
-  fetchMoreSearchedUpcoming,
-  fetchFirstSearchedPast,
-  fetchMoreSearchedPast,
+  fetchFirstSearched,
+  fetchMoreSearched,
   togglePopup,
 } from "../../../actions";
 
 const Search = ({
   match,
-  searchLive,
-  searchUpcoming,
-  searchPast,
-  fetchFirstSearchedLive,
-  fetchMoreSearchedLive,
-  fetchFirstSearchedUpcoming,
-  fetchMoreSearchedUpcoming,
-  fetchFirstSearchedPast,
-  fetchMoreSearchedPast,
+  searched,
+  fetchFirstSearched,
+  fetchMoreSearched,
 }) => {
   const { currentUserProfile } = useContext(AuthContext);
 
-  const [lastVisibleLive, setLastVisibleLive] = useState(null);
-  const [reachedLastLive, setReachedLastLive] = useState(true);
-
-  const [lastVisibleUpcoming, setLastVisibleUpcoming] = useState(null);
-  const [reachedLastUpcoming, setReachedLastUpcoming] = useState(true);
-
-  const [lastVisiblePast, setLastVisiblePast] = useState(null);
-  const [reachedLastPast, setReachedLastPast] = useState(true);
-
-  const dateNow = new Date();
+  const [lastVisible, setLastVisible] = useState(null);
+  const [reachedLast, setReachedLast] = useState(true);
 
   useEffect(() => {
-    fetchFirstSearchedLive(
-      setLastVisibleLive,
-      setReachedLastLive,
-      dateNow,
+    fetchFirstSearched(
+      setLastVisible,
+      setReachedLast,
       match.params.id,
       currentUserProfile && currentUserProfile.languages
         ? currentUserProfile.languages
         : null
     );
 
-    fetchFirstSearchedUpcoming(
-      setLastVisibleUpcoming,
-      setReachedLastUpcoming,
-      dateNow,
-      match.params.id,
-      currentUserProfile && currentUserProfile.languages
-        ? currentUserProfile.languages
-        : null
-    );
-
-    fetchFirstSearchedPast(
-      setLastVisiblePast,
-      setReachedLastPast,
-      dateNow,
-      match.params.id,
-      currentUserProfile && currentUserProfile.languages
-        ? currentUserProfile.languages
-        : null
-    );
   }, [currentUserProfile]);
 
   return (
     <div className="search">
       {renderSection(
-        searchLive,
-        `Live Practice Sessions on ${capitalizeAndRemoveHyphens(
+        searched,
+        `Rooms related to ${capitalizeAndRemoveHyphens(
           match.params.id
         )}`,
-        fetchMoreSearchedLive,
-        lastVisibleLive,
-        setLastVisibleLive,
-        reachedLastLive,
-        setReachedLastLive,
-        dateNow,
+        fetchMoreSearched,
+        lastVisible,
+        setLastVisible,
+        reachedLast,
+        setReachedLast,
         currentUserProfile,
         match.params.id
       )}
 
-      {renderSection(
-        searchUpcoming,
-        `Future Practice Sessions on ${capitalizeAndRemoveHyphens(
-          match.params.id
-        )}`,
-        fetchMoreSearchedUpcoming,
-        lastVisibleUpcoming,
-        setLastVisibleUpcoming,
-        reachedLastUpcoming,
-        setReachedLastUpcoming,
-        dateNow,
-        currentUserProfile,
-        match.params.id
-      )}
-
-      {renderSection(
-        searchPast,
-        `Practice Sessions I've Missed on ${capitalizeAndRemoveHyphens(
-          match.params.id
-        )}`,
-        fetchMoreSearchedPast,
-        lastVisiblePast,
-        setLastVisiblePast,
-        reachedLastPast,
-        setReachedLastPast,
-        dateNow,
-        currentUserProfile,
-        match.params.id
-      )}
-
-      {!searchLive.length && !searchUpcoming.length && !searchPast.length ? (
+      {!searched.length  ? (
         <div className="empty-feed small-margin-top centered">
-          This is a fresh topic! Want to talk about it? Host a practice session!
+          This is a fresh topic! Want to talk about it? Open a new Room!
         </div>
       ) : null}
     </div>
@@ -132,19 +63,13 @@ const Search = ({
 
 const mapStateToProps = (state) => {
   return {
-    searchLive: state.searchLive,
-    searchUpcoming: state.searchUpcoming,
-    searchPast: state.searchPast,
+    searched: state.searched,
     popupShown: state.popupShown,
   };
 };
 
 export default connect(mapStateToProps, {
-  fetchFirstSearchedLive,
-  fetchMoreSearchedLive,
-  fetchFirstSearchedUpcoming,
-  fetchMoreSearchedUpcoming,
-  fetchFirstSearchedPast,
-  fetchMoreSearchedPast,
+  fetchFirstSearched,
+  fetchMoreSearched,
   togglePopup,
 })(Search);

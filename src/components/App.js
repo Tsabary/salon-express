@@ -17,12 +17,12 @@ import Footer from "./footer";
 
 import SignUp from "./popups/signUp";
 import UpdateProfile from "./popups/updateProfile";
-import NewStream from "./popups/newStream";
-import EditedStream from "./popups/editStream";
+import NewRoom from "./popups/newRoom";
+import EditRoom from "./popups/editRoom";
 
 import Home from "./pages/home";
 import Search from "./pages/search";
-import SingleStream from "./pages/singleStream";
+import SingleRoom from "./pages/singleRoom";
 import Stranger from "./pages/stranger";
 import Contact from "./pages/contact";
 import PrivacyPolicy from "./pages/privacyPolicy";
@@ -41,14 +41,14 @@ const App = () => {
               <div className="app">
                 <SignUp />
                 <UpdateProfile />
-                <NewStream />
-                <EditedStream />
+                <NewRoom />
+                <EditRoom />
                 <Header />
 
                 <Switch>
                   <Route path="/" exact component={Home} />
                   <Route path="/on/:id" exact component={Search} />
-                  <Route path="/practice/:id" exact component={SingleStream} />
+                  <Route path="/room/:id" exact component={SingleRoom} />
                   <Route path="/contact" exact component={Contact} />
                   <Route
                     path="/frequently-asked-questions"

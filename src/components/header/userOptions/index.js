@@ -3,6 +3,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
+import firebase from "../../../firebase";
 import { AuthContext } from "../../../providers/Auth";
 
 import { logOut, resendVerification, togglePopup } from "../../../actions";
@@ -15,11 +16,18 @@ const UserOptions = ({ logOut, resendVerification, togglePopup }) => {
 
   useEffect(() => {
     if (
-      !!currentUserProfile &&
+      currentUserProfile &&
       currentUserProfile.roles &&
       currentUserProfile.roles.includes("admin")
-    )
+    ) {
       setIsAdmin(true);
+    }
+
+    if (currentUserProfile && currentUserProfile.languages) {
+      firebase
+        .analytics()
+        .setUserProperties({ languages: currentUserProfile.languages });
+    }
   }, [currentUserProfile]);
 
   return (
@@ -55,14 +63,13 @@ const UserOptions = ({ logOut, resendVerification, togglePopup }) => {
         <a
           className="user-options__option"
           href="#update-profile"
-          onClick={() => togglePopup(true)}
+          onClick={() => {
+            togglePopup(true);
+            firebase.analytics().logEvent("profile_update_clicked")
+          }}
         >
           <TextButton text="Update Profile" />
         </a>
-
-        <Link className="user-options__option" to="/contact">
-          Contact
-        </Link>
 
         <div className="user-options__option" onClick={() => logOut()}>
           Log Out

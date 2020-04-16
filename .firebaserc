@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "class-express-a333b"
+    "default": "our-salon",
+    "production": "our-salon"
   }
 }

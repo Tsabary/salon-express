@@ -43,13 +43,11 @@ const Header = () => {
         return <FilterInput />;
 
       case 2:
-        return <div className="header__center">Subscriptions</div>;
+        return <div className="header__center">Favorites</div>;
 
       case 3:
-        return <div className="header__center">Calendar</div>;
+        return <div className="header__center">My Rooms</div>;
 
-      case 4:
-        return <div className="header__center">My Channel</div>;
 
       case 5:
         return <FilterInput />;
@@ -64,17 +62,17 @@ const Header = () => {
       <MobileMenu />
       <div className="header-with-logo">
         <div className="header__logo-container">
-          <div
-            className="header__title header__title-full"
-            onClick={handleChange}
-          >
-            Class.
+          <div onClick={handleChange} className="header__title-full">
+            <div className="header__title-main ">Salon.</div>
+            <div className="header__title-sub">
+              Humans Talking
+            </div>
           </div>
           <div
             className="header__title header__title-lean"
             onClick={handleChange}
           >
-            C.
+            <div className="header__title-main ">S.</div>
           </div>
         </div>
         {page === 1 || page === 5 ? <FilterInput /> : <div />}

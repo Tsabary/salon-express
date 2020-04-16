@@ -1,35 +1,34 @@
 import React from "react";
 import Masonry from "react-masonry-css";
 import { breakpointColumnsObj } from "../constants";
-import Stream from "../components/stream";
+import Room from "../components/room";
 
-const renderItems = (streams, currentUserProfile) => {
-  return streams.map((stream) => {
+const renderItems = (rooms, currentUserProfile) => {
+  return rooms.map((room) => {
     return (
-      <Stream
-        stream={stream}
+      <Room
+        room={room}
         currentUserProfile={
           currentUserProfile || { uid: "", following: [], followers: [] }
         }
-        key={stream.id}
+        key={room.id}
       />
     );
   });
 };
 
 export const renderSection = (
-  streams,
+  rooms,
   title,
   fetchMore,
   lastVisible,
   setLastVisible,
   reachedLast,
   setReachedLast,
-  dateNow,
   currentUserProfile,
   tag
 ) => {
-  return streams.length ? (
+  return rooms.length ? (
     <>
       <div className="feed__header">{title}</div>
       <Masonry
@@ -37,10 +36,10 @@ export const renderSection = (
         className="my-masonry-grid"
         columnClassName="my-masonry-grid_column"
       >
-        {renderItems(streams, currentUserProfile)}
+        {renderItems(rooms, currentUserProfile)}
       </Masonry>
 
-      {streams.length && !reachedLast ? (
+      {rooms.length && !reachedLast ? (
         <div
           className="feed__load-more"
           onClick={() =>
@@ -48,7 +47,6 @@ export const renderSection = (
               lastVisible,
               setLastVisible,
               setReachedLast,
-              dateNow,
               currentUserProfile ? currentUserProfile.uid : null,
               tag,
               currentUserProfile ? currentUserProfile.languages : null

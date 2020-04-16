@@ -4,83 +4,17 @@ import { connect } from "react-redux";
 
 import { AuthContext } from "../../../providers/Auth";
 
-import { renderSection } from "../../../utils/feeds";
-
-import {
-  fetchStrangerProfile,
-  fetchFirstStrangerLive,
-  fetchMoreStrangerLive,
-  fetchFirstStrangerUpcoming,
-  fetchMoreStrangerUpcoming,
-  fetchFirstStrangerPast,
-  fetchMoreStrangerPast,
-} from "../../../actions";
+import { fetchStrangerProfile } from "../../../actions";
 
 import FollowBtn from "../../followBtn";
 import { getLanguageName } from "../../../utils/languages";
 
-const Stranger = ({
-  match,
-  strangerLive,
-  strangerUpcoming,
-  strangerPast,
-  strangerProfile,
-  fetchFirstStrangerLive,
-  fetchMoreStrangerLive,
-  fetchFirstStrangerUpcoming,
-  fetchMoreStrangerUpcoming,
-  fetchFirstStrangerPast,
-  fetchMoreStrangerPast,
-  fetchStrangerProfile,
-}) => {
+const Stranger = ({ match, strangerProfile, fetchStrangerProfile }) => {
   const { currentUserProfile } = useContext(AuthContext);
-
-  const [lastVisibleLive, setLastVisibleLive] = useState(null);
-  const [reachedLastLive, setReachedLastLive] = useState(true);
-
-  const [lastVisibleUpcoming, setLastVisibleUpcoming] = useState(null);
-  const [reachedLastUpcoming, setReachedLastUpcoming] = useState(true);
-
-  const [lastVisiblePast, setLastVisiblePast] = useState(null);
-  const [reachedLastPast, setReachedLastPast] = useState(true);
-
-  const dateNow = new Date();
 
   useEffect(() => {
     if (match.params.id) fetchStrangerProfile(match.params.id);
   }, [match.params.id]);
-
-  useEffect(() => {
-    console.log(strangerProfile);
-    if (!strangerProfile) return;
-
-    if (strangerProfile.uid && !strangerLive.length) {
-      fetchFirstStrangerLive(
-        setLastVisibleLive,
-        setReachedLastLive,
-        dateNow,
-        strangerProfile.uid
-      );
-    }
-
-    if (strangerProfile.uid && !strangerUpcoming.length) {
-      fetchFirstStrangerUpcoming(
-        setLastVisibleUpcoming,
-        setReachedLastUpcoming,
-        dateNow,
-        strangerProfile.uid
-      );
-    }
-
-    if (strangerProfile.uid && !strangerPast.length) {
-      fetchFirstStrangerPast(
-        setLastVisiblePast,
-        setReachedLastPast,
-        dateNow,
-        strangerProfile.uid
-      );
-    }
-  }, [strangerProfile]);
 
   return !strangerProfile ? null : (
     <div className="stranger">
@@ -95,40 +29,21 @@ const Stranger = ({
           />
         </div>
         <div className="stranger__header-body">
-          <div className="stranger__header-names">
-            <div className="stranger__header-name">
-              {strangerProfile && strangerProfile.name}
-            </div>
-            {strangerProfile &&
-            strangerProfile.username !== strangerProfile.uid ? (
-              <div className="stranger__header-username">
-                A.K.A {strangerProfile && strangerProfile.username}
-              </div>
-            ) : null}
+          <div className="stranger__header-name">
+            {strangerProfile && strangerProfile.name}
           </div>
+
           <div className="stranger__header-tagline">
             {strangerProfile && strangerProfile.description}
           </div>
           <div className="stranger__header-languages">
             {strangerProfile && strangerProfile.languages
-              ? `Languages: ${strangerProfile.languages
+              ? strangerProfile.languages
                   .map((lan) => getLanguageName(lan))
-                  .join(", ")}`
+                  .join(", ")
               : null}
           </div>
         </div>
-
-        {currentUserProfile &&
-        currentUserProfile.uid !== strangerProfile.uid ? (
-          <FollowBtn
-            currentUserProfile={currentUserProfile}
-            strangerID={strangerProfile.uid}
-            textFollow="Follow"
-            textUnfollow="Unfollow"
-          />
-        ) : (
-          <div />
-        )}
 
         <div className="stranger__header-social">
           {strangerProfile && strangerProfile.instagram ? (
@@ -213,72 +128,23 @@ const Stranger = ({
         </div>
       </div>
 
-      {strangerProfile ? (
-        <>
-          {renderSection(
-            strangerLive,
-            `Live Practice Sessions Hosted by ${strangerProfile.name}`,
-            fetchMoreStrangerLive,
-            lastVisibleLive,
-            setLastVisibleLive,
-            reachedLastLive,
-            setReachedLastLive,
-            dateNow,
-            currentUserProfile
-          )}
-
-          {renderSection(
-            strangerUpcoming,
-            `Future Practice Sessions Hosted by ${strangerProfile.name}`,
-            fetchMoreStrangerUpcoming,
-            lastVisibleUpcoming,
-            setLastVisibleUpcoming,
-            reachedLastUpcoming,
-            setReachedLastUpcoming,
-            dateNow,
-            currentUserProfile
-          )}
-
-          {renderSection(
-            strangerPast,
-            `Practice Sessions Hosted I've Missed with ${strangerProfile.name}`,
-            fetchMoreStrangerPast,
-            lastVisiblePast,
-            setLastVisiblePast,
-            reachedLastPast,
-            setReachedLastPast,
-            dateNow,
-            currentUserProfile
-          )}
-        </>
-      ) : null}
-
-      {!strangerPast.length &&
+      {/* {!strangerPast.length &&
       !strangerUpcoming.length &&
       !strangerLive.length ? (
         <div className="empty-feed small-margin-top centered">
           Nothing to see here
         </div>
-      ) : null}
+      ) : null} */}
     </div>
   );
 };
 
 const mapStateToProps = (state) => {
   return {
-    strangerLive: state.strangerLive,
-    strangerUpcoming: state.strangerUpcoming,
-    strangerPast: state.strangerPast,
     strangerProfile: state.strangerProfile,
   };
 };
 
 export default connect(mapStateToProps, {
   fetchStrangerProfile,
-  fetchFirstStrangerLive,
-  fetchMoreStrangerLive,
-  fetchFirstStrangerUpcoming,
-  fetchMoreStrangerUpcoming,
-  fetchFirstStrangerPast,
-  fetchMoreStrangerPast,
 })(Stranger);

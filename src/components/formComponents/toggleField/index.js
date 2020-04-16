@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import ToggleButton from "../toggleButton";
 
 const ToggleField = ({ id, text, toggleOn, toggleOff, isChecked }) => {
+
   return (
     <div className="toggle-field">
       <label className="toggle-button__label" htmlFor={id}>

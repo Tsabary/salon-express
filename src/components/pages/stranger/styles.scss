@@ -1,6 +1,8 @@
 @import "../../../styles/imports";
 
 .stranger {
+  width: max-content;
+  margin: auto;
   @include padding;
 
   @include resize(750px) {
@@ -8,7 +10,7 @@
   }
 
   &__header {
-    width: 100%;
+    // width: 100%;
     background-color: white;
     border-radius: $borderRadius;
     border: 1px solid $mainColor;
@@ -17,8 +19,10 @@
     cursor: default;
     display: grid;
     gap: 5rem;
-    grid-template-columns: max-content 1fr;
+    // grid-template-columns: max-content 1fr;
     align-items: center;
+    justify-content: center;
+    text-align: center;
 
     @include resize(900px) {
       gap: 3rem;
@@ -87,7 +91,7 @@
       margin-top: 2rem;
     }
 
-    &-languages{
+    &-languages {
       color: $mainColor;
       font-size: 2rem;
       margin-top: 2rem;

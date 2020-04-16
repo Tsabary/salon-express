@@ -26,7 +26,7 @@ const FollowBtn = ({
   ) : currentUserProfile &&
     !currentUserProfile.following.includes(strangerID) ? (
     <div
-      className="stream__button stream__button-full clickable"
+      className="room__button room__button-full clickable"
       onClick={() => {
         follow(currentUserProfile, strangerID, setCurrentUserProfile, () =>
           setHandlingFollow(false)
@@ -44,7 +44,7 @@ const FollowBtn = ({
     </div>
   ) : (
     <div
-      className="stream__button stream__button-line clickable"
+      className="room__button room__button-line clickable"
       onClick={() => {
         {
           unfollow(currentUserProfile, strangerID, setCurrentUserProfile, () =>

@@ -1,0 +1,28 @@
+@import "../../../../styles/imports";
+
+.comment {
+  margin-top: 2rem;
+  background-color: $bgColor;
+  border-radius: 0 3rem 0 3rem;
+  padding: 2.5rem;
+  &__avatar {
+    width: 3.5rem;
+    height: 3.5rem;
+    border: 1px white solid;
+    box-shadow: 0 0.4rem 1.4rem rgb(170, 170, 170);
+    border-radius: 10rem;
+    cursor: pointer;
+  }
+
+  &__body {
+    margin-top: 1rem;
+  }
+
+  &__user-name {
+    cursor: pointer;
+
+    &:hover{
+        color: $mainColor;
+    }
+  }
+}

@@ -22,7 +22,7 @@
     outline: none;
     font-family: $font;
     font-size: 1.4rem;
-    width: 30rem;
+    width: calc(100% - 3rem);
     margin: 0 2rem;
     &::-webkit-input-placeholder {
       color: $grey;
@@ -49,5 +49,12 @@
     background-color: $mainColor;
     color: white;
     cursor: pointer;
+  }
+
+  &__tags{
+    background-color: white;
+    border: $border;
+    border-radius: $borderRadius;
+    padding: 1rem 1rem 0 1rem;
   }
 }

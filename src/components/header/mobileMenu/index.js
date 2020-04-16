@@ -25,14 +25,12 @@ const Menu = ({ togglePopup, logOut }) => {
       case "Explore":
         return 1;
 
-      case "Subscriptions":
+      case "Favorites":
         return 2;
 
-      case "Calendar":
+      case "My Rooms":
         return 3;
 
-      case "My Channel":
-        return 4;
     }
   };
 
@@ -83,7 +81,7 @@ const Menu = ({ togglePopup, logOut }) => {
         className="navigation__button"
         onClick={() => {
           setIsMenuOpen(!isMenuOpen);
-          togglePopup(false);
+          togglePopup(!isMenuOpen);
         }}
       >
         <span className="navigation__icon">&nbsp;</span>
@@ -94,7 +92,7 @@ const Menu = ({ togglePopup, logOut }) => {
         <ul className="navigation__list">
           {currentUser && page
             ? renderMenuItems(
-                ["Explore", "Subscriptions", "Calendar", "My Channel"],
+                ["Explore", "Favorites", "My Rooms"],
                 page
               )
             : renderMenuItems(["Explore"], page)}

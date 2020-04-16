@@ -56,8 +56,13 @@ const Tags = ({
   };
 
   const handleTagInputChange = (input) => {
-    const cleanTag = input.replace(/[^\p{L}\s]+/gu, '');
-    if (cleanTag.length < 25) setTagInput(cleanTag);
+    const cleanTag = input
+      .replace(/^([^-]*-)|-/g, "$1")
+      .replace(/[^\p{L}\s\d-]+/gu, "")
+      .toLowerCase()
+      .split(" ")
+      .join("-");
+    if (cleanTag.length < 30) setTagInput(cleanTag);
     setTagsSuggestions(cleanTag ? filterTags(cleanTag) : null);
   };
 
@@ -107,7 +112,7 @@ const Tags = ({
       <div className="tags__container">
         <InputField
           type="text"
-          placeHolder="Add 2-5 tags that are related to the topic of the conversation"
+          placeHolder="Add 2-5 tags that are related to the room"
           value={tagInput}
           onChange={handleTagInputChange}
           onKeyDown={handleKeyPress}
