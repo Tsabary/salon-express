@@ -30,6 +30,7 @@ import Faq from "./pages/faq";
 import AddQuestion from "./pages/addQuestion";
 import Careers from "./pages/careers";
 import Apply from "./pages/apply";
+import Updates from "./updates";
 
 const App = () => {
   return (
@@ -44,6 +45,7 @@ const App = () => {
                 <NewRoom />
                 <EditRoom />
                 <Header />
+                <Updates/>
 
                 <Switch>
                   <Route path="/" exact component={Home} />

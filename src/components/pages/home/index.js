@@ -98,7 +98,7 @@ const Home = ({ popupShown, togglePopup }) => {
       {renderContent(page)}
 
       {/* NEW ROOM BUTTON */}
-      <a
+      {/* <a
         style={{ display: popupShown ? "none" : "" }}
         onClick={() => {
           togglePopup(true);
@@ -110,7 +110,7 @@ const Home = ({ popupShown, togglePopup }) => {
         }
       >
         New Room
-      </a>
+      </a> */}
     </div>
   );
 };

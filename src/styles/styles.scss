@@ -82,7 +82,7 @@ h3 {
       font-size: 5rem;
       line-height: 6rem;
       margin-bottom: 4rem;
-      width: min-content;
+      // width: min-content;
     }
   }
 }
@@ -241,8 +241,6 @@ h3 {
   }
 }
 
-
-
 .text-button {
   &-delete {
     // font-size: 1.6rem;
@@ -264,7 +262,7 @@ h3 {
     }
   }
 
-  &-mobile{
+  &-mobile {
     color: $mainColor;
     background: transparent;
     box-shadow: 0px 0px 0px transparent;
@@ -370,9 +368,9 @@ h3 {
 
 .popup {
   display: none;
-  min-height: 60%;
+  // min-height: 60%;
   max-width: 60%;
-  justify-content: center;
+  // justify-content: center;
   align-items: center;
   transition: all 0.2s;
   position: absolute;
@@ -388,16 +386,22 @@ h3 {
   box-shadow: 0 0.2rem 9rem rgb(228, 228, 228);
   background-color: white;
 
-  @include resize(600px) {
-    padding: 5rem;
-  }
-
   @include resize(800px) {
     max-width: 80%;
   }
 
   @include resize(600px) {
-    max-width: 95%;
+    padding: 5rem;
+  }
+
+  @include resize(750px) {
+    position: fixed;
+    max-width: 100%;
+    max-height: 100%;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    border: none;
   }
 
   &:target {

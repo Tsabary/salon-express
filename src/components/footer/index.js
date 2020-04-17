@@ -6,8 +6,8 @@ import history from "../../history";
 
 import firebase from "../../firebase";
 
-import tnc from "../../documents/tnc.pdf";
-import pp from "../../documents/pp.pdf";
+import tnc from "../../files/tnc.pdf";
+import pp from "../../files/pp.pdf";
 
 const Footer = () => {
   const myHistory = useHistory(history);

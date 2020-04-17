@@ -35,11 +35,15 @@ import {
   // CAREERS //
   FETCH_POSITIONS,
   FETCH_SINGLE_POSITION,
+  FETCH_UPDATES,
+  ADD_NOTIFICATION,
+  RESET_NOTIFICATIONS,
 } from "./types";
 
 const db = firebase.firestore();
 const storage = firebase.storage();
 const analytics = firebase.analytics();
+const RTDB = firebase.database();
 
 // EXPLORE //
 
@@ -284,7 +288,7 @@ export const fetchMoreSearched = (
 
 // ROOM //
 
-export const logGuestEntry = (room) => () => {
+export const logGuestEntry = (room, currentUserProfile) => () => {
   const roomRef = db.collection("rooms").doc(room.id);
   roomRef.set(
     {
@@ -293,7 +297,33 @@ export const logGuestEntry = (room) => () => {
     },
     { merge: true }
   );
+
   analytics.logEvent("room_entered");
+
+  if (!room.favorites) return;
+
+  currentUserProfile && currentUserProfile.uid
+    ? room.favorites.forEach((userID) => {
+        RTDB.ref("updates/" + userID)
+          .push()
+          .set({
+            user_ID: currentUserProfile.uid,
+            user_name: currentUserProfile.name,
+            user_username: currentUserProfile.username,
+            room_ID: room.id,
+            room_name: room.title,
+            created_on: Date.now(),
+          });
+      })
+    : room.favorites.forEach((userID) => {
+        RTDB.ref("updates/" + userID)
+          .push()
+          .set({
+            room_ID: room.id,
+            room_name: room.title,
+            created_on: Date.now(),
+          });
+      });
 };
 
 // FAVORITES LIST //
@@ -381,7 +411,7 @@ export const fetchSingleRoom = (roomID, setRoom) => async (dispatch) => {
 
   analytics.logEvent("room_direct_navigation");
   if (doc.data()) {
-    setRoom(doc.data())
+    setRoom(doc.data());
     // dispatch({
     //   type: NEW_ROOM,
     //   payload: doc.data(),
@@ -402,9 +432,8 @@ export const fetchRoomComments = (roomID, setComments) => async () => {
 };
 
 export const associateWithRoom = (room, associate) => async (dispatch) => {
-
   const newRoom = { ...room, associate };
-  console.log("associate with room", newRoom);
+
   db.collection("rooms")
     .doc(room.id)
     .set({ associate }, { merge: true })
@@ -756,6 +785,33 @@ export const updateProfile = (
         analytics.logEvent("profile_update");
       });
   }
+};
+
+export const listenToUpdates = (currentUserProfile, notification) => async (
+  dispatch
+) => {
+  var starCountRef = firebase
+    .database()
+    .ref("updates/" + currentUserProfile.uid);
+
+  starCountRef.on("value", (snapshot) => {
+    console.log("fetchedd");
+    notification();
+    dispatch({
+      type: FETCH_UPDATES,
+      payload: snapshot.val() ? Object.values(snapshot.val()) : [],
+    });
+
+    dispatch({
+      type: ADD_NOTIFICATION,
+    });
+  });
+};
+
+export const resetNotifications = () => {
+  return {
+    type: RESET_NOTIFICATIONS,
+  };
 };
 
 // GLOBAL //

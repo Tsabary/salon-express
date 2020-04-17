@@ -17,6 +17,7 @@ import {
 import { validateWordsLength } from "../../../utils/strings";
 
 import InputField from "../../formComponents/inputField";
+import TextArea from "../../formComponents/textArea";
 import ToggleField from "../../formComponents/toggleField";
 import BoxedButton from "../../formComponents/boxedButton";
 
@@ -152,7 +153,7 @@ const SingleRoom = ({
             });
           }}
         >
-          <InputField
+          <TextArea
             type="text"
             placeHolder="Leave a comment"
             value={values && values.body}

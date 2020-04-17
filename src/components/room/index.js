@@ -102,7 +102,7 @@ const Room = ({
           <a
             href={"https://meet.jit.si/ClassExpress-" + room.id}
             target="_blank"
-            onClick={() => logGuestEntry(room)}
+            onClick={() => logGuestEntry(room, currentUserProfile)}
           >
             <div className="room__button room__button-full clickable">
               Enter Room

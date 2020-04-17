@@ -47,7 +47,7 @@
   &-with-logo {
     // width: 100%;
     display: grid;
-    grid-template-columns: max-content 1fr max-content;
+    grid-template-columns: max-content 1fr max-content max-content;
     align-items: start;
     gap: 4rem;
     // @include resize(900px) {
@@ -61,7 +61,7 @@
 
   &-without-logo {
     display: none;
-    grid-template-columns: 7rem 1fr;
+    grid-template-columns: 7rem 1fr max-content;
     align-items: start;
     gap: 4rem;
     @include resize(750px) {
@@ -111,6 +111,12 @@
       @include resize(700px) {
         display: block;
       }
+    }
+  }
+
+  &__new-room {
+    @include resize(750px) {
+      display: none;
     }
   }
 

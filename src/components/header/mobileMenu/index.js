@@ -96,6 +96,15 @@ const Menu = ({ togglePopup, logOut }) => {
                 page
               )
             : renderMenuItems(["Explore"], page)}
+          
+
+          {currentUser ? (
+            <a href="#add-room" onClick={() => setIsMenuOpen(false)}>
+              <li className="navigation__item">New Room</li>
+            </a>
+          ) : null}
+
+
           {currentUser ? (
             <a href="#update-profile" onClick={() => setIsMenuOpen(false)}>
               <li className="navigation__item">Update Profile</li>

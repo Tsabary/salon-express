@@ -13,6 +13,8 @@ import StrangerProfileReducer from "./stranger/StrangerProfileReducer";
 
 import QuestionsReducer from "./global/QuestionsReducer";
 import PositionsReducer from "./careers/PositionsReducer";
+import UpdatesReducer from "./user/UpdatesReducer";
+import NotificationReducer from "./user/NotificationReducer";
 
 export default combineReducers({
   // GLOBAL //
@@ -24,17 +26,20 @@ export default combineReducers({
   // EXPLORE //
   explore: ExploreReducer,
 
-  // MY FAVORITES
+  // MY FAVORITES //
   favorites: FavoritesReducer,
 
   myRooms: MyRoomsReducer,
 
-  // SEARCH
+  // SEARCH //
   searched: SearchReducer,
 
   // STRANGER //
   strangerProfile: StrangerProfileReducer,
 
+  // USER //
+  updates: UpdatesReducer,
+  notifications: NotificationReducer,
   // CAREERS //
   positions: PositionsReducer,
 });

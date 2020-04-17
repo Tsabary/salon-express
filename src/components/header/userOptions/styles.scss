@@ -4,10 +4,11 @@
   position: relative;
 
   &__container-full {
+    margin-top: -.5rem;
     display: grid;
     grid-template-columns: repeat(2, max-content);
     gap: 2rem;
-    @include resize(900px) {
+    @include resize(950px) {
       // grid-template-columns: max-content;
       display: none;
     }
@@ -15,8 +16,10 @@
 
   &__container-lean {
     display: none;
+    margin-top: -.5rem;
+
     grid-template-columns: max-content;
-    @include resize(900px) {
+    @include resize(950px) {
       display: grid;
     }
 
@@ -84,7 +87,6 @@
       visibility: visible;
       color: $mainColor;
       text-decoration: none !important;
-
     }
   }
 

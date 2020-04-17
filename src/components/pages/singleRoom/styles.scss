@@ -3,7 +3,7 @@
 .single-room {
   @include padding;
   display: grid;
-  grid-template-columns: max-content 1fr;
+  grid-template-columns: 1fr 2fr;
   gap: 4rem;
 
   @include resize(1200px) {

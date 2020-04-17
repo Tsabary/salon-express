@@ -76,12 +76,15 @@ const Header = () => {
           </div>
         </div>
         {page === 1 || page === 5 ? <FilterInput /> : <div />}
+        {currentUser ? <div className="header__new-room boxed-button">New Room</div>: null}
+
         <div className="header__auth">{renderAuth()}</div>
       </div>
 
       <div className="header-without-logo">
         <div />
         {renderCenter(page)}
+        {currentUser ? <div className="header__new-room boxed-button">New Room</div>: null}
 
         <div className="header__auth">{renderAuth()}</div>
       </div>
