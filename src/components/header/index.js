@@ -2,16 +2,17 @@ import "./styles.scss";
 import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 
+import firebase from "../../firebase";
 import history from "../../history";
 
 import { AuthContext } from "../../providers/Auth";
 import { PageContext } from "../../providers/Page";
+import { SearchContext } from "../../providers/Search";
 
 import AuthOptions from "./authOptions";
 import UserOptions from "./userOptions";
 import FilterInput from "./filterInput";
 import MobileMenu from "./mobileMenu";
-import { SearchContext } from "../../providers/Search";
 
 const Header = () => {
   const { currentUser } = useContext(AuthContext);
@@ -48,7 +49,6 @@ const Header = () => {
       case 3:
         return <div className="header__center">My Rooms</div>;
 
-
       case 5:
         return <FilterInput />;
 
@@ -60,13 +60,17 @@ const Header = () => {
   return (
     <div className="header">
       <MobileMenu />
-      <div className="header-with-logo">
+      <div
+        className={
+          currentUser
+            ? "header-with-logo header-with-logo--logged-in"
+            : "header-with-logo header-with-logo--logged-out"
+        }
+      >
         <div className="header__logo-container">
           <div onClick={handleChange} className="header__title-full">
             <div className="header__title-main ">Salon.</div>
-            <div className="header__title-sub">
-              Humans Talking
-            </div>
+            <div className="header__title-sub">Humans Talking</div>
           </div>
           <div
             className="header__title header__title-lean"
@@ -76,7 +80,21 @@ const Header = () => {
           </div>
         </div>
         {page === 1 || page === 5 ? <FilterInput /> : <div />}
-        {currentUser ? <div className="header__new-room boxed-button">New Room</div>: null}
+        {currentUser ? (
+          <a
+            className="header__new-room boxed-button"
+            onClick={() => {
+              firebase.analytics().logEvent("room_open_button_click");
+            }}
+            href={
+              currentUser && currentUser.emailVerified
+                ? "#add-room"
+                : "#sign-up"
+            }
+          >
+            New Room
+          </a>
+        ) : null}
 
         <div className="header__auth">{renderAuth()}</div>
       </div>
@@ -84,7 +102,21 @@ const Header = () => {
       <div className="header-without-logo">
         <div />
         {renderCenter(page)}
-        {currentUser ? <div className="header__new-room boxed-button">New Room</div>: null}
+        {currentUser ? (
+          <a
+            className="header__new-room boxed-button"
+            onClick={() => {
+              firebase.analytics().logEvent("room_open_button_click");
+            }}
+            href={
+              currentUser && currentUser.emailVerified
+                ? "#add-room"
+                : "#sign-up"
+            }
+          >
+            New Room
+          </a>
+        ) : null}
 
         <div className="header__auth">{renderAuth()}</div>
       </div>

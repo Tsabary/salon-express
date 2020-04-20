@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 
 import Moment from "react-moment";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { ReactSVG } from "react-svg";
 
 import history from "../../history";
 import firebase from "../../firebase";
@@ -21,7 +22,6 @@ import {
 import { getLanguageName } from "../../utils/languages";
 import { capitalizeSentances } from "../../utils/strings";
 
-
 const Room = ({
   room,
   logGuestEntry,
@@ -29,6 +29,7 @@ const Room = ({
   removeFromFavorites,
   currentUserProfile,
   togglePopup,
+  isForFeed,
 }) => {
   const myHistory = useHistory(history);
 
@@ -67,7 +68,7 @@ const Room = ({
   };
 
   return (
-    <div className="room">
+    <div className={isForFeed ? "room room-feed" : "room"}>
       <input
         className="room-delete-checkbox"
         type="checkbox"
@@ -84,22 +85,26 @@ const Room = ({
 
             <div
               className="room__title"
-              onClick={() => myHistory.push(`/room/${room.id}`)}
+              onClick={() => {
+                myHistory.push(`/room/${room.id}`);
+                logGuestEntry(room, currentUserProfile);
+              }}
             >
               {capitalizeSentances(room.title)}
             </div>
 
-            <div className="room__languages">
-              <div className="room__languages--base">
-                Need to know {getLanguageName(room.language)}
-              </div>
+            <div className="room__languages--base">
+              Need to know {getLanguageName(room.language)}
             </div>
+
+            {isForFeed ? null :
+              <div className="room__description">{room.description}</div>}
 
             <div className="tiny-margin-top"> {renderTags()}</div>
           </div>
         </div>
         <div className="room__actions--all">
-          <a
+          {/* <a
             href={"https://meet.jit.si/ClassExpress-" + room.id}
             target="_blank"
             onClick={() => logGuestEntry(room, currentUserProfile)}
@@ -107,7 +112,7 @@ const Room = ({
             <div className="room__button room__button-full clickable">
               Enter Room
             </div>
-          </a>
+          </a> */}
 
           <div className="room__actions--pair">
             <CopyToClipboard
@@ -124,9 +129,13 @@ const Room = ({
                 {shareButton ? (
                   shareButton
                 ) : (
-                  <svg className="room__favorite-heart room__favorite-heart--full">
-                    <use xlinkHref="../sprite.svg#share"></use>
-                  </svg>
+                  <ReactSVG
+                    src="./svgs/share.svg"
+                    wrapper="div"
+                    beforeInjection={(svg) => {
+                      svg.classList.add("room__icon");
+                    }}
+                  />
                 )}
               </div>
             </CopyToClipboard>
@@ -142,11 +151,15 @@ const Room = ({
               >
                 <div className="fr-max-fr">
                   <div />
-                  <svg className="room__favorite-heart room__favorite-heart--empty">
-                    <use xlinkHref="../sprite.svg#heart"></use>
-                  </svg>
+                  <ReactSVG
+                    src="./svgs/heart.svg"
+                    wrapper="div"
+                    beforeInjection={(svg) => {
+                      svg.classList.add("room__icon");
+                    }}
+                  />
                   <div />
-                </div>{" "}
+                </div>
               </a>
             ) : room.favorites &&
               room.favorites.includes(currentUserProfile.uid) ? (
@@ -156,9 +169,13 @@ const Room = ({
               >
                 <div className="fr-max-fr">
                   <div />
-                  <svg className="room__favorite-heart room__favorite-heart--full">
-                    <use xlinkHref="../sprite.svg#heart"></use>
-                  </svg>
+                  <ReactSVG
+                    src="./svgs/heart_full.svg"
+                    wrapper="div"
+                    beforeInjection={(svg) => {
+                      svg.classList.add("room__icon");
+                    }}
+                  />
                   <div />
                 </div>
               </div>
@@ -169,9 +186,13 @@ const Room = ({
               >
                 <div className="fr-max-fr">
                   <div />
-                  <svg className="room__favorite-heart room__favorite-heart--empty">
-                    <use xlinkHref="../sprite.svg#heart"></use>
-                  </svg>
+                  <ReactSVG
+                    src="./svgs/heart.svg"
+                    wrapper="div"
+                    beforeInjection={(svg) => {
+                      svg.classList.add("room__icon");
+                    }}
+                  />
                   <div />
                 </div>
               </div>

@@ -71,8 +71,6 @@ const Apply = ({ match, positions, fetchSinglePosition }) => {
           setValues({});
           setSubmitting(true);
           setFormError(null);
-          console.log("Email successfully sent!");
-
         })
         .catch(err =>
           console.error(

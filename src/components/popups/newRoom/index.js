@@ -104,10 +104,6 @@ const NewRoom = ({ newRoom, togglePopup }) => {
             <div>
               <div
                 className="popup__title"
-                onClick={() => {
-                  console.log(checkValidity(values, setFormError));
-                  console.log(values);
-                }}
               >
                 Open a Room
               </div>

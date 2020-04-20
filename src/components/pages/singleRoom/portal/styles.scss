@@ -1,0 +1,40 @@
+@import "../../../../styles/imports";
+.portal {
+  padding: 0.5rem 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  @include resize(1500px) {
+    grid-template-columns: 1fr;
+    line-height: 1.6rem;
+  }
+  &__title {
+    color: $mainColor;
+    cursor: pointer;
+    transition: all 0.2s;
+    &:hover {
+      font-size: 1.5rem;
+    }
+  }
+
+  &__title-current {
+    font-family: $fontBold;
+    color: $mainColor;
+    cursor: pointer;
+    transition: all 0.2s;
+    &:hover {
+      font-size: 1.5rem;
+    }
+  }
+
+  &__members {
+    cursor: default;
+    color: $grey;
+  }
+
+  &__enter {
+    background-color: $mainColor;
+    padding: 0rem 0.7rem;
+    color: white;
+    border-radius: $borderRadius;
+  }
+}

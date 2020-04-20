@@ -1,71 +1,167 @@
 @import "../../../styles/imports";
 
 .single-room {
-  @include padding;
+  max-width: 160rem;
+  margin: auto;
+  background-color: $bgColor;
   display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 4rem;
+  grid-template-columns: repeat(12, 1fr);
+  // grid-template-rows: 450px repeat(auto-fill, 1fr);
+  gap: 2rem;
+  justify-items: stretch;
+  align-items: stretch;
+  @include padding;
 
-  @include resize(1200px) {
-    grid-template-columns: 1fr;
+  &__container {
+    &-multiverse {
+      grid-column: 1/4;
+      grid-row: 1/3;
+    }
+    &-chat {
+      grid-column: 4/13;
+      grid-row: 1/2;
+    }
+    &-audio {
+      grid-column: 4/13;
+      grid-row: 2/3;
+    }
+    &-donations {
+      grid-column: 8/13;
+      grid-row: 3/5;
+    }
+    &-description {
+      grid-column: 8/13;
+      grid-row: 3/5;
+      @include resize(1200px) {
+        grid-column: 1/4;
+        grid-row: 4/6;
+      }
+    }
+
+    &-info {
+      grid-column: 4/8;
+      grid-row: 3/5;
+      @include resize(1200px) {
+        grid-column: 4/13;
+        grid-row: 3/5;
+      }
+    }
+
+    &-mixlr {
+      grid-column: 1/4;
+      grid-row: 3/4;
+      margin-top: 2rem;
+    }
+    &-admin {
+      &--owner {
+        grid-column: 1/4;
+        grid-row: 4/5;
+
+        @include resize(1200px) {
+          grid-column: 1/4;
+          grid-row: 6/8;
+        }
+      }
+
+      &--visitor {
+        grid-column: 1/4;
+        grid-row: 3/4;
+        margin-top: 2rem;
+
+        @include resize(1200px) {
+          grid-column: 1/4;
+          grid-row: 6/8;
+        }
+      }
+    }
+
+    &-comments {
+      grid-column: 4/13;
+      grid-row: 5/9;
+    }
   }
 
-  @include resize(500px) {
-    margin-top: 1rem;
+  &__audio {
+    border: none;
+    outline: none;
+  }
+
+  &__multiverse-form {
+    @include gridVariation;
+    grid-template-columns: 1fr max-content;
+
+    @include resize(1600px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__portals {
+    margin-top: 2rem;
+    max-height: 28rem;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+      width: 0.5em;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: $mainColor;
+      outline: 1px solid slategrey;
+    }
+  }
+
+  &__chat {
+    border: none;
+    outline: none;
+    margin-top: 2rem;
+  }
+
+  &__current-portal {
+    font-family: $fontBold;
   }
 
   &__comment {
     &--text {
       display: none;
-      @include resize(750px){
+      @include resize(950px) {
         display: block;
       }
     }
 
     &--boxed {
-      @include resize(750px){
+      @include resize(950px) {
         display: none;
       }
     }
   }
 
-  &__box {
-    margin: 4rem auto;
-    // max-width: 35rem;
-  }
+  // &__box {
+  //   margin: 4rem auto;
+  //   // max-width: 35rem;
+  // }
   &__comments {
     width: 100%;
-    margin: 4rem auto;
+    height: max-content;
     border-radius: $borderRadius;
     box-shadow: 0 0.2rem 9rem rgb(228, 228, 228);
     background-color: white;
     padding: 3rem;
-    @include resize(1200px){
+    @include resize(1200px) {
       margin: 0 auto;
     }
 
-    @include resize(650px){
+    @include resize(650px) {
       padding: 2rem;
     }
-
   }
 
   &__founder {
-    &-container {
-      border-radius: $borderRadius;
-      box-shadow: 0 0.2rem 9rem rgb(228, 228, 228);
-      background-color: white;
-      padding: 3rem;
-    }
-
     &-admin {
-      text-transform: capitalize;
-      color: $mainColor;
-      font-family: $fontBold;
+      font-size: 1.2rem;
+      color: $grey;
     }
     &-name {
       color: $greyDark;
-
       &:hover {
         color: $mainColor;
       }

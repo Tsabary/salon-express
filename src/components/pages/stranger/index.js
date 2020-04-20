@@ -1,6 +1,7 @@
 import "./styles.scss";
 import React, { useContext, useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { ReactSVG } from "react-svg";
 
 import { AuthContext } from "../../../providers/Auth";
 
@@ -49,9 +50,13 @@ const Stranger = ({ match, strangerProfile, fetchStrangerProfile }) => {
           {strangerProfile && strangerProfile.instagram ? (
             <div className="social__icon--instagram">
               <a href={"https://" + strangerProfile.instagram} target="_blank">
-                <svg className="social__icon social__icon--instagram-icon">
-                  <use xlinkHref="../sprite.svg#instagram"></use>
-                </svg>
+                <ReactSVG
+                  src="./svgs/instagram.svg"
+                  wrapper="div"
+                  beforeInjection={(svg) => {
+                    svg.classList.add("room__icon");
+                  }}
+                />
               </a>
             </div>
           ) : null}

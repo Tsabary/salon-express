@@ -72,10 +72,31 @@ export const turnToLowerCaseWithHyphen = (string) => {
   return string.toLowerCase().split(" ").join("-");
 };
 
-export const capitalizeAndRemoveHyphens = string => {
-  return string.split("-").map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(" ");
-}
+export const capitalizeAndRemoveHyphens = (string) => {
+  return string
+    .split("-")
+    .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+    .join(" ");
+};
 
-export const capitalizeSentances = string => {
-  return string.split(".").map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(". ");
-}
+export const capitalizeSentances = (string) => {
+  return string
+    .split(".")
+    .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+    .join(". ");
+};
+
+export const titleToKey = (string) => {
+  return string
+    .trim()
+    .split(" ")
+    .join("")
+    .toLowerCase()
+    .replace("?", "-")
+    .replace("&", "-")
+    .replace(":", "-")
+    .replace("'", "-")
+    .replace('"', "-")
+    .replace("%", "-")
+    .replace("#", "-");
+};

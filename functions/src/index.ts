@@ -65,20 +65,14 @@ exports.userUpdate = functions.firestore
       profile.name !== profileOld.name ||
       profile.avatar !== profileOld.avatar
     ) {
-      console.log("begin update");
-
       const roomsData = await db
         .collection("rooms")
         .where("user_ID", "==", profile.uid)
         .get();
-      
-      console.log("roomsDataLength", roomsData.docs.length)
 
       roomsData.docs.map((doc) => {
         const room = doc.data();
         const roomRef = db.collection("rooms").doc(room.id);
-
-        console.log("room", room.id);
 
         batch.set(
           roomRef,
@@ -99,9 +93,6 @@ exports.userUpdate = functions.firestore
       commentsData.docs.map((doc) => {
         const comment = doc.data();
         const commentRef = db.collection("comments").doc(comment.id);
-
-        console.log("comment", comment.id);
-
         batch.set(
           commentRef,
           {
@@ -116,7 +107,6 @@ exports.userUpdate = functions.firestore
 
     return batch.commit();
   });
-
 
 // ROOM CREATED //
 
@@ -190,7 +180,6 @@ exports.roomUpdated = functions.firestore
       !newRoom.tags.every((tag: string) => oldRoom.tags.includes(tag)) ||
       !oldRoom.tags.every((tag: string) => newRoom.tags.includes(tag))
     ) {
-      console.log("not all tags are the same");
       // Filter and create a new array of all the tags that we've removed from a post
       const tagsToRemove = oldRoom.tags.filter(
         (tag: string) => !newRoom.tags.includes(tag)
@@ -248,8 +237,6 @@ exports.roomUpdated = functions.firestore
           { merge: true }
         );
       });
-    } else {
-      console.log("all tags are the same");
     }
 
     promises.push(batch.commit());
@@ -313,3 +300,57 @@ exports.roomDeleted = functions.firestore
 
     return Promise.all(promises);
   });
+
+// MULTIVERSE UPDATED //
+
+// exports.multiverseUpdated = functions.firestore
+//   .document("multiverses/{roomID}")
+//   .onUpdate((change, context) => {
+//     const newPortals = change.after.data();
+//     const oldPortals = change.before.data();
+
+//     const batch = db.batch();
+//     const promises: any = [];
+//     console.log("newPortals", newPortals);
+//     console.log("oldPortals", oldPortals);
+
+//     if (!newPortals || !oldPortals || newPortals === oldPortals) return;
+
+//     const newPortalsArray = Object.values(newPortals);
+
+//     const filteredPortalsArray = Object.values(newPortals).filter(
+//       (port: any) => port.members.length
+//     );
+
+//     const emptyPortalsExist = Object.values(newPortals).every(
+//       (port: any) => port.members.length
+//     );
+
+//     console.log("newPortalsArray", newPortalsArray);
+//     console.log("filteredPortalsArray", filteredPortalsArray);
+//     console.log("emptyPortalsExist", emptyPortalsExist);
+
+//     if (!emptyPortalsExist) {
+//       const multiverseDoc = db
+//         .collection("multiverses")
+//         .doc(context.params.roomID);
+
+//       if (filteredPortalsArray.length) {
+//         const filteredPortalsObject: any = {};
+
+//         filteredPortalsArray.forEach((por: any) => {
+//           const key = por.title.trim().split(" ").join("").toLowerCase();
+//           filteredPortalsObject[key] = por;
+//         });
+//         console.log("filteredPortalsObject", filteredPortalsObject);
+
+//         batch.set(multiverseDoc, filteredPortalsObject);
+//       } else {
+//         batch.delete(multiverseDoc);
+//       }
+//     }
+
+//     promises.push(batch.commit());
+
+//     return Promise.all(promises);
+//   });

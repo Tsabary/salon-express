@@ -9,6 +9,7 @@ import { ToastProvider } from "react-toast-notifications";
 import { AuthProvider } from "../providers/Auth";
 import { SearchProvider } from "../providers/Search";
 import { PageProvider } from "../providers/Page";
+import { UniqueIdProvider } from "../providers/UniqueId";
 
 import history from "../history";
 
@@ -38,41 +39,43 @@ const App = () => {
       <PageProvider>
         <SearchProvider>
           <ToastProvider>
-            <Router history={history}>
-              <div className="app">
-                <SignUp />
-                <UpdateProfile />
-                <NewRoom />
-                <EditRoom />
-                <Header />
-                <Updates/>
+            <UniqueIdProvider>
+              <Router history={history}>
+                <div className="app">
+                  <SignUp />
+                  <UpdateProfile />
+                  <NewRoom />
+                  <EditRoom />
+                  <Header />
+                  <Updates />
 
-                <Switch>
-                  <Route path="/" exact component={Home} />
-                  <Route path="/on/:id" exact component={Search} />
-                  <Route path="/room/:id" exact component={SingleRoom} />
-                  <Route path="/contact" exact component={Contact} />
-                  <Route
-                    path="/frequently-asked-questions"
-                    exact
-                    component={Faq}
-                  />
-                  <Route path="/add-question" exact component={AddQuestion} />
-                  <Route path="/careers" exact component={Careers} />
-                  <Route path="/careers/:id" exact component={Apply} />
-                  <Route
-                    path="/privacy-policy"
-                    exact
-                    component={PrivacyPolicy}
-                  />
-                  <Route path="/:id" exact component={Stranger} />
-                </Switch>
+                  <Switch>
+                    <Route path="/" exact component={Home} />
+                    <Route path="/on/:id" exact component={Search} />
+                    <Route path="/room/:id" exact component={SingleRoom} />
+                    <Route path="/contact" exact component={Contact} />
+                    <Route
+                      path="/frequently-asked-questions"
+                      exact
+                      component={Faq}
+                    />
+                    <Route path="/add-question" exact component={AddQuestion} />
+                    <Route path="/careers" exact component={Careers} />
+                    <Route path="/careers/:id" exact component={Apply} />
+                    <Route
+                      path="/privacy-policy"
+                      exact
+                      component={PrivacyPolicy}
+                    />
+                    <Route path="/:id" exact component={Stranger} />
+                  </Switch>
 
-                <div className="app__footer">
-                  <Footer />
+                  <div className="app__footer">
+                    <Footer />
+                  </div>
                 </div>
-              </div>
-            </Router>
+              </Router>
+            </UniqueIdProvider>
           </ToastProvider>
         </SearchProvider>
       </PageProvider>

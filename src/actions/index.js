@@ -40,6 +40,8 @@ import {
   RESET_NOTIFICATIONS,
 } from "./types";
 
+import { titleToKey } from "../utils/strings";
+
 const db = firebase.firestore();
 const storage = firebase.storage();
 const analytics = firebase.analytics();
@@ -304,16 +306,18 @@ export const logGuestEntry = (room, currentUserProfile) => () => {
 
   currentUserProfile && currentUserProfile.uid
     ? room.favorites.forEach((userID) => {
-        RTDB.ref("updates/" + userID)
-          .push()
-          .set({
-            user_ID: currentUserProfile.uid,
-            user_name: currentUserProfile.name,
-            user_username: currentUserProfile.username,
-            room_ID: room.id,
-            room_name: room.title,
-            created_on: Date.now(),
-          });
+        if (userID !== currentUserProfile.uid) {
+          RTDB.ref("updates/" + userID)
+            .push()
+            .set({
+              user_ID: currentUserProfile.uid,
+              user_name: currentUserProfile.name,
+              user_username: currentUserProfile.username,
+              room_ID: room.id,
+              room_name: room.title,
+              created_on: Date.now(),
+            });
+        }
       })
     : room.favorites.forEach((userID) => {
         RTDB.ref("updates/" + userID)
@@ -406,17 +410,159 @@ export const fetchStrangerProfile = (strangerUsername) => async (dispatch) => {
 
 // SINGLE ROOM //
 
-export const fetchSingleRoom = (roomID, setRoom) => async (dispatch) => {
-  const doc = await db.collection("rooms").doc(roomID).get();
+const compare = (a, b) => {
+  return a.members.length < b.members.length
+    ? 1
+    : a.members.length === b.members.length
+    ? a.members.length < b.members.length
+      ? 1
+      : -1
+    : -1;
+};
+
+let multiverseListener;
+
+export const fetchSingleRoom = (
+  roomID,
+  setRoom,
+  setMultiverse,
+  setMultiverseArray,
+  newPortal
+) => async (dispatch) => {
+  const docRoom = await db.collection("rooms").doc(roomID).get();
 
   analytics.logEvent("room_direct_navigation");
-  if (doc.data()) {
-    setRoom(doc.data());
-    // dispatch({
-    //   type: NEW_ROOM,
-    //   payload: doc.data(),
-    // });
+  if (docRoom.data()) {
+    setRoom(docRoom.data());
   }
+
+  multiverseListener = db
+    .collection("multiverses")
+    .doc(roomID)
+    .onSnapshot((docMultiverse) => {
+      if (docMultiverse.data()) {
+        setMultiverse(docMultiverse.data());
+
+        const arrayVerse = Object.values(docMultiverse.data());
+
+        setMultiverseArray(arrayVerse.sort(compare));
+      } else {
+        newPortal();
+      }
+    });
+};
+
+export const detachListener = () => () => {
+  if (multiverseListener) multiverseListener();
+};
+
+export const newPortal = (newPortal, oldPortal, room, uid, cb) => () => {
+  const batch = db.batch();
+  const verseDoc = db.collection("multiverses").doc(room.id);
+
+  let newPortalKey = titleToKey(newPortal);
+
+  let oldPortalKey = oldPortal ? titleToKey(oldPortal.title) : null;
+
+  const portalObj = {
+    title: newPortal,
+    members: [uid],
+    created_on: new Date(),
+  };
+
+  batch.set(
+    verseDoc,
+    {
+      [newPortalKey]: portalObj,
+    },
+    { merge: true }
+  );
+
+  if (oldPortal) {
+    batch.set(
+      verseDoc,
+      {
+        [oldPortalKey]: {
+          members: firebase.firestore.FieldValue.arrayRemove(uid),
+        },
+      },
+      { merge: true }
+    );
+  }
+
+  batch
+    .commit()
+    .then(() => {
+      cb(portalObj);
+    })
+    .catch((e) => console.log("dddddddddddddd", e));
+};
+
+export const leavePortal = (room, portal, uid) => () => {
+  const batch = db.batch();
+  const portalDoc = db.collection("multiverses").doc(room.id);
+  const key = titleToKey(portal.title);
+
+  batch.set(
+    portalDoc,
+    {
+      [key]: { members: firebase.firestore.FieldValue.arrayRemove(uid) },
+    },
+    { merge: true }
+  );
+
+  batch.commit().catch((e) => console.log("dddddddddddddd", e));
+};
+
+export const enterPortal = (room, portal, uid) => () => {
+  const batch = db.batch();
+  const portalDoc = db.collection("multiverses").doc(room.id);
+  const key = titleToKey(portal.title);
+
+  batch.set(
+    portalDoc,
+    {
+      [key]: { members: firebase.firestore.FieldValue.arrayUnion(uid) },
+    },
+    { merge: true }
+  );
+
+  batch.commit().catch((e) => console.log("dddddddddddddd", e));
+};
+
+export const replaceTimestampWithUid = (
+  room,
+  portal,
+  fakeUid,
+  realUid
+) => () => {
+  const batch = db.batch();
+  const portalDoc = db.collection("multiverses").doc(room.id);
+  const key = titleToKey(portal.title);
+
+  batch.set(
+    portalDoc,
+    {
+      [key]: {
+        members: firebase.firestore.FieldValue.arrayRemove(fakeUid),
+      },
+    },
+
+    { merge: true }
+  );
+
+  batch.set(
+    portalDoc,
+    {
+      [key]: {
+        members: firebase.firestore.FieldValue.arrayUnion(realUid),
+      },
+    },
+
+    { merge: true }
+  );
+
+  batch.commit().catch((e) => console.log("dddddddddddddd", e));
 };
 
 export const fetchRoomComments = (roomID, setComments) => async () => {
@@ -424,7 +570,8 @@ export const fetchRoomComments = (roomID, setComments) => async () => {
     .collection("comments")
     .orderBy("created_on", "desc")
     .where("room_ID", "==", roomID)
-    .get();
+    .get()
+    .catch((e) => console.log("dddddddddddddd", e));
 
   if (data.docs) {
     setComments(data.docs.map((doc) => doc.data()));
@@ -459,6 +606,8 @@ export const keepRoomListed = (room, listed) => async (dispatch) => {
     });
 };
 
+// ROOM //
+
 export const newRoom = (values, reset) => (dispatch) => {
   window.scrollTo(0, 0);
 
@@ -488,18 +637,16 @@ export const newRoom = (values, reset) => (dispatch) => {
   });
 };
 
-export const updateRoom = (values, tagsToAdd, tagsToRemove, reset) => (
-  dispatch
-) => {
+export const updateRoom = (values, parameter, reset) => (dispatch) => {
   const batch = db.batch();
   const docRef = db.collection("rooms").doc(values.id);
 
-  batch.set(docRef, values);
+  batch.set(docRef, values, { merge: true });
 
   batch.commit().then(() => {
     reset();
     window.location.hash = "";
-    analytics.logEvent("room_updated");
+    analytics.logEvent("room_updated", { parameter });
 
     dispatch({
       type: EDIT_ROOM,
@@ -525,7 +672,6 @@ export const removeRoom = (room) => (dispatch) => {
 };
 
 export const newComment = (values, cb) => async () => {
-  console.log(values);
   const commentDoc = await db.collection("comments").doc();
   const comment = { ...values, created_on: new Date(), id: commentDoc.id };
 
@@ -603,7 +749,7 @@ export const fetchQuestions = () => async (dispatch) => {
 };
 
 export const addQuestion = (values, userUID, cb) => () => {
-  if (userUID !== "PPryp7ws2lekKx1mePChgH0Sh3t1") return;
+  if (userUID !== "KbhtqAE0B9RDAonhQqgZ1CWsg1o1") return;
   const docRef = db.collection("questions").doc();
   docRef.set({ ...values, id: docRef.id }).then(() => {
     cb();
@@ -661,26 +807,31 @@ export const signUp = (
             analytics.logEvent("signup_email");
           })
           .catch((err) => {
-            console.log("login error:", err);
-
             if (err.code === "auth/wrong-password") {
               setSubmitting(0);
               setFormError("Wrong password");
             }
           });
       } else {
-        console.log("signup error:", err);
         setSubmitting(4);
       }
     });
 };
 
-export const logOut = () => () => {
+export const logOut = () => async (dispatch) => {
   firebase
     .auth()
     .signOut()
     .then(() => {
       analytics.logEvent("logout");
+      dispatch({
+        type: RESET_NOTIFICATIONS,
+      });
+
+      dispatch({
+        type: FETCH_UPDATES,
+        payload: [],
+      });
     });
 };
 
@@ -699,7 +850,6 @@ export const providerSignIn = (provider, cb) => () => {
         .then(() => {
           analytics.logEvent("signup_google");
           cb();
-          console.log("google signin in success");
         });
 
       break;
@@ -710,7 +860,6 @@ export const providerSignIn = (provider, cb) => () => {
         .then(() => {
           analytics.logEvent("signup_facebook");
           cb();
-          console.log("facebook signin in success");
         });
 
       break;
@@ -736,11 +885,9 @@ export const updateProfile = (
       "state_changed",
       (snapShot) => {
         //takes a snap shot of the process as it is happening
-        console.log(snapShot);
       },
       (err) => {
         //catches the errors
-        console.log(err);
       },
       () => {
         // gets the functions from storage refences the image storage in firebase by the children
@@ -795,7 +942,6 @@ export const listenToUpdates = (currentUserProfile, notification) => async (
     .ref("updates/" + currentUserProfile.uid);
 
   starCountRef.on("value", (snapshot) => {
-    console.log("fetchedd");
     notification();
     dispatch({
       type: FETCH_UPDATES,

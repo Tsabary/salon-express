@@ -36,7 +36,7 @@ const Updates = ({
   const renderUpdates = (updates) => {
     return updates.map((update) => {
       return (
-        <Update update={update} key={update.created_on + update.user_ID} />
+        <Update update={update} key={update.created_on + update.room_ID} />
       );
     });
   };
@@ -57,7 +57,7 @@ const Updates = ({
       </label>
 
       <ScrollToBottom scrollViewClassName="updates__container" className="updates__container">
-        {updates ? (
+        {updates && updates.length ? (
           renderUpdates(updates)
         ) : (
           <div>Add some Rooms to your favorites to begin receiving updates</div>

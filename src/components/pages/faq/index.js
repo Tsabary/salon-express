@@ -10,10 +10,9 @@ const Faq = ({ fetchQuestions, questions }) => {
   }, []);
 
   const renderQuestions = (questions) => {
-    console.log(questions);
 
     return questions.map((q) => {
-      console.log(q);
+
       return (
         <details  key={q.id}>
         <summary className="question__title">
@@ -29,7 +28,7 @@ const Faq = ({ fetchQuestions, questions }) => {
   return (
     <div className="about">
       <div className="about__container">
-        <div className="about__title">Class Express Help Center</div>
+        <div className="about__title">Salon Express Help Center</div>
         <div className="about__questions small-margin-top">
           {renderQuestions(questions)}
         </div>

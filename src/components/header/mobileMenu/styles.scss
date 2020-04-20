@@ -20,72 +20,62 @@
 
   &__button {
     background-color: #fff;
-    height: 7rem;
-    width: 7rem;
+    height: 5rem;
+    width: 5rem;
     position: fixed;
-    top: 4.7rem;
-    left: 9.5rem;
+    top: 4.5rem;
+    left: 4rem;
     border-radius: 50%;
     z-index: 2000;
     box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.1);
     text-align: center;
     cursor: pointer;
 
-    @include resize(800px) {
-      height: 6rem;
-      width: 6rem;
-      top: 4.5rem;
-      left: 8rem;
-    }
-
     @include resize(700px) {
-      height: 5rem;
-      width: 5rem;
-      top: 4rem;
-      left: 6rem;
+      height: 4.5rem;
+      width: 4.5rem;
+      top: 3.5rem;
+      left: 3.5rem;
     }
 
     @include resize(600px) {
+      height: 4rem;
+      width: 4rem;
       top: 3rem;
-      left: 5rem;
+      left: 3rem;
     }
-    @include resize(500px) {
-      left: 4rem;
-    }
+    // @include resize(500px) {
+    //   left: 3rem;
+    // }
   }
 
   &__background {
-    height: 6rem;
-    width: 6rem;
+    height: 4rem;
+    width: 4rem;
     border-radius: 50%;
     position: fixed;
-    top: 5.2rem;
-    left: 9.5rem;
+    top: 5rem;
+    left: 4.5rem;
     background-image: radial-gradient($mainColor, $mainColorDark);
     z-index: 1000;
     transition: transform, 0.8s cubic-bezier(0.86, 0, 0.07, 1);
 
-    @include resize(800px) {
-      height: 5.2rem;
-      width: 5rem;
-      top: 5rem;
-      left: 8.5rem;
-    }
-
     @include resize(700px) {
-      height: 4rem;
-      width: 4rem;
-      top: 4.5rem;
-      left: 6.5rem;
+      height: 3.5rem;
+      width: 3.5rem;
+      top: 4rem;
+      left: 4rem;
     }
 
     @include resize(600px) {
+      height: 3rem;
+      width: 3rem;
       top: 3.5rem;
-      left: 5.5rem;
+      left: 3.5rem;
     }
 
     @include resize(500px) {
-      left: 4.5rem;
+      left: 3.5rem;
     }
   }
 
@@ -173,31 +163,36 @@
 
   &__icon {
     position: relative;
-    margin-top: 3.5rem;
-    @include resize(800px) {
-      margin-top: 3rem;
-    }
+    margin-top: 2.5rem;
 
     @include resize(700px) {
-      margin-top: 2.5rem;
+      margin-top: 2.3rem;
+    }
+
+    @include resize(600px) {
+      margin-top: 2rem;
     }
   }
   &__icon,
   &__icon::before,
   &__icon::after {
-    width: 3rem;
+    width: 2rem;
     height: 2px;
     background-color: #333;
     display: inline-block;
 
     @include resize(800px) {
-      width: 2.5rem;
+      width: 2rem;
       height: 2px;
     }
 
     @include resize(700px) {
       width: 2rem;
       height: 1px;
+    }
+
+    @include resize(600px) {
+      width: 1.5rem;
     }
   }
   &__icon::before,
@@ -208,10 +203,10 @@
     transition: all 0.2s;
   }
   &__icon::before {
-    top: -0.8rem;
+    top: -0.6rem;
   }
   &__icon::after {
-    top: 0.8rem;
+    top: 0.6rem;
   }
 
   &__button:hover &__icon::before {

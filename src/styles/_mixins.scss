@@ -13,21 +13,31 @@
 @mixin padding {
   padding: 11rem 10rem;
 
+  @include resize(1200px) {
+    padding: 10rem 6rem;
+
+  }
+
+  @include resize(1000px) {
+    padding: 10rem 5rem;
+
+  }
+
   @include resize(800px) {
-    padding: 10rem 8rem;
+    padding: 9rem 4rem;
   }
 
   @include resize(700px) {
-    padding: 8rem 5rem;
+    padding: 8rem 3.5rem;
   }
 
   @include resize(600px) {
-    padding: 6rem 4rem;
+    padding: 7rem 3.5rem;
   }
 
-  @include resize(500px) {
-    padding: 5rem 3rem;
-  }
+  // @include resize(500px) {
+  //   padding: 5rem 3rem;
+  // }
 }
 
 @mixin image {

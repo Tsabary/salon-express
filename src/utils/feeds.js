@@ -11,6 +11,7 @@ const renderItems = (rooms, currentUserProfile) => {
         currentUserProfile={
           currentUserProfile || { uid: "", following: [], followers: [] }
         }
+        isForFeed
         key={room.id}
       />
     );

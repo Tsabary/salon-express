@@ -1,6 +1,7 @@
 @import "../../../styles/imports";
 
 .about {
+  background-color: $bgColor;
   @include padding;
 
   &__container {
@@ -8,6 +9,7 @@
     border: $border;
     border-radius: $borderRadius;
     padding: 4rem;
+  background-color: white;
   }
 
   &__title {

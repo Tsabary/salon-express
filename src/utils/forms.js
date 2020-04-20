@@ -55,7 +55,6 @@ export const trimURL = (string) => {
   const newString = string
     ? string.replace(/^https?:\/\//, "").replace(/^http?:\/\//, "")
     : string;
-  console.log("newString", newString);
   return newString;
 };
 

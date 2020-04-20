@@ -7,7 +7,7 @@
     height: min-content;
     font-family: $font, Arimo;
     font-size: 1.4rem;
-    padding: .7rem 2.5rem;
+    padding: .3rem 1.7rem;
     outline: none;
     border: none;
     background-color: white;
@@ -15,8 +15,12 @@
     border-radius: $borderRadius;
     display: block;
     border-bottom: 2px solid transparent;
+    // transition: all 0.3s;
 
-    transition: all 0.3s;
+    &:hover{
+      border: $border;
+    }
+
     &::-webkit-input-placeholder {
       color: $grey;
     }

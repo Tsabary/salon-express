@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 
 import firebase from "../../../firebase";
 
-import { togglePopup } from "../../../actions";
+import { togglePopup, detachListener } from "../../../actions";
 
 import { PageContext } from "../../../providers/Page";
 import { AuthContext } from "../../../providers/Auth";
@@ -13,9 +13,13 @@ import Explore from "../explore";
 import Favorites from "../favorites";
 import MyRooms from "../myRooms";
 
-const Home = ({ popupShown, togglePopup }) => {
+const Home = ({ popupShown, togglePopup, detachListener }) => {
   const { currentUser } = useContext(AuthContext);
   const { page, setPage } = useContext(PageContext);
+
+  useEffect(() => {
+    detachListener();
+  });
 
   const renderContent = (p) => {
     switch (p) {
@@ -121,4 +125,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { togglePopup })(Home);
+export default connect(mapStateToProps, { togglePopup, detachListener })(Home);

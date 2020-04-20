@@ -31,7 +31,6 @@ const Contact = () => {
       .send("gmail", "contact", variables, "user_hE0SyjVsZawiPWprq0Att")
       .then((res) => {
         setSent(true);
-        console.log("Email successfully sent!");
       })
       .catch((err) =>
         console.error(
@@ -53,12 +52,14 @@ const Contact = () => {
 
       {!sent ? (
         <form onSubmit={handleSubmit} className="small-margin-top">
-          <InputField
-            type="email"
-            placeHolder="Email address"
-            value={values.email}
-            onChange={(email) => setValues({ ...values, email })}
-          />
+          <div className="tiny-margin-bottom">
+            <InputField
+              type="email"
+              placeHolder="Email address"
+              value={values.email}
+              onChange={(email) => setValues({ ...values, email })}
+            />
+          </div>
 
           <TextArea
             type="text"

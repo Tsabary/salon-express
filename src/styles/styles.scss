@@ -93,15 +93,15 @@ h3 {
     content: "?";
     display: block;
     font-size: 1rem;
-    height: 2rem;
-    width: 2rem;
+    height: 1.7rem;
+    width: 1.7rem;
     color: $grey;
     border-radius: 8rem;
-    border: 1px solid $grey;
+    border: 1px solid $greyLight;
     text-align: center;
     justify-content: center;
     align-content: center;
-    line-height: 2rem;
+    line-height: 1.7rem;
   }
 }
 
@@ -216,14 +216,13 @@ h3 {
 
 .boxed-button {
   height: min-content;
-  width: max-content;
-  font-size: 1.6rem;
+  text-align: center;
+  font-size: 1.4rem;
   user-select: none;
   font-family: $font;
-  // background: $gradientColor;
   background-color: $mainColor;
   color: white;
-  padding: 0.7rem 5rem 0.9rem 5rem;
+  padding: 0.3rem 3rem 0.5rem 3rem;
   border-radius: 3px;
   box-shadow: 0 0.2rem 1rem rgb(170, 170, 170);
   border: none;
@@ -233,6 +232,7 @@ h3 {
   &:hover {
     transform: translateY(-0.2rem);
     box-shadow: 0 0.4rem 1.4rem rgb(170, 170, 170);
+    color: white !important;
   }
 
   &:active {
@@ -445,6 +445,12 @@ h3 {
   }
 }
 
+.button-colored {
+  width: max-content;
+  color: $mainColor;
+  cursor: pointer;
+}
+
 .empty-feed {
   font-family: $fontBold, $fontHebrew;
   color: $greyLight;
@@ -473,8 +479,6 @@ h3 {
 }
 
 .dropdown {
-  &__input {
-  }
   &__options {
     position: absolute;
     top: 0;

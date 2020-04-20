@@ -3,14 +3,19 @@
 .room {
   // min-width: 30rem;
   border-radius: $borderRadius;
-  box-shadow: 0 0.2rem 9rem rgb(228, 228, 228);
+  box-shadow: $containerBoxShadow;
   background-color: white;
   padding: 0;
-  margin-bottom: 3rem;
   position: relative;
   overflow: hidden;
   transition: all 0.2s;
+  justify-self: stretch;
+  align-self: stretch;
   cursor: default;
+
+  &-feed{
+    margin-bottom: 3rem;
+  }
 
   &__languages {
     display: flex;
@@ -262,16 +267,11 @@
     }
   }
 
-  &__favorite-heart {
-    height: 1.5rem;
-    width: 1.5rem;
-    &--full {
-      fill: $mainColor;
-    }
-
-    &--empty {
-      fill: $greyLightest;
-    }
+  &__icon {
+    height: 15px;
+    width: 15px;
+    text-align: center;
+    margin: auto;
   }
 
   &-button {
@@ -324,6 +324,11 @@
     text-align: center;
   }
 }
+
+// .icon-testing{
+//   width: 24px;
+//   height: 24px;
+// }
 
 .social {
   display: grid;
