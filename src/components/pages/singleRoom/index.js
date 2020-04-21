@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import Iframe from "react-iframe";
-import {isMobile} from 'react-device-detect';
+import { isMobile } from "react-device-detect";
 
 import history from "../../../history";
 
@@ -22,6 +22,7 @@ import {
   leavePortal,
   enterPortal,
   detachListener,
+  logGuestEntry,
 } from "../../../actions";
 
 import { titleToKey } from "../../../utils/strings";
@@ -35,6 +36,8 @@ import Portal from "./portal";
 import Room from "../../room";
 import Comment from "./comment";
 import Section from "./section";
+import AudioSettings from "./audioSettings";
+import RoomInfo from "./roomInfo";
 
 const SingleRoom = ({
   match,
@@ -49,6 +52,7 @@ const SingleRoom = ({
   newPortal,
   associateWithRoom,
   keepRoomListed,
+  logGuestEntry,
 }) => {
   const myHistory = useHistory(history);
 
@@ -71,7 +75,6 @@ const SingleRoom = ({
 
   // These are controllers for the different containers - do we show the static or the edit mode
   const [isDescriptionEdited, setIsDescriptionEdited] = useState(false);
-  const [isAudioStreamEdited, setIsAudioStreamEdited] = useState(false);
   const [isDonationsUrlEdited, setIsDonationsUrlEdited] = useState(false);
 
   // We use this state to hold
@@ -92,9 +95,7 @@ const SingleRoom = ({
   // This keeps track if it's our first time loading. On our first load, we set the portal to the fullest one in our multiverse. After that it's up to the user to decide. It's important to have it because we set the portal when we get an update for the multiverse
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
-  useEffect(() => {
-    console.log("mine", "current portal changed");
-  }, [currentPortalUrl]);
+  const [currentAudioChannel, setCurrentAudioChannel] = useState(null);
 
   // This happens when the room first loads. We take the id of the room and also the fake uid (return if it's not set yet) and we fetch the rooms data. There's also a callback for creating a new portal called home in case there aren't any portals in this room yet
   useEffect(() => {
@@ -104,6 +105,8 @@ const SingleRoom = ({
       setRoom,
       setMultiverse,
       setMultiverseArray,
+      setCurrentAudioChannel,
+      isMobile,
       () => {
         newPortal(
           "Home",
@@ -165,7 +168,6 @@ const SingleRoom = ({
           : uniqueId
       );
       detachListener();
-      console.log("mine", "doing detachment shit from window unloda");
     };
 
     window.addEventListener("beforeunload", cleanup);
@@ -174,6 +176,12 @@ const SingleRoom = ({
       window.removeEventListener("beforeunload", cleanup);
     };
   }, [isFirstLoad, currentUserProfile, currentPortal]);
+
+  // Send the update to all followers that someone has entered the room
+  useEffect(() => {
+    if (isFirstLoad) return;
+    logGuestEntry(room, currentUserProfile);
+  }, [isFirstLoad]);
 
   // This cleans up our listener and removes us from the latest portal we were in. Is this the right place?
   useEffect(() => {
@@ -186,8 +194,6 @@ const SingleRoom = ({
           ? currentUserProfile.uid
           : uniqueId
       );
-      // detachListener();
-      console.log("mine", "doing detachment shit from use effect");
     };
   }, [isFirstLoad, currentUserProfile, currentPortal]);
 
@@ -231,31 +237,6 @@ const SingleRoom = ({
     );
   }, [currentUserProfile, room, currentPortal]);
 
-  // Render the room info
-  const renderContent = (room, currentUserProfile) => {
-    switch (true) {
-      case !room:
-        return null;
-
-      case room === "empty":
-        return (
-          <div className="empty-feed">
-            {/* Looks like this room isn't available anymore! */}
-          </div>
-        );
-
-      default:
-        return (
-          <Room
-            room={room}
-            currentUserProfile={
-              currentUserProfile || { uid: "", following: [], followers: [] }
-            }
-            key={room.id}
-          />
-        );
-    }
-  };
 
   // Render the comments to the page
   const renderComments = (comments) => {
@@ -266,7 +247,6 @@ const SingleRoom = ({
 
   // Render the portals to the page
   const renderPortals = (multiverse) => {
-    console.log("mine", multiverse);
     return multiverse.map((portal) => {
       return (
         <Portal
@@ -283,104 +263,123 @@ const SingleRoom = ({
   // Our main render
   return (
     <div className="single-room">
-      <div className="single-room__container-multiverse section__container tiny-margin-top">
-        <div className="section__title">The Multiverse</div>
-        <form
-          className="single-room__multiverse-form"
-          autoComplete="off"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (
-              !currentUserProfile ||
-              !values ||
-              !values.portal ||
-              !values.portal.length
-            )
-              return;
-
-            if (
-              multiverse.hasOwnProperty(
-                values.portal.trim().split(" ").join("").toLowerCase()
-              )
-            ) {
-              setPortalError("A portal with that name already exists");
-              return;
-            }
-
-            newPortal(
-              values.portal,
-              currentPortal,
-              room,
-              currentUserProfile.uid,
-              (portalObj) => {
-                setValues({ ...values, portal: "" });
-                setCurrentPortal(portalObj);
-                setPortalError(null);
-              }
-            );
-          }}
-        >
-          <InputField
-            type="text"
-            placeHolder="Open a portal"
-            value={values.portal}
-            onChange={(portal) => {
-              if (portal.length < 30) setValues({ ...values, portal });
-            }}
-          />
-
-          {currentUserProfile ? (
-            <>
-              <button
-                type="submit"
-                className="boxed-button single-room__comment--boxed"
-              >
-                Open Portal
-              </button>
-
-              <button
-                type="submit"
-                className="text-button-mobile  single-room__comment--text"
-              >
-                Open Portal
-              </button>
-            </>
-          ) : (
-            <a href="#sign-up" className="auth-options__box">
-              <BoxedButton text="Open Portal" />
-            </a>
-          )}
-        </form>
-        {portalError ? (
-          <div className="form-error tiny-margin-top">{portalError}</div>
-        ) : null}
-
-        <div className="single-room__portals">
-          {multiverseArray ? renderPortals(multiverseArray) : null}
+      {isMobile ? (
+        <div className="single-room__container-no-mobile">
+          We currently do not support video on mobile, please join the party on
+          your desktop
         </div>
-      </div>
+      ) : null}
 
-      <div className="single-room__container-chat">
-        {currentPortalUrl ? (
-          <Iframe
-            url={
-              room ? "https://meet.jit.si/ClassExpress-" + currentPortalUrl : ""
-            }
-            width="100%"
-            height="450px"
-            id="myId"
-            display="initial"
-            position="relative"
-            allow="fullscreen; camera; microphone"
-            className="single-room__chat"
-          />
-        ) : null}
-      </div>
+      {!isMobile ? (
+        <div className="single-room__container-multiverse section__container tiny-margin-top">
+          <div className="section__title">The Multiverse</div>
+          <form
+            className="single-room__multiverse-form"
+            autoComplete="off"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (
+                !currentUserProfile ||
+                !values ||
+                !values.portal ||
+                !values.portal.length
+              )
+                return;
 
-      <div className="single-room__container-audio">
-        {room && room.audio_live ? (
+              if (
+                multiverse.hasOwnProperty(
+                  values.portal.trim().split(" ").join("").toLowerCase()
+                )
+              ) {
+                setPortalError("A portal with that name already exists");
+                return;
+              }
+
+              newPortal(
+                values.portal,
+                currentPortal,
+                room,
+                currentUserProfile.uid,
+                (portalObj) => {
+                  setValues({ ...values, portal: "" });
+                  setCurrentPortal(portalObj);
+                  setPortalError(null);
+                }
+              );
+            }}
+          >
+            <InputField
+              type="text"
+              placeHolder="Open a portal"
+              value={values.portal}
+              onChange={(portal) => {
+                if (portal.length < 30) setValues({ ...values, portal });
+              }}
+            />
+
+            {currentUserProfile ? (
+              <>
+                <button
+                  type="submit"
+                  className="boxed-button single-room__comment--boxed"
+                >
+                  Open
+                </button>
+
+                <button
+                  type="submit"
+                  className="text-button-mobile  single-room__comment--text"
+                >
+                  Open
+                </button>
+              </>
+            ) : (
+              <a href="#sign-up" className="auth-options__box">
+                <BoxedButton text="Open" />
+              </a>
+            )}
+          </form>
+          {portalError ? (
+            <div className="form-error tiny-margin-top">{portalError}</div>
+          ) : null}
+
+          <div className="single-room__portals">
+            {multiverseArray ? renderPortals(multiverseArray) : null}
+          </div>
+        </div>
+      ) : null}
+
+      {!isMobile ? (
+        <div className="single-room__container-chat">
+          {currentPortalUrl && !isMobile ? (
+            <Iframe
+              url={
+                room
+                  ? "https://meet.jit.si/ClassExpress-" + currentPortalUrl
+                  : ""
+              }
+              width="100%"
+              height="450px"
+              id="myId"
+              display="initial"
+              position="relative"
+              allow="fullscreen; camera; microphone"
+              className="single-room__chat"
+            />
+          ) : null}
+        </div>
+      ) : null}
+
+      <div
+        className={
+          isMobile
+            ? "single-room__container-audio--mobile"
+            : "single-room__container-audio--not-mobile"
+        }
+      >
+        {currentAudioChannel ? (
           <Iframe
-            url={`https://mixlr.com/users/${room.audio_stream}/embed`}
+            url={`https://mixlr.com/users/${currentAudioChannel}/embed?autoplay=true`}
             width="100%"
             height="180px"
             id="myId2"
@@ -390,112 +389,72 @@ const SingleRoom = ({
           />
         ) : null}
       </div>
-
-      <div className="single-room__container-donations">
-        <Section
-          currentUserProfile={currentUserProfile}
-          room={room}
-          values={values}
-          setValues={setValues}
-          analyticsTag="audio live"
-          visibilityConditionField="accepting_donations"
-          field="donations_url"
-          title="Link for Donations"
-          moreText={room && room.donations_info}
-          isInEditMode={isDonationsUrlEdited}
-          setIsInEditMode={setIsDonationsUrlEdited}
-          tooltipId="acceptingDonationsTooltip"
-          tooltipText="Accepting donations?<br />Drop your forwarding link here."
-          inputType="text"
-          inputPlaceholder="Link for donations"
-          formError={donationsError}
-          setFormError={setDonationsError}
-          isUrl={true}
-          toggleID="acceptingDonationsToggle"
-          toggleText="Currently accepting donations"
-          toggleOn={() =>
-            updateRoom(
-              {
-                ...room,
-                accepting_donations: true,
-              },
-              "Enabled donations",
-              () => console.log("Enabled donations")
-            )
-          }
-          toggleOff={() =>
-            updateRoom(
-              {
-                ...room,
-                accepting_donations: false,
-              },
-              "Dissabled donations",
-              () => console.log("Dissabled donations")
-            )
-          }
-          toggleDefault="accepting_donations"
-        />
-      </div>
-
-      {/* <div className="single-room__container-description">
-        <Section
-          currentUserProfile={currentUserProfile}
-          room={room}
-          values={values}
-          setValues={setValues}
-          analyticsTag="description"
-          visibilityConditionField="description"
-          field="description"
-          title="Description"
-          isInEditMode={isDescriptionEdited}
-          setIsInEditMode={setIsDescriptionEdited}
-          inputType="area"
-          inputPlaceholder="Add a description for this room"
-        />
-      </div> */}
-
-      <div className="single-room__container-mixlr">
-        {currentUserProfile &&
+      {(room && room.accepting_donations) ||
+      (currentUserProfile &&
         room &&
-        currentUserProfile.uid === room.user_ID ? (
+        currentUserProfile.uid === room.user_ID) ? (
+        <div className="single-room__container-donations">
           <Section
             currentUserProfile={currentUserProfile}
             room={room}
             values={values}
             setValues={setValues}
-            analyticsTag="audio live"
-            visibilityConditionField="audio_live"
-            field="audio_stream"
-            title="Audio Stream"
-            isInEditMode={isAudioStreamEdited}
-            setIsInEditMode={setIsAudioStreamEdited}
-            tooltipId="audioStream"
-            tooltipText="Paste here your Mixlr ID only.<br />Click for more details."
+            analyticsTag="accepting donations"
+            visibilityConditionField="accepting_donations"
+            field="donations_url"
+            title="Link for Donations"
+            moreText={room && room.donations_info}
+            isInEditMode={isDonationsUrlEdited}
+            setIsInEditMode={setIsDonationsUrlEdited}
+            tooltipId="acceptingDonationsTooltip"
+            tooltipText="Accepting donations?<br />Drop your forwarding link here."
             inputType="text"
-            inputPlaceholder="Your Mixlr ID"
-            toggleID="audioLive"
-            toggleText="Currently streaming audio"
-            toggleOn={() => {
+            inputPlaceholder="Link for donations"
+            formError={donationsError}
+            setFormError={setDonationsError}
+            isUrl={true}
+            toggleID="acceptingDonationsToggle"
+            toggleText="Currently accepting donations"
+            toggleOn={() =>
               updateRoom(
                 {
                   ...room,
-                  audio_live: true,
+                  accepting_donations: true,
                 },
-                "audio live",
-                () => console.log("audio went live")
-              );
-            }}
-            toggleOff={() => {
+                "Enabled donations",
+                () => console.log("Enabled donations")
+              )
+            }
+            toggleOff={() =>
               updateRoom(
                 {
                   ...room,
-                  audio_live: false,
+                  accepting_donations: false,
                 },
-                "audio offline",
-                () => console.log("audio went offline")
-              );
-            }}
-            toggleDefault="audio_live"
+                "Dissabled donations",
+                () => console.log("Dissabled donations")
+              )
+            }
+            toggleDefault="accepting_donations"
+          />
+        </div>
+      ) : null}
+
+      <div
+        className={
+          isMobile
+            ? "single-room__container-mixlr"
+            : "single-room__container-mixlr tiny-margin-top"
+        }
+      >
+        {currentUserProfile &&
+        room &&
+        currentUserProfile.uid === room.user_ID ? (
+          <AudioSettings
+            values={values}
+            setValues={setValues}
+            room={room}
+            currentAudioChannel={currentAudioChannel}
           />
         ) : null}
       </div>
@@ -504,7 +463,9 @@ const SingleRoom = ({
         className={
           currentUserProfile && room && currentUserProfile.uid === room.user_ID
             ? "single-room__container-admin--owner"
-            : "single-room__container-admin--visitor"
+            : isMobile
+            ? "single-room__container-admin--visitor"
+            : "single-room__container-admin--visitor tiny-margin-top"
         }
       >
         {(room && room.associate) ||
@@ -550,9 +511,21 @@ const SingleRoom = ({
         ) : null}
       </div>
 
-      <div className="single-room__container-info">
-        {renderContent(room, currentUserProfile)}
-      </div>
+      {room && currentUserProfile ? (
+        <div
+          className={
+            (room && room.accepting_donations) ||
+            (currentUserProfile &&
+              room &&
+              currentUserProfile.uid === room.user_ID)
+              ? "single-room__container-info--with-donations"
+              : "single-room__container-info--without-donations"
+          }
+        >
+          <RoomInfo room={room} />
+        </div>
+      ) : null}
+
 
       <div className="single-room__container-comments single-room__comments">
         <form
@@ -644,4 +617,5 @@ export default connect(null, {
   enterPortal,
   associateWithRoom,
   keepRoomListed,
+  logGuestEntry,
 })(SingleRoom);

@@ -1,0 +1,26 @@
+@import '../../../../../styles/imports';
+
+.single-channel {
+  margin-top: 2rem;
+  background-color: $bgColor;
+  border-radius: $borderRadius;
+  padding: 1.5rem;
+
+  &--active {
+    border: $border;
+  }
+
+  &__title{
+    &--active{
+      font-family: $fontBold;
+      color: $mainColor;
+    }
+  }
+
+  &__link{
+
+    &--active{
+      color: $mainColor;
+    }
+  }
+}

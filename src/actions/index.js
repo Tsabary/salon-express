@@ -1,4 +1,6 @@
 import firebase from "../firebase";
+import { v1 as uuidv1 } from "uuid";
+
 import {
   // GLOBAL //
   TOGGLE_POPUP,
@@ -38,6 +40,9 @@ import {
   FETCH_UPDATES,
   ADD_NOTIFICATION,
   RESET_NOTIFICATIONS,
+  ADD_CHANNEL,
+  SET_CHANNELS,
+  REMOVE_CHANNEL,
 } from "./types";
 
 import { titleToKey } from "../utils/strings";
@@ -291,6 +296,7 @@ export const fetchMoreSearched = (
 // ROOM //
 
 export const logGuestEntry = (room, currentUserProfile) => () => {
+
   const roomRef = db.collection("rooms").doc(room.id);
   roomRef.set(
     {
@@ -421,12 +427,15 @@ const compare = (a, b) => {
 };
 
 let multiverseListener;
+let channelListener;
 
 export const fetchSingleRoom = (
   roomID,
   setRoom,
   setMultiverse,
   setMultiverseArray,
+  setCurrentAudioChannel,
+  isMobile,
   newPortal
 ) => async (dispatch) => {
   const docRoom = await db.collection("rooms").doc(roomID).get();
@@ -434,8 +443,16 @@ export const fetchSingleRoom = (
   analytics.logEvent("room_direct_navigation");
   if (docRoom.data()) {
     setRoom(docRoom.data());
+
+    dispatch({
+      type: SET_CHANNELS,
+      payload: docRoom.data().audio_channels
+        ? docRoom.data().audio_channels
+        : [],
+    });
   }
 
+  if (isMobile) return;
   multiverseListener = db
     .collection("multiverses")
     .doc(roomID)
@@ -450,25 +467,38 @@ export const fetchSingleRoom = (
         newPortal();
       }
     });
+
+  channelListener = db
+    .collection("active_channels")
+    .doc(roomID)
+    .onSnapshot((docChannel) => {
+      setCurrentAudioChannel(
+        docChannel.data() ? docChannel.data().channel : null
+      );
+    });
 };
 
 export const detachListener = () => () => {
   if (multiverseListener) multiverseListener();
+  if (channelListener) channelListener();
+};
+
+export const setActiveChannel = (roomID, channel) => () => {
+  db.collection("active_channels").doc(roomID).set({ channel });
 };
 
 export const newPortal = (newPortal, oldPortal, room, uid, cb) => () => {
-  const batch = db.batch();
-  const verseDoc = db.collection("multiverses").doc(room.id);
-
-  let newPortalKey = titleToKey(newPortal);
-
-  let oldPortalKey = oldPortal ? titleToKey(oldPortal.title) : null;
-
   const portalObj = {
     title: newPortal,
     members: [uid],
     created_on: new Date(),
   };
+
+  const batch = db.batch();
+  const verseDoc = db.collection("multiverses").doc(room.id);
+
+  let newPortalKey = titleToKey(newPortal);
+  let oldPortalKey = oldPortal ? titleToKey(oldPortal.title) : null;
 
   batch.set(
     verseDoc,
@@ -490,12 +520,9 @@ export const newPortal = (newPortal, oldPortal, room, uid, cb) => () => {
     );
   }
 
-  batch
-    .commit()
-    .then(() => {
-      cb(portalObj);
-    })
-    .catch((e) => console.log("dddddddddddddd", e));
+  batch.commit().then(() => {
+    cb(portalObj);
+  });
 };
 
 export const leavePortal = (room, portal, uid) => () => {
@@ -511,7 +538,7 @@ export const leavePortal = (room, portal, uid) => () => {
     { merge: true }
   );
 
-  batch.commit().catch((e) => console.log("dddddddddddddd", e));
+  batch.commit()
 };
 
 export const enterPortal = (room, portal, uid) => () => {
@@ -562,7 +589,44 @@ export const replaceTimestampWithUid = (
     { merge: true }
   );
 
-  batch.commit().catch((e) => console.log("dddddddddddddd", e));
+  batch.commit();
+};
+
+export const addChannel = (channel, room) => async (dispatch) => {
+  db.collection("rooms")
+    .doc(room.id)
+    .set(
+      {
+        audio_channels: firebase.firestore.FieldValue.arrayUnion({
+          ...channel,
+          id: uuidv1(),
+        }),
+      },
+      { merge: true }
+    )
+    .then(() => {
+      dispatch({
+        type: ADD_CHANNEL,
+        payload: channel,
+      });
+    });
+};
+
+export const deleteChannel = (channel, room, cb) => async (dispatch) => {
+  console.log(room.id);
+  db.collection("rooms")
+    .doc(room.id)
+    .set(
+      { audio_channels: firebase.firestore.FieldValue.arrayRemove(channel) },
+      { merge: true }
+    )
+    .then(() => {
+      cb();
+      dispatch({
+        type: REMOVE_CHANNEL,
+        payload: channel,
+      });
+    });
 };
 
 export const fetchRoomComments = (roomID, setComments) => async () => {

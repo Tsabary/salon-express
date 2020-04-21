@@ -15,6 +15,7 @@ import QuestionsReducer from "./global/QuestionsReducer";
 import PositionsReducer from "./careers/PositionsReducer";
 import UpdatesReducer from "./user/UpdatesReducer";
 import NotificationReducer from "./user/NotificationReducer";
+import ChannelsReducer from "./room/ChannelsReducer";
 
 export default combineReducers({
   // GLOBAL //
@@ -40,6 +41,10 @@ export default combineReducers({
   // USER //
   updates: UpdatesReducer,
   notifications: NotificationReducer,
+
+  // ROOM //
+  audioChannels: ChannelsReducer,
+
   // CAREERS //
   positions: PositionsReducer,
 });

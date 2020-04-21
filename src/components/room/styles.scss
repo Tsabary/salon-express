@@ -302,33 +302,7 @@
       }
     }
   }
-
-  @include toggleConainer;
-
-  &-delete-checkbox {
-    display: none;
-    &:checked + .room__visible {
-      transform: translateX(-110%);
-    }
-
-    &:checked ~ .room__hidden {
-      left: 0;
-    }
-  }
-
-  &__hidden {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 5rem;
-    text-align: center;
-  }
 }
-
-// .icon-testing{
-//   width: 24px;
-//   height: 24px;
-// }
 
 .social {
   display: grid;

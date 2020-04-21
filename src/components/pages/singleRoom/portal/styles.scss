@@ -1,4 +1,5 @@
 @import "../../../../styles/imports";
+
 .portal {
   padding: 0.5rem 1.5rem;
   display: grid;
@@ -8,21 +9,22 @@
     line-height: 1.6rem;
   }
   &__title {
+    font-family: $font, $fontHebrew;
     color: $mainColor;
     cursor: pointer;
     transition: all 0.2s;
     &:hover {
       font-size: 1.5rem;
     }
-  }
 
-  &__title-current {
-    font-family: $fontBold;
-    color: $mainColor;
-    cursor: pointer;
-    transition: all 0.2s;
-    &:hover {
-      font-size: 1.5rem;
+    &--current {
+      font-family: $fontBold, $fontHebrewBold;
+      color: $mainColor;
+      cursor: pointer;
+      transition: all 0.2s;
+      &:hover {
+        font-size: 1.5rem;
+      }
     }
   }
 

@@ -21,6 +21,15 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    match /active_channels/{channel}{
+      allow read: if true;
+      allow create: if true; // need to check that it's the admin
+      allow update: if true; // need to check that it's the admin
+      allow delete: if true; // need to check that it's the admin
+    }
+
+    
+
     match /comments/{room}{
       allow read: if true;
       allow create: if request.auth.uid == request.resource.data.user_ID;

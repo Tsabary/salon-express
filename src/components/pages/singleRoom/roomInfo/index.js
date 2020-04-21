@@ -1,35 +1,27 @@
-import "./styles.scss";
+import './styles.scss';
 import React, { useContext, useState } from "react";
-import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 import Moment from "react-moment";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { ReactSVG } from "react-svg";
 
-import history from "../../history";
-import firebase from "../../firebase";
+import history from "../../../../history";
+import firebase from "../../../../firebase";
 
-import { SearchContext } from "../../providers/Search";
-import { PageContext } from "../../providers/Page";
+import { AuthContext } from "../../../../providers/Auth";
+import { SearchContext } from "../../../../providers/Search";
+import { PageContext } from "../../../../providers/Page";
 
-import {
-  addToFavorites,
-  removeFromFavorites,
-} from "../../actions";
+import { addToFavorites, removeFromFavorites } from "../../../../actions";
 
-import { getLanguageName } from "../../utils/languages";
-import { capitalizeSentances } from "../../utils/strings";
+import { getLanguageName } from "../../../../utils/languages";
+import { capitalizeSentances } from "../../../../utils/strings";
 
-const Room = ({
-  room,
-  addToFavorites,
-  removeFromFavorites,
-  currentUserProfile,
-  togglePopup,
-  isForFeed,
-}) => {
+const RoomInfo = ({ room }) => {
   const myHistory = useHistory(history);
+
+  const { currentUserProfile } = useContext(AuthContext);
 
   const { setSearchTerm } = useContext(SearchContext);
   const { setPage } = useContext(PageContext);
@@ -66,37 +58,33 @@ const Room = ({
   };
 
   return (
-    <div className={isForFeed ? "room room-feed" : "room"}>
+      <div className="section__container room-info">
+      <div className="section__title">Room Info</div>
+
       <div className="room__top">
-        <div className="room__content">
-          {lastVisit ? (
-            <div className="room__last-visit">
-              Last visitor joined <Moment fromNow>{lastVisit}</Moment>
-            </div>
-          ) : null}
-
-          <div
-            className="room__title"
-            onClick={() => {
-              myHistory.push(`/room/${room.id}`);
-            }}
-          >
-            {capitalizeSentances(room.title)}
+        {lastVisit ? (
+          <div className="room__last-visit">
+            Last visitor joined <Moment fromNow>{lastVisit}</Moment>
           </div>
+        ) : null}
 
-          <div className="room__languages--base">
-            Need to know {getLanguageName(room.language)}
-          </div>
-
-          {isForFeed ? null : (
-            <div className="room__description">{room.description}</div>
-          )}
-
-          <div className="tiny-margin-top"> {renderTags()}</div>
+        <div
+          className="room__title"
+          onClick={() => {
+            myHistory.push(`/room/${room.id}`);
+          }}
+        >
+          {capitalizeSentances(room.title)}
         </div>
-      </div>
-      <div className="room__actions--all">
 
+        <div className="room__languages--base">
+          Need to know {getLanguageName(room.language)}
+        </div>
+
+        <div className="room__description">{room.description}</div>
+
+        <div className="tiny-margin-top"> {renderTags()}</div>
+      </div>
         <div className="room__actions--pair">
           <CopyToClipboard
             text={`https://salon.express/room/${room.id}`}
@@ -113,7 +101,7 @@ const Room = ({
                 shareButton
               ) : (
                 <ReactSVG
-                  src={isForFeed ? "./svgs/share.svg" : "../svgs/share.svg"}
+                  src="../svgs/share.svg"
                   wrapper="div"
                   beforeInjection={(svg) => {
                     svg.classList.add("room__icon");
@@ -126,7 +114,6 @@ const Room = ({
           {!currentUserProfile.uid ? (
             <a
               onClick={() => {
-                togglePopup(true);
                 firebase.analytics().logEvent("favorites_clicked_not_user");
               }}
               className="room__button room__button-line clickable"
@@ -135,7 +122,7 @@ const Room = ({
               <div className="fr-max-fr">
                 <div />
                 <ReactSVG
-                  src={isForFeed ? "./svgs/heart.svg" : "../svgs/heart.svg"}
+                  src="../svgs/heart.svg"
                   wrapper="div"
                   beforeInjection={(svg) => {
                     svg.classList.add("room__icon");
@@ -153,7 +140,7 @@ const Room = ({
               <div className="fr-max-fr">
                 <div />
                 <ReactSVG
-                  src={isForFeed ? "./svgs/heart_full.svg" : "../svgs/heart_full.svg"}
+                  src="../svgs/heart_full.svg"
                   wrapper="div"
                   beforeInjection={(svg) => {
                     svg.classList.add("room__icon");
@@ -170,7 +157,7 @@ const Room = ({
               <div className="fr-max-fr">
                 <div />
                 <ReactSVG
-                  src={isForFeed ? "./svgs/heart.svg" : "../svgs/heart.svg"}
+                  src="../svgs/heart.svg"
                   wrapper="div"
                   beforeInjection={(svg) => {
                     svg.classList.add("room__icon");
@@ -180,13 +167,9 @@ const Room = ({
               </div>
             </div>
           )}
-        </div>
       </div>
     </div>
   );
 };
 
-export default connect(null, {
-  addToFavorites,
-  removeFromFavorites,
-})(Room);
+export default RoomInfo;

@@ -16,18 +16,48 @@
     &-multiverse {
       grid-column: 1/4;
       grid-row: 1/3;
+      @include resize(1100px) {
+        grid-column: 1/13;
+        grid-row: 2/3;
+      }
     }
     &-chat {
       grid-column: 4/13;
       grid-row: 1/2;
+      @include resize(1100px) {
+        grid-column: 1/13;
+      }
     }
     &-audio {
-      grid-column: 4/13;
-      grid-row: 2/3;
+      &--mobile{
+        grid-column: 1/13;
+        grid-row: 2/3;
+        @include resize(1100px) {
+          grid-row: 3/4;
+        }
+      }
+      &--not-mobile{
+        grid-column: 4/13;
+        grid-row: 2/3;
+        @include resize(1100px) {
+          grid-column: 1/13;
+          grid-row: 3/4;
+        }
+      }
+
     }
+
+
     &-donations {
       grid-column: 8/13;
       grid-row: 3/5;
+      @include resize(1100px) {
+        grid-row: 4/5;
+      }
+      @include resize(700px) {
+        grid-column: 1/13;
+        grid-row: 4/5;
+      }
     }
     &-description {
       grid-column: 8/13;
@@ -38,20 +68,55 @@
       }
     }
 
+    &-no-mobile {
+      grid-column: 1/13;
+      grid-row: 1/2;
+      border: $border;
+      border-radius: $borderRadius;
+      padding: 4rem;
+      text-align: center;
+      margin-top: 2rem;
+    }
     &-info {
-      grid-column: 4/8;
-      grid-row: 3/5;
-      @include resize(1200px) {
+      &--with-donations {
+        grid-column: 4/8;
+        grid-row: 3/5;
+        @include resize(1200px) {
+          grid-column: 4/8;
+          grid-row: 3/5;
+        }
+        @include resize(1100px) {
+          grid-column: 1/8;
+          grid-row: 4/6;
+        }
+        @include resize(700px) {
+          grid-column: 1/13;
+          grid-row: 5/6;
+        }
+      }
+      &--without-donations {
         grid-column: 4/13;
         grid-row: 3/5;
+        @include resize(1200px) {
+          grid-column: 4/13;
+          grid-row: 3/5;
+        }
+        @include resize(1100px) {
+          grid-column: 1/13;
+        }
       }
     }
 
     &-mixlr {
       grid-column: 1/4;
       grid-row: 3/4;
-      margin-top: 2rem;
+      @include resize(1100px) {
+        grid-column: 1/13;
+        grid-row: 9/10;
+      }
     }
+
+
     &-admin {
       &--owner {
         grid-column: 1/4;
@@ -59,18 +124,26 @@
 
         @include resize(1200px) {
           grid-column: 1/4;
-          grid-row: 6/8;
+          grid-row: 4/5;
+        }
+        @include resize(1100px) {
+          grid-column: 1/13;
+          grid-row: 10/11;
         }
       }
 
       &--visitor {
         grid-column: 1/4;
         grid-row: 3/4;
-        margin-top: 2rem;
 
         @include resize(1200px) {
           grid-column: 1/4;
-          grid-row: 6/8;
+          grid-row: 3/4;
+        }
+        @include resize(1100px) {
+          grid-column: 1/13;
+          grid-row: 9/10;
+          margin-top: 0rem;
         }
       }
     }
@@ -78,6 +151,10 @@
     &-comments {
       grid-column: 4/13;
       grid-row: 5/9;
+      @include resize(1100px) {
+        grid-column: 1/13;
+        grid-row: 6/9;
+      }
     }
   }
 
@@ -90,7 +167,7 @@
     @include gridVariation;
     grid-template-columns: 1fr max-content;
 
-    @include resize(1600px) {
+    @include resize(1300px) {
       grid-template-columns: 1fr;
     }
   }
