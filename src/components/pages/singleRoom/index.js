@@ -28,16 +28,14 @@ import {
 import { titleToKey } from "../../../utils/strings";
 
 import InputField from "../../formComponents/inputField";
-import TextArea from "../../formComponents/textArea";
-import ToggleField from "../../formComponents/toggleField";
 import BoxedButton from "../../formComponents/boxedButton";
 
 import Portal from "./portal";
-import Room from "../../room";
-import Comment from "./comment";
 import Section from "./section";
 import AudioSettings from "./audioSettings";
 import RoomInfo from "./roomInfo";
+import Comments from "./comments";
+import Admin from './admin';
 
 const SingleRoom = ({
   match,
@@ -48,10 +46,7 @@ const SingleRoom = ({
   leavePortal,
   enterPortal,
   detachListener,
-  newComment,
   newPortal,
-  associateWithRoom,
-  keepRoomListed,
   logGuestEntry,
 }) => {
   const myHistory = useHistory(history);
@@ -74,7 +69,6 @@ const SingleRoom = ({
   const [comments, setComments] = useState([]);
 
   // These are controllers for the different containers - do we show the static or the edit mode
-  const [isDescriptionEdited, setIsDescriptionEdited] = useState(false);
   const [isDonationsUrlEdited, setIsDonationsUrlEdited] = useState(false);
 
   // We use this state to hold
@@ -236,14 +230,6 @@ const SingleRoom = ({
       currentUserProfile.uid
     );
   }, [currentUserProfile, room, currentPortal]);
-
-
-  // Render the comments to the page
-  const renderComments = (comments) => {
-    return comments.map((com) => {
-      return <Comment comment={com} key={com.id} />;
-    });
-  };
 
   // Render the portals to the page
   const renderPortals = (multiverse) => {
@@ -459,57 +445,24 @@ const SingleRoom = ({
         ) : null}
       </div>
 
-      <div
-        className={
-          currentUserProfile && room && currentUserProfile.uid === room.user_ID
-            ? "single-room__container-admin--owner"
-            : isMobile
-            ? "single-room__container-admin--visitor"
-            : "single-room__container-admin--visitor tiny-margin-top"
-        }
-      >
-        {(room && room.associate) ||
-        (currentUserProfile &&
-          room &&
-          currentUserProfile.uid === room.user_ID) ? (
-          <div className="section__container">
-            {currentUserProfile &&
+      {(room && room.associate) ||
+      (currentUserProfile &&
+        room &&
+        currentUserProfile.uid === room.user_ID) ? (
+        <div
+          className={
+            currentUserProfile &&
             room &&
-            currentUserProfile.uid === room.user_ID ? (
-              <>
-                <ToggleField
-                  id="singleRoomListed"
-                  text="Keep room public"
-                  toggleOn={() => keepRoomListed(room, true)}
-                  toggleOff={() => keepRoomListed(room, false)}
-                  isChecked={room.listed}
-                />
-                <ToggleField
-                  id="singleRoomAssociate"
-                  text="Associate me with this Room"
-                  toggleOn={() => associateWithRoom(room, true)}
-                  toggleOff={() => associateWithRoom(room, false)}
-                  isChecked={room.associate}
-                />
-              </>
-            ) : null}
-
-            {room && room.associate ? (
-              <>
-                <div className="single-room__founder-admin">Founded by:</div>
-
-                <div
-                  className="max-max"
-                  onClick={() => myHistory.push(`/${room.user_username}`)}
-                >
-                  <img className="comment__avatar" src={room.user_avatar} />
-                  <div className="comment__user-name">{room.user_name}</div>
-                </div>
-              </>
-            ) : null}
-          </div>
-        ) : null}
-      </div>
+            currentUserProfile.uid === room.user_ID
+              ? "single-room__container-admin--owner"
+              : isMobile
+              ? "single-room__container-admin--visitor"
+              : "single-room__container-admin--visitor tiny-margin-top"
+          }
+        >
+          <Admin room={room} />
+        </div>
+      ) : null}
 
       {room && currentUserProfile ? (
         <div
@@ -526,81 +479,12 @@ const SingleRoom = ({
         </div>
       ) : null}
 
-
-      <div className="single-room__container-comments single-room__comments">
-        <form
-          className="fr-max"
-          autoComplete="off"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (
-              !currentUserProfile ||
-              !values ||
-              !values.comment.body ||
-              !values.comment.body.length
-            )
-              return;
-            newComment(values.comment, () => {
-              setComments([
-                {
-                  ...values.comment,
-                  created_on: new Date(),
-                  id: Date.now(),
-                },
-                ...comments,
-              ]);
-              setValues({ comment: { ...values.comment, body: "" } });
-            });
-          }}
-        >
-          <TextArea
-            type="text"
-            placeHolder="Leave a comment"
-            value={values && values.comment && values.comment.body}
-            onChange={(body) => {
-              if (body.length < 500)
-                setValues({
-                  ...values,
-                  comment: { ...values.comment, body },
-                });
-            }}
-          />
-          {currentUserProfile ? (
-            <>
-              <button
-                type="submit"
-                className="boxed-button single-room__comment--boxed"
-              >
-                Comment
-              </button>
-
-              <button
-                type="submit"
-                className="text-button-mobile single-room__comment--text"
-              >
-                Comment
-              </button>
-            </>
-          ) : (
-            <>
-              <a
-                href="#sign-up"
-                className="boxed-button single-room__comment--boxed"
-              >
-                Comment
-              </a>
-
-              <a
-                href="#sign-up"
-                className="text-button-mobile single-room__comment--text"
-              >
-                Comment
-              </a>
-            </>
-          )}
-        </form>
-        {comments ? renderComments(comments) : null}
-      </div>
+      <Comments
+        values={values}
+        setValues={setValues}
+        comments={comments}
+        setComments={setComments}
+      />
     </div>
   );
 };
