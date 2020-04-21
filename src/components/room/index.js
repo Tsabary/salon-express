@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 import Moment from "react-moment";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { ReactSVG } from "react-svg";
+import ShowMoreText from "react-show-more-text";
 
 import history from "../../history";
 import firebase from "../../firebase";
@@ -13,10 +14,7 @@ import firebase from "../../firebase";
 import { SearchContext } from "../../providers/Search";
 import { PageContext } from "../../providers/Page";
 
-import {
-  addToFavorites,
-  removeFromFavorites,
-} from "../../actions";
+import { addToFavorites, removeFromFavorites } from "../../actions";
 
 import { getLanguageName } from "../../utils/languages";
 import { capitalizeSentances } from "../../utils/strings";
@@ -87,6 +85,16 @@ const Room = ({
           <div className="room__languages--base">
             Need to know {getLanguageName(room.language)}
           </div>
+          {room.description ? (
+            <ShowMoreText
+              lines={3}
+              more="Show more"
+              less="Show less"
+              anchorClass="room__read-more"
+            >
+              {room.description}
+            </ShowMoreText>
+          ) : null}
 
           {isForFeed ? null : (
             <div className="room__description">{room.description}</div>
@@ -96,7 +104,6 @@ const Room = ({
         </div>
       </div>
       <div className="room__actions--all">
-
         <div className="room__actions--pair">
           <CopyToClipboard
             text={`https://salon.express/room/${room.id}`}
@@ -153,7 +160,11 @@ const Room = ({
               <div className="fr-max-fr">
                 <div />
                 <ReactSVG
-                  src={isForFeed ? "./svgs/heart_full.svg" : "../svgs/heart_full.svg"}
+                  src={
+                    isForFeed
+                      ? "./svgs/heart_full.svg"
+                      : "../svgs/heart_full.svg"
+                  }
                   wrapper="div"
                   beforeInjection={(svg) => {
                     svg.classList.add("room__icon");

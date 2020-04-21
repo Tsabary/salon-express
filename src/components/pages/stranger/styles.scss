@@ -87,7 +87,7 @@
 
     &-tagline {
       color: $grey;
-      font-size: 2rem;
+      font-size: 1.6rem;
       margin-top: 2rem;
     }
 
@@ -103,10 +103,5 @@
       margin-top: 2rem;
     }
 
-    &-social {
-      display: grid;
-      gap: 1rem;
-      grid-template-columns: repeat(6, max-content);
-    }
   }
 }

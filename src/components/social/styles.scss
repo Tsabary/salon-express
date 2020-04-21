@@ -1,0 +1,15 @@
+.social {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(6, max-content);
+
+  &__icon {
+    height: 3rem;
+    width: 3rem;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+
+    &:hover {
+      transform: rotate(1080deg);
+    }
+  }
+}

@@ -296,7 +296,6 @@ export const fetchMoreSearched = (
 // ROOM //
 
 export const logGuestEntry = (room, currentUserProfile) => () => {
-
   const roomRef = db.collection("rooms").doc(room.id);
   roomRef.set(
     {
@@ -398,15 +397,18 @@ export const removeFromFavorites = (currentUserProfile, room) => async (
 
 // STRANGER //
 
-export const fetchStrangerProfile = (strangerUsername) => async (dispatch) => {
+export const fetchStrangerProfile = (strangerUsername, setProfile) => async (
+  dispatch
+) => {
   const data = await db
     .collection("users")
     .where("username", "==", strangerUsername)
     .get();
 
   const profile = data.docs.map((doc) => doc.data())[0];
-
+  setProfile(profile ? profile : null);
   analytics.logEvent("stranger_profile_visitor");
+  console.log("mine", profile ? profile : null);
 
   dispatch({
     type: FETCH_STRANGER_PROFILE,
@@ -525,20 +527,22 @@ export const newPortal = (newPortal, oldPortal, room, uid, cb) => () => {
   });
 };
 
-export const leavePortal = (room, portal, uid) => () => {
+export const leavePortal = (room, portal, uids) => () => {
   const batch = db.batch();
   const portalDoc = db.collection("multiverses").doc(room.id);
   const key = titleToKey(portal.title);
 
-  batch.set(
-    portalDoc,
-    {
-      [key]: { members: firebase.firestore.FieldValue.arrayRemove(uid) },
-    },
-    { merge: true }
-  );
+  uids.forEach((uid) => {
+    batch.set(
+      portalDoc,
+      {
+        [key]: { members: firebase.firestore.FieldValue.arrayRemove(uid) },
+      },
+      { merge: true }
+    );
+  });
 
-  batch.commit()
+  batch.commit();
 };
 
 export const enterPortal = (room, portal, uid) => () => {
@@ -554,7 +558,7 @@ export const enterPortal = (room, portal, uid) => () => {
     { merge: true }
   );
 
-  batch.commit().catch((e) => console.log("dddddddddddddd", e));
+  batch.commit();
 };
 
 export const replaceTimestampWithUid = (
@@ -635,7 +639,7 @@ export const fetchRoomComments = (roomID, setComments) => async () => {
     .orderBy("created_on", "desc")
     .where("room_ID", "==", roomID)
     .get()
-    .catch((e) => console.log("dddddddddddddd", e));
+
 
   if (data.docs) {
     setComments(data.docs.map((doc) => doc.data()));

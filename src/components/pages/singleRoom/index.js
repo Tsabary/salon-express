@@ -1,11 +1,8 @@
 import "./styles.scss";
 import React, { useContext, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { useHistory } from "react-router-dom";
 import Iframe from "react-iframe";
 import { isMobile } from "react-device-detect";
-
-import history from "../../../history";
 
 import { AuthContext } from "../../../providers/Auth";
 import { UniqueIdContext } from "../../../providers/UniqueId";
@@ -27,15 +24,12 @@ import {
 
 import { titleToKey } from "../../../utils/strings";
 
-import InputField from "../../formComponents/inputField";
-import BoxedButton from "../../formComponents/boxedButton";
-
-import Portal from "./portal";
 import Section from "./section";
 import AudioSettings from "./audioSettings";
 import RoomInfo from "./roomInfo";
 import Comments from "./comments";
-import Admin from './admin';
+import Admin from "./admin";
+import Multiverse from "./multiverse";
 
 const SingleRoom = ({
   match,
@@ -49,8 +43,6 @@ const SingleRoom = ({
   newPortal,
   logGuestEntry,
 }) => {
-  const myHistory = useHistory(history);
-
   const { currentUserProfile } = useContext(AuthContext);
 
   // This is a fake unique id based on current timestamp. We use it to identify users that aren't logged in, so we can manage the coun of users in each portal
@@ -73,9 +65,6 @@ const SingleRoom = ({
 
   // We use this state to hold
   const [values, setValues] = useState({});
-
-  // This holdes the portal error if any (currently only one is "a portal with a similar name exists")
-  const [portalError, setPortalError] = useState(null);
 
   // This holdes the donations error if any ("Not a valid URL")
   const [donationsError, setDonationsError] = useState(null);
@@ -112,13 +101,49 @@ const SingleRoom = ({
           (portalObj) => {
             setValues({ ...values, portal: "" });
             setCurrentPortal(portalObj);
-            setPortalError(null);
           }
         );
       }
     );
     fetchRoomComments(match.params.id, setComments);
   }, [match.params.id, uniqueId]);
+
+
+   // This is our cleanup event for when the window closes ( remove the user from the portal)
+   useEffect(() => {
+    const cleanup = () => {
+      leavePortal(
+        room,
+        currentPortal,
+        currentUserProfile && currentUserProfile.uid
+          ? [currentUserProfile.uid, uniqueId]
+          : [uniqueId]
+      );
+      detachListener();
+    };
+
+    window.addEventListener("beforeunload", cleanup);
+
+    return () => {
+      window.removeEventListener("beforeunload", cleanup);
+    };
+  }, [isFirstLoad, currentUserProfile, currentPortal]);
+
+
+  // This is our cleanup event for when the comonent unloads ( remove the user from the portal)
+  useEffect(() => {
+    return function cleanup() {
+      if (!room || !currentPortal) return;
+      leavePortal(
+        room,
+        currentPortal,
+        currentUserProfile && currentUserProfile.uid
+          ? [currentUserProfile.uid, uniqueId]
+          : [uniqueId]
+      );
+    };
+  }, [isFirstLoad, currentUserProfile, currentPortal]);
+
 
   // This sets the comment basic info, and the values of the different fields in our page to what they currently are (so that they'll be present in our edit components)
   useEffect(() => {
@@ -152,44 +177,12 @@ const SingleRoom = ({
       });
   }, [currentUserProfile, room]);
 
-  useEffect(() => {
-    const cleanup = () => {
-      leavePortal(
-        room,
-        currentPortal,
-        currentUserProfile && currentUserProfile.uid
-          ? currentUserProfile.uid
-          : uniqueId
-      );
-      detachListener();
-    };
 
-    window.addEventListener("beforeunload", cleanup);
-
-    return () => {
-      window.removeEventListener("beforeunload", cleanup);
-    };
-  }, [isFirstLoad, currentUserProfile, currentPortal]);
-
-  // Send the update to all followers that someone has entered the room
-  useEffect(() => {
-    if (isFirstLoad) return;
-    logGuestEntry(room, currentUserProfile);
-  }, [isFirstLoad]);
-
-  // This cleans up our listener and removes us from the latest portal we were in. Is this the right place?
-  useEffect(() => {
-    return function cleanup() {
-      if (!room || !currentPortal) return;
-      leavePortal(
-        room,
-        currentPortal,
-        currentUserProfile && currentUserProfile.uid
-          ? currentUserProfile.uid
-          : uniqueId
-      );
-    };
-  }, [isFirstLoad, currentUserProfile, currentPortal]);
+    // Send the update to all followers that someone has entered the room. Only do it when isFirstLoad is false, becasue that's the indicatir they've actually entered the room
+    useEffect(() => {
+      if (isFirstLoad) return;
+      logGuestEntry(room, currentUserProfile);
+    }, [isFirstLoad]);
 
   // If it's not the first load or if we don't have anything in the multiverse array then return, because we either don't need to automatically pick the portal (not the first load) or there is no portal to choose
   useEffect(() => {
@@ -231,21 +224,6 @@ const SingleRoom = ({
     );
   }, [currentUserProfile, room, currentPortal]);
 
-  // Render the portals to the page
-  const renderPortals = (multiverse) => {
-    return multiverse.map((portal) => {
-      return (
-        <Portal
-          portal={portal}
-          members={portal.members}
-          currentPortal={currentPortal}
-          setCurrentPortal={setCurrentPortal}
-          key={titleToKey(portal.title)}
-        />
-      );
-    });
-  };
-
   // Our main render
   return (
     <div className="single-room">
@@ -255,86 +233,19 @@ const SingleRoom = ({
           your desktop
         </div>
       ) : null}
-
-      {!isMobile ? (
-        <div className="single-room__container-multiverse section__container tiny-margin-top">
-          <div className="section__title">The Multiverse</div>
-          <form
-            className="single-room__multiverse-form"
-            autoComplete="off"
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (
-                !currentUserProfile ||
-                !values ||
-                !values.portal ||
-                !values.portal.length
-              )
-                return;
-
-              if (
-                multiverse.hasOwnProperty(
-                  values.portal.trim().split(" ").join("").toLowerCase()
-                )
-              ) {
-                setPortalError("A portal with that name already exists");
-                return;
-              }
-
-              newPortal(
-                values.portal,
-                currentPortal,
-                room,
-                currentUserProfile.uid,
-                (portalObj) => {
-                  setValues({ ...values, portal: "" });
-                  setCurrentPortal(portalObj);
-                  setPortalError(null);
-                }
-              );
-            }}
-          >
-            <InputField
-              type="text"
-              placeHolder="Open a portal"
-              value={values.portal}
-              onChange={(portal) => {
-                if (portal.length < 30) setValues({ ...values, portal });
-              }}
-            />
-
-            {currentUserProfile ? (
-              <>
-                <button
-                  type="submit"
-                  className="boxed-button single-room__comment--boxed"
-                >
-                  Open
-                </button>
-
-                <button
-                  type="submit"
-                  className="text-button-mobile  single-room__comment--text"
-                >
-                  Open
-                </button>
-              </>
-            ) : (
-              <a href="#sign-up" className="auth-options__box">
-                <BoxedButton text="Open" />
-              </a>
-            )}
-          </form>
-          {portalError ? (
-            <div className="form-error tiny-margin-top">{portalError}</div>
-          ) : null}
-
-          <div className="single-room__portals">
-            {multiverseArray ? renderPortals(multiverseArray) : null}
-          </div>
-        </div>
+      {/** This is the multiverse*/}
+      {!isMobile && room ? (
+        <Multiverse
+          room={room}
+          values={values}
+          setValues={setValues}
+          multiverse={multiverse}
+          currentPortal={currentPortal}
+          setCurrentPortal={setCurrentPortal}
+          multiverseArray={multiverseArray}
+        />
       ) : null}
-
+      {/** This is the video chat*/}
       {!isMobile ? (
         <div className="single-room__container-chat">
           {currentPortalUrl && !isMobile ? (
@@ -355,7 +266,7 @@ const SingleRoom = ({
           ) : null}
         </div>
       ) : null}
-
+      {/** This is the audio stream controller, if audio is being streamed*/}
       <div
         className={
           isMobile
@@ -375,6 +286,8 @@ const SingleRoom = ({
           />
         ) : null}
       </div>
+
+      {/** This is the donations tile*/}
       {(room && room.accepting_donations) ||
       (currentUserProfile &&
         room &&
@@ -426,6 +339,7 @@ const SingleRoom = ({
         </div>
       ) : null}
 
+      {/** This is the audio settings tile, in case the user is the page's admin*/}
       <div
         className={
           isMobile
@@ -445,6 +359,7 @@ const SingleRoom = ({
         ) : null}
       </div>
 
+      {/** This is the admin info/settings tile*/}
       {(room && room.associate) ||
       (currentUserProfile &&
         room &&
@@ -464,6 +379,7 @@ const SingleRoom = ({
         </div>
       ) : null}
 
+      {/** This is the room info tile*/}
       {room && currentUserProfile ? (
         <div
           className={
@@ -475,16 +391,19 @@ const SingleRoom = ({
               : "single-room__container-info--without-donations"
           }
         >
-          <RoomInfo room={room} />
+          <RoomInfo room={room} values={values} setValues={setValues} />
         </div>
       ) : null}
 
-      <Comments
-        values={values}
-        setValues={setValues}
-        comments={comments}
-        setComments={setComments}
-      />
+      {/** This is the comments tile*/}
+      {room ? (
+        <Comments
+          values={values}
+          setValues={setValues}
+          comments={comments}
+          setComments={setComments}
+        />
+      ) : null}
     </div>
   );
 };

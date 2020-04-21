@@ -304,117 +304,117 @@
   }
 }
 
-.social {
-  display: grid;
-  margin: 1.5rem;
-  grid-template-columns: max-content;
-  gap: 1rem;
-  height: max-content;
-  &__icon {
-    height: 3rem;
-    width: 3rem;
-    cursor: pointer;
-    fill: $mainColor;
+// .social {
+//   display: grid;
+//   margin: 1.5rem;
+//   grid-template-columns: max-content;
+//   gap: 1rem;
+//   height: max-content;
+//   &__icon {
+//     height: 3rem;
+//     width: 3rem;
+//     cursor: pointer;
+//     fill: $mainColor;
 
-    &-disabled {
-      height: 3rem;
-      width: 3rem;
-      fill: $grey;
-    }
+//     &-disabled {
+//       height: 3rem;
+//       width: 3rem;
+//       fill: $grey;
+//     }
 
-    &--facebook {
-      &-icon {
-        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-      }
-      :hover .social__icon--facebook-icon {
-        fill: $facebookColor;
-        transform: rotate(1080deg);
-      }
-    }
+//     &--facebook {
+//       &-icon {
+//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+//       }
+//       :hover .social__icon--facebook-icon {
+//         fill: $facebookColor;
+//         transform: rotate(1080deg);
+//       }
+//     }
 
-    &--instagram {
-      &-icon {
-        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-      }
-      :hover .social__icon--instagram-icon {
-        fill: $instagramColor;
-        transform: rotate(1080deg);
-      }
-    }
+//     &--instagram {
+//       &-icon {
+//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+//       }
+//       :hover .social__icon--instagram-icon {
+//         fill: $instagramColor;
+//         transform: rotate(1080deg);
+//       }
+//     }
 
-    &--twitter {
-      &-icon {
-        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-      }
-      :hover .social__icon--twitter-icon {
-        fill: $twitterColor;
-        transform: rotate(1080deg);
-      }
-    }
+//     &--twitter {
+//       &-icon {
+//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+//       }
+//       :hover .social__icon--twitter-icon {
+//         fill: $twitterColor;
+//         transform: rotate(1080deg);
+//       }
+//     }
 
-    &--soundcloud {
-      &-icon {
-        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-      }
-      :hover .social__icon--soundcloud-icon {
-        fill: $soundcloudColor;
-        transform: rotate(1080deg);
-      }
-    }
+//     &--soundcloud {
+//       &-icon {
+//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+//       }
+//       :hover .social__icon--soundcloud-icon {
+//         fill: $soundcloudColor;
+//         transform: rotate(1080deg);
+//       }
+//     }
 
-    &--spotify {
-      &-icon {
-        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-      }
-      :hover .social__icon--spotify-icon {
-        fill: $spotifyColor;
-        transform: rotate(1080deg);
-      }
-    }
+//     &--spotify {
+//       &-icon {
+//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+//       }
+//       :hover .social__icon--spotify-icon {
+//         fill: $spotifyColor;
+//         transform: rotate(1080deg);
+//       }
+//     }
 
-    &--youtube {
-      &-icon {
-        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-      }
-      :hover .social__icon--youtube-icon {
-        fill: $youtubeColor;
-        transform: rotate(1080deg);
-      }
-    }
+//     &--youtube {
+//       &-icon {
+//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+//       }
+//       :hover .social__icon--youtube-icon {
+//         fill: $youtubeColor;
+//         transform: rotate(1080deg);
+//       }
+//     }
 
-    &--linkedin {
-      &-icon {
-        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-      }
-      :hover .social__icon--linkedin-icon {
-        fill: $linkedinColor;
-        transform: rotate(1080deg);
-      }
-    }
+//     &--linkedin {
+//       &-icon {
+//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+//       }
+//       :hover .social__icon--linkedin-icon {
+//         fill: $linkedinColor;
+//         transform: rotate(1080deg);
+//       }
+//     }
 
-    &--website {
-      &-icon {
-        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-      }
-      :hover .social__icon--website-icon {
-        fill: $mainColor;
-        transform: rotate(1080deg);
-      }
-    }
+//     &--website {
+//       &-icon {
+//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+//       }
+//       :hover .social__icon--website-icon {
+//         fill: $mainColor;
+//         transform: rotate(1080deg);
+//       }
+//     }
 
-    &--room {
-      &-icon {
-        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-      }
-      :hover .social__icon--room-icon {
-        fill: $mainColor;
-        transform: rotate(1080deg);
-      }
-    }
-  }
-}
+//     &--room {
+//       &-icon {
+//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+//       }
+//       :hover .social__icon--room-icon {
+//         fill: $mainColor;
+//         transform: rotate(1080deg);
+//       }
+//     }
+//   }
+// }
 
-.live {
-  // border: 1px $mainColor solid;
-  box-shadow: 0 0.2rem 3rem rgba($mainColor, 0.5);
-}
+// .live {
+//   // border: 1px $mainColor solid;
+//   box-shadow: 0 0.2rem 3rem rgba($mainColor, 0.5);
+// }
