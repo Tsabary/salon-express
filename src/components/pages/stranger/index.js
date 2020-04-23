@@ -7,9 +7,9 @@ import { AuthContext } from "../../../providers/Auth";
 
 import { fetchStrangerProfile } from "../../../actions";
 
-import FollowBtn from "../../followBtn";
+import FollowBtn from "../../otherComponents/followBtn";
 import { getLanguageName } from "../../../utils/languages";
-import Social from '../../social';
+import Social from '../../otherComponents/social';
 
 const Stranger = ({ match, strangerProfile, fetchStrangerProfile }) => {
   const { currentUserProfile } = useContext(AuthContext);

@@ -37,12 +37,12 @@ const NewRoom = ({ newRoom, togglePopup }) => {
 
   useEffect(() => {
     if (currentUserProfile) {
-      reset();
+      reset(currentUserProfile);
     }
   }, [currentUserProfile]);
 
   // Reset the form
-  const reset = () => {
+  const reset = (currentUserProfile) => {
     setValues({
       user_ID: currentUserProfile.uid,
       user_avatar: currentUserProfile.avatar,
@@ -72,7 +72,7 @@ const NewRoom = ({ newRoom, togglePopup }) => {
         autoDismiss: true,
       });
       togglePopup(false);
-      reset();
+      reset(currentUserProfile);
       window.location.hash = "";
     });
   };
@@ -86,7 +86,7 @@ const NewRoom = ({ newRoom, togglePopup }) => {
           href="#"
           onClick={() => {
             togglePopup(false);
-            reset();
+            reset(currentUserProfile);
           }}
         >
           Close
@@ -123,7 +123,6 @@ const NewRoom = ({ newRoom, togglePopup }) => {
                       if (title.length < 80 && validateWordsLength(title, 25))
                         setValues({ ...values, title });
                     }}
-                    // required={true}
                   />
                 </div>
 

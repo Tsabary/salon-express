@@ -1,28 +1,40 @@
 import React, { useEffect, useState } from "react";
 import firebase from "../firebase";
-const db = firebase.firestore();
+
+import { listenToProfile, stopListeningToProfile } from "../actions";
 
 export const AuthContext = React.createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [currentUserProfile, setCurrentUserProfile] = useState(null);
-  firebase.auth().onAuthStateChanged(state => {
-    setCurrentUser(state)
+
+  firebase.auth().onAuthStateChanged((state) => {
+    setCurrentUser(state);
   });
 
   useEffect(() => {
     if (currentUser) {
-      db.collection("users")
-        .doc(currentUser.uid)
-        .get()
-        .then(doc => setCurrentUserProfile(doc.data()))
-        .catch(err => {
-          setCurrentUserProfile(null);
-        });
+      listenToProfile(currentUser, setCurrentUserProfile);
+      console.log("mine", "wasn't null")
     } else {
-      setCurrentUserProfile(null);
+      stopListeningToProfile();
     }
+
+    // if (currentUser) {
+    //   db.collection("users")
+    //     .doc(currentUser.uid)
+    //     .get()
+    //     .then((doc) => {
+    //       setCurrentUserProfile(doc.data());
+    //       console.log("mine new profile", doc.data())
+    //     })
+    //     .catch((err) => {
+    //       setCurrentUserProfile(null);
+    //     });
+    // } else {
+    //   setCurrentUserProfile(null);
+    // }
   }, [currentUser]);
 
   return (
@@ -30,7 +42,7 @@ export const AuthProvider = ({ children }) => {
       value={{
         currentUser,
         currentUserProfile,
-        setCurrentUserProfile
+        setCurrentUserProfile,
       }}
     >
       {children}

@@ -13,7 +13,7 @@ import {
 } from "../../../../actions";
 
 import ToggleField from "../../../formComponents/toggleField";
-import Social from "../../../social";
+import Social from "../../../otherComponents/social";
 
 const Admin = ({
   room,

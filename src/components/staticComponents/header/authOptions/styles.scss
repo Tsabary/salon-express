@@ -1,0 +1,29 @@
+@import "../../../../styles/imports";
+
+.auth-options {
+  margin-top: -.5rem;
+  display: grid;
+  width: max-content;
+  align-items: center;
+
+  &__box {
+    text-decoration: none !important;
+
+    &:hover {
+      text-decoration: none !important;
+    }
+
+    @include resize(750px) {
+      display: none;
+    }
+  }
+
+  &__text {
+    display: none;
+    text-decoration: none !important;
+
+    &:hover {
+      text-decoration: none !important;
+    }
+  }
+}

@@ -15,33 +15,26 @@ import {
   associateWithRoom,
   keepRoomListed,
   updateRoom,
-  replaceTimestampWithUid,
-  leavePortal,
   enterPortal,
-  detachListener,
-  logGuestEntry,
 } from "../../../actions";
 
 import { titleToKey } from "../../../utils/strings";
 
-import Section from "./section";
 import AudioSettings from "./audioSettings";
 import RoomInfo from "./roomInfo";
 import Comments from "./comments";
 import Admin from "./admin";
 import Multiverse from "./multiverse";
+import Streamer from "./streamer";
+import Donations from "./donations";
+import AudioPlayer from "./audioPlayer";
 
 const SingleRoom = ({
   match,
   fetchSingleRoom,
   fetchRoomComments,
-  updateRoom,
-  replaceTimestampWithUid,
-  leavePortal,
   enterPortal,
-  detachListener,
   newPortal,
-  logGuestEntry,
 }) => {
   const { currentUserProfile } = useContext(AuthContext);
 
@@ -60,14 +53,15 @@ const SingleRoom = ({
   // This is the array of all the comments
   const [comments, setComments] = useState([]);
 
-  // These are controllers for the different containers - do we show the static or the edit mode
-  const [isDonationsUrlEdited, setIsDonationsUrlEdited] = useState(false);
-
   // We use this state to hold
   const [values, setValues] = useState({});
 
-  // This holdes the donations error if any ("Not a valid URL")
-  const [donationsError, setDonationsError] = useState(null);
+  // Holds permissions status
+  const [
+    microphonePermissionGranted,
+    setMicrophonePermissionGranted,
+  ] = useState(false);
+  const [cameraPermissionGranted, setCameraPermissionGranted] = useState(false);
 
   // This holds the current portal were in (its title)
   const [currentPortal, setCurrentPortal] = useState(null);
@@ -79,6 +73,30 @@ const SingleRoom = ({
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   const [currentAudioChannel, setCurrentAudioChannel] = useState(null);
+
+  useEffect(() => {
+    navigator.permissions
+      .query({ name: "microphone" })
+      .then((permissionStatus) => {
+        console.log("minemicrophone", permissionStatus.state); // granted, denied, prompt
+        setMicrophonePermissionGranted(permissionStatus.state === "granted");
+
+        permissionStatus.onchange = function () {
+          console.log("minemicrophone", "Permission changed to " + this.state);
+          setMicrophonePermissionGranted(this.state === "granted");
+        };
+      });
+
+    navigator.permissions.query({ name: "camera" }).then((permissionStatus) => {
+      console.log("minecamera", permissionStatus.state); // granted, denied, prompt
+      setCameraPermissionGranted(permissionStatus.state === "granted");
+
+      permissionStatus.onchange = function () {
+        console.log("minecamera", "Permission changed to " + this.state);
+        setCameraPermissionGranted(this.state === "granted");
+      };
+    });
+  }, []);
 
   // This happens when the room first loads. We take the id of the room and also the fake uid (return if it's not set yet) and we fetch the rooms data. There's also a callback for creating a new portal called home in case there aren't any portals in this room yet
   useEffect(() => {
@@ -108,81 +126,21 @@ const SingleRoom = ({
     fetchRoomComments(match.params.id, setComments);
   }, [match.params.id, uniqueId]);
 
-
-   // This is our cleanup event for when the window closes ( remove the user from the portal)
-   useEffect(() => {
-    const cleanup = () => {
-      leavePortal(
-        room,
-        currentPortal,
-        currentUserProfile && currentUserProfile.uid
-          ? [currentUserProfile.uid, uniqueId]
-          : [uniqueId]
-      );
-      detachListener();
-    };
-
-    window.addEventListener("beforeunload", cleanup);
-
-    return () => {
-      window.removeEventListener("beforeunload", cleanup);
-    };
-  }, [isFirstLoad, currentUserProfile, currentPortal]);
-
-
-  // This is our cleanup event for when the comonent unloads ( remove the user from the portal)
+  // This sets the value of the donations field (so that it'll be present in our edit component). Should just move to it's own component
   useEffect(() => {
-    return function cleanup() {
-      if (!room || !currentPortal) return;
-      leavePortal(
-        room,
-        currentPortal,
-        currentUserProfile && currentUserProfile.uid
-          ? [currentUserProfile.uid, uniqueId]
-          : [uniqueId]
-      );
-    };
-  }, [isFirstLoad, currentUserProfile, currentPortal]);
-
-
-  // This sets the comment basic info, and the values of the different fields in our page to what they currently are (so that they'll be present in our edit components)
-  useEffect(() => {
-    if (!room || !currentUserProfile || !currentUserProfile.uid) return;
-
-    setValues({
-      comment: {
-        user_ID: currentUserProfile.uid,
-        user_name: currentUserProfile.name,
-        user_username: currentUserProfile.username,
-        user_avatar: currentUserProfile.avatar,
-        room_ID: room.id,
-      },
-    });
-
-    if (room.user_ID !== currentUserProfile.uid) return;
-
-    if (room.description)
-      setValues((val) => {
-        return { ...val, description: room.description };
-      });
-
-    if (room.audio_stream)
-      setValues((val) => {
-        return { ...val, audio_stream: room.audio_stream };
-      });
+    if (
+      !room ||
+      !currentUserProfile ||
+      !currentUserProfile.uid ||
+      room.user_ID !== currentUserProfile.uid
+    )
+      return;
 
     if (room.donations_url)
       setValues((val) => {
         return { ...val, donations_url: room.donations_url };
       });
   }, [currentUserProfile, room]);
-
-
-    // Send the update to all followers that someone has entered the room. Only do it when isFirstLoad is false, becasue that's the indicatir they've actually entered the room
-    useEffect(() => {
-      if (isFirstLoad) return;
-      logGuestEntry(room, currentUserProfile);
-    }, [isFirstLoad]);
 
   // If it's not the first load or if we don't have anything in the multiverse array then return, because we either don't need to automatically pick the portal (not the first load) or there is no portal to choose
   useEffect(() => {
@@ -197,32 +155,31 @@ const SingleRoom = ({
   useEffect(() => {
     if (!currentPortal || !room) return;
     setCurrentPortalUrl(titleToKey(currentPortal.title + room.id));
-    enterPortal(
-      room,
-      currentPortal,
-      currentUserProfile && currentUserProfile.uid
-        ? currentUserProfile.uid
-        : uniqueId
-    );
-  }, [currentPortal, room]);
+    if (microphonePermissionGranted && cameraPermissionGranted)
+      enterPortal(
+        room,
+        currentPortal,
+        currentUserProfile && currentUserProfile.uid
+          ? currentUserProfile.uid
+          : uniqueId
+      );
+  }, [
+    currentPortal,
+    room,
+    microphonePermissionGranted,
+    cameraPermissionGranted,
+  ]);
 
-  // If we have a hold of the user's profile now, we should replace the fake uid we've used before with the real user uid
-  useEffect(() => {
-    if (
-      !currentUserProfile ||
-      !currentUserProfile.uid ||
-      !room ||
-      !currentPortal
-    )
-      return;
-
-    replaceTimestampWithUid(
-      room,
-      currentPortal,
-      uniqueId,
-      currentUserProfile.uid
-    );
-  }, [currentUserProfile, room, currentPortal]);
+  const requestPermission = (constraints) => {
+    navigator.mediaDevices
+      .getUserMedia(constraints)
+      .then(function (stream) {
+        console.log("minee stream", stream);
+      })
+      .catch(function (err) {
+        console.log("minee error", err);
+      });
+  };
 
   // Our main render
   return (
@@ -233,6 +190,7 @@ const SingleRoom = ({
           your desktop
         </div>
       ) : null}
+
       {/** This is the multiverse*/}
       {!isMobile && room ? (
         <Multiverse
@@ -243,29 +201,78 @@ const SingleRoom = ({
           currentPortal={currentPortal}
           setCurrentPortal={setCurrentPortal}
           multiverseArray={multiverseArray}
+          isFirstLoad={isFirstLoad}
+          microphonePermissionGranted={microphonePermissionGranted}
+          cameraPermissionGranted={cameraPermissionGranted}
+          currentAudioChannel={currentAudioChannel}
         />
       ) : null}
+
       {/** This is the video chat*/}
       {!isMobile ? (
         <div className="single-room__container-chat">
           {currentPortalUrl && !isMobile ? (
-            <Iframe
-              url={
-                room
-                  ? "https://meet.jit.si/ClassExpress-" + currentPortalUrl
-                  : ""
-              }
-              width="100%"
-              height="450px"
-              id="myId"
-              display="initial"
-              position="relative"
-              allow="fullscreen; camera; microphone"
-              className="single-room__chat"
-            />
+            cameraPermissionGranted && microphonePermissionGranted ? (
+              <div className="single-room__container-chat-chat">
+              <Iframe
+                url={
+                  room ? "https://meet.jit.si/SalExp-" + currentPortalUrl : ""
+                }
+                width="100%"
+                height="450px"
+                id="myId"
+                display="initial"
+                position="relative"
+                allow="fullscreen; camera; microphone"
+                className="single-room__chat"
+              /></div>
+            ) : (
+              <div className="single-room__access-container">
+                <div className="single-room__access-buttons">
+                  {microphonePermissionGranted ? (
+                    <div className="single-room__access-button single-room__access-button--unactive">
+                      Microphone Permission Granted
+                    </div>
+                  ) : (
+                    <div
+                      className="single-room__access-button single-room__access-button--active"
+                      onClick={() =>
+                        requestPermission({ audio: true, video: false })
+                      }
+                    >
+                      Grant Microphone Permission
+                    </div>
+                  )}
+
+                  {cameraPermissionGranted ? (
+                    <div className="single-room__access-button single-room__access-button--unactive">
+                      Camera Permission Granted
+                    </div>
+                  ) : (
+                    <div
+                      className="single-room__access-button single-room__access-button--active"
+                      onClick={() =>
+                        requestPermission({ audio: false, video: true })
+                      }
+                    >
+                      Grant Camera Permission
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
           ) : null}
         </div>
       ) : null}
+      {/* <div
+        className={
+          isMobile
+            ? "single-room__container-audio--mobile"
+            : "single-room__container-audio--not-mobile"
+        }
+      > <AudioPlayer /></div>
+      */}
+
       {/** This is the audio stream controller, if audio is being streamed*/}
       <div
         className={
@@ -293,49 +300,7 @@ const SingleRoom = ({
         room &&
         currentUserProfile.uid === room.user_ID) ? (
         <div className="single-room__container-donations">
-          <Section
-            currentUserProfile={currentUserProfile}
-            room={room}
-            values={values}
-            setValues={setValues}
-            analyticsTag="accepting donations"
-            visibilityConditionField="accepting_donations"
-            field="donations_url"
-            title="Link for Donations"
-            moreText={room && room.donations_info}
-            isInEditMode={isDonationsUrlEdited}
-            setIsInEditMode={setIsDonationsUrlEdited}
-            tooltipId="acceptingDonationsTooltip"
-            tooltipText="Accepting donations?<br />Drop your forwarding link here."
-            inputType="text"
-            inputPlaceholder="Link for donations"
-            formError={donationsError}
-            setFormError={setDonationsError}
-            isUrl={true}
-            toggleID="acceptingDonationsToggle"
-            toggleText="Currently accepting donations"
-            toggleOn={() =>
-              updateRoom(
-                {
-                  ...room,
-                  accepting_donations: true,
-                },
-                "Enabled donations",
-                () => console.log("Enabled donations")
-              )
-            }
-            toggleOff={() =>
-              updateRoom(
-                {
-                  ...room,
-                  accepting_donations: false,
-                },
-                "Dissabled donations",
-                () => console.log("Dissabled donations")
-              )
-            }
-            toggleDefault="accepting_donations"
-          />
+          <Donations room={room} />
         </div>
       ) : null}
 
@@ -344,15 +309,13 @@ const SingleRoom = ({
         className={
           isMobile
             ? "single-room__container-mixlr"
-            : "single-room__container-mixlr tiny-margin-top"
+            : "single-room__container-mixlr"
         }
       >
         {currentUserProfile &&
         room &&
         currentUserProfile.uid === room.user_ID ? (
           <AudioSettings
-            values={values}
-            setValues={setValues}
             room={room}
             currentAudioChannel={currentAudioChannel}
           />
@@ -380,7 +343,7 @@ const SingleRoom = ({
       ) : null}
 
       {/** This is the room info tile*/}
-      {room && currentUserProfile ? (
+      {room ? (
         <div
           className={
             (room && room.accepting_donations) ||
@@ -391,7 +354,7 @@ const SingleRoom = ({
               : "single-room__container-info--without-donations"
           }
         >
-          <RoomInfo room={room} values={values} setValues={setValues} />
+          <RoomInfo room={room} setRoom={setRoom} values={values} setValues={setValues} />
         </div>
       ) : null}
 
@@ -402,6 +365,7 @@ const SingleRoom = ({
           setValues={setValues}
           comments={comments}
           setComments={setComments}
+          room={room}
         />
       ) : null}
     </div>
@@ -414,11 +378,7 @@ export default connect(null, {
   updateRoom,
   newComment,
   newPortal,
-  replaceTimestampWithUid,
-  detachListener,
-  leavePortal,
   enterPortal,
   associateWithRoom,
   keepRoomListed,
-  logGuestEntry,
 })(SingleRoom);

@@ -3,6 +3,7 @@ import React, { useContext, useEffect } from "react";
 import { connect } from "react-redux";
 
 import firebase from "../../../firebase";
+import ReactHowler from "react-howler";
 
 import { togglePopup, detachListener } from "../../../actions";
 
@@ -47,6 +48,10 @@ const Home = ({ popupShown, togglePopup, detachListener }) => {
           to join sessions - it's <span className="bold-700">FREE</span>.
         </div>
       ) : null}
+            <ReactHowler
+        src="http://localhost/stream.ogg"
+        playing={true}
+      />
 
       {currentUser ? (
         <div className="home__menu">

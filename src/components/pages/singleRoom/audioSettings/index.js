@@ -4,18 +4,14 @@ import { AuthContext } from "../../../../providers/Auth";
 import validator from "validator";
 import ReactTooltip from "react-tooltip";
 
-import { updateRoom, addChannel } from "../../../../actions";
+import { updateRoom } from "../../../../actions";
 import { connect } from "react-redux";
 
-import ToggleField from "../../../formComponents/toggleField";
 import InputField from "../../../formComponents/inputField";
 import SingleChannel from "./singleChannel";
 
 const AudioSettings = ({
   audioChannels,
-  values,
-  setValues,
-  updateRoom,
   addChannel,
   room,
   currentAudioChannel,
@@ -26,7 +22,12 @@ const AudioSettings = ({
   const renderChannels = (channels) => {
     return channels.map((channel) => {
       return (
-        <SingleChannel channel={channel} room={room} currentAudioChannel={currentAudioChannel} key={channel.id} />
+        <SingleChannel
+          channel={channel}
+          room={room}
+          currentAudioChannel={currentAudioChannel}
+          key={channel.id}
+        />
       );
     });
   };
@@ -63,7 +64,12 @@ const AudioSettings = ({
           placeHolder="Name"
           value={newChannel && newChannel.title}
           onChange={(title) => {
-            setNewChannel({ ...newChannel, title });
+            setNewChannel({
+              ...newChannel,
+              title: title
+                .replace(/^([^-]*-)|-/g, "$1")
+                .replace(/[^\p{L}\s\d-]+/gu, ""),
+            });
           }}
         />
         <InputField
@@ -73,6 +79,7 @@ const AudioSettings = ({
           onChange={(link) => {
             setNewChannel({ ...newChannel, link });
           }}
+          isNumber={true}
         />
         <button type="submit" className="audio-settings__add">
           +
@@ -80,7 +87,6 @@ const AudioSettings = ({
       </form>
 
       {renderChannels(audioChannels)}
-
     </div>
   );
 };
@@ -91,6 +97,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { updateRoom, addChannel })(
-  AudioSettings
-);
+export default connect(mapStateToProps, { updateRoom })(AudioSettings);

@@ -337,9 +337,10 @@ export const logGuestEntry = (room, currentUserProfile) => () => {
 
 // FAVORITES LIST //
 
-export const addToFavorites = (currentUserProfile, room) => async (
+export const addToFavorites = (currentUserProfile, room, cb) => async (
   dispatch
 ) => {
+  console.log("mine", "Addind to favorites");
   db.collection("rooms")
     .doc(room.id)
     .set(
@@ -353,7 +354,7 @@ export const addToFavorites = (currentUserProfile, room) => async (
     )
     .then(() => {
       analytics.logEvent("favorites_added");
-
+      if (cb) cb();
       dispatch({
         type: ADD_TO_FAVORITES,
         payload: {
@@ -366,9 +367,11 @@ export const addToFavorites = (currentUserProfile, room) => async (
     });
 };
 
-export const removeFromFavorites = (currentUserProfile, room) => async (
+export const removeFromFavorites = (currentUserProfile, room, cb) => async (
   dispatch
 ) => {
+  console.log("mine", "removing from favorites");
+
   db.collection("rooms")
     .doc(room.id)
     .set(
@@ -382,6 +385,7 @@ export const removeFromFavorites = (currentUserProfile, room) => async (
     )
     .then(() => {
       analytics.logEvent("favorites_removed");
+      if (cb) cb();
 
       dispatch({
         type: REMOVE_FROM_FAVORITES,
@@ -546,6 +550,7 @@ export const leavePortal = (room, portal, uids) => () => {
 };
 
 export const enterPortal = (room, portal, uid) => () => {
+  console.log("mineeeee", "enterrringngngng");
   const batch = db.batch();
   const portalDoc = db.collection("multiverses").doc(room.id);
   const key = titleToKey(portal.title);
@@ -567,6 +572,8 @@ export const replaceTimestampWithUid = (
   fakeUid,
   realUid
 ) => () => {
+  console.log("mineeeee", "replllacccing");
+
   const batch = db.batch();
   const portalDoc = db.collection("multiverses").doc(room.id);
   const key = titleToKey(portal.title);
@@ -638,8 +645,7 @@ export const fetchRoomComments = (roomID, setComments) => async () => {
     .collection("comments")
     .orderBy("created_on", "desc")
     .where("room_ID", "==", roomID)
-    .get()
-
+    .get();
 
   if (data.docs) {
     setComments(data.docs.map((doc) => doc.data()));
@@ -935,6 +941,24 @@ export const providerSignIn = (provider, cb) => () => {
 };
 
 // USER //
+let profileListener;
+export const listenToProfile = (user, setProfile) => () => {
+  console.log("mine", "starting to listen");
+
+  profileListener = db
+    .collection("users")
+    .doc(user.uid)
+    .onSnapshot((docProfile) => {
+      console.log("mine we got", docProfile.data() ? docProfile.data() : null);
+
+      setProfile(docProfile.data() ? docProfile.data() : null);
+    });
+};
+
+export const stopListeningToProfile = () => () => {
+  if (!profileListener) return;
+  profileListener();
+};
 
 export const updateProfile = (
   values,
@@ -1007,7 +1031,7 @@ export const listenToUpdates = (currentUserProfile, notification) => async (
 ) => {
   var starCountRef = firebase
     .database()
-    .ref("updates/" + currentUserProfile.uid);
+    .ref("updates/" + currentUserProfile.uid).limitToLast(10);
 
   starCountRef.on("value", (snapshot) => {
     notification();

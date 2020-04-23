@@ -1,0 +1,60 @@
+@import "../../../../styles/imports";
+
+.filter-input {
+  &__input-container {
+    width: 100%;
+    height: min-content;
+    font-family: $font, Arimo;
+    font-size: 1.6rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    outline: none;
+    border: none;
+    background-color: white;
+    box-shadow: 0 0.2rem 2rem rgb(228, 228, 228);
+    border-radius: $borderRadius;
+    display: block;
+    border-bottom: 2px solid $mainColor;
+  }
+
+  &__input {
+    border: none;
+    outline: none;
+    font-family: $font;
+    font-size: 1.4rem;
+    width: calc(100% - 3rem);
+    margin: 0 2rem;
+    &::-webkit-input-placeholder {
+      color: $grey;
+    }
+
+    @include resize(600px) {
+      width: 25rem;
+    }
+    @include resize(500px) {
+      width: 20rem;
+    }
+
+    @include resize(450px) {
+      width: 15rem;
+    }
+  }
+
+  &__tag {
+    display: inline-block;
+    font-family: $font, $fontHebrew;
+    padding: 0.2rem 1rem;
+    border-radius: $borderRadius;
+    width: max-content;
+    background-color: $mainColor;
+    color: white;
+    cursor: pointer;
+  }
+
+  &__tags{
+    background-color: white;
+    border: $border;
+    border-radius: $borderRadius;
+    padding: 1rem 1rem 0 1rem;
+  }
+}

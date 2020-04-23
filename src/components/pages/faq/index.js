@@ -1,3 +1,5 @@
+import 'react-app-polyfill/ie9';
+import 'react-app-polyfill/stable';
 import "./styles.scss";
 import React, { useEffect } from "react";
 import { connect } from "react-redux";

@@ -1,9 +1,11 @@
 import "../styles/styles.scss";
 
 import "./styles.scss";
-import React from "react";
+import React, { useEffect } from "react";
 import { Router, Route, Switch } from "react-router-dom";
+import { connect } from "react-redux";
 
+import { isMobile } from "react-device-detect";
 import { ToastProvider } from "react-toast-notifications";
 
 import { AuthProvider } from "../providers/Auth";
@@ -11,10 +13,12 @@ import { SearchProvider } from "../providers/Search";
 import { PageProvider } from "../providers/Page";
 import { UniqueIdProvider } from "../providers/UniqueId";
 
+import { stopListeningToProfile, detachListener } from "../actions";
+
 import history from "../history";
 
-import Header from "./header";
-import Footer from "./footer";
+import Header from "./staticComponents/header";
+import Footer from "./staticComponents/footer";
 
 import SignUp from "./popups/signUp";
 import UpdateProfile from "./popups/updateProfile";
@@ -26,14 +30,16 @@ import Search from "./pages/search";
 import SingleRoom from "./pages/singleRoom";
 import Stranger from "./pages/stranger";
 import Contact from "./pages/contact";
-import PrivacyPolicy from "./pages/privacyPolicy";
+import PrivacyPolicy from "./pages/sheets/PrivacyPolicy";
+import TermsAndConditions from "./pages/sheets/TermsAndConditions";
+
 import Faq from "./pages/faq";
 import AddQuestion from "./pages/addQuestion";
 import Careers from "./pages/careers";
 import Apply from "./pages/apply";
-import Updates from "./updates";
+import Updates from "./otherComponents/updates";
 
-const App = () => {
+const App = ({ stopListeningToProfile, detachListener }) => {
   return (
     <AuthProvider>
       <PageProvider>
@@ -47,7 +53,7 @@ const App = () => {
                   <NewRoom />
                   <EditRoom />
                   <Header />
-                  <Updates />
+                  {!isMobile ? <Updates /> : null}
 
                   <Switch>
                     <Route path="/" exact component={Home} />
@@ -67,6 +73,12 @@ const App = () => {
                       exact
                       component={PrivacyPolicy}
                     />
+
+                    <Route
+                      path="/terms-and-conditions"
+                      exact
+                      component={TermsAndConditions}
+                    />
                     <Route path="/:id" exact component={Stranger} />
                   </Switch>
 
@@ -83,4 +95,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default connect(null, { stopListeningToProfile, detachListener })(App);

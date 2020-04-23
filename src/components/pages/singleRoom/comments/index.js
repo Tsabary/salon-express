@@ -1,5 +1,5 @@
 import "./styles.scss";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 
 import { AuthContext } from "../../../../providers/Auth";
 
@@ -9,10 +9,32 @@ import { connect } from "react-redux";
 import Comment from "./comment";
 
 import TextArea from "../../../formComponents/textArea";
+import { validateWordsLength } from "../../../../utils/strings";
 
-
-const Comments = ({ values, setValues, comments, setComments, newComment }) => {
+const Comments = ({
+  values,
+  setValues,
+  comments,
+  setComments,
+  room,
+  newComment,
+}) => {
   const { currentUserProfile } = useContext(AuthContext);
+
+  // This sets the comment basic info, and the values of the different fields in our page to what they currently are (so that they'll be present in our edit components)
+  useEffect(() => {
+    if (!room || !currentUserProfile || !currentUserProfile.uid) return;
+
+    setValues({
+      comment: {
+        user_ID: currentUserProfile.uid,
+        user_name: currentUserProfile.name,
+        user_username: currentUserProfile.username,
+        user_avatar: currentUserProfile.avatar,
+        room_ID: room.id,
+      },
+    });
+  }, [currentUserProfile, room]);
 
   // Render the comments to the page
   const renderComments = (comments) => {
@@ -51,9 +73,13 @@ const Comments = ({ values, setValues, comments, setComments, newComment }) => {
         <TextArea
           type="text"
           placeHolder="Leave a comment"
-          value={values && values.comment && values.comment.body}
+          value={
+            values && values.comment && values.comment.body
+              ? values.comment.body
+              : ""
+          }
           onChange={(body) => {
-            if (body.length < 500)
+            if (body.length < 500 && validateWordsLength(body, 50))
               setValues({
                 ...values,
                 comment: { ...values.comment, body },

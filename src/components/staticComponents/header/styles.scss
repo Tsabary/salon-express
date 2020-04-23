@@ -1,0 +1,195 @@
+@import "../../../styles/imports";
+
+.header {
+  max-width: 160rem;
+  margin: auto;
+  z-index: 100;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  width: 100%;
+  padding: 5rem 10rem;
+  @include resize(1200px) {
+    padding: 5rem 6rem;
+  }
+
+  @include resize(1000px) {
+    padding: 5rem 5rem;
+  }
+
+
+
+  &__center {
+    font-size: 8rem;
+    font-family: $fontBold;
+    color: $greyLight;
+    // background-color: $mainColor 1px solid;
+    // margin-bottom: 7rem;
+    margin-top: 1rem;
+
+    @include resize(1000px) {
+      font-size: 7rem;
+    }
+
+    @include resize(900px) {
+      font-size: 6rem;
+    }
+
+    @include resize(800px) {
+      font-size: 5rem;
+    }
+
+    @include resize(650px) {
+      font-size: 4rem;
+    }
+
+    @include resize(550px) {
+      font-size: 3rem;
+    }
+
+    @include resize(450px) {
+      font-size: 2rem;
+    }
+  }
+
+  &-with-logo {
+    // width: 100%;
+    display: grid;
+    align-items: start;
+    gap: 4rem;
+    // @include resize(900px) {
+    //   grid-template-columns: 9rem 1fr max-content;
+    // }
+
+    @include resize(750px) {
+      display: none;
+    }
+
+    &--logged-in{
+      grid-template-columns: max-content 1fr max-content max-content;
+
+    }
+
+    &--logged-out{
+      grid-template-columns: max-content 1fr max-content;
+
+    }
+  }
+
+  &-without-logo {
+    display: none;
+    grid-template-columns: 7rem 1fr max-content;
+    align-items: start;
+    gap: 4rem;
+    @include resize(750px) {
+      display: grid;
+      grid-template-columns: 6rem 1fr;
+    }
+
+    @include resize(750px) {
+      grid-template-columns: 5rem 1fr;
+    }
+
+    @include resize(600px) {
+      grid-template-columns: 3rem 1fr;
+    }
+  }
+
+  @include resize(800px) {
+    padding: 5rem 5rem;
+  }
+
+  @include resize(700px) {
+    padding: 4rem 3.5rem;
+  }
+
+  @include resize(600px) {
+    padding: 2rem 3rem;
+  }
+
+  // @include resize(500px) {
+  //   padding: 3rem 3rem;
+  // }
+
+  &__logo {
+    height: 8rem;
+    width: 8rem;
+    background: url("/imgs/logo.jpg") no-repeat;
+    background-size: cover;
+    cursor: pointer;
+    &-container {
+      display: grid;
+      grid-template-columns: repeat(2, min-content);
+      // grid-gap: 1rem;
+      align-items: center;
+      @include resize(700px) {
+        display: none;
+      }
+    }
+
+    &-empty-holder {
+      display: none;
+      @include resize(700px) {
+        display: block;
+      }
+    }
+  }
+
+  &__new-room {
+    @include resize(750px) {
+      display: none;
+    }
+  }
+
+  &__title {
+    text-align: center;
+    @include resize(700px) {
+      display: none;
+    }
+    &:hover {
+      color: $mainColor;
+    }
+    &-main {
+      font-family: $fontBold, $fontHebrew;
+      font-weight: 900;
+      font-size: 4rem;
+      text-align: center;
+      color: $mainColor;
+      transition: all 0.2s;
+    }
+
+    &-sub {
+      color: $mainColor;
+      margin-top: -0.5rem;
+      margin-left: 0.3rem;
+    }
+
+    &-full {
+      cursor: pointer;
+      @include resize(900px) {
+        display: none;
+      }
+    }
+
+    &-lean {
+      display: none;
+      margin-top: 1rem;
+      cursor: pointer;
+
+      @include resize(900px) {
+        display: block;
+      }
+
+      @include resize(750px) {
+        display: none;
+      }
+    }
+  }
+
+  &__auth {
+    display: grid;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+  }
+}

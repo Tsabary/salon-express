@@ -84,6 +84,12 @@ h3 {
       margin-bottom: 4rem;
       // width: min-content;
     }
+
+    @include resize(600px) {
+      font-size: 3rem;
+      line-height: 3rem;
+      margin-bottom: 2rem;
+    }
   }
 }
 
@@ -221,7 +227,7 @@ h3 {
   user-select: none;
   font-family: $font;
   background-color: $mainColor;
-  color: white;
+  color: white !important;
   padding: 0.3rem 3rem 0.5rem 3rem;
   border-radius: 3px;
   box-shadow: 0 0.2rem 1rem rgb(170, 170, 170);
@@ -362,6 +368,38 @@ h3 {
       :hover {
         fill: $instagramColor;
       }
+    }
+  }
+}
+
+.section {
+  &__container {
+    border-radius: $borderRadius;
+    box-shadow: $containerBoxShadow;
+    background-color: white;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    // @include resize(1500px) {
+    //   padding: 1rem;
+    // }
+  }
+  &__title {
+    font-size: 1.2rem;
+    color: $grey;
+  }
+}
+
+.legal-notice {
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  color: $grey;
+  &__link {
+    cursor: pointer;
+    &:hover{
+      color: $mainColor;
+      text-decoration: underline;
     }
   }
 }
@@ -543,7 +581,7 @@ h3 {
   grid-template-columns: repeat(2, 1fr);
 }
 
-.fr-fr-max{
+.fr-fr-max {
   @include gridVariation;
   grid-template-columns: repeat(2, 1fr) max-content;
 }

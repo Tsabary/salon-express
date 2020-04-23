@@ -1,16 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
-import InputField from "../../formComponents/inputField";
+import history from "../../../history";
+import firebase from "../../../firebase";
+
 import { signUp, providerSignIn, togglePopup } from "../../../actions";
 
+import InputField from "../../formComponents/inputField";
+
 const SignUp = ({ signUp, providerSignIn, togglePopup }) => {
+  const myHistory = useHistory(history);
+
   const [values, setValues] = useState({});
   const [submitting, setSubmitting] = useState(0);
   const [formError, setFormError] = useState("");
+
+  const handleChange = (page, path) => {
+    firebase.analytics().logEvent("signup_navigation", { page });
+    myHistory.push(`/${path}`);
+    window.location.hash = "#";
+    window.scrollTo(0, 0);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -56,7 +70,7 @@ const SignUp = ({ signUp, providerSignIn, togglePopup }) => {
                 type="submit"
                 className="auth__button auth__button--direct"
               >
-                Submit
+                Sign up | Login
               </button>
 
               <div
@@ -82,6 +96,24 @@ const SignUp = ({ signUp, providerSignIn, togglePopup }) => {
                 facebook
               </div>
             </form>
+            <div className="legal-notice">
+              By joining you aggree to our{" "}
+              <span
+                className="legal-notice__link"
+                onClick={() =>
+                  handleChange("Terms and Conditions", "terms-and-conditions")
+                }
+              >
+                Terms of Service
+              </span>{" "}
+              and{" "}
+              <span
+                className="legal-notice__link"
+                onClick={() => handleChange("Privacy Policy", "privacy-policy")}
+              >
+                Privacy Policy
+              </span>
+            </div>
           </>
         );
 

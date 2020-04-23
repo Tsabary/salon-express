@@ -6,8 +6,10 @@ $easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
 .home {
   background-color: $bgColor;
+  width: 100%;
   max-width: 160rem;
-  margin: auto;
+  margin-right: auto;
+  margin-left: auto;
   @include padding;
 
   @include resize(750px) {
@@ -17,8 +19,7 @@ $easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   &__welcome {
     border: $border;
     border-radius: $borderRadius;
-    padding: 2rem;
-    font-size: 1.8rem;
+    padding: 1rem;
     margin-top: 1rem;
     color: $mainColor;
     @include resize(1200px) {

@@ -1,7 +1,7 @@
 import React from "react";
 import Masonry from "react-masonry-css";
 import { breakpointColumnsObj } from "../constants";
-import Room from "../components/room";
+import Room from "../components/otherComponents/room";
 
 const renderItems = (rooms, currentUserProfile) => {
   return rooms.map((room) => {

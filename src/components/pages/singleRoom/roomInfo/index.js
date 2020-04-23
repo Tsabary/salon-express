@@ -1,5 +1,5 @@
 import "./styles.scss";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
 import Moment from "react-moment";
@@ -24,15 +24,40 @@ import { capitalizeSentances } from "../../../../utils/strings";
 import { connect } from "react-redux";
 import TextArea from "../../../formComponents/textArea";
 
-const RoomInfo = ({ room, values, setValues, updateRoom }) => {
+const RoomInfo = ({
+  room,
+  setRoom,
+  updateRoom,
+  addToFavorites,
+  removeFromFavorites,
+}) => {
   const myHistory = useHistory(history);
 
   const { currentUserProfile } = useContext(AuthContext);
   const { setSearchTerm } = useContext(SearchContext);
   const { setPage } = useContext(PageContext);
 
+  // We use this state to hold
+  const [values, setValues] = useState({});
+
   const [shareButton, setShareButton] = useState(null);
   const [isDescriptionEdited, setIsDescriptionEdited] = useState(false);
+
+  // This sets the value of the description field (so that it'll be present in our edit component)
+  useEffect(() => {
+    if (
+      !room ||
+      !currentUserProfile ||
+      !currentUserProfile.uid ||
+      room.user_ID !== currentUserProfile.uid
+    )
+      return;
+
+    if (room.description)
+      setValues((val) => {
+        return { ...val, description: room.description };
+      });
+  }, [currentUserProfile, room]);
 
   const lastVisit =
     Object.prototype.toString.call(room.last_visit) === "[object Date]"
@@ -127,7 +152,7 @@ const RoomInfo = ({ room, values, setValues, updateRoom }) => {
           </>
         ) : (
           <>
-            <div className="room__description">{values.description}</div>
+            <div className="room__description">{room.description}</div>
 
             {currentUserProfile &&
             room &&
@@ -142,9 +167,9 @@ const RoomInfo = ({ room, values, setValues, updateRoom }) => {
           </>
         )}
 
-        <div className="tiny-margin-top"> {renderTags()}</div>
+        <div className="tiny-margin-top">{renderTags()}</div>
       </div>
-      <div className="room__actions--pair">
+      <div className="room__actions--pair tiny-margin-top">
         <CopyToClipboard
           text={`https://salon.express/room/${room.id}`}
           data-tip
@@ -170,7 +195,7 @@ const RoomInfo = ({ room, values, setValues, updateRoom }) => {
           </div>
         </CopyToClipboard>
 
-        {!currentUserProfile.uid ? (
+        {!currentUserProfile || !currentUserProfile.uid ? (
           <a
             onClick={() => {
               firebase.analytics().logEvent("favorites_clicked_not_user");
@@ -194,7 +219,16 @@ const RoomInfo = ({ room, values, setValues, updateRoom }) => {
           room.favorites.includes(currentUserProfile.uid) ? (
           <div
             className="room__button room__button-line clickable"
-            onClick={() => removeFromFavorites(currentUserProfile, room)}
+            onClick={() =>
+              removeFromFavorites(currentUserProfile, room, () => {
+                setRoom({
+                  ...room,
+                  favorites: room.favorites.filter(
+                    (fav) => fav !== currentUserProfile.uid
+                  ),
+                });
+              })
+            }
           >
             <div className="fr-max-fr">
               <div />
@@ -211,7 +245,14 @@ const RoomInfo = ({ room, values, setValues, updateRoom }) => {
         ) : (
           <div
             className="room__button room__button-line clickable"
-            onClick={() => addToFavorites(currentUserProfile, room)}
+            onClick={() =>
+              addToFavorites(currentUserProfile, room, () => {
+                setRoom({
+                  ...room,
+                  favorites: [...room.favorites, currentUserProfile.uid],
+                });
+              })
+            }
           >
             <div className="fr-max-fr">
               <div />
@@ -231,4 +272,8 @@ const RoomInfo = ({ room, values, setValues, updateRoom }) => {
   );
 };
 
-export default connect(null, { updateRoom })(RoomInfo);
+export default connect(null, {
+  updateRoom,
+  addToFavorites,
+  removeFromFavorites,
+})(RoomInfo);
