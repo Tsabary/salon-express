@@ -53,6 +53,7 @@ const App = ({ stopListeningToProfile, detachListener }) => {
                   <NewRoom />
                   <EditRoom />
                   <Header />
+       
                   {!isMobile ? <Updates /> : null}
 
                   <Switch>

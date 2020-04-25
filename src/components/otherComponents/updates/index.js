@@ -19,11 +19,9 @@ const Updates = ({
   updates,
   notifications,
 }) => {
-
   // var sound = new Howl({
   //   src: ["update.mp3"],
   // });
-  
 
   // sound.play();
 
@@ -41,11 +39,13 @@ const Updates = ({
   useEffect(() => {
     if (!currentUserProfile) return;
     listenToUpdates(currentUserProfile, () => notification.play());
-    console.log("mine", "plaaaaaaaay")
+    console.log("mine", "plaaaaaaaay");
   }, [currentUserProfile]);
 
   const renderUpdates = (updates) => {
-    return updates.map((update) => {
+    return updates.reverse().map((update) => {
+      console.log("mineupdte", update);
+      // return <div>fff</div>
       return (
         <Update update={update} key={update.created_on + update.room_ID} />
       );
@@ -66,17 +66,22 @@ const Updates = ({
           <div className="updates__notifications">{notCount}</div>
         ) : null}
       </label>
-
-      <ScrollToBottom
-        scrollViewClassName="updates__container"
-        className="updates__container"
-      >
-        {updates && updates.length ? (
+      {/* {updates && updates.length ? (
           renderUpdates(updates)
         ) : (
           <div>Add some Rooms to your favorites to begin receiving updates</div>
-        )}
-      </ScrollToBottom>
+        )} */}
+      <div className="updates__container">
+        <ScrollToBottom scrollViewClassName="updates__scroll">
+          {updates && updates.length ? (
+            renderUpdates(updates)
+          ) : (
+            <div>
+              Add some Rooms to your favorites to begin receiving updates
+            </div>
+          )}
+        </ScrollToBottom>
+      </div>
     </div>
   );
 };

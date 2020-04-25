@@ -42,6 +42,8 @@ const Multiverse = ({
   // This holdes the portal error if any (currently only one is "a portal with a similar name exists")
   const [portalError, setPortalError] = useState(null);
   const [userID, setUserID] = useState(null);
+  const [query, setQuery] = useState("");
+
 
   // This is our cleanup event for when the window closes ( remove the user from the portal)
   useEffect(() => {
@@ -101,24 +103,25 @@ const Multiverse = ({
         );
         setUserID(currentUserProfile.uid);
       } else if (room && currentPortal && userID && uniqueId) {
-        console.log("mine", "I am replacing uid with fake");
         replaceTimestampWithUid(room, currentPortal, userID, uniqueId);
       }
   }, [currentUserProfile, room, currentPortal]);
 
   // Render the portals to the page
-  const renderPortals = (multiverse) => {
-    return multiverse.map((portal) => {
-      return (
-        <Portal
-          portal={portal}
-          members={portal.members}
-          currentPortal={currentPortal}
-          setCurrentPortal={setCurrentPortal}
-          key={titleToKey(portal.title)}
-        />
-      );
-    });
+  const renderPortals = (multiverse, query) => {
+    return multiverse
+      .filter((el) => el.title.toLowerCase().startsWith(query.toLowerCase()))
+      .map((portal) => {
+        return (
+          <Portal
+            portal={portal}
+            members={portal.members}
+            currentPortal={currentPortal}
+            setCurrentPortal={setCurrentPortal}
+            key={titleToKey(portal.title)}
+          />
+        );
+      });
   };
 
   return (
@@ -130,6 +133,7 @@ const Multiverse = ({
       }
     >
       <div className="section__title">The Multiverse</div>
+
       <form
         className="multiverse__form"
         autoComplete="off"
@@ -184,7 +188,7 @@ const Multiverse = ({
           <>
             <button
               type="submit"
-              className="boxed-button single-room__comment--boxed"
+              className="small-button single-room__comment--boxed"
             >
               Open
             </button>
@@ -202,12 +206,22 @@ const Multiverse = ({
           </a>
         )}
       </form>
+
       {portalError ? (
         <div className="form-error tiny-margin-top">{portalError}</div>
       ) : null}
 
+      <div className="extra-tiny-margin-top">
+        <InputField
+          type="text"
+          placeHolder="Find a portal"
+          value={query}
+          onChange={setQuery}
+        />
+      </div>
+
       <div className="multiverse__channels">
-        {multiverseArray ? renderPortals(multiverseArray) : null}
+        {multiverseArray ? renderPortals(multiverseArray, query) : null}
       </div>
     </div>
   );

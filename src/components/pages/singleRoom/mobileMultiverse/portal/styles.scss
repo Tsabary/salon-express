@@ -1,0 +1,31 @@
+@import "../../../../../styles/imports";
+
+.portal-mobile {
+  &__content {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    padding: 0.5rem 2rem;
+  }
+
+  &__border {
+    height: 1px;
+    margin: 0.5rem 1.5rem;
+    background-color: $greyLightest;
+  }
+
+  &__title {
+    font-size: 1.4rem;
+    font-family: $font, $fontHebrew;
+    color: $mainColor;
+    cursor: pointer;
+    transition: all 0.2s;
+    &:hover {
+      font-size: 1.5rem;
+    }
+  }
+
+  &__members {
+    cursor: default;
+    color: $grey;
+  }
+}

@@ -8,18 +8,30 @@ const InputField = ({
   label,
   type,
   isNumber,
+  numbersAndLetters,
   required = false,
-  pattern = null
+  pattern = null,
 }) => {
-  const handleChange = string => {
-    isNumber ? onChange(Number(string.replace(/\D/, ""))) : onChange(string);
+  const handleChange = (string) => {
+    switch (true) {
+      case isNumber:
+        onChange(Number(string.replace(/\D/, "")));
+
+      case numbersAndLetters:
+        onChange(string.replace(/[^a-zA-Z0-9]/, ""))
+
+      default:
+        onChange(string);
+    }
   };
 
   return (
     <div className="input-field">
       <input
         className={
-          required ? "input-field__input input-field__input--required" : "input-field__input"
+          required
+            ? "input-field__input input-field__input--required"
+            : "input-field__input"
         }
         id={placeHolder}
         type={type}
@@ -27,7 +39,7 @@ const InputField = ({
         // autocomplete="no"
         // autoComplete="no"
         value={value || ""}
-        onChange={e => handleChange(e.target.value)}
+        onChange={(e) => handleChange(e.target.value)}
         // required={required}
         // pattern={pattern}
       />

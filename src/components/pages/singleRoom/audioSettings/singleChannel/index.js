@@ -26,7 +26,7 @@ const SingleChannel = ({
         <div>
           <div
             className={
-              currentAudioChannel === channel.link
+              currentAudioChannel && currentAudioChannel.link === channel.link
                 ? "single-channel__title--active"
                 : "single-channel__title"
             }
@@ -35,7 +35,7 @@ const SingleChannel = ({
           </div>
           <div
             className={
-              currentAudioChannel === channel.link
+              currentAudioChannel &&  currentAudioChannel.link === channel.link
                 ? "single-channel__link--active"
                 : "single-channel__link"
             }
@@ -48,7 +48,7 @@ const SingleChannel = ({
             className="clickable"
             onClick={() =>
               deleteChannel(channel, room, () => {
-                if (currentAudioChannel === channel.link)
+                if ( currentAudioChannel && currentAudioChannel.link === channel.link)
                   setActiveChannel(room.id, null);
               })
             }
@@ -62,7 +62,7 @@ const SingleChannel = ({
             />
           </div>
 
-          {currentAudioChannel === channel.link ? (
+          { currentAudioChannel && currentAudioChannel.link === channel.link ? (
             <div
               className="clickable"
               onClick={() => setActiveChannel(room.id, null)}
@@ -78,7 +78,7 @@ const SingleChannel = ({
           ) : (
             <div
               className="clickable"
-              onClick={() => setActiveChannel(room.id, channel.link)}
+              onClick={() => setActiveChannel(room.id, channel)}
             >
               <ReactSVG
                 src="../svgs/play.svg"

@@ -3,10 +3,10 @@ import React from "react";
 
 const TextArea = ({ placeHolder, onChange, value, label, rows, required=false}) => {
   return (
-    <div className="input-field">
+    <div className="text-area">
       <textarea
         className={
-          required ? "input-field__input input-field__input--required" : "input-field__input"
+          required ? "text-area__input text-area__input--required" : "text-area__input"
         }
         id={placeHolder}
         type="text"
@@ -17,7 +17,7 @@ const TextArea = ({ placeHolder, onChange, value, label, rows, required=false}) 
         rows={rows}
         required={required}
       />
-      <label htmlFor={placeHolder} className="input-field__label">
+      <label htmlFor={placeHolder} className="text-area__label">
         {label}
       </label>
     </div>

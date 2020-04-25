@@ -249,7 +249,9 @@ const RoomInfo = ({
               addToFavorites(currentUserProfile, room, () => {
                 setRoom({
                   ...room,
-                  favorites: [...room.favorites, currentUserProfile.uid],
+                  favorites: room.favorites
+                  ? [...room.favorites, currentUserProfile.uid]
+                  : [currentUserProfile.uid],
                 });
               })
             }

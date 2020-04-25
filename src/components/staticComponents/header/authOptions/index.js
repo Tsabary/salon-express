@@ -8,11 +8,11 @@ const AuthOptions = () => {
   return (
     <div className="auth-options">
       <a href="#sign-up" className="auth-options__box">
-        <BoxedButton text="Sign Up / Login" />
+        <BoxedButton text="Sign Up | Login" />
       </a>
 
       <a href="#sign-up" className="auth-options__text">
-        <TextButton text="Sign Up / Login" />
+        <TextButton text="Sign Up | Login" />
       </a>
     </div>
   );

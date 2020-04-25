@@ -13,6 +13,10 @@
   grid-template-columns: repeat(4, max-content);
   gap: 20rem;
 
+  &__mobile{
+    margin-bottom: 6rem;
+  }
+
   @include resize(800px) {
     padding: 5rem 8rem;
   }

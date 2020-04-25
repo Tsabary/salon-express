@@ -4,6 +4,7 @@
   padding: 0.5rem 1.5rem;
   display: grid;
   grid-template-columns: 1fr max-content;
+  
   @include resize(1500px) {
     grid-template-columns: 1fr;
     line-height: 1.6rem;

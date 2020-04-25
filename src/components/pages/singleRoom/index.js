@@ -1,8 +1,9 @@
 import "./styles.scss";
 import React, { useContext, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import Iframe from "react-iframe";
 import { isMobile } from "react-device-detect";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 import { AuthContext } from "../../../providers/Auth";
 import { UniqueIdContext } from "../../../providers/UniqueId";
@@ -28,6 +29,11 @@ import Multiverse from "./multiverse";
 import Streamer from "./streamer";
 import Donations from "./donations";
 import AudioPlayer from "./audioPlayer";
+import MobileMultiverse from "./mobileMultiverse";
+import Chat from "./chat";
+import Youtube from "./youtube";
+import Mixlr from "./mixlr";
+import Twitch from "./twitch";
 
 const SingleRoom = ({
   match,
@@ -74,29 +80,11 @@ const SingleRoom = ({
 
   const [currentAudioChannel, setCurrentAudioChannel] = useState(null);
 
+  const [mediaState, setMediaState] = useState(false);
+
   useEffect(() => {
-    navigator.permissions
-      .query({ name: "microphone" })
-      .then((permissionStatus) => {
-        console.log("minemicrophone", permissionStatus.state); // granted, denied, prompt
-        setMicrophonePermissionGranted(permissionStatus.state === "granted");
-
-        permissionStatus.onchange = function () {
-          console.log("minemicrophone", "Permission changed to " + this.state);
-          setMicrophonePermissionGranted(this.state === "granted");
-        };
-      });
-
-    navigator.permissions.query({ name: "camera" }).then((permissionStatus) => {
-      console.log("minecamera", permissionStatus.state); // granted, denied, prompt
-      setCameraPermissionGranted(permissionStatus.state === "granted");
-
-      permissionStatus.onchange = function () {
-        console.log("minecamera", "Permission changed to " + this.state);
-        setCameraPermissionGranted(this.state === "granted");
-      };
-    });
-  }, []);
+    if (currentAudioChannel && currentAudioChannel.source) setMediaState(true);
+  }, [currentAudioChannel]);
 
   // This happens when the room first loads. We take the id of the room and also the fake uid (return if it's not set yet) and we fetch the rooms data. There's also a callback for creating a new portal called home in case there aren't any portals in this room yet
   useEffect(() => {
@@ -170,24 +158,51 @@ const SingleRoom = ({
     cameraPermissionGranted,
   ]);
 
-  const requestPermission = (constraints) => {
-    navigator.mediaDevices
-      .getUserMedia(constraints)
-      .then(function (stream) {
-        console.log("minee stream", stream);
-      })
-      .catch(function (err) {
-        console.log("minee error", err);
-      });
+  const renderControllers = () => {
+    return (
+      <div className="single-room__media__buttons">
+        {mediaState ? (
+          <label
+            className="single-room__media__button single-room__media__button--unactive"
+            htmlFor="single-room-media-checkbox"
+          >
+            Chat
+          </label>
+        ) : (
+          <div className="single-room__media__button single-room__media__button--active">
+            Chat
+          </div>
+        )}
+
+        {!mediaState ? (
+          <label
+            className="single-room__media__button single-room__media__button--unactive"
+            htmlFor="single-room-media-checkbox"
+          >
+            Stream
+          </label>
+        ) : (
+          <div className="single-room__media__button single-room__media__button--active">
+            Stream
+          </div>
+        )}
+      </div>
+    );
   };
 
   // Our main render
   return (
     <div className="single-room">
+      {/* {!cameraPermissionGranted || !microphonePermissionGranted ? <div className="single-room__point-bg"></div>:null} */}
+
+      {isMobile ? (
+        <MobileMultiverse room={room} multiverseArray={multiverseArray} />
+      ) : null}
+
       {isMobile ? (
         <div className="single-room__container-no-mobile">
-          We currently do not support video on mobile, please join the party on
-          your desktop
+          To join the party on mobile, you will need the Jitsi app. Choose a
+          portal from the multiverse to join.
         </div>
       ) : null}
 
@@ -209,90 +224,60 @@ const SingleRoom = ({
       ) : null}
 
       {/** This is the video chat*/}
-      {!isMobile ? (
-        <div className="single-room__container-chat">
-          {currentPortalUrl && !isMobile ? (
-            cameraPermissionGranted && microphonePermissionGranted ? (
-              <div className="single-room__container-chat-chat">
-              <Iframe
-                url={
-                  room ? "https://meet.jit.si/SalExp-" + currentPortalUrl : ""
-                }
-                width="100%"
-                height="450px"
-                id="myId"
-                display="initial"
-                position="relative"
-                allow="fullscreen; camera; microphone"
-                className="single-room__chat"
-              /></div>
-            ) : (
-              <div className="single-room__access-container">
-                <div className="single-room__access-buttons">
-                  {microphonePermissionGranted ? (
-                    <div className="single-room__access-button single-room__access-button--unactive">
-                      Microphone Permission Granted
-                    </div>
-                  ) : (
-                    <div
-                      className="single-room__access-button single-room__access-button--active"
-                      onClick={() =>
-                        requestPermission({ audio: true, video: false })
-                      }
-                    >
-                      Grant Microphone Permission
-                    </div>
-                  )}
+      <div className="single-room__container-chat">
+        <div className="single-room__media">
+          <input
+            className="single-room__media-checkbox"
+            type="checkbox"
+            id="single-room-media-checkbox"
+            onChange={() => {
+              setMediaState(!mediaState);
+            }}
+            checked={mediaState}
+          />
+          <div className="single-room__media__container">
+            <span className="single-room__media__container__visible">
+              {/* <div>{microphonePermissionGranted ? "happy" : "Sad"} {cameraPermissionGranted ? "happy" : "Sad"}</div> */}
+              <Chat
+                room={room}
+                currentPortalUrl={currentPortalUrl}
+                cameraPermissionGranted={cameraPermissionGranted}
+                setCameraPermissionGranted={setCameraPermissionGranted}
+                microphonePermissionGranted={microphonePermissionGranted}
+                setMicrophonePermissionGranted={setMicrophonePermissionGranted}
+              />
+            </span>
+            {currentAudioChannel && currentAudioChannel.source === "youtube" ? (
+              <span className="single-room__media__container__hidden">
+                <Youtube ID={currentAudioChannel.link} />
+              </span>
+            ) : null}
 
-                  {cameraPermissionGranted ? (
-                    <div className="single-room__access-button single-room__access-button--unactive">
-                      Camera Permission Granted
-                    </div>
-                  ) : (
-                    <div
-                      className="single-room__access-button single-room__access-button--active"
-                      onClick={() =>
-                        requestPermission({ audio: false, video: true })
-                      }
-                    >
-                      Grant Camera Permission
-                    </div>
-                  )}
-                </div>
-              </div>
-            )
+            {currentAudioChannel && currentAudioChannel.source === "twitch" ? (
+              <span className="single-room__media__container__hidden">
+                <Twitch ID={currentAudioChannel.link} />
+              </span>
+            ) : null}
+          </div>
+
+          {currentAudioChannel &&
+          ["youtube", "twitch"].includes(currentAudioChannel.source)
+            ? renderControllers()
+            : null}
+
+          {currentAudioChannel && ["youtube", "twitch"].includes(currentAudioChannel.source) ? (
+            <div className="single-room__container-no-mobile">
+              Please listen to the music using a headset, or disable your
+              microphone in the chat to prevent noise for the other participants
+            </div>
           ) : null}
         </div>
-      ) : null}
-      {/* <div
-        className={
-          isMobile
-            ? "single-room__container-audio--mobile"
-            : "single-room__container-audio--not-mobile"
-        }
-      > <AudioPlayer /></div>
-      */}
+      </div>
 
       {/** This is the audio stream controller, if audio is being streamed*/}
-      <div
-        className={
-          isMobile
-            ? "single-room__container-audio--mobile"
-            : "single-room__container-audio--not-mobile"
-        }
-      >
-        {currentAudioChannel ? (
-          <Iframe
-            url={`https://mixlr.com/users/${currentAudioChannel}/embed?autoplay=true`}
-            width="100%"
-            height="180px"
-            id="myId2"
-            display="initial"
-            position="relative"
-            className="single-room__audio"
-          />
-        ) : null}
-      </div>
+      {currentAudioChannel && currentAudioChannel.source === "mixlr" ? (
+        <Mixlr ID={currentAudioChannel.link} />
+      ) : null}
 
       {/** This is the donations tile*/}
       {(room && room.accepting_donations) ||
@@ -354,7 +339,12 @@ const SingleRoom = ({
               : "single-room__container-info--without-donations"
           }
         >
-          <RoomInfo room={room} setRoom={setRoom} values={values} setValues={setValues} />
+          <RoomInfo
+            room={room}
+            setRoom={setRoom}
+            values={values}
+            setValues={setValues}
+          />
         </div>
       ) : null}
 

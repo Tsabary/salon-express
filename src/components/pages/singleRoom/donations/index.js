@@ -20,6 +20,9 @@ const Donations = ({ room, updateRoom }) => {
   // This holdes the donations error if any ("Not a valid URL")
   const [donationsError, setDonationsError] = useState(null);
 
+  // This holdes the donations error if any ("Not a valid URL")
+  const [merchError, setMerchError] = useState(null);
+
   // These are controllers for the different containers - do we show the static or the edit mode
   const [isDonationsUrlEdited, setIsDonationsUrlEdited] = useState(false);
 
@@ -27,6 +30,9 @@ const Donations = ({ room, updateRoom }) => {
   const [isDonationsDetailsEdited, setIsDonationsDetailsEdited] = useState(
     false
   );
+
+  // These are controllers for the different containers - do we show the static or the edit mode
+  const [isMerchDetailsEdited, setIsMerchDetailsEdited] = useState(false);
 
   // This sets the value of the description field (so that it'll be present in our edit component)
   useEffect(() => {
@@ -43,6 +49,11 @@ const Donations = ({ room, updateRoom }) => {
         return { ...val, donations_url: room.donations_url };
       });
 
+    if (room.merch_url)
+      setValues((val) => {
+        return { ...val, merch_url: room.merch_url };
+      });
+
     if (room.donations_info)
       setValues((val) => {
         return { ...val, donations_info: room.donations_info };
@@ -50,7 +61,7 @@ const Donations = ({ room, updateRoom }) => {
   }, [currentUserProfile, room]);
 
   return (
-    <div className="section__container">
+    <div className="section__container donations">
       <div className="max-max">
         <div className="section__title">Link for Donations</div>
         {currentUserProfile &&
@@ -133,6 +144,62 @@ const Donations = ({ room, updateRoom }) => {
         </>
       )}
 
+      {isMerchDetailsEdited ? (
+        <div className="small-margin-top">
+          <div className="tiny-margin-bottom">
+            <InputField
+              type="text"
+              placeHolder="Link for merchandise"
+              value={values && values.merch_url}
+              onChange={(val) => setValues({ ...values, merch_url: val })}
+            />
+          </div>
+          {merchError ? merchError : null}
+          {currentUserProfile &&
+          room &&
+          currentUserProfile.uid === room.user_ID ? (
+            <div
+              className="button-colored"
+              onClick={() => {
+                if (values.merch_url && validator.isURL(values.merch_url)) {
+                  updateRoom(
+                    {
+                      ...room,
+                      merch_url: values.merch_url,
+                    },
+                    "merchandise link",
+                    () => {
+                      setIsMerchDetailsEdited(false);
+                    }
+                  );
+                } else {
+                  setMerchError("Please enter a valid url");
+                }
+              }}
+            >
+              Save
+            </div>
+          ) : null}
+        </div>
+      ) : (
+        <>
+          <a href={room.merch_url} target="_blank" className="boxed-button tiny-margin-top">
+            Merchandise
+          </a>
+
+          {currentUserProfile &&
+          room &&
+          currentUserProfile.uid === room.user_ID ? (
+            <div
+              className="button-colored tiny-margin-top"
+              onClick={() => setIsMerchDetailsEdited(true)}
+            >
+              Edit Url
+            </div>
+          ) : null}
+        </>
+      )}
+
       {isDonationsDetailsEdited ? (
         <>
           <div className="tiny-margin-bottom">
@@ -170,7 +237,9 @@ const Donations = ({ room, updateRoom }) => {
       ) : (
         <>
           {room && room.donations_info ? (
-            <div className="donations__info tiny-margin-top ">{room && room.donations_info}</div>
+            <div className="donations__info tiny-margin-top ">
+              {room && room.donations_info}
+            </div>
           ) : null}
 
           {currentUserProfile &&

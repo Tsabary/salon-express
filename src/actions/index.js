@@ -68,13 +68,14 @@ export const fetchFirstExplore = (
           // .where("language", "in", [...languages, "lir"])
           .limit(90)
           .get()
+          .catch((e) => console.error("promise Error fetch ex", e))
       : await db
           .collection("rooms")
           .where("listed", "==", true)
           .orderBy("last_visit", "desc")
           .limit(90)
-          .get();
-
+          .get()
+          .catch((e) => console.error("promise Error fetch ex", e));
   setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length === 90) setReachedLast(false);
 
@@ -102,14 +103,15 @@ export const fetchMoreExplore = (
           .startAfter(lastVisible)
           .limit(90)
           .get()
+          .catch((e) => console.error("promise Error fetch mo ex", e))
       : await db
           .collection("rooms")
           .where("listed", "==", true)
           .orderBy("last_visit", "desc")
           .startAfter(lastVisible)
           .limit(90)
-          .get();
-
+          .get()
+          .catch((e) => console.error("promise Error fetch mo ex", e));
   setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length < 90) setReachedLast(true);
 
@@ -133,8 +135,8 @@ export const fetchFirstFavorites = (
     .where("favorites", "array-contains", userID)
     .orderBy("last_visit", "desc")
     .limit(90)
-    .get();
-
+    .get()
+    .catch((e) => console.error("promise Error fetch fav", e));
   if (data.docs[data.docs.length - 1])
     setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length === 90) setReachedLast(false);
@@ -157,8 +159,8 @@ export const fetchMoreFavorites = (
     .orderBy("last_visit", "desc")
     .startAfter(lastVisible)
     .limit(90)
-    .get();
-
+    .get()
+    .catch((e) => console.error("promise Error fetch mo fav", e));
   if (data.docs[data.docs.length - 1])
     setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length < 90) setReachedLast(true);
@@ -183,8 +185,8 @@ export const fetchFirstMyRooms = (
     .where("user_ID", "==", userID)
     .orderBy("last_visit", "desc")
     .limit(90)
-    .get();
-
+    .get()
+    .catch((e) => console.error("promise Error fetch my", e));
   if (data.docs[data.docs.length - 1])
     setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length === 90) setReachedLast(false);
@@ -207,8 +209,8 @@ export const fetchMoreMyRooms = (
     .orderBy("last_visit", "desc")
     .startAfter(lastVisible)
     .limit(90)
-    .get();
-
+    .get()
+    .catch((e) => console.error("promise Error fetch m my", e));
   if (data.docs[data.docs.length - 1])
     setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length < 90) setReachedLast(true);
@@ -238,13 +240,14 @@ export const fetchFirstSearched = (
           .orderBy("last_visit", "desc")
           .limit(90)
           .get()
+          .catch((e) => console.error("promise Error fetch searc", e))
       : await db
           .collection("rooms")
           .where("tags", "array-contains", tag)
           .orderBy("last_visit", "desc")
           .limit(90)
-          .get();
-
+          .get()
+          .catch((e) => console.error("promise Error fetch sear", e));
   setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length === 90) setReachedLast(false);
 
@@ -274,14 +277,15 @@ export const fetchMoreSearched = (
           .startAfter(lastVisible)
           .limit(90)
           .get()
+          .catch((e) => console.error("promise Error feth mo sear", e))
       : await db
           .collection("rooms")
           .where("tags", "array-contains", tag)
           .orderBy("last_visit", "desc")
           .startAfter(lastVisible)
           .limit(15)
-          .get();
-
+          .get()
+          .catch((e) => console.error("promise Error fetch ore ser", e));
   setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length < 90) setReachedLast(true);
 
@@ -297,13 +301,15 @@ export const fetchMoreSearched = (
 
 export const logGuestEntry = (room, currentUserProfile) => () => {
   const roomRef = db.collection("rooms").doc(room.id);
-  roomRef.set(
-    {
-      last_visit: new Date(),
-      visitors_count: firebase.firestore.FieldValue.increment(1),
-    },
-    { merge: true }
-  );
+  roomRef
+    .set(
+      {
+        last_visit: new Date(),
+        visitors_count: firebase.firestore.FieldValue.increment(1),
+      },
+      { merge: true }
+    )
+    .catch((e) => console.error("promise Error log gues", e));
 
   analytics.logEvent("room_entered");
 
@@ -321,7 +327,8 @@ export const logGuestEntry = (room, currentUserProfile) => () => {
               room_ID: room.id,
               room_name: room.title,
               created_on: Date.now(),
-            });
+            })
+            .catch((e) => console.error("promise Error log guest", e));
         }
       })
     : room.favorites.forEach((userID) => {
@@ -331,7 +338,8 @@ export const logGuestEntry = (room, currentUserProfile) => () => {
             room_ID: room.id,
             room_name: room.title,
             created_on: Date.now(),
-          });
+          })
+          .catch((e) => console.error("promise Error log guest", e));
       });
 };
 
@@ -340,7 +348,7 @@ export const logGuestEntry = (room, currentUserProfile) => () => {
 export const addToFavorites = (currentUserProfile, room, cb) => async (
   dispatch
 ) => {
-  console.log("mine", "Addind to favorites");
+  console.error("mine", "Addind to favorites");
   db.collection("rooms")
     .doc(room.id)
     .set(
@@ -364,14 +372,13 @@ export const addToFavorites = (currentUserProfile, room, cb) => async (
             : [currentUserProfile.uid],
         },
       });
-    });
+    })
+    .catch((e) => console.error("promise Error add to fav", e));
 };
 
 export const removeFromFavorites = (currentUserProfile, room, cb) => async (
   dispatch
 ) => {
-  console.log("mine", "removing from favorites");
-
   db.collection("rooms")
     .doc(room.id)
     .set(
@@ -396,7 +403,8 @@ export const removeFromFavorites = (currentUserProfile, room, cb) => async (
           ),
         },
       });
-    });
+    })
+    .catch((e) => console.error("promise Error remove form fav", e));
 };
 
 // STRANGER //
@@ -407,12 +415,11 @@ export const fetchStrangerProfile = (strangerUsername, setProfile) => async (
   const data = await db
     .collection("users")
     .where("username", "==", strangerUsername)
-    .get();
-
+    .get()
+    .catch((e) => console.error("promise Error fetch starg prog]f", e));
   const profile = data.docs.map((doc) => doc.data())[0];
   setProfile(profile ? profile : null);
   analytics.logEvent("stranger_profile_visitor");
-  console.log("mine", profile ? profile : null);
 
   dispatch({
     type: FETCH_STRANGER_PROFILE,
@@ -444,8 +451,11 @@ export const fetchSingleRoom = (
   isMobile,
   newPortal
 ) => async (dispatch) => {
-  const docRoom = await db.collection("rooms").doc(roomID).get();
-
+  const docRoom = await db
+    .collection("rooms")
+    .doc(roomID)
+    .get()
+    .catch((e) => console.error("promise Error fetch sing room", e));
   analytics.logEvent("room_direct_navigation");
   if (docRoom.data()) {
     setRoom(docRoom.data());
@@ -458,7 +468,7 @@ export const fetchSingleRoom = (
     });
   }
 
-  if (isMobile) return;
+  // if (isMobile) return;
   multiverseListener = db
     .collection("multiverses")
     .doc(roomID)
@@ -478,9 +488,7 @@ export const fetchSingleRoom = (
     .collection("active_channels")
     .doc(roomID)
     .onSnapshot((docChannel) => {
-      setCurrentAudioChannel(
-        docChannel.data() ? docChannel.data().channel : null
-      );
+      setCurrentAudioChannel(docChannel.data() ? docChannel.data() : null);
     });
 };
 
@@ -490,7 +498,13 @@ export const detachListener = () => () => {
 };
 
 export const setActiveChannel = (roomID, channel) => () => {
-  db.collection("active_channels").doc(roomID).set({ channel });
+  db.collection("active_channels")
+    .doc(roomID)
+    .set({
+      link: channel ? channel.link : null,
+      source: channel ? channel.source : null,
+    })
+    .catch((e) => console.error("promise Error set activ cha", e));
 };
 
 export const newPortal = (newPortal, oldPortal, room, uid, cb) => () => {
@@ -526,9 +540,12 @@ export const newPortal = (newPortal, oldPortal, room, uid, cb) => () => {
     );
   }
 
-  batch.commit().then(() => {
-    cb(portalObj);
-  });
+  batch
+    .commit()
+    .then(() => {
+      cb(portalObj);
+    })
+    .catch((e) => console.error("promise Error new portal", e));
 };
 
 export const leavePortal = (room, portal, uids) => () => {
@@ -546,11 +563,10 @@ export const leavePortal = (room, portal, uids) => () => {
     );
   });
 
-  batch.commit();
+  batch.commit().catch((e) => console.error("promise Error leave port", e));
 };
 
 export const enterPortal = (room, portal, uid) => () => {
-  console.log("mineeeee", "enterrringngngng");
   const batch = db.batch();
   const portalDoc = db.collection("multiverses").doc(room.id);
   const key = titleToKey(portal.title);
@@ -563,7 +579,7 @@ export const enterPortal = (room, portal, uid) => () => {
     { merge: true }
   );
 
-  batch.commit();
+  batch.commit().catch((e) => console.error("promise Error enter port", e));
 };
 
 export const replaceTimestampWithUid = (
@@ -572,8 +588,6 @@ export const replaceTimestampWithUid = (
   fakeUid,
   realUid
 ) => () => {
-  console.log("mineeeee", "replllacccing");
-
   const batch = db.batch();
   const portalDoc = db.collection("multiverses").doc(room.id);
   const key = titleToKey(portal.title);
@@ -600,7 +614,9 @@ export const replaceTimestampWithUid = (
     { merge: true }
   );
 
-  batch.commit();
+  batch
+    .commit()
+    .catch((e) => console.error("promise Error replace time wit huid", e));
 };
 
 export const addChannel = (channel, room) => async (dispatch) => {
@@ -610,6 +626,7 @@ export const addChannel = (channel, room) => async (dispatch) => {
       {
         audio_channels: firebase.firestore.FieldValue.arrayUnion({
           ...channel,
+          source: channel.source.toLowerCase(),
           id: uuidv1(),
         }),
       },
@@ -620,11 +637,12 @@ export const addChannel = (channel, room) => async (dispatch) => {
         type: ADD_CHANNEL,
         payload: channel,
       });
-    });
+    })
+    .catch((e) => console.error("promise Error add chanen", e));
 };
 
 export const deleteChannel = (channel, room, cb) => async (dispatch) => {
-  console.log(room.id);
+  console.error(room.id);
   db.collection("rooms")
     .doc(room.id)
     .set(
@@ -637,7 +655,8 @@ export const deleteChannel = (channel, room, cb) => async (dispatch) => {
         type: REMOVE_CHANNEL,
         payload: channel,
       });
-    });
+    })
+    .catch((e) => console.error("promise Error delete channel", e));
 };
 
 export const fetchRoomComments = (roomID, setComments) => async () => {
@@ -645,8 +664,8 @@ export const fetchRoomComments = (roomID, setComments) => async () => {
     .collection("comments")
     .orderBy("created_on", "desc")
     .where("room_ID", "==", roomID)
-    .get();
-
+    .get()
+    .catch((e) => console.error("promise Error fetch room comme", e));
   if (data.docs) {
     setComments(data.docs.map((doc) => doc.data()));
   }
@@ -663,7 +682,8 @@ export const associateWithRoom = (room, associate) => async (dispatch) => {
         type: EDIT_ROOM,
         payload: newRoom,
       });
-    });
+    })
+    .catch((e) => console.error("promise Error associate with r", e));
 };
 
 export const keepRoomListed = (room, listed) => async (dispatch) => {
@@ -677,7 +697,8 @@ export const keepRoomListed = (room, listed) => async (dispatch) => {
         type: EDIT_ROOM,
         payload: newRoom,
       });
-    });
+    })
+    .catch((e) => console.error("promise Error keep listed", e));
 };
 
 // ROOM //
@@ -696,19 +717,22 @@ export const newRoom = (values, reset) => (dispatch) => {
 
   batch.set(newDoc, room);
 
-  batch.commit().then((d) => {
-    analytics.logEvent("room_opened", {
-      language: values.language,
-      tags: values.tags,
-    });
+  batch
+    .commit()
+    .then((d) => {
+      analytics.logEvent("room_opened", {
+        language: values.language,
+        tags: values.tags,
+      });
 
-    reset();
+      reset();
 
-    dispatch({
-      type: NEW_ROOM,
-      payload: room,
-    });
-  });
+      dispatch({
+        type: NEW_ROOM,
+        payload: room,
+      });
+    })
+    .catch((e) => console.error("promise Error new room", e));
 };
 
 export const updateRoom = (values, parameter, reset) => (dispatch) => {
@@ -717,16 +741,19 @@ export const updateRoom = (values, parameter, reset) => (dispatch) => {
 
   batch.set(docRef, values, { merge: true });
 
-  batch.commit().then(() => {
-    reset();
-    window.location.hash = "";
-    analytics.logEvent("room_updated", { parameter });
+  batch
+    .commit()
+    .then(() => {
+      reset();
+      window.location.hash = "";
+      analytics.logEvent("room_updated", { parameter });
 
-    dispatch({
-      type: EDIT_ROOM,
-      payload: values,
-    });
-  });
+      dispatch({
+        type: EDIT_ROOM,
+        payload: values,
+      });
+    })
+    .catch((e) => console.error("promise Error update room", e));
 };
 
 export const removeRoom = (room) => (dispatch) => {
@@ -735,23 +762,29 @@ export const removeRoom = (room) => (dispatch) => {
   const doc = db.collection("rooms").doc(room.id);
   batch.delete(doc);
 
-  batch.commit().then(() => {
-    analytics.logEvent("room_deleted");
+  batch
+    .commit()
+    .then(() => {
+      analytics.logEvent("room_deleted");
 
-    dispatch({
-      type: DELETE_ROOM,
-      payload: room.id,
-    });
-  });
+      dispatch({
+        type: DELETE_ROOM,
+        payload: room.id,
+      });
+    })
+    .catch((e) => console.error("promise Error remove room", e));
 };
 
 export const newComment = (values, cb) => async () => {
   const commentDoc = await db.collection("comments").doc();
   const comment = { ...values, created_on: new Date(), id: commentDoc.id };
 
-  commentDoc.set(comment).then(() => {
-    cb();
-  });
+  commentDoc
+    .set(comment)
+    .then(() => {
+      cb();
+    })
+    .catch((e) => console.error("promise Error new comment", e));
 };
 
 export const follow = (
@@ -769,16 +802,19 @@ export const follow = (
     { merge: true }
   );
 
-  batch.commit().then(() => {
-    setCurrentUserProfile({
-      ...userProfile,
-      following: [...userProfile.following, hostID],
-    });
+  batch
+    .commit()
+    .then(() => {
+      setCurrentUserProfile({
+        ...userProfile,
+        following: [...userProfile.following, hostID],
+      });
 
-    analytics.logEvent("follow");
+      analytics.logEvent("follow");
 
-    cb();
-  });
+      cb();
+    })
+    .catch((e) => console.error("promise Error foolow", e));
 };
 
 export const unfollow = (
@@ -796,16 +832,19 @@ export const unfollow = (
     { merge: true }
   );
 
-  batch.commit().then(() => {
-    setCurrentUserProfile({
-      ...userProfile,
-      following: userProfile.following.filter((id) => id !== hostID),
-    });
+  batch
+    .commit()
+    .then(() => {
+      setCurrentUserProfile({
+        ...userProfile,
+        following: userProfile.following.filter((id) => id !== hostID),
+      });
 
-    analytics.logEvent("unfollow");
+      analytics.logEvent("unfollow");
 
-    cb();
-  });
+      cb();
+    })
+    .catch((e) => console.error("promise Error", e));
 };
 
 // FAQ //
@@ -814,7 +853,8 @@ export const fetchQuestions = () => async (dispatch) => {
   const data = await db
     .collection("questions")
     .orderBy("placement", "asc")
-    .get();
+    .get()
+    .catch((e) => console.error("promise Error", e));
 
   dispatch({
     type: FETCH_QUESTIONS,
@@ -825,14 +865,20 @@ export const fetchQuestions = () => async (dispatch) => {
 export const addQuestion = (values, userUID, cb) => () => {
   if (userUID !== "KbhtqAE0B9RDAonhQqgZ1CWsg1o1") return;
   const docRef = db.collection("questions").doc();
-  docRef.set({ ...values, id: docRef.id }).then(() => {
-    cb();
-  });
+  docRef
+    .set({ ...values, id: docRef.id })
+    .then(() => {
+      cb();
+    })
+    .catch((e) => console.error("promise Error", e));
 };
 
 // CAREERS //
 export const fetchPositions = () => async (dispatch) => {
-  const data = await db.collection("positions").get();
+  const data = await db
+    .collection("positions")
+    .get()
+    .catch((e) => console.error("promise Error", e));
 
   dispatch({
     type: FETCH_POSITIONS,
@@ -845,7 +891,11 @@ export const fetchPositions = () => async (dispatch) => {
 };
 
 export const fetchSinglePosition = (id) => async (dispatch) => {
-  const data = await db.collection("positions").doc(id).get();
+  const data = await db
+    .collection("positions")
+    .doc(id)
+    .get()
+    .catch((e) => console.error("promise Error", e));
 
   dispatch({
     type: FETCH_SINGLE_POSITION,
@@ -906,7 +956,8 @@ export const logOut = () => async (dispatch) => {
         type: FETCH_UPDATES,
         payload: [],
       });
-    });
+    })
+    .catch((e) => console.error("promise Error", e));
 };
 
 export const resendVerification = () => () => {
@@ -924,7 +975,8 @@ export const providerSignIn = (provider, cb) => () => {
         .then(() => {
           analytics.logEvent("signup_google");
           cb();
-        });
+        })
+        .catch((e) => console.error("promise Error", e));
 
       break;
     case "facebook":
@@ -1010,7 +1062,8 @@ export const updateProfile = (
                 updateLocaly();
                 window.location.hash = "";
                 analytics.logEvent("profile_update");
-              });
+              })
+              .catch((e) => console.error("promise Error", e));
           });
       }
     );
@@ -1022,7 +1075,8 @@ export const updateProfile = (
         updateLocaly();
         window.location.hash = "";
         analytics.logEvent("profile_update");
-      });
+      })
+      .catch((e) => console.error("promise Error", e));
   }
 };
 
@@ -1031,7 +1085,8 @@ export const listenToUpdates = (currentUserProfile, notification) => async (
 ) => {
   var starCountRef = firebase
     .database()
-    .ref("updates/" + currentUserProfile.uid).limitToLast(10);
+    .ref("updates/" + currentUserProfile.uid)
+    .limitToLast(10);
 
   starCountRef.on("value", (snapshot) => {
     notification();
@@ -1062,7 +1117,10 @@ export const setEditedRoom = (room) => {
 };
 
 export const fetchTags = () => async (dispatch) => {
-  const data = await db.collection("tags_count").get();
+  const data = await db
+    .collection("tags_count")
+    .get()
+    .catch((e) => console.error("promise Error", e));
 
   const allTags = [];
 

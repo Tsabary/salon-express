@@ -1,12 +1,12 @@
 @import "../../../styles/imports";
 
 .single-room {
+  position: relative;
   width: 100%;
   max-width: 160rem;
   margin: auto;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  // grid-template-rows: 450px repeat(auto-fill, 1fr);
   gap: 2rem;
   justify-items: stretch;
   align-items: stretch;
@@ -14,16 +14,15 @@
 
   &__container {
     &-multiverse {
-      &--with-audio{
+      &--with-audio {
         grid-column: 1/4;
         grid-row: 1/3;
       }
 
-      &--no-audio{
+      &--no-audio {
         grid-column: 1/4;
         grid-row: 1/2;
       }
-
 
       @include resize(1100px) {
         grid-column: 1/13;
@@ -33,6 +32,7 @@
     &-chat {
       grid-column: 4/13;
       grid-row: 1/2;
+
       @include resize(1100px) {
         grid-column: 1/13;
       }
@@ -41,9 +41,9 @@
       &--mobile {
         grid-column: 1/13;
         grid-row: 2/3;
-        @include resize(1100px) {
-          grid-row: 3/4;
-        }
+        // @include resize(1100px) {
+        //   grid-row: 3/4;
+        // }
       }
       &--not-mobile {
         grid-column: 4/13;
@@ -59,7 +59,7 @@
       grid-column: 8/13;
       grid-row: 3/5;
       @include resize(1100px) {
-        grid-row: 4/5;
+        grid-row: 4/6;
       }
       @include resize(700px) {
         grid-column: 1/13;
@@ -80,9 +80,10 @@
       grid-row: 1/2;
       border: $border;
       border-radius: $borderRadius;
-      padding: 4rem;
+      padding: 1rem;
       text-align: center;
       margin-top: 2rem;
+      line-height: 2.2rem;
     }
     &-info {
       &--with-donations {
@@ -110,6 +111,7 @@
         }
         @include resize(1100px) {
           grid-column: 1/13;
+          grid-row: 3/5;
         }
       }
     }
@@ -226,10 +228,61 @@
     }
   }
 
-  // &__box {
-  //   margin: 4rem auto;
-  //   // max-width: 35rem;
-  // }
+  &__media {
+    &-checkbox {
+      display: none;
+      &:checked
+        ~ .single-room__media__container
+        .single-room__media__container__visible {
+        transform: translateX(-110%);
+      }
+
+      &:checked
+        ~ .single-room__media__container
+        .single-room__media__container__hidden {
+        left: 0;
+      }
+    }
+
+    &__container {
+      position: relative;
+      overflow: hidden;
+      @include toggleConainer;
+    }
+
+    &__buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      border-radius: $borderRadius;
+    }
+    &__button {
+      cursor: pointer;
+      padding: 1rem 1rem 0.7rem 1rem;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      height: 100%;
+      user-select: none;
+
+      &--active {
+        background-color: $mainColor;
+        color: white;
+      }
+      &--unactive {
+        background-color: $greyLightest;
+        color: $grey;
+      }
+    }
+  }
+
+  &__point-bg {
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(#000000, 0.5);
+    z-index: 2000;
+  }
+
   &__comments {
     width: 100%;
     height: max-content;

@@ -2,6 +2,8 @@ import "./styles.scss";
 import React from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { isMobile } from "react-device-detect";
+
 import history from "../../../history";
 
 import firebase from "../../../firebase";
@@ -21,7 +23,14 @@ const Footer = () => {
   const renderMenuItems = (items) => {
     return items.map((group) => {
       return (
-        <div className="footer__section-contents" key={group.title}>
+        <div
+          className={
+            isMobile
+              ? "footer__section-contents footer__mobile"
+              : "footer__section-contents"
+          }
+          key={group.title}
+        >
           <div className="footer__section-title">{group.title}</div>
           {group.pages.map((page) => {
             return (
@@ -68,14 +77,16 @@ const Footer = () => {
         <div className="footer__section-title">Support</div>
         <div
           className="footer__section-item"
-          onClick={()=>handleChange("Privacy Policy", "privacy-policy")}
+          onClick={() => handleChange("Privacy Policy", "privacy-policy")}
         >
           Privacy Policy
         </div>
 
         <div
           className="footer__section-item"
-          onClick={()=>handleChange("Terms and Conditions", "terms-and-conditions")}
+          onClick={() =>
+            handleChange("Terms and Conditions", "terms-and-conditions")
+          }
         >
           Terms and Conditions
         </div>

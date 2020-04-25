@@ -46,7 +46,7 @@ const Comments = ({
   return (
     <div className="single-room__container-comments single-room__comments">
       <form
-        className="fr-max"
+        className="comments__form"
         autoComplete="off"
         onSubmit={(e) => {
           e.preventDefault();
@@ -88,34 +88,14 @@ const Comments = ({
         />
         {currentUserProfile ? (
           <>
-            <button
-              type="submit"
-              className="boxed-button single-room__comment--boxed"
-            >
-              Comment
-            </button>
-
-            <button
-              type="submit"
-              className="text-button-mobile single-room__comment--text"
-            >
-              Comment
+            <button type="submit" className="small-button">
+              Post
             </button>
           </>
         ) : (
           <>
-            <a
-              href="#sign-up"
-              className="boxed-button single-room__comment--boxed"
-            >
-              Comment
-            </a>
-
-            <a
-              href="#sign-up"
-              className="text-button-mobile single-room__comment--text"
-            >
-              Comment
+            <a href="#sign-up" className="comments__post">
+              Post
             </a>
           </>
         )}

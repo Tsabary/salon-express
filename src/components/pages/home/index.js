@@ -37,6 +37,7 @@ const Home = ({ popupShown, togglePopup, detachListener }) => {
 
   return (
     <div className="home">
+   
       {!currentUser ? (
         <div className="home__welcome small-margin-bottom">
           Welcome to <span className="bold-700">Salon Express</span>, where you
@@ -48,10 +49,7 @@ const Home = ({ popupShown, togglePopup, detachListener }) => {
           to join sessions - it's <span className="bold-700">FREE</span>.
         </div>
       ) : null}
-            <ReactHowler
-        src="http://localhost/stream.ogg"
-        playing={true}
-      />
+      <ReactHowler src="http://localhost/stream.ogg" playing={true} />
 
       {currentUser ? (
         <div className="home__menu">

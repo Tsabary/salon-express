@@ -94,7 +94,7 @@ h3 {
 }
 
 .info {
-  // margin-top: .3rem;
+  margin-bottom: 1rem;
   &::before {
     content: "?";
     display: block;
@@ -218,6 +218,18 @@ h3 {
     padding-top: 52.35%;
     position: relative;
   }
+}
+
+.small-button {
+  font-size: 1.2rem;
+  margin-top: 0.4rem;
+  background-color: $mainColor;
+  border-radius: $borderRadius;
+  color: white !important;
+  padding: 0.2rem 0.8rem;
+  align-self: flex-start;
+  border: none;
+  outline: none;
 }
 
 .boxed-button {
@@ -387,6 +399,7 @@ h3 {
   }
   &__title {
     font-size: 1.2rem;
+    margin-bottom: 1rem;
     color: $grey;
   }
 }
@@ -754,6 +767,7 @@ h3 {
 .tiny-margin-bottom {
   margin-bottom: 2rem;
 }
+
 .extra-small-margin-bottom {
   margin-bottom: 3rem;
 }
@@ -768,6 +782,10 @@ h3 {
 
 .big-margin-bottom {
   margin-bottom: 16rem;
+}
+
+.extra-tiny-margin-top {
+  margin-top: 1rem;
 }
 
 .tiny-margin-top {

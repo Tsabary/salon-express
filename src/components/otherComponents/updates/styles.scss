@@ -52,12 +52,8 @@
     line-height: 2rem;
   }
 
-  &__container {
-    height: 0;
-    width: 0;
-    padding: 0rem;
-    margin: 0;
-    transition: all 0.2s;
+  &__scoll {
+    background-color: yellow;
     overflow-y: scroll;
 
     &::-webkit-scrollbar {
@@ -68,6 +64,24 @@
       background-color: $mainColor;
       outline: 1px solid slategrey;
     }
+  }
 
+  &__container {
+    height: 0;
+    width: 0;
+    padding: 0rem;
+    margin: 0;
+    overflow-y: scroll;
+
+    transition: all 0.2s;
+
+    &::-webkit-scrollbar {
+      width: 0.5em;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: $mainColor;
+      outline: 1px solid slategrey;
+    }
   }
 }

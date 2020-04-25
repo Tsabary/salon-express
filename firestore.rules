@@ -10,7 +10,7 @@ service cloud.firestore {
     match /rooms/{room}{
       allow read: if true;
       allow create: if request.auth.uid == request.resource.data.user_ID;
-      allow update: if request.auth != null;
+      allow update: if true; // It's true because even when a non logged in user enters a room we need to update the last active field
       allow delete: if request.auth.uid == resource.data.user_ID;
     }
 
@@ -20,15 +20,13 @@ service cloud.firestore {
       allow update: if true;
       allow delete: if false;
     }
-
+    
     match /active_channels/{channel}{
       allow read: if true;
       allow create: if true; // need to check that it's the admin
       allow update: if true; // need to check that it's the admin
       allow delete: if true; // need to check that it's the admin
     }
-
-    
 
     match /comments/{room}{
       allow read: if true;
