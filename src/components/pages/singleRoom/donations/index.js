@@ -61,7 +61,7 @@ const Donations = ({ room, updateRoom }) => {
   }, [currentUserProfile, room]);
 
   return (
-    <div className="section__container donations">
+    <div className="section__container single-room__container-donations donations">
       <div className="max-max">
         <div className="section__title">Link for Donations</div>
         {currentUserProfile &&
@@ -127,7 +127,12 @@ const Donations = ({ room, updateRoom }) => {
         </>
       ) : (
         <>
-          <a href={room.donations_url} target="_blank" className="boxed-button">
+          <a
+            href={values.donations_url}
+            target="_blank"
+              className="boxed-button"
+              rel="noopener noreferrer"
+          >
             Donations
           </a>
 
@@ -183,7 +188,12 @@ const Donations = ({ room, updateRoom }) => {
         </div>
       ) : (
         <>
-          <a href={room.merch_url} target="_blank" className="boxed-button tiny-margin-top">
+          <a
+            href={room.merch_url}
+            target="_blank"
+              className="boxed-button tiny-margin-top"
+              rel="noopener noreferrer"
+          >
             Merchandise
           </a>
 
@@ -216,7 +226,7 @@ const Donations = ({ room, updateRoom }) => {
             <div
               className="button-colored"
               onClick={() => {
-                if (values.donations_url) {
+                if (values.donations_info) {
                   updateRoom(
                     {
                       ...room,
@@ -236,9 +246,9 @@ const Donations = ({ room, updateRoom }) => {
         </>
       ) : (
         <>
-          {room && room.donations_info ? (
+          {values && values.donations_info ? (
             <div className="donations__info tiny-margin-top ">
-              {room && room.donations_info}
+              {values && values.donations_info}
             </div>
           ) : null}
 

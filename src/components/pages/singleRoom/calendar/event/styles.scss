@@ -1,0 +1,49 @@
+@import "../../../../../styles/imports";
+
+.event {
+  margin-top: 2rem;
+  background-color: $bgColor;
+  border-radius: $borderRadius;
+  padding: 1.5rem;
+
+  &__main {
+    display: grid;
+    grid-template-columns: 1fr repeat(2, max-content);
+    gap: 1.5rem;
+  }
+
+  &__date {
+    font-size: 1.1rem;
+    color: $grey;
+  }
+
+  &__title {
+    font-family: $fontBold, $fontHebrewBold;
+  }
+
+  &__calendar {
+    position: relative;
+
+    &:hover .event__calendar-options {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    &-options {
+      position: absolute;
+      opacity: 0;
+      visibility: hidden;
+      width: max-content;
+      right: 2rem;
+      top: -2rem;
+      background-color: white;
+      // margin-top: 1rem;
+      display: grid;
+      grid-gap: 0.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 0.4rem 1.4rem rgb(210, 210, 210);
+      transition: all 0.2s;
+
+    }
+  }
+}

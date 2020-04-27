@@ -2,8 +2,9 @@
 
 .audio-settings {
   &__add {
-      background-color: white;
+    background-color: white;
     border: $border;
+    outline: none;
     font-size: 2rem;
     border-radius: 4rem;
     padding: 1rem;
@@ -11,6 +12,11 @@
     color: $mainColor;
     cursor: pointer;
     transition: all 0.2s;
+
+    &:focus{
+      outline: none !important;
+      outline-offset: none !important;
+    }
 
     &:hover {
       color: white;

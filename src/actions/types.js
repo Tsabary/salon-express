@@ -35,10 +35,15 @@ export const FETCH_UPDATES = "FETCH_UPDATES";
 export const ADD_NOTIFICATION = "ADD_NOTIFICATION";
 export const RESET_NOTIFICATIONS = "RESET_NOTIFICATIONS";
 
-// SINGE ROOM //
+// CHANNELS //
 export const SET_CHANNELS = "SET_CHANNELS";
 export const ADD_CHANNEL = "ADD_CHANNEL";
 export const REMOVE_CHANNEL = "REMOVE_CHANNEL";
+
+// EVENTS //
+export const FETCH_EVENTS = "FETCH_EVENTS";
+export const ADD_EVENT = "ADD_EVENT";
+export const REMOVE_EVENT = "REMOVE_EVENT";
 
 
 // CAREERS //

@@ -4,12 +4,11 @@
   position: relative;
 
   &__container-full {
-    margin-top: -.5rem;
+    margin-top: -1rem;
     display: grid;
     grid-template-columns: repeat(2, max-content);
     gap: 2rem;
     @include resize(950px) {
-      // grid-template-columns: max-content;
       display: none;
     }
   }
@@ -39,7 +38,7 @@
   }
 
   &:hover .user-options__name {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     color: $mainColor;
   }
 

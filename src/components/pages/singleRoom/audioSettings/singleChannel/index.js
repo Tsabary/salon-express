@@ -1,9 +1,11 @@
 import "./styles.scss";
 import React from "react";
+import { connect } from "react-redux";
+
 import { ReactSVG } from "react-svg";
+import ReactTooltip from "react-tooltip";
 
 import { setActiveChannel, deleteChannel } from "../../../../../actions";
-import { connect } from "react-redux";
 
 const SingleChannel = ({
   channel,
@@ -12,8 +14,8 @@ const SingleChannel = ({
   setActiveChannel,
   deleteChannel,
 }) => {
-  console.log("minecurrentAudioChannel", currentAudioChannel);
-  console.log("channel.link", channel.link);
+
+  
   return (
     <div
       className={
@@ -35,7 +37,7 @@ const SingleChannel = ({
           </div>
           <div
             className={
-              currentAudioChannel &&  currentAudioChannel.link === channel.link
+              currentAudioChannel && currentAudioChannel.link === channel.link
                 ? "single-channel__link--active"
                 : "single-channel__link"
             }
@@ -48,7 +50,10 @@ const SingleChannel = ({
             className="clickable"
             onClick={() =>
               deleteChannel(channel, room, () => {
-                if ( currentAudioChannel && currentAudioChannel.link === channel.link)
+                if (
+                  currentAudioChannel &&
+                  currentAudioChannel.link === channel.link
+                )
                   setActiveChannel(room.id, null);
               })
             }
@@ -56,13 +61,22 @@ const SingleChannel = ({
             <ReactSVG
               src="../svgs/trash.svg"
               wrapper="div"
+              data-tip={`deleteChannel${channel.id}`}
+              data-for={`deleteChannel${channel.id}`}
               beforeInjection={(svg) => {
                 svg.classList.add("room__icon");
               }}
             />
+            <ReactTooltip id={`deleteChannel${channel.id}`}>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: "Clicking would remove this channel immediately.",
+                }}
+              />
+            </ReactTooltip>
           </div>
 
-          { currentAudioChannel && currentAudioChannel.link === channel.link ? (
+          {currentAudioChannel && currentAudioChannel.link === channel.link ? (
             <div
               className="clickable"
               onClick={() => setActiveChannel(room.id, null)}

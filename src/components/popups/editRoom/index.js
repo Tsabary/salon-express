@@ -135,16 +135,16 @@ const EditRoom = ({
     <div className="popup" id="edited-room">
       <div className="popup__close">
         <div />
-        <a
+        <div
           className="popup__close-text"
-          href="#"
           onClick={() => {
             togglePopup(false);
             reset();
+            window.location.hash=""
           }}
         >
           Close
-        </a>
+        </div>
       </div>
 
       {!submitting ? (

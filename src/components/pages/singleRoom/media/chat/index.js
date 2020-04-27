@@ -85,18 +85,20 @@ const Chat = ({
         display="initial"
         position="relative"
         allow="fullscreen; camera; microphone"
-        className="single-room__chat"
+        className="iframe"
       />
     ) : (
-      <div className="single-room__access-container">
-        <div className="single-room__access-buttons">
+        <div className="chat__access-container">
+                      <div>dfsdfsdfsdf</div>
+
+        <div className="chat__access-buttons">
           {microphonePermissionGranted ? (
-            <div className="single-room__access-button single-room__access-button--unactive">
+            <div className="chat__access-button chat__access-button--unactive">
               Microphone Permission Granted
             </div>
           ) : (
             <div
-              className="single-room__access-button single-room__access-button--active"
+              className="chat__access-button chat__access-button--active"
               onClick={() =>
                 requestPermission({ audio: true, video: false }, "mic")
               }
@@ -106,12 +108,12 @@ const Chat = ({
           )}
 
           {cameraPermissionGranted ? (
-            <div className="single-room__access-button single-room__access-button--unactive">
+            <div className="chat__access-button chat__access-button--unactive">
               Camera Permission Granted
             </div>
           ) : (
             <div
-              className="single-room__access-button single-room__access-button--active"
+              className="chat__access-button chat__access-button--active"
               onClick={() =>
                 requestPermission({ audio: false, video: true }, "cam")
               }

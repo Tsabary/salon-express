@@ -7,13 +7,13 @@ import TextButton from "../../../formComponents/textButton";
 const AuthOptions = () => {
   return (
     <div className="auth-options">
-      <a href="#sign-up" className="auth-options__box">
+      <div className="auth-options__box" onClick={()=> window.location.hash="sign-up"}>
         <BoxedButton text="Sign Up | Login" />
-      </a>
+      </div>
 
-      <a href="#sign-up" className="auth-options__text">
+      <div className="auth-options__text" onClick={()=> window.location.hash="sign-up"}>
         <TextButton text="Sign Up | Login" />
-      </a>
+      </div>
     </div>
   );
 };

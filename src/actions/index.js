@@ -1,4 +1,9 @@
 import firebase from "../firebase";
+import "firebase/firestore";
+import "firebase/storage";
+import "firebase/analytics";
+import "firebase/database";
+
 import { v1 as uuidv1 } from "uuid";
 
 import {
@@ -43,6 +48,9 @@ import {
   ADD_CHANNEL,
   SET_CHANNELS,
   REMOVE_CHANNEL,
+  FETCH_EVENTS,
+  REMOVE_EVENT,
+  ADD_EVENT,
 } from "./types";
 
 import { titleToKey } from "../utils/strings";
@@ -443,17 +451,13 @@ let multiverseListener;
 let channelListener;
 
 export const fetchSingleRoom = (
-  roomID,
+  room_ID,
   setRoom,
-  setMultiverse,
-  setMultiverseArray,
-  setCurrentAudioChannel,
-  isMobile,
-  newPortal
+  setCurrentAudioChannel
 ) => async (dispatch) => {
   const docRoom = await db
     .collection("rooms")
-    .doc(roomID)
+    .doc(room_ID)
     .get()
     .catch((e) => console.error("promise Error fetch sing room", e));
   analytics.logEvent("room_direct_navigation");
@@ -468,10 +472,23 @@ export const fetchSingleRoom = (
     });
   }
 
-  // if (isMobile) return;
+  channelListener = db
+    .collection("active_channels")
+    .doc(room_ID)
+    .onSnapshot((docChannel) => {
+      setCurrentAudioChannel(docChannel.data() ? docChannel.data() : null);
+    });
+};
+
+export const listenToMultiverse = (
+  room_ID,
+  setMultiverse,
+  setMultiverseArray,
+  newPortal
+) => () => {
   multiverseListener = db
     .collection("multiverses")
-    .doc(roomID)
+    .doc(room_ID)
     .onSnapshot((docMultiverse) => {
       if (docMultiverse.data()) {
         setMultiverse(docMultiverse.data());
@@ -480,33 +497,112 @@ export const fetchSingleRoom = (
 
         setMultiverseArray(arrayVerse.sort(compare));
       } else {
-        newPortal();
+        if (newPortal) newPortal();
       }
-    });
-
-  channelListener = db
-    .collection("active_channels")
-    .doc(roomID)
-    .onSnapshot((docChannel) => {
-      setCurrentAudioChannel(docChannel.data() ? docChannel.data() : null);
     });
 };
 
+// Deteching the listener for the multiverse
 export const detachListener = () => () => {
   if (multiverseListener) multiverseListener();
   if (channelListener) channelListener();
 };
 
+// Setting the active audio channel
 export const setActiveChannel = (roomID, channel) => () => {
   db.collection("active_channels")
     .doc(roomID)
     .set({
       link: channel ? channel.link : null,
       source: channel ? channel.source : null,
-    })
-    .catch((e) => console.error("promise Error set activ cha", e));
+    });
 };
 
+// Enter a portal
+export const enterPortal = (room, portal, uid) => () => {
+  const batch = db.batch();
+  const portalDoc = db.collection("multiverses").doc(room.id);
+  const key = titleToKey(portal.title);
+
+  batch.set(
+    portalDoc,
+    {
+      [key]: {
+        title: portal.title,
+        created_on: portal.created_on,
+        members: firebase.firestore.FieldValue.arrayUnion(uid),
+      },
+    },
+    { merge: true }
+  );
+
+  batch.commit();
+};
+
+// Leave a portal
+export const leavePortal = (room, portal, uids) => () => {
+  const batch = db.batch();
+  const portalDoc = db.collection("multiverses").doc(room.id);
+  const key = titleToKey(portal.title);
+
+  uids.forEach((uid) => {
+    batch.set(
+      portalDoc,
+      {
+        [key]: {
+          title: portal.title,
+          created_on: portal.created_on,
+          members: firebase.firestore.FieldValue.arrayRemove(uid),
+        },
+      },
+      { merge: true }
+    );
+  });
+
+  batch.commit();
+};
+
+//Replacing between UUID and UID in the portal logs
+export const replaceTimestampWithUid = (
+  room,
+  portal,
+  previousID,
+  newID
+) => () => {
+  const batch = db.batch();
+  const portalDoc = db.collection("multiverses").doc(room.id);
+  const key = titleToKey(portal.title);
+
+  batch.set(
+    portalDoc,
+    {
+      [key]: {
+        title: portal.title,
+        created_on: portal.created_on,
+        members: firebase.firestore.FieldValue.arrayRemove(previousID),
+      },
+    },
+
+    { merge: true }
+  );
+
+  batch.set(
+    portalDoc,
+    {
+      [key]: {
+        title: portal.title,
+        created_on: portal.created_on,
+        members: firebase.firestore.FieldValue.arrayUnion(newID),
+      },
+    },
+
+    { merge: true }
+  );
+
+  batch.commit();
+};
+
+// Opening a new portal
 export const newPortal = (newPortal, oldPortal, room, uid, cb) => () => {
   const portalObj = {
     title: newPortal,
@@ -540,86 +636,14 @@ export const newPortal = (newPortal, oldPortal, room, uid, cb) => () => {
     );
   }
 
-  batch
-    .commit()
-    .then(() => {
-      cb(portalObj);
-    })
-    .catch((e) => console.error("promise Error new portal", e));
-};
-
-export const leavePortal = (room, portal, uids) => () => {
-  const batch = db.batch();
-  const portalDoc = db.collection("multiverses").doc(room.id);
-  const key = titleToKey(portal.title);
-
-  uids.forEach((uid) => {
-    batch.set(
-      portalDoc,
-      {
-        [key]: { members: firebase.firestore.FieldValue.arrayRemove(uid) },
-      },
-      { merge: true }
-    );
+  batch.commit().then(() => {
+    cb(portalObj);
   });
-
-  batch.commit().catch((e) => console.error("promise Error leave port", e));
 };
 
-export const enterPortal = (room, portal, uid) => () => {
-  const batch = db.batch();
-  const portalDoc = db.collection("multiverses").doc(room.id);
-  const key = titleToKey(portal.title);
+// AUDIO CHANNELS //
 
-  batch.set(
-    portalDoc,
-    {
-      [key]: { members: firebase.firestore.FieldValue.arrayUnion(uid) },
-    },
-    { merge: true }
-  );
-
-  batch.commit().catch((e) => console.error("promise Error enter port", e));
-};
-
-export const replaceTimestampWithUid = (
-  room,
-  portal,
-  fakeUid,
-  realUid
-) => () => {
-  const batch = db.batch();
-  const portalDoc = db.collection("multiverses").doc(room.id);
-  const key = titleToKey(portal.title);
-
-  batch.set(
-    portalDoc,
-    {
-      [key]: {
-        members: firebase.firestore.FieldValue.arrayRemove(fakeUid),
-      },
-    },
-
-    { merge: true }
-  );
-
-  batch.set(
-    portalDoc,
-    {
-      [key]: {
-        members: firebase.firestore.FieldValue.arrayUnion(realUid),
-      },
-    },
-
-    { merge: true }
-  );
-
-  batch
-    .commit()
-    .catch((e) => console.error("promise Error replace time wit huid", e));
-};
-
-export const addChannel = (channel, room) => async (dispatch) => {
+export const addChannel = (channel, room, cb) => async (dispatch) => {
   db.collection("rooms")
     .doc(room.id)
     .set(
@@ -633,6 +657,8 @@ export const addChannel = (channel, room) => async (dispatch) => {
       { merge: true }
     )
     .then(() => {
+      cb();
+
       dispatch({
         type: ADD_CHANNEL,
         payload: channel,
@@ -642,7 +668,6 @@ export const addChannel = (channel, room) => async (dispatch) => {
 };
 
 export const deleteChannel = (channel, room, cb) => async (dispatch) => {
-  console.error(room.id);
   db.collection("rooms")
     .doc(room.id)
     .set(
@@ -657,6 +682,53 @@ export const deleteChannel = (channel, room, cb) => async (dispatch) => {
       });
     })
     .catch((e) => console.error("promise Error delete channel", e));
+};
+
+// EVENTS //
+
+export const fetchEvents = (room) => async (dispatch) => {
+  const data = await db
+    .collection("events")
+    .where("room_ID", "==", room.id)
+    .where("start", ">", new Date())
+    .orderBy("start", "desc")
+    .limit(10)
+    .get();
+
+  dispatch({
+    type: FETCH_EVENTS,
+    payload: data && data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+export const addEvent = (event, room, cb) => async (dispatch) => {
+  const eventDoc = db.collection("events").doc();
+  const eventObj = { ...event, room_ID: room.id, id: eventDoc.id };
+
+  eventDoc
+    .set(eventObj)
+    .then(() => {
+      cb();
+
+      dispatch({
+        type: ADD_EVENT,
+        payload: eventObj,
+      });
+    })
+    .catch((e) => console.error("promise Error add event", e));
+};
+
+export const deleteEvent = (event) => async (dispatch) => {
+  db.collection("events")
+    .doc(event.id)
+    .delete()
+    .then(() => {
+      dispatch({
+        type: REMOVE_EVENT,
+        payload: event,
+      });
+    })
+    .catch((e) => console.error("promise Error delete event", e));
 };
 
 export const fetchRoomComments = (roomID, setComments) => async () => {
@@ -778,7 +850,7 @@ export const removeRoom = (room) => (dispatch) => {
 export const newComment = (values, cb) => async () => {
   const commentDoc = await db.collection("comments").doc();
   const comment = { ...values, created_on: new Date(), id: commentDoc.id };
-
+  console.log("minee comment", "setting new comment");
   commentDoc
     .set(comment)
     .then(() => {
@@ -977,8 +1049,8 @@ export const providerSignIn = (provider, cb) => () => {
           cb();
         })
         .catch((e) => console.error("promise Error", e));
-
       break;
+
     case "facebook":
       firebase
         .auth()
@@ -987,22 +1059,20 @@ export const providerSignIn = (provider, cb) => () => {
           analytics.logEvent("signup_facebook");
           cb();
         });
-
       break;
+
+    default:
+      console.error("Provider", "No proper provider was provided");
   }
 };
 
 // USER //
 let profileListener;
 export const listenToProfile = (user, setProfile) => () => {
-  console.log("mine", "starting to listen");
-
   profileListener = db
     .collection("users")
     .doc(user.uid)
     .onSnapshot((docProfile) => {
-      console.log("mine we got", docProfile.data() ? docProfile.data() : null);
-
       setProfile(docProfile.data() ? docProfile.data() : null);
     });
 };

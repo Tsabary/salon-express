@@ -2,34 +2,31 @@ import "./styles.scss";
 import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 
-import { AuthContext } from "../../../../providers/Auth";
-import { UniqueIdContext } from "../../../../providers/UniqueId";
+import { AuthContext } from "../../../../../providers/Auth";
+import { UniqueIdContext } from "../../../../../providers/UniqueId";
 
-import { titleToKey } from "../../../../utils/strings";
+import { titleToKey } from "../../../../../utils/strings";
 import {
+  listenToMultiverse,
   newPortal,
   leavePortal,
   detachListener,
   logGuestEntry,
   replaceTimestampWithUid,
-} from "../../../../actions";
+} from "../../../../../actions";
 
 import Portal from "./portal";
-import InputField from "../../../formComponents/inputField";
-import BoxedButton from "../../../formComponents/boxedButton";
+import InputField from "../../../../formComponents/inputField";
 
 const Multiverse = ({
+  match,
   room,
-  values,
-  setValues,
-  multiverse,
   currentPortal,
   setCurrentPortal,
-  multiverseArray,
-  isFirstLoad,
   microphonePermissionGranted,
   cameraPermissionGranted,
   currentAudioChannel,
+  listenToMultiverse,
   newPortal,
   leavePortal,
   detachListener,
@@ -39,11 +36,23 @@ const Multiverse = ({
   const { currentUserProfile } = useContext(AuthContext);
   const { uniqueId } = useContext(UniqueIdContext);
 
+  const [portal, setPortal] = useState("");
+
   // This holdes the portal error if any (currently only one is "a portal with a similar name exists")
   const [portalError, setPortalError] = useState(null);
   const [userID, setUserID] = useState(null);
+
+  // This is the multivers - a documents with info of all our portals
+  const [multiverse, setMultiverse] = useState(null);
+
+  // This is the same multiverse just as an array of objects rather as an object
+  const [multiverseArray, setMultiverseArray] = useState(null);
+
+  // We use this to filter portals by user text search
   const [query, setQuery] = useState("");
 
+  // This keeps track if it's our first time loading. On our first load, we set the portal to the fullest one in our multiverse. After that it's up to the user to decide. It's important to have it because we set the portal when we get an update for the multiverse
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   // This is our cleanup event for when the window closes ( remove the user from the portal)
   useEffect(() => {
@@ -67,6 +76,21 @@ const Multiverse = ({
 
   // This is our cleanup event for when the comonent unloads ( remove the user from the portal)
   useEffect(() => {
+    listenToMultiverse(room.id, setMultiverse, setMultiverseArray, () => {
+      newPortal(
+        "Home",
+        currentPortal,
+        { id: match.params.id },
+        currentUserProfile && currentUserProfile.uid
+          ? currentUserProfile.uid
+          : uniqueId,
+        (portalObj) => {
+          setPortal("");
+          setCurrentPortal(portalObj);
+        }
+      );
+    });
+
     return function cleanup() {
       if (!room || !currentPortal) return;
       leavePortal(
@@ -84,6 +108,15 @@ const Multiverse = ({
     if (isFirstLoad) return;
     logGuestEntry(room, currentUserProfile);
   }, [isFirstLoad]);
+
+  // If it's not the first load or if we don't have anything in the multiverse array then return, because we either don't need to automatically pick the portal (not the first load) or there is no portal to choose
+  useEffect(() => {
+    if (!isFirstLoad || !multiverseArray || !multiverseArray.length) return;
+    {
+      setCurrentPortal(multiverseArray[0]);
+      setIsFirstLoad(false);
+    }
+  }, [multiverseArray]);
 
   // If we have a hold of the user's profile now, we should replace the fake uid we've used before with the real user uid
   useEffect(() => {
@@ -104,13 +137,17 @@ const Multiverse = ({
         setUserID(currentUserProfile.uid);
       } else if (room && currentPortal && userID && uniqueId) {
         replaceTimestampWithUid(room, currentPortal, userID, uniqueId);
+        setUserID(null);
       }
   }, [currentUserProfile, room, currentPortal]);
 
   // Render the portals to the page
   const renderPortals = (multiverse, query) => {
     return multiverse
-      .filter((el) => el.title.toLowerCase().startsWith(query.toLowerCase()))
+      .filter(
+        (el) =>
+          el.title && el.title.toLowerCase().startsWith(query.toLowerCase())
+      )
       .map((portal) => {
         return (
           <Portal
@@ -128,8 +165,8 @@ const Multiverse = ({
     <div
       className={
         currentAudioChannel
-          ? "single-room__container-multiverse--with-audio section__container"
-          : "single-room__container-multiverse--no-audio section__container"
+          ? "media__multiverse--with-audio section__container"
+          : "media__multiverse--no-audio section__container"
       }
     >
       <div className="section__title">The Multiverse</div>
@@ -139,17 +176,11 @@ const Multiverse = ({
         autoComplete="off"
         onSubmit={(e) => {
           e.preventDefault();
-          if (
-            !currentUserProfile ||
-            !values ||
-            !values.portal ||
-            !values.portal.length
-          )
-            return;
+          if (!currentUserProfile || !portal || !portal.length) return;
 
           if (
             multiverse.hasOwnProperty(
-              values.portal.trim().split(" ").join("").toLowerCase()
+              portal.trim().split(" ").join("").toLowerCase()
             )
           ) {
             setPortalError("A portal with that name already exists");
@@ -157,12 +188,12 @@ const Multiverse = ({
           }
 
           newPortal(
-            values.portal,
+            portal,
             currentPortal,
             room,
             currentUserProfile.uid,
             (portalObj) => {
-              setValues({ ...values, portal: "" });
+              setPortal("");
               setCurrentPortal(portalObj);
               setPortalError(null);
             }
@@ -172,15 +203,14 @@ const Multiverse = ({
         <InputField
           type="text"
           placeHolder="Open a portal"
-          value={values.portal}
-          onChange={(portal) => {
-            if (portal.length < 30)
-              setValues({
-                ...values,
-                portal: portal
+          value={portal}
+          onChange={(port) => {
+            if (port.length < 30)
+              setPortal(
+                port
                   .replace(/^([^-]*-)|-/g, "$1")
-                  .replace(/[^\p{L}\s\d-]+/gu, ""),
-              });
+                  .replace(/[^\p{L}\s\d-]+/gu, "")
+              );
           }}
         />
 
@@ -192,18 +222,14 @@ const Multiverse = ({
             >
               Open
             </button>
-
-            <button
-              type="submit"
-              className="text-button-mobile  single-room__comment--text"
-            >
-              Open
-            </button>
           </>
         ) : (
-          <a href="#sign-up" className="auth-options__box">
-            <BoxedButton text="Open" />
-          </a>
+          <div
+            className="small-button single-room__comment--boxed"
+            onClick={() => (window.location.hash = "sign-up")}
+          >
+            Open
+          </div>
         )}
       </form>
 
@@ -228,6 +254,7 @@ const Multiverse = ({
 };
 
 export default connect(null, {
+  listenToMultiverse,
   newPortal,
   leavePortal,
   detachListener,

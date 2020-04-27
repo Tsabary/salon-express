@@ -1,6 +1,20 @@
 @import "../../../../styles/imports";
 
 .comments {
+  width: 100%;
+  height: max-content;
+  border-radius: $borderRadius;
+  box-shadow: 0 0.2rem 9rem rgb(228, 228, 228);
+  background-color: white;
+  padding: 3rem;
+  @include resize(1200px) {
+    margin: 0 auto;
+  }
+
+  @include resize(650px) {
+    padding: 2rem;
+  }
+
   &__form {
     display: grid;
     grid-template-columns: 1fr max-content;

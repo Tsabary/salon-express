@@ -9,7 +9,7 @@ import { fetchQuestions } from "../../../actions";
 const Faq = ({ fetchQuestions, questions }) => {
   useEffect(() => {
     if (questions.length === 0) fetchQuestions();
-  }, []);
+  });
 
   const renderQuestions = (questions) => {
 

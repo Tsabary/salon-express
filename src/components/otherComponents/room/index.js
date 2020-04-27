@@ -9,7 +9,7 @@ import { ReactSVG } from "react-svg";
 import ShowMoreText from "react-show-more-text";
 
 import history from "../../../history";
-import firebase from "../../../firebase";
+import firebase from "firebase/app";
 
 import { SearchContext } from "../../../providers/Search";
 import { PageContext } from "../../../providers/Page";
@@ -82,9 +82,11 @@ const Room = ({
             {capitalizeSentances(room.title)}
           </div>
 
-          <div className="room__languages--base">
-            Need to know {getLanguageName(room.language)}
-          </div>
+          {room.language !== "lir" ? (
+            <div className="room__languages--base extra-tiny-margin-top">
+              Need to know {getLanguageName(room.language)}
+            </div>
+          ) : null}
           {room.description ? (
             <ShowMoreText
               lines={3}

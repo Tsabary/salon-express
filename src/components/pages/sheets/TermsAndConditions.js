@@ -10,7 +10,7 @@ const TermsAndConditions = () => {
         the Terms and conditions of the compeny "8×8", who provides the video
         conference.
       </div>
-      <a href="https://jitsi.org/meet-jit-si-terms-of-service/" target="_blank">
+      <a href="https://jitsi.org/meet-jit-si-terms-of-service/" target="_blank" rel="noopener noreferrer">
         To read "8×8" Terms and Conditions click here
       </a>
 

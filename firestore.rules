@@ -21,11 +21,18 @@ service cloud.firestore {
       allow delete: if false;
     }
     
-    match /active_channels/{channel}{
+    match /active_channels/{room}{
       allow read: if true;
-      allow create: if true; // need to check that it's the admin
-      allow update: if true; // need to check that it's the admin
-      allow delete: if true; // need to check that it's the admin
+      allow create: if get(/databases/$(database)/documents/rooms/$(room)).data.user_ID == request.auth.uid; // need to check that it's the admin
+      allow update: if get(/databases/$(database)/documents/rooms/$(room)).data.user_ID == request.auth.uid; // need to check that it's the admin
+      allow delete: if get(/databases/$(database)/documents/rooms/$(room)).data.user_ID == request.auth.uid; // need to check that it's the admin
+    }
+
+    match /events/{event}{
+      allow read: if true;
+      allow create: if get(/databases/$(database)/documents/rooms/$(request.resource.data.room_ID)).data.user_ID == request.auth.uid; // need to check that it's the admin
+      allow update: if get(/databases/$(database)/documents/rooms/$(request.resource.data.room_ID)).data.user_ID == request.auth.uid; // need to check that it's the admin
+      allow delete: if get(/databases/$(database)/documents/rooms/$(request.resource.data.room_ID)).data.user_ID == request.auth.uid; // need to check that it's the admin
     }
 
     match /comments/{room}{

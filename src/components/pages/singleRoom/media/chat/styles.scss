@@ -1,0 +1,36 @@
+@import '../../../../../styles/imports';
+
+.chat {
+  &__access {
+    &-container {
+      height: 450px;
+      border: $border;
+      border-radius: $borderRadius;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &-buttons {
+      width: 35%;
+      display: grid;
+      gap: 2rem;
+    }
+    &-button {
+      cursor: pointer;
+      padding: 1rem;
+      border-radius: $borderRadius;
+      text-align: center;
+
+      &--active {
+        background-color: $mainColor;
+        color: white;
+      }
+
+      &--unactive {
+        background-color: $greyLight;
+        color: $grey;
+      }
+    }
+  }
+}

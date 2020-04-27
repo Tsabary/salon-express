@@ -6,7 +6,7 @@ import { isMobile } from "react-device-detect";
 
 import history from "../../../history";
 
-import firebase from "../../../firebase";
+import firebase from "firebase/app";
 
 // import tnc from "../../files/tnc.pdf";
 // import pp from "../../files/pp.pdf";

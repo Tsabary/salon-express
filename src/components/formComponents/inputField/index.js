@@ -16,9 +16,11 @@ const InputField = ({
     switch (true) {
       case isNumber:
         onChange(Number(string.replace(/\D/, "")));
+        break;
 
       case numbersAndLetters:
-        onChange(string.replace(/[^a-zA-Z0-9]/, ""))
+        onChange(string.replace(/[^a-zA-Z0-9]/, ""));
+        break;
 
       default:
         onChange(string);

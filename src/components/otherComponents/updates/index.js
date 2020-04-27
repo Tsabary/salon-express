@@ -39,13 +39,10 @@ const Updates = ({
   useEffect(() => {
     if (!currentUserProfile) return;
     listenToUpdates(currentUserProfile, () => notification.play());
-    console.log("mine", "plaaaaaaaay");
   }, [currentUserProfile]);
 
   const renderUpdates = (updates) => {
     return updates.reverse().map((update) => {
-      console.log("mineupdte", update);
-      // return <div>fff</div>
       return (
         <Update update={update} key={update.created_on + update.room_ID} />
       );

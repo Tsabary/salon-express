@@ -416,6 +416,10 @@ h3 {
     }
   }
 }
+.iframe {
+  border: none;
+  outline: none;
+}
 
 .popup {
   display: none;
@@ -467,6 +471,7 @@ h3 {
     justify-self: stretch;
     width: 100%;
     margin-top: 0rem;
+    cursor: pointer;
 
     &-text {
       font-size: 1.4rem;

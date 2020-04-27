@@ -81,16 +81,17 @@ const NewRoom = ({ newRoom, togglePopup }) => {
     <div className="popup" id="add-room">
       <div className="popup__close">
         <div />
-        <a
+        <div
           className="popup__close-text"
-          href="#"
           onClick={() => {
             togglePopup(false);
             reset(currentUserProfile);
+            window.location.hash=""
+
           }}
         >
           Close
-        </a>
+        </div>
       </div>
       <div>
         <input

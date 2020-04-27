@@ -20,7 +20,7 @@ const Feed = ({ explore, fetchFirstExplore, fetchMoreExplore }) => {
         ? currentUserProfile.languages
         : null
     );
-  }, []);
+  }, [currentUserProfile, fetchFirstExplore]);
 
   return (
     <div className="feed">

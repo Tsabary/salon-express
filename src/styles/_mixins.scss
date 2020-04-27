@@ -89,10 +89,10 @@
     transition: all 0.4s cubic-bezier(0.7, 0.1, 0.5, 0.1);
   }
 
-  &__visible {
+  &--visible {
   }
 
-  &__hidden {
+  &--hidden {
     position: absolute;
     top: 0;
     left: 100%;

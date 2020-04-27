@@ -16,7 +16,9 @@ const Contact = () => {
 
   useEffect(() => {
     if (currentUserProfile)
-      setValues({ ...values, email: currentUserProfile.email });
+      setValues((values) => {
+        return { ...values, email: currentUserProfile.email };
+      });
   }, [currentUserProfile]);
 
   const handleSubmit = (e) => {

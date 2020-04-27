@@ -2,8 +2,7 @@ import "./styles.scss";
 import React, { useContext, useEffect } from "react";
 import { connect } from "react-redux";
 
-import firebase from "../../../firebase";
-import ReactHowler from "react-howler";
+import firebase from "firebase/app";
 
 import { togglePopup, detachListener } from "../../../actions";
 
@@ -32,24 +31,28 @@ const Home = ({ popupShown, togglePopup, detachListener }) => {
 
       case 3:
         return <MyRooms />;
+
+      default:
+        return null;
     }
   };
 
   return (
     <div className="home">
-   
       {!currentUser ? (
         <div className="home__welcome small-margin-bottom">
           Welcome to <span className="bold-700">Salon Express</span>, where you
           can discover public group video chats. Join sessions, and connect to
           other like minded people from around the world.{" "}
-          <a href="#sign-up" className="bold-700">
+          <span
+            className="bold-700"
+            onClick={() => (window.location.hash = "sign-up")}
+          >
             Sign Up
-          </a>{" "}
+          </span>{" "}
           to join sessions - it's <span className="bold-700">FREE</span>.
         </div>
       ) : null}
-      <ReactHowler src="http://localhost/stream.ogg" playing={true} />
 
       {currentUser ? (
         <div className="home__menu">

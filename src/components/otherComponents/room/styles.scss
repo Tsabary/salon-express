@@ -2,6 +2,7 @@
 
 .room {
   // min-width: 30rem;
+
   border-radius: $borderRadius;
   box-shadow: $containerBoxShadow;
   background-color: white;
@@ -33,7 +34,6 @@
 
   &__last-visit {
     color: $grey;
-    margin-bottom: 1rem;
     line-height: 2rem;
   }
 
@@ -42,11 +42,15 @@
     cursor: pointer;
     &:hover {
       text-decoration: underline;
+      color: $mainColor !important;
+
     }
   }
 
   &__content {
     padding: 3rem;
+    display: grid;
+    gap: 1rem;
     @include resize(900px) {
       padding: 2rem;
     }

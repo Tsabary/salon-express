@@ -2,7 +2,7 @@ import "./styles.scss";
 import React, { useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
-import firebase from "../../../firebase";
+import firebase from "firebase/app";
 import history from "../../../history";
 
 import { AuthContext } from "../../../providers/Auth";

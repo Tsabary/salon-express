@@ -20,7 +20,7 @@ const Favorites = ({ favorites, fetchFirstFavorites, fetchMoreFavorites }) => {
         currentUser.uid
       );
     }
-  }, [currentUser]);
+  }, [currentUser, fetchFirstFavorites, favorites]);
 
   return (
     <div className="feed">

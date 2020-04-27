@@ -21,7 +21,7 @@ const Comment = ({ comment }) => {
         onClick={() => myHistory.push(`/${comment.user_username}`)}
       >
         <div className="max-fr">
-          <img className="comment__avatar" src={comment.user_avatar} />
+          <img className="comment__avatar" src={comment.user_avatar} alt="comment author"/>
           <div className="comment__user-name">{comment.user_name}</div>
         </div>
         <div className="comment__time">

@@ -7,7 +7,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { ReactSVG } from "react-svg";
 
 import history from "../../../../history";
-import firebase from "../../../../firebase";
+import firebase from "firebase/app";
 
 import { AuthContext } from "../../../../providers/Auth";
 import { SearchContext } from "../../../../providers/Search";
@@ -30,6 +30,7 @@ const RoomInfo = ({
   updateRoom,
   addToFavorites,
   removeFromFavorites,
+  currentAudioChannel,
 }) => {
   const myHistory = useHistory(history);
 
@@ -88,8 +89,17 @@ const RoomInfo = ({
     }, 3000);
   };
 
-  return (
-    <div className="section__container room-info">
+  return room ? (
+    <div
+      className={
+        (room && room.accepting_donations) ||
+        (currentUserProfile && room && currentUserProfile.uid === room.user_ID)
+          ? "single-room__container-info--with-donations section__container room-info"
+          : currentAudioChannel
+          ? "single-room__container-info--with-audio section__container room-info"
+          : "single-room__container-info--without-donations section__container room-info"
+      }
+    >
       <div className="section__title">Room Info</div>
 
       <div className="room__top">
@@ -108,19 +118,21 @@ const RoomInfo = ({
           {capitalizeSentances(room.title)}
         </div>
 
-        <div className="room__languages--base">
-          Need to know {getLanguageName(room.language)}
-        </div>
+        {room.language !== "lir" ? (
+          <div className="room__languages--base extra-tiny-margin-top">
+            Need to know {getLanguageName(room.language)}
+          </div>
+        ) : null}
 
         {isDescriptionEdited ? (
           <>
-            <div className="tiny-margin-bottom">
+            <div className="tiny-margin-bottom tiny-margin-top">
               <TextArea
                 type="text"
                 placeHolder="Describe what this Room is about"
                 value={values && values.description}
                 onChange={(val) => {
-                  if (val.length < 300)
+                  if (val.length < 600)
                     setValues({ ...values, description: val });
                 }}
               />
@@ -152,7 +164,9 @@ const RoomInfo = ({
           </>
         ) : (
           <>
-            <div className="room__description">{room.description}</div>
+            <div className="room__description tiny-margin-top">
+              {values.description}
+            </div>
 
             {currentUserProfile &&
             room &&
@@ -250,8 +264,8 @@ const RoomInfo = ({
                 setRoom({
                   ...room,
                   favorites: room.favorites
-                  ? [...room.favorites, currentUserProfile.uid]
-                  : [currentUserProfile.uid],
+                    ? [...room.favorites, currentUserProfile.uid]
+                    : [currentUserProfile.uid],
                 });
               })
             }
@@ -271,7 +285,7 @@ const RoomInfo = ({
         )}
       </div>
     </div>
-  );
+  ) : null;
 };
 
 export default connect(null, {

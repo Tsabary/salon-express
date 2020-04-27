@@ -1,7 +1,6 @@
 import "./styles.scss";
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../../../../providers/Auth";
-import validator from "validator";
 import Form from "react-bootstrap/Form";
 
 import ReactTooltip from "react-tooltip";
@@ -18,7 +17,6 @@ const AudioSettings = ({
   room,
   currentAudioChannel,
 }) => {
-  const { currentUserProfile } = useContext(AuthContext);
   const [newChannel, setNewChannel] = useState(null);
 
   const renderChannels = (channels) => {
@@ -83,7 +81,7 @@ const AudioSettings = ({
   };
 
   return (
-    <div className="section__container">
+    <div className="section__container single-room__container-audio-settings">
       <div className="max-max">
         <div className="section__title">Audio Settings</div>
 
@@ -104,7 +102,13 @@ const AudioSettings = ({
         </>
       </div>
 
-      <form autoComplete="off" onSubmit={() => addChannel(newChannel, room)}>
+      <form
+        autoComplete="off"
+        onSubmit={(e) => {
+          e.preventDefault();
+          addChannel(newChannel, room, () => setNewChannel(null));
+        }}
+      >
         <div className="fr-max">
           <div>
             <InputField

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 
@@ -6,7 +6,7 @@ import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
 import history from "../../../history";
-import firebase from "../../../firebase";
+import firebase from "firebase/app";
 
 import { signUp, providerSignIn, togglePopup } from "../../../actions";
 
@@ -146,15 +146,16 @@ const SignUp = ({ signUp, providerSignIn, togglePopup }) => {
     <div className="popup" id="sign-up">
       <div className="popup__close">
         <div />
-        <a
+        <div
           className="popup__close-text"
-          href="#"
           onClick={() => {
             togglePopup(false);
+            window.location.hash=""
+
           }}
         >
           Close
-        </a>
+        </div>
       </div>
       {renderContent(submitting, formError)}
     </div>

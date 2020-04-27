@@ -8,7 +8,7 @@ const Social = ({ data }) => {
     <div className="social">
       {data.instagram ? (
         <div className="social__icon--instagram">
-          <a href={"https://" + data.instagram} target="_blank">
+          <a href={"https://" + data.instagram} target="_blank" rel="noopener noreferrer">
             <ReactSVG
               src="../svgs/instagram.svg"
               wrapper="div"
@@ -22,7 +22,7 @@ const Social = ({ data }) => {
 
       {data.twitter ? (
         <div className="social__icon--twitter">
-          <a href={"https://" + data.twitter} target="_blank">
+          <a href={"https://" + data.twitter} target="_blank" rel="noopener noreferrer">
             <ReactSVG
               src="../svgs/twitter.svg"
               wrapper="div"
@@ -36,7 +36,7 @@ const Social = ({ data }) => {
 
       {data.facebook ? (
         <div className="social__icon--facebook">
-          <a href={"https://" + data.facebook} target="_blank">
+          <a href={"https://" + data.facebook} target="_blank" rel="noopener noreferrer">
             <ReactSVG
               src="../svgs/facebook.svg"
               wrapper="div"
@@ -50,7 +50,7 @@ const Social = ({ data }) => {
 
       {data.soundcloud ? (
         <div className="social__icon--soundcloud">
-          <a href={"https://" + data.soundcloud} target="_blank">
+          <a href={"https://" + data.soundcloud} target="_blank" rel="noopener noreferrer">
             <ReactSVG
               src="../svgs/soundcloud.svg"
               wrapper="div"
@@ -64,7 +64,7 @@ const Social = ({ data }) => {
 
       {data.spotify ? (
         <div className="social__icon--spotify">
-          <a href={"https://" + data.spotify} target="_blank">
+          <a href={"https://" + data.spotify} target="_blank" rel="noopener noreferrer">
             <ReactSVG
               src="../svgs/spotify.svg"
               wrapper="div"
@@ -78,7 +78,7 @@ const Social = ({ data }) => {
 
       {data.youtube ? (
         <div className="social__icon--youtube">
-          <a href={"https://" + data.youtube} target="_blank">
+          <a href={"https://" + data.youtube} target="_blank" rel="noopener noreferrer">
             <ReactSVG
               src="../svgs/youtube.svg"
               wrapper="div"
@@ -92,7 +92,7 @@ const Social = ({ data }) => {
 
       {data.linkedin ? (
         <div className="social__icon--linkedin">
-          <a href={"https://" + data.linkedin} target="_blank">
+          <a href={"https://" + data.linkedin} target="_blank" rel="noopener noreferrer">
             <ReactSVG
               src="../svgs/linkedin.svg"
               wrapper="div"
@@ -106,7 +106,7 @@ const Social = ({ data }) => {
 
       {data.website ? (
         <div className="social__icon--website">
-          <a href={"https://" + data.website} target="_blank">
+          <a href={"https://" + data.website} target="_blank" rel="noopener noreferrer">
             <ReactSVG
               src="../svgs/website.svg"
               wrapper="div"

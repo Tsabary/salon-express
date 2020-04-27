@@ -126,15 +126,16 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
     <div className="popup" id="update-profile">
       <div className="popup__close">
         <div />
-        <a
+        <div
           className="popup__close-text"
-          href="#"
+     
           onClick={() => {
             togglePopup(false);
+            window.location.hash=""
           }}
         >
           Close
-        </a>
+        </div>
       </div>
       {!submitting ? (
         <div>
@@ -153,6 +154,7 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
                       (currentUserProfile && currentUserProfile.avatar) ||
                       "../../imgs/logo.jpeg"
                     }
+                    alt="Profile"
                   />
                 </label>
                 <input

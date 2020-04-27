@@ -3,7 +3,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 
-import firebase from "../../../../firebase";
+import firebase from "firebase/app";
 
 import history from "../../../../history";
 
@@ -108,20 +108,6 @@ const FilterInput = ({ tags, fetchTags }) => {
             );
           }}
         />
-
-        // <input
-        //   className="filter-input__input"
-        //   type="text"
-        //   placeholder="Filter rooms by topic"
-        //   autoComplete="new-password"
-        //   value={tagInput}
-        //   onChange={(e) =>
-        //     handleTagInputChange(
-        //       e.target.value.toLowerCase().split(" ").join("-")
-        //     )
-        //   }
-        //   onKeyDown={handleKeyPress}
-        // />
       )}
       {!searchTerm && tagInput && tagsSuggestions ? (
         <div className="filter-input__tags">

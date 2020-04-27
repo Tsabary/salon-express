@@ -114,7 +114,7 @@ const Section = ({
           {!room || (room && !room[field]) ? (
             ""
           ) : isUrl ? (
-            <a href={room[field]} target="_blank" className="boxed-button">
+            <a href={room[field]} target="_blank" className="boxed-button" rel="noopener noreferrer">
               Donations
             </a>
           ) : (

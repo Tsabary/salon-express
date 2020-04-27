@@ -31,13 +31,20 @@ const Admin = ({
     if (room && room.associate) {
       console.log("mine", "fethcing profile");
       fetchStrangerProfile(room.user_username, setAdmin);
-    } else {
-      console.log("mine", "not fethcing profile");
     }
   }, [room]);
 
-  return (
-    <div className="section__container">
+  return (room && room.associate) ||
+    (currentUserProfile && room && currentUserProfile.uid === room.user_ID) ? (
+    <div
+      className={
+        currentUserProfile && room && currentUserProfile.uid === room.user_ID
+          ? "single-room__container-admin--owner section__container"
+          : "single-room__container-admin--visitor section__container"
+      }
+    >
+      <div className="section__title">Admin</div>
+
       {currentUserProfile && room && currentUserProfile.uid === room.user_ID ? (
         <>
           <ToggleField
@@ -59,8 +66,6 @@ const Admin = ({
 
       {room && room.associate ? (
         <>
-          <div className="single-room__founder-admin">Admin:</div>
-
           <div
             className="max-max"
             onClick={() => myHistory.push(`/${room.user_username}`)}
@@ -75,14 +80,8 @@ const Admin = ({
         </>
       ) : null}
     </div>
-  );
+  ) : null;
 };
-
-// const mapStateToProps = (state) => {
-//   return {
-//     strangerProfile: state.strangerProfile,
-//   };
-// };
 
 export default connect(null, {
   keepRoomListed,

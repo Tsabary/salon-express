@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import firebase from "../firebase";
+import firebase from "firebase/app";
 
 import { listenToProfile, stopListeningToProfile } from "../actions";
 
@@ -16,7 +16,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (currentUser) {
       listenToProfile(currentUser, setCurrentUserProfile);
-      console.log("mine", "wasn't null")
     } else {
       stopListeningToProfile();
     }

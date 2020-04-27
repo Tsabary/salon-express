@@ -3,7 +3,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
-import firebase from "../../../../firebase";
+import firebase from "firebase/app";
 import { AuthContext } from "../../../../providers/Auth";
 
 import { logOut, resendVerification, togglePopup } from "../../../../actions";
@@ -60,16 +60,16 @@ const UserOptions = ({ logOut, resendVerification, togglePopup }) => {
       </div>
 
       <div className="user-options__options">
-        <a
+        <div
           className="user-options__option"
-          href="#update-profile"
           onClick={() => {
+            window.location.hash = "update-profile";
             togglePopup(true);
-            firebase.analytics().logEvent("profile_update_clicked")
+            firebase.analytics().logEvent("profile_update_clicked");
           }}
         >
           <TextButton text="Update Profile" />
-        </a>
+        </div>
 
         <div className="user-options__option" onClick={() => logOut()}>
           Log Out

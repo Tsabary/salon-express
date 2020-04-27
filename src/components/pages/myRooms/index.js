@@ -20,7 +20,7 @@ const MyRooms = ({ myRooms, fetchFirstMyRooms, fetchMoreMyRooms }) => {
         currentUser.uid
       );
     }
-  }, [currentUser]);
+  }, [currentUser, fetchFirstMyRooms, myRooms]);
 
   return (
     <div className="feed">

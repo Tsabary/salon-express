@@ -67,7 +67,7 @@ const Stranger = ({ match, strangerProfile, fetchStrangerProfile }) => {
         <div className="stranger__header-social">
           {strangerProfile && strangerProfile.instagram ? (
             <div className="social__icon--instagram">
-              <a href={"https://" + strangerProfile.instagram} target="_blank">
+              <a href={"https://" + strangerProfile.instagram} target="_blank" rel="noopener noreferrer">
                 <svg className="social__icon social__icon--instagram-icon">
                   <use xlinkHref="../sprite.svg#instagram"></use>
                 </svg>
@@ -77,7 +77,7 @@ const Stranger = ({ match, strangerProfile, fetchStrangerProfile }) => {
 
           {strangerProfile && strangerProfile.twitter ? (
             <div className="social__icon--twitter">
-              <a href={"https://" + strangerProfile.twitter} target="_blank">
+              <a href={"https://" + strangerProfile.twitter} target="_blank" rel="noopener noreferrer">
                 <svg className="social__icon social__icon--twitter-icon">
                   <use xlinkHref="../sprite.svg#twitter"></use>
                 </svg>
@@ -87,7 +87,7 @@ const Stranger = ({ match, strangerProfile, fetchStrangerProfile }) => {
 
           {strangerProfile && strangerProfile.facebook ? (
             <div className="social__icon--facebook">
-              <a href={"https://" + strangerProfile.facebook} target="_blank">
+              <a href={"https://" + strangerProfile.facebook} target="_blank" rel="noopener noreferrer">
                 <svg className="social__icon social__icon--facebook-icon">
                   <use xlinkHref="../sprite.svg#facebook"></use>
                 </svg>
@@ -97,7 +97,7 @@ const Stranger = ({ match, strangerProfile, fetchStrangerProfile }) => {
 
           {strangerProfile && strangerProfile.soundcloud ? (
             <div className="social__icon--soundcloud">
-              <a href={"https://" + strangerProfile.soundcloud} target="_blank">
+              <a href={"https://" + strangerProfile.soundcloud} target="_blank" rel="noopener noreferrer">
                 <svg className="social__icon social__icon--soundcloud-icon">
                   <use xlinkHref="../sprite.svg#soundcloud"></use>
                 </svg>
@@ -107,7 +107,7 @@ const Stranger = ({ match, strangerProfile, fetchStrangerProfile }) => {
 
           {strangerProfile && strangerProfile.spotify ? (
             <div className="social__icon--spotify">
-              <a href={"https://" + strangerProfile.spotify} target="_blank">
+              <a href={"https://" + strangerProfile.spotify} target="_blank" rel="noopener noreferrer">
                 <svg className="social__icon social__icon--spotify-icon">
                   <use xlinkHref="../sprite.svg#spotify"></use>
                 </svg>
@@ -117,7 +117,7 @@ const Stranger = ({ match, strangerProfile, fetchStrangerProfile }) => {
 
           {strangerProfile && strangerProfile.youtube ? (
             <div className="social__icon--youtube">
-              <a href={"https://" + strangerProfile.youtube} target="_blank">
+              <a href={"https://" + strangerProfile.youtube} target="_blank" rel="noopener noreferrer">
                 <svg className="social__icon social__icon--youtube-icon">
                   <use xlinkHref="../sprite.svg#youtube"></use>
                 </svg>
@@ -127,7 +127,7 @@ const Stranger = ({ match, strangerProfile, fetchStrangerProfile }) => {
 
           {strangerProfile && strangerProfile.linkedin ? (
             <div className="social__icon--linkedin">
-              <a href={"https://" + strangerProfile.linkedin} target="_blank">
+              <a href={"https://" + strangerProfile.linkedin} target="_blank" rel="noopener noreferrer">
                 <svg className="social__icon social__icon--linkedin-icon">
                   <use xlinkHref="../sprite.svg#linkedin"></use>
                 </svg>
@@ -137,7 +137,7 @@ const Stranger = ({ match, strangerProfile, fetchStrangerProfile }) => {
 
           {strangerProfile && strangerProfile.website ? (
             <div className="social__icon--website">
-              <a href={"https://" + strangerProfile.website} target="_blank">
+              <a href={"https://" + strangerProfile.website} target="_blank" rel="noopener noreferrer">
                 <svg className="social__icon social__icon--website-icon">
                   <use xlinkHref="../sprite.svg#website"></use>
                 </svg>

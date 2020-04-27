@@ -2,17 +2,28 @@ import "./styles.scss";
 import React, { useState, useEffect } from "react";
 import ScrollToBottom from "react-scroll-to-bottom";
 
-import { titleToKey } from "../../../../utils/strings";
+import { titleToKey } from "../../../../../utils/strings";
+import { listenToMultiverse } from "../../../../../actions";
 
 import Portal from "./portal";
+import { connect } from "react-redux";
 
-const MobileMultiverse = ({ multiverseArray, room }) => {
+const MobileMultiverse = ({ room, listenToMultiverse }) => {
   const [open, setOpen] = useState(false);
+
+  // This is the multivers - a documents with info of all our portals
+  const [multiverse, setMultiverse] = useState(null);
+
+  // This is the same multiverse just as an array of objects rather as an object
+  const [multiverseArray, setMultiverseArray] = useState(null);
+
+  useEffect(() => {
+    listenToMultiverse(room.id, setMultiverse, setMultiverseArray);
+  });
 
   // Render the portals to the page
   const renderPortals = (multiverse) => {
     return multiverse.map((portal) => {
-      console.log("mineportal", portal);
 
       return (
         <Portal
@@ -48,4 +59,4 @@ const MobileMultiverse = ({ multiverseArray, room }) => {
   );
 };
 
-export default MobileMultiverse;
+export default connect(null, { listenToMultiverse })(MobileMultiverse);

@@ -9,7 +9,7 @@ import { AuthContext } from "../../../../providers/Auth";
 import { PageContext } from "../../../../providers/Page";
 
 import { togglePopup, logOut } from "../../../../actions";
-import { turnToLowerCaseWithHyphen } from '../../../../utils/strings';
+import { turnToLowerCaseWithHyphen } from "../../../../utils/strings";
 
 const Menu = ({ togglePopup, logOut }) => {
   const { currentUser } = useContext(AuthContext);
@@ -17,10 +17,7 @@ const Menu = ({ togglePopup, logOut }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const myHistory = useHistory(history);
 
-
-
-
-  const itemNumber = item => {
+  const itemNumber = (item) => {
     switch (item) {
       case "Explore":
         return 1;
@@ -30,11 +27,13 @@ const Menu = ({ togglePopup, logOut }) => {
 
       case "My Rooms":
         return 3;
-
+      
+      default:
+        return null;
     }
   };
 
-  const handleChange = p => {
+  const handleChange = (p) => {
     if (p !== page) setPage(p);
     p === 6 ? myHistory.push("/contact") : myHistory.push("/");
 
@@ -42,7 +41,7 @@ const Menu = ({ togglePopup, logOut }) => {
   };
 
   const renderMenuItems = (array, p) => {
-    return array.map(item => {
+    return array.map((item) => {
       const smallHyphenedItem = turnToLowerCaseWithHyphen(item);
 
       return (
@@ -91,24 +90,29 @@ const Menu = ({ togglePopup, logOut }) => {
       <nav className="navigation__nav">
         <ul className="navigation__list">
           {currentUser && page
-            ? renderMenuItems(
-                ["Explore", "Favorites", "My Rooms"],
-                page
-              )
+            ? renderMenuItems(["Explore", "Favorites", "My Rooms"], page)
             : renderMenuItems(["Explore"], page)}
-          
 
           {currentUser ? (
-            <a href="#add-room" onClick={() => setIsMenuOpen(false)}>
+            <div
+              onClick={() => {
+                setIsMenuOpen(false);
+                window.location.hash = "add-room";
+              }}
+            >
               <li className="navigation__item">New Room</li>
-            </a>
+            </div>
           ) : null}
 
-
           {currentUser ? (
-            <a href="#update-profile" onClick={() => setIsMenuOpen(false)}>
+            <div
+              onClick={() => {
+                setIsMenuOpen(false);
+                window.location.hash = "update-profile";
+              }}
+            >
               <li className="navigation__item">Update Profile</li>
-            </a>
+            </div>
           ) : null}
           <li className="navigation__item" onClick={() => handleChange(6)}>
             Contact
@@ -125,13 +129,15 @@ const Menu = ({ togglePopup, logOut }) => {
             </li>
           ) : (
             <li>
-              <a
+              <div
                 className="navigation__item"
-                href="#sign-up"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  window.location.hash="sign-up"
+                }}
               >
                 Sign Up / Login
-              </a>
+              </div>
             </li>
           )}
         </ul>
