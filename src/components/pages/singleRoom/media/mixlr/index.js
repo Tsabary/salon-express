@@ -23,7 +23,7 @@ const Mixlr = ({ ID }) => {
         id="myId2"
         display="initial"
         position="relative"
-        className="iframe"
+        className="my-iframe"
       />
     </div>
   );

@@ -9,7 +9,7 @@ const Youtube = ({ ID }) => {
       src={`https://www.youtube.com/embed/${ID}`}
       frameborder="0"
       allow="fullscreen; accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-      className="single-room__chat"
+      className="my-iframe"
     />
   );
 };

@@ -1,0 +1,31 @@
+@import '../../../styles/imports';
+
+.audio-channels {
+  &__channels {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  &__save-order {
+    &::before {
+      display: block;
+      content: "You have unsaved changes";
+      color: red;
+      font-family: $font;
+      border-radius: $borderRadius;
+      border: 1px red solid;
+      padding: 1rem 2rem;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    &:hover {
+      &::before {
+        color: $mainColor;
+        border: 1px $mainColor solid;
+        content: "Click to save";
+      }
+    }
+  }
+}

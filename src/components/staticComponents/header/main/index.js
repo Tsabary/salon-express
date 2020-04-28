@@ -3,18 +3,18 @@ import React, { useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
 import firebase from "firebase/app";
-import history from "../../../history";
+import history from "../../../../history";
 
-import { AuthContext } from "../../../providers/Auth";
-import { PageContext } from "../../../providers/Page";
-import { SearchContext } from "../../../providers/Search";
+import { AuthContext } from "../../../../providers/Auth";
+import { PageContext } from "../../../../providers/Page";
+import { SearchContext } from "../../../../providers/Search";
 
-import { listenToProfile, stopListeningToProfile } from "../../../actions";
+import { listenToProfile, stopListeningToProfile } from "../../../../actions";
 
-import AuthOptions from "./authOptions";
-import UserOptions from "./userOptions";
-import FilterInput from "./filterInput";
-import MobileMenu from "./mobileMenu";
+import AuthOptions from "../authOptions";
+import UserOptions from "../userOptions";
+import FilterInput from "../filterInput";
+import MobileMenu from "../mobileMenu";
 import { connect } from "react-redux";
 
 const Header = ({ listenToProfile, stopListeningToProfile }) => {

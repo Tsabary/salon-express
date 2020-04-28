@@ -6,7 +6,7 @@ import Form from "react-bootstrap/Form";
 
 import { AuthContext } from "../../../providers/Auth";
 
-import { updateProfile, togglePopup } from "../../../actions";
+import { updateProfile } from "../../../actions";
 import { validateWordsLength } from "../../../utils/strings";
 import { errorMessages } from "../../../utils/forms";
 import {
@@ -18,7 +18,7 @@ import {
 import InputField from "../../formComponents/inputField";
 import validator from "validator";
 
-const UpdateProfile = ({ updateProfile, togglePopup }) => {
+const UpdateProfile = ({ updateProfile }) => {
   const { currentUserProfile, setCurrentUserProfile, currentUser } = useContext(
     AuthContext
   );
@@ -97,7 +97,6 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
             avatar: selectedImage || currentUserProfile.avatar,
           });
           setSubmitting(false);
-          togglePopup(false);
         }
       );
     }
@@ -128,9 +127,7 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
         <div />
         <div
           className="popup__close-text"
-     
           onClick={() => {
-            togglePopup(false);
             window.location.hash=""
           }}
         >
@@ -332,4 +329,4 @@ const UpdateProfile = ({ updateProfile, togglePopup }) => {
   );
 };
 
-export default connect(null, { updateProfile, togglePopup })(UpdateProfile);
+export default connect(null, { updateProfile})(UpdateProfile);

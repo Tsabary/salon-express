@@ -93,7 +93,7 @@ const Event = ({ event, room, deleteEvent }) => {
               data-tip={`deleteEvent${event.id}`}
               data-for={`deleteEvent${event.id}`}
               beforeInjection={(svg) => {
-                svg.classList.add("room__icon");
+                svg.classList.add("svg-icon--normal");
               }}
             />
             <ReactTooltip id={`deleteEvent${event.id}`}>
@@ -112,7 +112,7 @@ const Event = ({ event, room, deleteEvent }) => {
             src="../svgs/calendar.svg"
             wrapper="div"
             beforeInjection={(svg) => {
-              svg.classList.add("room__icon");
+              svg.classList.add("svg-icon--normal");
             }}
           />
 

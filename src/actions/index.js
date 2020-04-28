@@ -453,7 +453,9 @@ let channelListener;
 export const fetchSingleRoom = (
   room_ID,
   setRoom,
-  setCurrentAudioChannel
+  setGlobalRoom,
+  setCurrentAudioChannel,
+  setGlobalCurrentAudioChannel
 ) => async (dispatch) => {
   const docRoom = await db
     .collection("rooms")
@@ -463,6 +465,7 @@ export const fetchSingleRoom = (
   analytics.logEvent("room_direct_navigation");
   if (docRoom.data()) {
     setRoom(docRoom.data());
+    setGlobalRoom(docRoom.data());
 
     dispatch({
       type: SET_CHANNELS,
@@ -477,6 +480,9 @@ export const fetchSingleRoom = (
     .doc(room_ID)
     .onSnapshot((docChannel) => {
       setCurrentAudioChannel(docChannel.data() ? docChannel.data() : null);
+      setGlobalCurrentAudioChannel(
+        docChannel.data() ? docChannel.data() : null
+      );
     });
 };
 
@@ -509,12 +515,15 @@ export const detachListener = () => () => {
 };
 
 // Setting the active audio channel
-export const setActiveChannel = (roomID, channel) => () => {
+export const setActiveChannel = (roomID, channel, cb) => () => {
   db.collection("active_channels")
     .doc(roomID)
     .set({
       link: channel ? channel.link : null,
       source: channel ? channel.source : null,
+    })
+    .then(() => {
+      if (cb) cb();
     });
 };
 
@@ -644,15 +653,17 @@ export const newPortal = (newPortal, oldPortal, room, uid, cb) => () => {
 // AUDIO CHANNELS //
 
 export const addChannel = (channel, room, cb) => async (dispatch) => {
+  const channelObj = {
+    ...channel,
+    source: channel.source.toLowerCase(),
+    id: uuidv1(),
+  };
+
   db.collection("rooms")
     .doc(room.id)
     .set(
       {
-        audio_channels: firebase.firestore.FieldValue.arrayUnion({
-          ...channel,
-          source: channel.source.toLowerCase(),
-          id: uuidv1(),
-        }),
+        audio_channels: firebase.firestore.FieldValue.arrayUnion(channelObj),
       },
       { merge: true }
     )
@@ -661,7 +672,7 @@ export const addChannel = (channel, room, cb) => async (dispatch) => {
 
       dispatch({
         type: ADD_CHANNEL,
-        payload: channel,
+        payload: channelObj,
       });
     })
     .catch((e) => console.error("promise Error add chanen", e));
@@ -682,6 +693,13 @@ export const deleteChannel = (channel, room, cb) => async (dispatch) => {
       });
     })
     .catch((e) => console.error("promise Error delete channel", e));
+};
+
+export const saveArrayOrder = (collection, key, array, parent, reset) => () => {
+  db.collection(collection)
+    .doc(parent.id)
+    .set({ [key]: array }, { merge: true })
+    .then(() => reset());
 };
 
 // EVENTS //
@@ -775,11 +793,11 @@ export const keepRoomListed = (room, listed) => async (dispatch) => {
 
 // ROOM //
 
-export const newRoom = (values, reset) => (dispatch) => {
+export const newRoom = (values, reset) => async (dispatch) => {
   window.scrollTo(0, 0);
 
   const batch = db.batch();
-  const newDoc = db.collection("rooms").doc();
+  const newDoc = await db.collection("rooms").doc();
 
   const room = {
     ...values,
@@ -857,6 +875,134 @@ export const newComment = (values, cb) => async () => {
       cb();
     })
     .catch((e) => console.error("promise Error new comment", e));
+};
+
+// FLOOR //
+
+export const fetchFloor = (floor_ID, setFloor) => async () => {
+  const docFloor = await db
+    .collection("floors")
+    .doc(floor_ID)
+    .get()
+    .catch((e) => console.error("promise Error fetch sing floor", e));
+
+  analytics.logEvent("floor_direct_navigation");
+
+  if (docFloor.data()) {
+    setFloor(docFloor.data());
+  }
+};
+
+export const fetchFloorRooms = (floor_ID, setFloorRooms) => async () => {
+  const data = await db
+    .collection("floor_rooms")
+    .where("floor_ID", "==", floor_ID)
+    .get()
+    .catch((e) => console.error("promise Error fetch sing floor", e));
+
+  analytics.logEvent("floor_direct_navigation");
+
+  setFloorRooms(data.docs ? data.docs.map((doc) => doc.data()) : []);
+};
+
+export const fetchFloorPlans = (setFloorPlans) => async () => {
+  const data = await db
+    .collection("floor_plans")
+    .get()
+    .catch((e) => console.error("promise Error fetch floor plans", e));
+
+  setFloorPlans(data.docs ? data.docs.map((doc) => doc.data()) : []);
+};
+
+export const newFloor = (values, reset) => async (dispatch) => {
+  window.scrollTo(0, 0);
+
+  const batch = db.batch();
+  const newDoc = await db.collection("floors").doc();
+
+  const room = {
+    ...values,
+    id: newDoc.id,
+  };
+
+  batch.set(newDoc, room);
+
+  batch
+    .commit()
+    .then((d) => {
+      analytics.logEvent("floor_opened", {
+        language: values.language,
+        tags: values.tags,
+      });
+
+      reset();
+
+      // dispatch({
+      //   type: NEW_ROOM,
+      //   payload: room,
+      // });
+    })
+    .catch((e) => console.error("promise Error new floor", e));
+};
+
+export const newFloorRoom = (values, reset) => async () => {
+  window.scrollTo(0, 0);
+
+  const batch = db.batch();
+  const newDoc = await db.collection("floor_rooms").doc();
+
+  const room = {
+    ...values,
+    id: newDoc.id,
+  };
+
+  batch.set(newDoc, room);
+
+  batch
+    .commit()
+    .then((d) => {
+      analytics.logEvent("floor_room_opened");
+
+      reset();
+
+      // dispatch({
+      //   type: NEW_ROOM,
+      //   payload: room,
+      // });
+    })
+    .catch((e) => console.error("promise Error new floor room", e));
+};
+
+export const addFloorPlan = (rooms, image, cb) => async () => {
+  const floorPlanDoc = await db.collection("floor_plans").doc();
+
+  const uploadTask = storage
+    .ref(`/images/floor_plans/${floorPlanDoc.id}`)
+    .put(image);
+
+  uploadTask.on(
+    "state_changed",
+    (snapShot) => {
+      //takes a snap shot of the process as it is happening
+    },
+    (err) => {
+      //catches the errors
+    },
+    () => {
+      // gets the functions from storage refences the image storage in firebase by the children
+      // gets the download url then sets the image from firebase as the value for the imgUrl key:
+      storage
+        .ref(`/images/floor_plans`)
+        .child(floorPlanDoc.id)
+        .getDownloadURL()
+        .then((fireBaseUrl) => {
+          const floorPlan = { id: floorPlanDoc.id, rooms, image: fireBaseUrl };
+          floorPlanDoc.set(floorPlan).then(() => {
+            cb();
+          });
+        });
+    }
+  );
 };
 
 export const follow = (

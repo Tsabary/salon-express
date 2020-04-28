@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 
 import { AuthContext } from "../../../providers/Auth";
 import { UniqueIdContext } from "../../../providers/UniqueId";
+import { RoomContext } from "../../../providers/Room";
 
 import { fetchSingleRoom } from "../../../actions";
 
@@ -16,7 +17,9 @@ import Calendar from "./calendar";
 import Media from "./media";
 
 const SingleRoom = ({ match, fetchSingleRoom }) => {
+  const {setGlobalCurrentAudioChannel} = useContext(RoomContext)
   const { currentUserProfile } = useContext(AuthContext);
+  const { setGlobalRoom } = useContext(RoomContext);
 
   // This is a fake unique id based on current timestamp. We use it to identify users that aren't logged in, so we can manage the coun of users in each portal
   const { uniqueId } = useContext(UniqueIdContext);
@@ -27,14 +30,18 @@ const SingleRoom = ({ match, fetchSingleRoom }) => {
   // We use this state to hold
   const [values, setValues] = useState({});
 
-
-
   const [currentAudioChannel, setCurrentAudioChannel] = useState(null);
 
   // This happens when the room first loads. We take the id of the room and also the fake uid (return if it's not set yet) and we fetch the rooms data. There's also a callback for creating a new portal called home in case there aren't any portals in this room yet
   useEffect(() => {
     if (!uniqueId) return;
-    fetchSingleRoom(match.params.id, setRoom, setCurrentAudioChannel);
+    fetchSingleRoom(
+      match.params.id,
+      setRoom,
+      setGlobalRoom,
+      setCurrentAudioChannel,
+      setGlobalCurrentAudioChannel
+    );
   }, [match.params.id, uniqueId]);
 
   // This sets the value of the donations field (so that it'll be present in our edit component). Should just move to it's own component
@@ -58,10 +65,8 @@ const SingleRoom = ({ match, fetchSingleRoom }) => {
     <div className="single-room">
       {/* {!cameraPermissionGranted || !microphonePermissionGranted ? <div className="single-room__point-bg"></div>:null} */}
 
-
       {/** This is the video chat, the embedded streams, the Mixlr and the Multiverse*/}
-      <Media room={room} currentAudioChannel={currentAudioChannel}/>
-
+      <Media room={room} currentAudioChannel={currentAudioChannel} />
 
       {room ? (
         <Calendar

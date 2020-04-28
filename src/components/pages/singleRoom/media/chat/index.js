@@ -85,12 +85,10 @@ const Chat = ({
         display="initial"
         position="relative"
         allow="fullscreen; camera; microphone"
-        className="iframe"
+        className="my-iframe"
       />
     ) : (
-        <div className="chat__access-container">
-                      <div>dfsdfsdfsdf</div>
-
+      <div className="chat__access-container">
         <div className="chat__access-buttons">
           {microphonePermissionGranted ? (
             <div className="chat__access-button chat__access-button--unactive">

@@ -404,19 +404,37 @@ h3 {
   }
 }
 
+.svg-icon {
+  &--normal {
+    height: 15px;
+    width: 15px;
+    text-align: center;
+    margin: auto;
+  }
+
+  &--small {
+    height: 10px;
+    width: 10px;
+    text-align: center;
+    margin: auto;
+    margin-bottom: 1rem;
+    cursor: pointer;
+  }
+}
+
 .legal-notice {
   margin-top: 2rem;
   font-size: 1.2rem;
   color: $grey;
   &__link {
     cursor: pointer;
-    &:hover{
+    &:hover {
       color: $mainColor;
       text-decoration: underline;
     }
   }
 }
-.iframe {
+.my-iframe {
   border: none;
   outline: none;
 }

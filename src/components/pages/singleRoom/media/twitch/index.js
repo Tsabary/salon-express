@@ -9,7 +9,7 @@ const Twitch = ({ ID }) => {
       src={`https://player.twitch.tv/?channel=${ID}`}
       frameborder="0"
       allow="fullscreen; accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-      className="iframe"
+      className="my-iframe"
     />
   );
 };

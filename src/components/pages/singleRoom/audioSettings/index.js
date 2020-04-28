@@ -2,7 +2,7 @@ import "./styles.scss";
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../../../../providers/Auth";
 import Form from "react-bootstrap/Form";
-
+import { ReactSVG } from "react-svg";
 import ReactTooltip from "react-tooltip";
 
 import { updateRoom, addChannel } from "../../../../actions";
@@ -10,6 +10,7 @@ import { connect } from "react-redux";
 
 import InputField from "../../../formComponents/inputField";
 import SingleChannel from "./singleChannel";
+import { isMobile } from "react-device-detect";
 
 const AudioSettings = ({
   audioChannels,
@@ -82,7 +83,7 @@ const AudioSettings = ({
 
   return (
     <div className="section__container single-room__container-audio-settings">
-      <div className="max-max">
+      <div className="max-fr-max">
         <div className="section__title">Audio Settings</div>
 
         <>
@@ -100,6 +101,21 @@ const AudioSettings = ({
             />
           </ReactTooltip>
         </>
+        {!isMobile ? (
+          <div onClick={()=>window.location.hash="audio-channels"}>
+            <ReactSVG
+              src="../svgs/expand.svg"
+              wrapper="div"
+              data-tip={`expandAudioSettings${room.id}`}
+              data-for={`expandAudioSettings${room.id}`}
+              beforeInjection={(svg) => {
+                svg.classList.add("svg-icon--small");
+              }}
+            />
+          </div>
+        ) : (
+          <div />
+        )}
       </div>
 
       <form

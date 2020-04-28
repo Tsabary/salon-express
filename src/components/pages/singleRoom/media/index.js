@@ -68,23 +68,25 @@ const Media = ({ room, currentAudioChannel }) => {
     return (
       <div className="media__buttons">
         {mediaState ? (
-          <label
+          <div
             className="media__button media__button--unactive"
-            htmlFor="media-toggle-checkbox"
+            onClick={()=>setMediaState(!mediaState)}
+            // htmlFor="media-toggle-checkbox"
           >
             Chat
-          </label>
+          </div>
         ) : (
           <div className="media__button media__button--active">Chat</div>
         )}
 
         {!mediaState ? (
-          <label
+          <div
             className="media__button media__button--unactive"
-            htmlFor="media-toggle-checkbox"
+            onClick={()=>setMediaState(!mediaState)}
+            // htmlFor="media-toggle-checkbox"
           >
             Stream
-          </label>
+          </div>
         ) : (
           <div className="media__button media__button--active">Stream</div>
         )}
@@ -96,12 +98,12 @@ const Media = ({ room, currentAudioChannel }) => {
 
   return (
     <div className="media single-room__container-media">
-      {/* {isMobile ? (
+      {isMobile ? (
         <div className="media__no-mobile">
           To join the party on mobile, you will need the Jitsi app. Choose a
           portal from the multiverse to join.
         </div>
-      ) : null} */}
+      ) : null}
 
       {/** This is the multiverse*/}
       {!isMobile && room ? (
@@ -115,11 +117,11 @@ const Media = ({ room, currentAudioChannel }) => {
         />
       ) : null}
 
-      {/* {isMobile && room ? <MobileMultiverse room={room} /> : null} */}
+      {isMobile && room ? <MobileMultiverse room={room} /> : null}
 
       {currentAudioChannel && currentAudioChannel.source === "mixlr" ? (
         <Mixlr ID={currentAudioChannel.link} />
-      ) : null}
+      ) : null} 
 
       <div
         className={

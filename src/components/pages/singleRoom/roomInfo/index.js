@@ -202,7 +202,7 @@ const RoomInfo = ({
                 src="../svgs/share.svg"
                 wrapper="div"
                 beforeInjection={(svg) => {
-                  svg.classList.add("room__icon");
+                  svg.classList.add("svg-icon--normal");
                 }}
               />
             )}
@@ -223,7 +223,7 @@ const RoomInfo = ({
                 src="../svgs/heart.svg"
                 wrapper="div"
                 beforeInjection={(svg) => {
-                  svg.classList.add("room__icon");
+                  svg.classList.add("svg-icon--normal");
                 }}
               />
               <div />
@@ -250,7 +250,7 @@ const RoomInfo = ({
                 src="../svgs/heart_full.svg"
                 wrapper="div"
                 beforeInjection={(svg) => {
-                  svg.classList.add("room__icon");
+                  svg.classList.add("svg-icon--normal");
                 }}
               />
               <div />
@@ -276,7 +276,7 @@ const RoomInfo = ({
                 src="../svgs/heart.svg"
                 wrapper="div"
                 beforeInjection={(svg) => {
-                  svg.classList.add("room__icon");
+                  svg.classList.add("svg-icon--normal");
                 }}
               />
               <div />

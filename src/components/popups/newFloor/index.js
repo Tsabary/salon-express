@@ -3,16 +3,24 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import React, { useContext, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Loader from "react-loader-spinner";
 import Form from "react-bootstrap/Form";
 import { useToasts } from "react-toast-notifications";
 import ReactTooltip from "react-tooltip";
+import {
+  CarouselProvider,
+  Slider,
+  Slide,
+  ButtonBack,
+  ButtonNext,
+  ImageWithZoom,
+} from "pure-react-carousel";
+import "pure-react-carousel/dist/react-carousel.es.css";
 
 import { AuthContext } from "../../../providers/Auth";
 
-import { newRoom } from "../../../actions";
+import { newFloor, fetchFloorPlans } from "../../../actions";
 import { checkValidity, errorMessages } from "../../../utils/forms";
 
 import { validateWordsLength } from "../../../utils/strings";
@@ -23,10 +31,9 @@ import {
 } from "../../../utils/languages";
 
 import InputField from "../../formComponents/inputField";
-import ToggleButton from "../../formComponents/toggleButton";
 import Tags from "../../formComponents/tags";
 
-const NewRoom = ({ newRoom }) => {
+const NewFloor = ({ newFloor, fetchFloorPlans }) => {
   const { currentUserProfile } = useContext(AuthContext);
   const { addToast } = useToasts();
 
@@ -34,6 +41,13 @@ const NewRoom = ({ newRoom }) => {
 
   const [formError, setFormError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const [floorPlans, setFloorPlans] = useState(null);
+  const [chosenPlan, setChosenPlan] = useState(null);
+
+  useEffect(() => {
+    if (!floorPlans) fetchFloorPlans(setFloorPlans);
+  });
 
   useEffect(() => {
     if (currentUserProfile) {
@@ -45,13 +59,6 @@ const NewRoom = ({ newRoom }) => {
   const reset = (currentUserProfile) => {
     setValues({
       user_ID: currentUserProfile.uid,
-      user_avatar: currentUserProfile.avatar,
-      user_name: currentUserProfile.name,
-      user_username: currentUserProfile.username,
-      visitors_count: 0,
-      favorites_count: 0,
-      listed: true,
-      associate: true,
     });
     setSubmitting(false);
   };
@@ -66,8 +73,8 @@ const NewRoom = ({ newRoom }) => {
     setFormError(null);
     setSubmitting(true);
 
-    newRoom(values, () => {
-      addToast("Room Created Succesfully", {
+    newFloor(values, () => {
+      addToast("Floor Created Succesfully", {
         appearance: "success",
         autoDismiss: true,
       });
@@ -76,8 +83,31 @@ const NewRoom = ({ newRoom }) => {
     });
   };
 
+  const renderSildes = (plans) => {
+    return plans.map((plan, index) => {
+      return (
+        <Slide index={index} key={index}>
+          <ImageWithZoom
+            src={plan.image}
+            className="clickable extra-tiny-margin-right"
+            onClick={() => {
+              setChosenPlan(plan);
+              setValues((val) => {
+                return {
+                  ...val,
+                  rooms: plan.rooms,
+                  image: plan.image,
+                };
+              });
+            }}
+          />
+        </Slide>
+      );
+    });
+  };
+
   return (
-    <div className="popup" id="add-room">
+    <div className="popup" id="add-floor">
       <div className="popup__close">
         <div />
         <div
@@ -93,7 +123,7 @@ const NewRoom = ({ newRoom }) => {
       <div>
         {!submitting ? (
           <div>
-            <div className="popup__title">Open a Room</div>
+            <div className="popup__title">Open a Floor</div>
             <form
               onSubmit={(e) => {
                 console.log("nothing");
@@ -104,7 +134,7 @@ const NewRoom = ({ newRoom }) => {
               <div className="tiny-margin-bottom">
                 <InputField
                   type="text"
-                  placeHolder="Room name (this can't be changed)"
+                  placeHolder="Floor name"
                   value={values.title}
                   onChange={(title) => {
                     if (title.length < 80 && validateWordsLength(title, 25))
@@ -129,57 +159,42 @@ const NewRoom = ({ newRoom }) => {
               >
                 {renderLanguageOptions("Choose a language")}
               </Form.Control>
-
-              <div className="max-fr-max tiny-margin-bottom">
-                <label
-                  className="toggle-button__label clickable"
-                  htmlFor="unlisted"
+              <img
+                className="new-floor-plan__image-preview"
+                src={
+                  (chosenPlan && chosenPlan.image) ||
+                  "../../../imgs/placeholder.jpg"
+                }
+              />
+              <div className="tiny-margin-bottom tiny-margin-top">
+                <CarouselProvider
+                  naturalSlideWidth={12}
+                  naturalSlideHeight={9}
+                  totalSlides={
+                    floorPlans && floorPlans.length ? floorPlans.length : 0
+                  }
+                  visibleSlides={
+                    !floorPlans
+                      ? 0
+                      : !floorPlans.length
+                      ? 0
+                      : floorPlans.length > 3
+                      ? 3
+                      : floorPlans.length
+                  }
+                  hasMasterSpinner
                 >
-                  Make room unlisted
-                </label>
-
-                <div
-                  className="info"
-                  data-tip="unlistedtip"
-                  data-for="unlistedtip"
-                />
-                <ReactTooltip id="unlistedtip">
-                  Checking this would hide this Room from the main feed.
-                  <br />
-                  Only users with the url would be able to access this room.
-                </ReactTooltip>
-
-                <ToggleButton
-                  id="unlisted"
-                  toggleOn={() => setValues({ ...values, listed: false })}
-                  toggleOff={() => setValues({ ...values, listed: true })}
-                />
-              </div>
-
-              <div className="max-fr-max tiny-margin-bottom">
-                <label
-                  className="toggle-button__label clickable"
-                  htmlFor="associate"
-                >
-                  Associate me as founder
-                </label>
-
-                <div
-                  className="info"
-                  data-tip="associatetip"
-                  data-for="associatetip"
-                />
-
-                <ReactTooltip id="associatetip">
-                  Checking this would present you as the admin of the Room
-                </ReactTooltip>
-
-                <ToggleButton
-                  id="associate"
-                  toggleOn={() => setValues({ ...values, associate: true })}
-                  toggleOff={() => setValues({ ...values, associate: false })}
-                  isChecked={true}
-                />
+                  {floorPlans ? (
+                    <Slider className="new-floor__carousel">
+                      {renderSildes(floorPlans)}
+                    </Slider>
+                  ) : null}
+                  <div className="max-fr-max">
+                    <ButtonBack className="small-button">Back</ButtonBack>
+                    <div className="centered-text">Choose a Floor plan</div>
+                    <ButtonNext className="small-button">Next</ButtonNext>
+                  </div>
+                </CarouselProvider>
               </div>
 
               <Tags
@@ -215,5 +230,6 @@ const NewRoom = ({ newRoom }) => {
 };
 
 export default connect(null, {
-  newRoom,
-})(NewRoom);
+  newFloor,
+  fetchFloorPlans,
+})(NewFloor);

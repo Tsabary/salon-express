@@ -1,25 +1,27 @@
 import "./styles.scss";
-import React from "react";
+import React, { useContext } from "react";
 import { connect } from "react-redux";
 
 import { ReactSVG } from "react-svg";
 import ReactTooltip from "react-tooltip";
 
 import { setActiveChannel, deleteChannel } from "../../../../../actions";
+import { RoomContext } from "../../../../../providers/Room";
 
 const SingleChannel = ({
   channel,
   room,
+  index,
   currentAudioChannel,
   setActiveChannel,
   deleteChannel,
 }) => {
+  const { setGlobalCurrentAudioChannel } = useContext(RoomContext);
 
-  
   return (
     <div
       className={
-        currentAudioChannel === channel.link
+        currentAudioChannel && currentAudioChannel.link === channel.link
           ? "single-channel single-channel--active"
           : "single-channel single-channel"
       }
@@ -54,7 +56,9 @@ const SingleChannel = ({
                   currentAudioChannel &&
                   currentAudioChannel.link === channel.link
                 )
-                  setActiveChannel(room.id, null);
+                  setActiveChannel(room.id, null, () =>
+                    setGlobalCurrentAudioChannel(null)
+                  );
               })
             }
           >
@@ -64,7 +68,7 @@ const SingleChannel = ({
               data-tip={`deleteChannel${channel.id}`}
               data-for={`deleteChannel${channel.id}`}
               beforeInjection={(svg) => {
-                svg.classList.add("room__icon");
+                svg.classList.add("svg-icon--normal");
               }}
             />
             <ReactTooltip id={`deleteChannel${channel.id}`}>
@@ -79,26 +83,34 @@ const SingleChannel = ({
           {currentAudioChannel && currentAudioChannel.link === channel.link ? (
             <div
               className="clickable"
-              onClick={() => setActiveChannel(room.id, null)}
+              onClick={() => {
+                setActiveChannel(room.id, null, () =>
+                  setGlobalCurrentAudioChannel(null)
+                );
+              }}
             >
               <ReactSVG
                 src="../svgs/pause.svg"
                 wrapper="div"
                 beforeInjection={(svg) => {
-                  svg.classList.add("room__icon");
+                  svg.classList.add("svg-icon--normal");
                 }}
               />
             </div>
           ) : (
             <div
               className="clickable"
-              onClick={() => setActiveChannel(room.id, channel)}
+              onClick={() => {
+                setActiveChannel(room.id, channel, () =>
+                  setGlobalCurrentAudioChannel(channel)
+                );
+              }}
             >
               <ReactSVG
                 src="../svgs/play.svg"
                 wrapper="div"
                 beforeInjection={(svg) => {
-                  svg.classList.add("room__icon");
+                  svg.classList.add("svg-icon--normal");
                 }}
               />
             </div>

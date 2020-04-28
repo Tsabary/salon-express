@@ -1,4 +1,4 @@
-@import "../../../styles/imports";
+@import "../../../../styles/imports";
 
 .header {
   max-width: 160rem;
@@ -21,7 +21,7 @@
 
 
   &__center {
-    font-size: 8rem;
+    font-size: 5rem;
     font-family: $fontBold;
     color: $greyLight;
     // background-color: $mainColor 1px solid;
