@@ -12,182 +12,34 @@
   align-items: stretch;
   @include padding;
 
-  &__container {
+  &__media {
+    grid-column: 1/13;
+    grid-row: 1/2;
+  }
 
-    &-media {
+  &__details {
+    grid-column: 1/13;
+    grid-row: 2/3;
+  }
+
+  &__management {
+    grid-column: 1/4;
+    grid-row: 3/4;
+
+    @include resize(900px) {
       grid-column: 1/13;
-      grid-row: 1/2;
-    }
-
-    &-donations {
-      grid-column: 8/13;
-      grid-row: 3/4;
-      @include resize(1100px) {
-        grid-column: 9/13;
-        grid-row: 4/5;
-      }
-      @include resize(900px) {
-        grid-column: 1/13;
-        grid-row: 3/4;
-      }
-    }
-
-    &-info {
-      &--with-donations {
-        grid-column: 4/8;
-        grid-row: 3/4;
-
-        @include resize(1100px) {
-          grid-column: 1/5;
-          grid-row: 4/5;
-        }
-        @include resize(900px) {
-          grid-column: 1/7;
-          grid-row: 5/6;
-        }
-
-        @include resize(700px) {
-          grid-column: 1/13;
-          grid-row: 4/5;
-        }
-      }
-      &--without-donations {
-        grid-column: 4/13;
-        grid-row: 3/4;
-        @include resize(1200px) {
-          grid-column: 4/13;
-          grid-row: 3/4;
-        }
-        @include resize(1100px) {
-          grid-column: 1/13;
-          grid-row: 3/4;
-        }
-      }
-      &--with-audio{
-        grid-column: 4/8;
-        grid-row: 3/4;
-
-        @include resize(1100px) {
-          grid-column: 1/7;
-          grid-row: 4/5;
-        }
-        @include resize(900px) {
-          grid-column: 1/7;
-          grid-row: 5/6;
-        }
-
-        @include resize(700px) {
-          grid-column: 1/13;
-          grid-row: 4/5;
-        }
-
-      }
-    }
-
-    &-calendar{
-      &--with-donations {
-        grid-column: 1/4;
-        grid-row: 3/4;
-
-        @include resize(1100px) {
-          grid-column: 5/9;
-          grid-row: 4/5;
-        }
-        @include resize(900px) {
-          grid-column: 7/13;
-          grid-row: 5/6;
-        }
-
-        @include resize(700px) {
-          grid-column: 1/13;
-        }
-      }
-
-      &--without-donations {
-        grid-column: 1/4;
-        grid-row: 3/4;
-
-        @include resize(1100px) {
-          grid-column: 1/13;
-          grid-row: 4/5;
-        }
-        @include resize(700px) {
-          grid-column: 1/13;
-          grid-row: 5/6;
-        }
-      }
-
-      &--with-audio{
-        grid-column: 1/4;
-        grid-row: 3/4;
-
-        @include resize(1100px) {
-          grid-column: 7/13;
-          grid-row: 4/5;
-        }
-        @include resize(900px) {
-          grid-column: 7/13;
-          grid-row: 5/6;
-        }
-
-        @include resize(700px) {
-          grid-column: 1/13;
-        }
-      }
-    }
-
-    &-audio-settings {
-      grid-column: 1/4;
       grid-row: 4/5;
-      @include resize(1100px) {
-        grid-column: 1/13;
-        grid-row: 9/10;
-      }
-    }
-
-    &-admin {
-      &--owner {
-        grid-column: 1/4;
-        grid-row: 5/6;
-
-        @include resize(1200px) {
-          grid-column: 1/4;
-          grid-row: 5/6;
-        }
-        @include resize(1100px) {
-          grid-column: 1/13;
-          grid-row: 10/11;
-        }
-      }
-
-      &--visitor {
-        grid-column: 1/4;
-        grid-row: 4/5;
-
-        @include resize(1200px) {
-          grid-column: 1/4;
-          grid-row: 4/5;
-        }
-        @include resize(1100px) {
-          grid-column: 1/13;
-          grid-row: 9/10;
-          margin-top: 0rem;
-        }
-      }
-    }
-
-    &-comments {
-      grid-column: 4/13;
-      grid-row: 4/9;
-      @include resize(1100px) {
-        grid-column: 1/13;
-        grid-row: 6/9;
-      }
     }
   }
 
-
-
+  &__comments {
+    grid-column: 4/13;
+    grid-row: 3/9;
+    @include resize(900px) {
+      grid-column: 1/13;
+      grid-row: 3/4;
+    }
+  }
 
   &__point-bg {
     position: fixed;

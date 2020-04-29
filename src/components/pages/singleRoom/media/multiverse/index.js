@@ -100,6 +100,7 @@ const Multiverse = ({
           ? [currentUserProfile.uid, uniqueId]
           : [uniqueId]
       );
+      detachListener();
     };
   }, [room, currentUserProfile, currentPortal, uniqueId]);
 

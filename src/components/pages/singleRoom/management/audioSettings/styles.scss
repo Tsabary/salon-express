@@ -1,0 +1,27 @@
+@import "../../../../../styles/imports";
+
+.audio-settings {
+  &__add {
+    background-color: white;
+    border: $border;
+    outline: none;
+    font-size: 2rem;
+    border-radius: 4rem;
+    padding: 1rem;
+    line-height: 1.1rem;
+    color: $mainColor;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s;
+
+    &:focus{
+      outline: none !important;
+      outline-offset: none !important;
+    }
+
+    &:hover {
+      color: white;
+      background-color: $mainColor;
+    }
+  }
+}

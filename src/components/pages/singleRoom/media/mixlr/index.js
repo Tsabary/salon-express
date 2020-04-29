@@ -5,16 +5,14 @@ import Iframe from "react-iframe";
 const Mixlr = ({ ID }) => {
   return (
     <div
-      className={
-        isMobile
-          ? "media__mixlr--mobile"
-          : "media__mixlr--not-mobile"
-      }
+      className={isMobile ? "media__mixlr--mobile" : "media__mixlr--not-mobile"}
     >
-      <div className="media__no-mobile small-margin-bottom">
-        Please listen to the music using a headset, or disable your microphone
-        in the chat to prevent noise for the other participants
-      </div>
+      {!isMobile ? (
+        <div className="media__no-mobile small-margin-bottom">
+          Please listen to the music using a headset, or disable your microphone
+          in the chat to prevent noise for the other participants
+        </div>
+      ) : null}
 
       <Iframe
         url={`https://mixlr.com/users/${ID}/embed?autoplay=true`}

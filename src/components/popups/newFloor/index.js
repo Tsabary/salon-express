@@ -33,7 +33,7 @@ import {
 import InputField from "../../formComponents/inputField";
 import Tags from "../../formComponents/tags";
 
-const NewFloor = ({ newFloor, fetchFloorPlans }) => {
+const NewFloor = ({floorPlans, newFloor, fetchFloorPlans }) => {
   const { currentUserProfile } = useContext(AuthContext);
   const { addToast } = useToasts();
 
@@ -42,11 +42,10 @@ const NewFloor = ({ newFloor, fetchFloorPlans }) => {
   const [formError, setFormError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const [floorPlans, setFloorPlans] = useState(null);
   const [chosenPlan, setChosenPlan] = useState(null);
 
   useEffect(() => {
-    if (!floorPlans) fetchFloorPlans(setFloorPlans);
+    if (!floorPlans.length) fetchFloorPlans();
   });
 
   useEffect(() => {
@@ -135,10 +134,10 @@ const NewFloor = ({ newFloor, fetchFloorPlans }) => {
                 <InputField
                   type="text"
                   placeHolder="Floor name"
-                  value={values.title}
-                  onChange={(title) => {
-                    if (title.length < 80 && validateWordsLength(title, 25))
-                      setValues({ ...values, title });
+                  value={values.name}
+                  onChange={(name) => {
+                    if (name.length < 80 && validateWordsLength(name, 25))
+                      setValues({ ...values, name });
                   }}
                 />
               </div>
@@ -159,13 +158,14 @@ const NewFloor = ({ newFloor, fetchFloorPlans }) => {
               >
                 {renderLanguageOptions("Choose a language")}
               </Form.Control>
+              <div className="new-floor-plan__image-container">
               <img
                 className="new-floor-plan__image-preview"
                 src={
                   (chosenPlan && chosenPlan.image) ||
                   "../../../imgs/placeholder.jpg"
                 }
-              />
+              /></div>
               <div className="tiny-margin-bottom tiny-margin-top">
                 <CarouselProvider
                   naturalSlideWidth={12}
@@ -189,9 +189,11 @@ const NewFloor = ({ newFloor, fetchFloorPlans }) => {
                       {renderSildes(floorPlans)}
                     </Slider>
                   ) : null}
-                  <div className="max-fr-max">
+                  <div className="max-fr-max tiny-margin-top">
                     <ButtonBack className="small-button">Back</ButtonBack>
-                    <div className="centered-text">Choose a Floor plan</div>
+                    <div className="centered-text new-floor__choose">
+                      Choose a Floor plan
+                    </div>
                     <ButtonNext className="small-button">Next</ButtonNext>
                   </div>
                 </CarouselProvider>
@@ -229,7 +231,13 @@ const NewFloor = ({ newFloor, fetchFloorPlans }) => {
   );
 };
 
-export default connect(null, {
+const mapStateToProps = (state) => {
+  return {
+    floorPlans: state.floorPlans,
+  };
+};
+
+export default connect(mapStateToProps, {
   newFloor,
   fetchFloorPlans,
 })(NewFloor);

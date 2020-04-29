@@ -11,8 +11,6 @@ export const FloorProvider = ({ children }) => {
       value={{
         floor,
         setFloor,
-        floorRooms,
-        setFloorRooms,
       }}
     >
       {children}

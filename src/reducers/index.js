@@ -17,6 +17,8 @@ import UpdatesReducer from "./user/UpdatesReducer";
 import NotificationReducer from "./user/NotificationReducer";
 import ChannelsReducer from "./room/ChannelsReducer";
 import EventsReducer from "./room/EventsReducer";
+import MyFloorsReducer from "./floors/MyFloorsReducer";
+import FloorPlansReducer from "./floors/FloorPlansReducer";
 
 export default combineReducers({
   // GLOBAL //
@@ -45,7 +47,9 @@ export default combineReducers({
 
   // ROOM //
   audioChannels: ChannelsReducer,
-  events : EventsReducer,
+  events: EventsReducer,
+  myFloors: MyFloorsReducer,
+  floorPlans : FloorPlansReducer,
 
   // CAREERS //
   positions: PositionsReducer,

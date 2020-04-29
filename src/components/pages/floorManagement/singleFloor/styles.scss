@@ -1,0 +1,24 @@
+@import "../../../../styles/imports";
+
+.single-floor {
+  display: grid;
+  grid-template-columns: $floorRows;
+  width: 100%;
+  padding: 0.8rem;
+  font-family: $font;
+
+  &__title {
+    cursor: pointer;
+    width: max-content;
+    &:hover {
+      color: $mainColor;
+    }
+  }
+}
+
+.single-floor:nth-child(even) {
+  background-color: $mainColorTransparent2;
+}
+.single-floor:nth-child(odd) {
+  background-color: $mainColorTransparent;
+}

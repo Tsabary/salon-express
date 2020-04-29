@@ -1,0 +1,41 @@
+@import "../../../styles/imports";
+
+.floor-management {
+  width: 100%;
+  max-width: 160rem;
+
+  margin: 3rem auto;
+  @include padding;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  &__table {
+    margin-top: 3rem;
+    border: $border;
+    border-radius: $borderRadius;
+  }
+
+  &__col-titles {
+    display: grid;
+    width: 100%;
+    grid-template-columns: $floorRows;
+    padding: 0.8rem;
+    justify-content: start;
+  }
+
+  &__col-title {
+    font-family: $fontBold;
+    color: $mainColor;
+  }
+  &__floors {
+    overflow: hidden;
+  }
+
+  &__title {
+    font-size: 2rem;
+    font-family: $fontBold;
+    color: $mainColor;
+
+  }
+}

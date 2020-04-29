@@ -46,7 +46,7 @@ const Comments = ({ match, room, fetchRoomComments, newComment }) => {
   };
 
   return (
-    <div className="comments single-room__container-comments">
+    <div className="comments single-room__comments section__container">
       <form
         className="comments__form"
         autoComplete="off"
@@ -55,8 +55,6 @@ const Comments = ({ match, room, fetchRoomComments, newComment }) => {
           if (!currentUserProfile || !comment.body || !comment.body.length)
             return;
           newComment(comment, () => {
-            console.log("minee comment", "comment callback")
-
             setComments([
               {
                 ...comment,
@@ -89,7 +87,10 @@ const Comments = ({ match, room, fetchRoomComments, newComment }) => {
           </>
         ) : (
           <>
-            <div className="comments__post" onClick={()=> window.location.hash="sign-up"}>
+            <div
+              className="small-button"
+              onClick={() => (window.location.hash = "sign-up")}
+            >
               Post
             </div>
           </>

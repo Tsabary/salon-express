@@ -230,18 +230,23 @@ h3 {
   align-self: flex-start;
   border: none;
   outline: none;
+  cursor: pointer;
+  &:focus {
+    border: none;
+    outline: none;
+  }
 }
 
 .boxed-button {
   height: min-content;
   text-align: center;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   user-select: none;
   font-family: $font;
   background-color: $mainColor;
   color: white !important;
   padding: 0.3rem 3rem 0.5rem 3rem;
-  border-radius: 3px;
+  border-radius: $borderRadius;
   box-shadow: 0 0.2rem 1rem rgb(170, 170, 170);
   border: none;
   outline: none;
@@ -384,6 +389,16 @@ h3 {
   }
 }
 
+.tile-form {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr max-content;
+
+  @include resize(1200px) {
+    grid-template-columns: 1fr;
+  }
+}
+
 .section {
   &__container {
     border-radius: $borderRadius;
@@ -442,7 +457,7 @@ h3 {
 .popup {
   display: none;
   // min-height: 60%;
-  max-width: 60%;
+  max-width: 80rem;
   // justify-content: center;
   align-items: center;
   transition: all 0.2s;
@@ -605,6 +620,11 @@ h3 {
 .flex-group-spaced {
   display: flex;
   justify-content: space-between;
+}
+
+.fr {
+  @include gridVariation;
+  grid-template-columns: 1fr;
 }
 
 .fr-max {

@@ -13,8 +13,8 @@
     border-radius: $borderRadius;
     display: block;
     border-bottom: 2px solid $mainColor;
-
     transition: all 0.3s;
+
     &::-webkit-input-placeholder {
       color: $grey;
     }
@@ -23,6 +23,10 @@
     }
     &:placeholder-shown {
       border-bottom: 2px solid transparent;
+    }
+
+    &:hover{
+      border: $border;
     }
   }
   &__label {

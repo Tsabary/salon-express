@@ -1,17 +1,19 @@
 import "./styles.scss";
 import React, { useEffect, useState, useContext } from "react";
 import { connect } from "react-redux";
-
-import { FloorContext } from "../../../providers/Floor";
-
+import { useHistory } from "react-router-dom";
 import ImageMapper from "react-image-mapper";
 
-import { fetchFloor, fetchFloorRooms } from "../../../actions";
+import history from "../../../history";
 
-const Floor = ({ match, fetchFloor, fetchFloorRooms }) => {
-  const { floor, setFloor, floorRooms, setFloorRooms } = useContext(
-    FloorContext
-  );
+import { FloorContext } from "../../../providers/Floor";
+import { fetchFloor, fetchFloorRooms } from "../../../actions";
+import { titleToKey } from "../../../utils/strings";
+
+const Floor = ({ match, myFloors, fetchFloor }) => {
+  const myHistory = useHistory(history);
+
+  const { floor, setFloor } = useContext(FloorContext);
 
   const [values, setValues] = useState({
     hoveredArea: null,
@@ -20,47 +22,12 @@ const Floor = ({ match, fetchFloor, fetchFloorRooms }) => {
   });
 
   useEffect(() => {
-    if (!floor) {
-      fetchFloor(match.params.id, setFloor);
-    }
-    // if (!floorRooms) {
-    //   fetchFloorRooms(match.params.id, setFloorRooms);
-    // }
-  }, [match]);
+    const thisFloor = myFloors.filter(
+      (floor) => floor.id === match.params.id
+    )[0];
 
-  // const URL = "https://c1.staticflickr.com/5/4052/4503898393_303cfbc9fd_b.jpg";
-  const URL = "../../../imgs/floor_plan.jpg";
-
-  const MAP = {
-    name: "my-map",
-    areas: [
-      {
-        name: "1",
-        shape: "rect",
-        coords: [640, 249, 1070, 458],
-        preFillColor: "green",
-        fillColor: "blue",
-      },
-      {
-        name: "2",
-        shape: "rect",
-        coords: [254, 825, 466, 1106],
-        preFillColor: "pink",
-      },
-      {
-        name: "3",
-        shape: "rect",
-        coords: [758, 888, 1066, 1105, 800, 905],
-        fillColor: "yellow",
-      },
-      {
-        name: "4",
-        shape: "rect",
-        coords: [261, 169, 592, 352],
-        preFillColor: "red",
-      },
-    ],
-  };
+    !thisFloor ? fetchFloor(match.params.id) : setFloor(thisFloor);
+  }, [match.params.id, myFloors]);
 
   const load = () => {
     setValues((val) => {
@@ -69,10 +36,12 @@ const Floor = ({ match, fetchFloor, fetchFloorRooms }) => {
   };
 
   const clicked = (area) => {
+    myHistory.push(`/floor/${floor.id}/${titleToKey(area.name)}`);
+
     setValues((val) => {
       return {
         ...val,
-        msg: `You clicked on ${area.shape} at coords ${JSON.stringify(
+        msg: `You clicked on ${area.id} at coords ${JSON.stringify(
           area.coords
         )} !`,
       };
@@ -128,19 +97,24 @@ const Floor = ({ match, fetchFloor, fetchFloorRooms }) => {
 
   return (
     <div className="floor">
-      <ImageMapper
-        src={URL}
-        map={{ name: "my-map", areas: floor && floor.rooms ? floor.rooms : [] }}
-        width={700}
-        imgWidth={1300}
-        onLoad={() => load()}
-        onClick={(area) => clicked(area)}
-        onMouseEnter={(area) => enterArea(area)}
-        onMouseLeave={(area) => leaveArea(area)}
-        onMouseMove={(area, _, evt) => moveOnArea(area, evt)}
-        onImageClick={(evt) => clickedOutside(evt)}
-        onImageMouseMove={(evt) => moveOnImage(evt)}
-      />
+      {floor ? (
+        <ImageMapper
+          src={floor.image}
+          map={{
+            name: "my-map",
+            areas: floor && floor.rooms ? Object.values(floor.rooms) : [],
+          }}
+          width={700}
+          imgWidth={1300}
+          onLoad={() => load()}
+          onClick={(area) => clicked(area)}
+          onMouseEnter={(area) => enterArea(area)}
+          onMouseLeave={(area) => leaveArea(area)}
+          onMouseMove={(area, _, evt) => moveOnArea(area, evt)}
+          onImageClick={(evt) => clickedOutside(evt)}
+          onImageMouseMove={(evt) => moveOnImage(evt)}
+        />
+      ) : null}
       {values.hoveredArea && (
         <span
           className="floor__tooltip"
@@ -150,8 +124,15 @@ const Floor = ({ match, fetchFloor, fetchFloorRooms }) => {
         </span>
       )}
       {values.moveMsg ? values.moveMsg : null}
+      {values.msg ? values.msg : null}
     </div>
   );
 };
 
-export default connect(null, { fetchFloor, fetchFloorRooms })(Floor);
+const mapStateToProps = (state) => {
+  return {
+    myFloors: state.myFloors,
+  };
+};
+
+export default connect(mapStateToProps, { fetchFloor, fetchFloorRooms })(Floor);

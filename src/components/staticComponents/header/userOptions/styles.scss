@@ -15,7 +15,7 @@
 
   &__container-lean {
     display: none;
-    margin-top: -.5rem;
+    margin-top: -1rem;
 
     grid-template-columns: max-content;
     @include resize(950px) {

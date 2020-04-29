@@ -1,7 +1,21 @@
+@import '../../../styles/imports';
+
 .social {
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(6, max-content);
+
+  @include resize(1350px){
+    grid-template-columns: repeat(4, max-content);
+  }
+
+  @include resize(1000px){
+    grid-template-columns: repeat(3, max-content);
+  }
+
+  @include resize(900px){
+    grid-template-columns: repeat(6, max-content);
+  }
 
   &__icon {
     height: 3rem;

@@ -45,6 +45,14 @@ export const FETCH_EVENTS = "FETCH_EVENTS";
 export const ADD_EVENT = "ADD_EVENT";
 export const REMOVE_EVENT = "REMOVE_EVENT";
 
+// FLOORS //
+export const SET_FLOORS = "SET_FLOORS";
+export const ADD_FLOOR = "ADD_FLOOR";
+export const REMOVE_FLOOR = "REMOVE_FLOOR";
+
+export const SET_FLOOR_PLANS = "SET_FLOOR_PLANS";
+
+
 
 // CAREERS //
 export const FETCH_POSITIONS = "FETCH_POSITIONS";

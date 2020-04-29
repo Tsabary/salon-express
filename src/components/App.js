@@ -31,7 +31,8 @@ import NewFloorPlan from "./popups/newFloorPlan";
 
 import Home from "./pages/home";
 import Search from "./pages/search";
-import SingleRoom from "./pages/singleRoom";
+import SingleRoom from "./pages/singleRoom/publicRoom";
+import SingleRoomFloor from "./pages/singleRoom/floorRoom";
 import Stranger from "./pages/stranger";
 import Contact from "./pages/contact";
 import PrivacyPolicy from "./pages/sheets/PrivacyPolicy";
@@ -41,6 +42,8 @@ import AddQuestion from "./pages/addQuestion";
 import Careers from "./pages/careers";
 import Apply from "./pages/apply";
 import Floor from "./pages/floor";
+import FloorManagement from "./pages/floorManagement";
+import EditFloor from "./pages/editFloor";
 
 import Updates from "./otherComponents/updates";
 import AudioChannels from "./popups/audioChannels";
@@ -62,7 +65,7 @@ const App = () => {
                       <NewRoom />
                       <NewFloor />
                       <NewFloorRoom />
-                      <NewFloorPlan/>
+                      <NewFloorPlan />
                       <AudioChannels />
                       {/* <EditRoom /> */}
                       {window.location.href.split("/")[3] !== "floor" ? (
@@ -90,7 +93,18 @@ const App = () => {
                         />
                         <Route path="/careers" exact component={Careers} />
                         <Route path="/careers/:id" exact component={Apply} />
+                        <Route
+                          path="/floor-management"
+                          exact
+                          component={FloorManagement}
+                        />
+                        <Route
+                          path="/floor-management/:id"
+                          exact
+                          component={EditFloor}
+                        />
                         <Route path="/floor/:id" exact component={Floor} />
+                        {/* <Route path="/floor/:id/:room" exact component={SingleRoomFloor} /> */}
                         <Route
                           path="/privacy-policy"
                           exact

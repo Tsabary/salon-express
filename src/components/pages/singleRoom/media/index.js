@@ -16,7 +16,7 @@ import Multiverse from "./multiverse";
 import MobileMultiverse from "./mobileMultiverse";
 import Mixlr from "./mixlr";
 
-const Media = ({ room, currentAudioChannel }) => {
+const Media = ({ match, room, currentAudioChannel }) => {
   // This is a fake unique id based on current timestamp. We use it to identify users that aren't logged in, so we can manage the coun of users in each portal
   const { uniqueId } = useContext(UniqueIdContext);
   const { currentUserProfile } = useContext(AuthContext);
@@ -70,7 +70,7 @@ const Media = ({ room, currentAudioChannel }) => {
         {mediaState ? (
           <div
             className="media__button media__button--unactive"
-            onClick={()=>setMediaState(!mediaState)}
+            onClick={() => setMediaState(!mediaState)}
             // htmlFor="media-toggle-checkbox"
           >
             Chat
@@ -82,7 +82,7 @@ const Media = ({ room, currentAudioChannel }) => {
         {!mediaState ? (
           <div
             className="media__button media__button--unactive"
-            onClick={()=>setMediaState(!mediaState)}
+            onClick={() => setMediaState(!mediaState)}
             // htmlFor="media-toggle-checkbox"
           >
             Stream
@@ -94,10 +94,9 @@ const Media = ({ room, currentAudioChannel }) => {
     );
   };
 
-  // return <div className="media single-room__container-media">fdsf</div>;
 
   return (
-    <div className="media single-room__container-media">
+    <div className="media single-room__media">
       {isMobile ? (
         <div className="media__no-mobile">
           To join the party on mobile, you will need the Jitsi app. Choose a
@@ -114,6 +113,7 @@ const Media = ({ room, currentAudioChannel }) => {
           currentAudioChannel={currentAudioChannel}
           microphonePermissionGranted={microphonePermissionGranted}
           cameraPermissionGranted={cameraPermissionGranted}
+          match={match}
         />
       ) : null}
 
@@ -121,7 +121,7 @@ const Media = ({ room, currentAudioChannel }) => {
 
       {currentAudioChannel && currentAudioChannel.source === "mixlr" ? (
         <Mixlr ID={currentAudioChannel.link} />
-      ) : null} 
+      ) : null}
 
       <div
         className={
@@ -139,36 +139,44 @@ const Media = ({ room, currentAudioChannel }) => {
           }}
           checked={mediaState}
         />
-        <div className="media__toggle-container">
-          <span className="media__toggle-container--visible">
-            <Chat
-              room={room}
-              currentPortalUrl={currentPortalUrl}
-              cameraPermissionGranted={cameraPermissionGranted}
-              setCameraPermissionGranted={setCameraPermissionGranted}
-              microphonePermissionGranted={microphonePermissionGranted}
-              setMicrophonePermissionGranted={setMicrophonePermissionGranted}
-            />
-          </span>
-          {currentAudioChannel && currentAudioChannel.source === "youtube" ? (
-            <span className="media__toggle-container--hidden">
-              <Youtube ID={currentAudioChannel.link} />
-            </span>
-          ) : null}
+        {!isMobile ? (
+          <>
+            <div className="media__toggle-container">
+              <span className="media__toggle-container--visible">
+                <Chat
+                  room={room}
+                  currentPortalUrl={currentPortalUrl}
+                  cameraPermissionGranted={cameraPermissionGranted}
+                  setCameraPermissionGranted={setCameraPermissionGranted}
+                  microphonePermissionGranted={microphonePermissionGranted}
+                  setMicrophonePermissionGranted={
+                    setMicrophonePermissionGranted
+                  }
+                />
+              </span>
+              {currentAudioChannel &&
+              currentAudioChannel.source === "youtube" ? (
+                <span className="media__toggle-container--hidden">
+                  <Youtube ID={currentAudioChannel.link} />
+                </span>
+              ) : null}
 
-          {currentAudioChannel && currentAudioChannel.source === "twitch" ? (
-            <span className="media__toggle-container--hidden">
-              <Twitch ID={currentAudioChannel.link} />
-            </span>
-          ) : null}
-        </div>
+              {currentAudioChannel &&
+              currentAudioChannel.source === "twitch" ? (
+                <span className="media__toggle-container--hidden">
+                  <Twitch ID={currentAudioChannel.link} />
+                </span>
+              ) : null}
+            </div>
+            {currentAudioChannel &&
+            ["youtube", "twitch"].includes(currentAudioChannel.source)
+              ? renderControllers()
+              : null}{" "}
+          </>
+        ) : null}
 
-        {currentAudioChannel &&
-        ["youtube", "twitch"].includes(currentAudioChannel.source)
-          ? renderControllers()
-          : null}
-
-        {currentAudioChannel &&
+        {!isMobile &&
+        currentAudioChannel &&
         ["youtube", "twitch"].includes(currentAudioChannel.source) ? (
           <div className="media__no-mobile">
             Please listen to the music using a headset, or disable your

@@ -22,7 +22,7 @@ const SignUp = ({ signUp, providerSignIn, togglePopup }) => {
   const handleChange = (page, path) => {
     firebase.analytics().logEvent("signup_navigation", { page });
     myHistory.push(`/${path}`);
-    window.location.hash = "#";
+    window.location.hash = "";
     window.scrollTo(0, 0);
   };
 

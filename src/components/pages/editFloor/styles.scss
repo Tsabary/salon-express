@@ -1,0 +1,39 @@
+@import "../../../styles/imports";
+
+.edit-floor {
+  @include padding;
+
+  &__plans {
+    display: grid;
+    gap: 4rem;
+    grid-template-columns: 3fr 2fr;
+    align-items: center;
+  }
+
+  &__rooms {
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  &__basic-and_logo {
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: 3fr 2fr;
+  }
+
+  &__section {
+    margin-top: 4rem;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0 3rem 0 3rem;
+    box-shadow: $containerBoxShadow;
+
+    &-title {
+      margin-bottom: 2rem;
+      font-size: 2rem;
+      font-family: $fontBold;
+      color: $mainColor;
+    }
+  }
+}
