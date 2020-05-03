@@ -104,11 +104,11 @@ const NewRoom = ({ newRoom }) => {
               <div className="tiny-margin-bottom">
                 <InputField
                   type="text"
-                  placeHolder="Room name (this can't be changed)"
-                  value={values.title}
-                  onChange={(title) => {
-                    if (title.length < 80 && validateWordsLength(title, 25))
-                      setValues({ ...values, title });
+                  placeHolder="Room name"
+                  value={values.name}
+                  onChange={(name) => {
+                    if (name.length < 80 && validateWordsLength(name, 25))
+                      setValues({ ...values, name });
                   }}
                 />
               </div>

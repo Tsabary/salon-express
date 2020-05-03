@@ -41,7 +41,6 @@ const FloorManagement = ({ fetchFloors }) => {
 
   const renderFloors = (floors) => {
     return floors.map((floor) => {
-      console.log("myyyyy floor", floor);
       return <SingleFloor key={floor.id} floor={floor} />;
     });
   };

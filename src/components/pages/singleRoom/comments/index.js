@@ -11,7 +11,7 @@ import Comment from "./comment";
 import TextArea from "../../../formComponents/textArea";
 import { validateWordsLength } from "../../../../utils/strings";
 
-const Comments = ({ match, room, fetchRoomComments, newComment }) => {
+const Comments = ({ entityID, room, fetchRoomComments, newComment }) => {
   const { currentUserProfile } = useContext(AuthContext);
 
   // This is the array of all the comments
@@ -22,8 +22,8 @@ const Comments = ({ match, room, fetchRoomComments, newComment }) => {
 
   // This happens when the room first loads. We take the id of the room and also the fake uid (return if it's not set yet) and we fetch the rooms data. There's also a callback for creating a new portal called home in case there aren't any portals in this room yet
   useEffect(() => {
-    fetchRoomComments(match.params.id, setComments);
-  }, [match, fetchRoomComments]);
+    fetchRoomComments(entityID, setComments);
+  }, [entityID, fetchRoomComments]);
 
   // This sets the comment basic info, and the values of the different fields in our page to what they currently are (so that they'll be present in our edit components)
   useEffect(() => {
@@ -34,14 +34,14 @@ const Comments = ({ match, room, fetchRoomComments, newComment }) => {
       user_name: currentUserProfile.name,
       user_username: currentUserProfile.username,
       user_avatar: currentUserProfile.avatar,
-      room_ID: room.id,
+      room_ID: entityID,
     });
   }, [currentUserProfile, room]);
 
   // Render the comments to the page
   const renderComments = (comments) => {
     return comments.map((com) => {
-      return <Comment comment={com} key={com.id} />;
+      return <Comment comment={com} setComments={setComments} key={com.id} />;
     });
   };
 
@@ -80,15 +80,15 @@ const Comments = ({ match, room, fetchRoomComments, newComment }) => {
           }}
         />
         {currentUserProfile ? (
-          <>
+          <div className="comments__button">
             <button type="submit" className="small-button">
               Post
             </button>
-          </>
+          </div>
         ) : (
           <>
             <div
-              className="small-button"
+              className="small-button comments__button"
               onClick={() => (window.location.hash = "sign-up")}
             >
               Post

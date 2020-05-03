@@ -1,6 +1,7 @@
 import "./styles.scss";
 import React, { useContext, useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import { connect } from "react-redux";
 
 import Moment from "react-moment";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -19,13 +20,21 @@ import {
 } from "../../../../../actions";
 
 import { getLanguageName } from "../../../../../utils/languages";
-import { capitalizeSentances } from "../../../../../utils/strings";
-import { connect } from "react-redux";
+import {
+  capitalizeSentances,
+  validateWordsLength,
+} from "../../../../../utils/strings";
+import { errorMessages } from "../../../../../utils/forms";
+
 import TextArea from "../../../../formComponents/textArea";
+import InputField from "../../../../formComponents/inputField";
+import Tags from "../../../../formComponents/tags";
 
 const RoomInfo = ({
   room,
   setRoom,
+  isOwner,
+  floor,
   updateRoom,
   addToFavorites,
   removeFromFavorites,
@@ -36,31 +45,31 @@ const RoomInfo = ({
 
   // We use this state to hold
   const [values, setValues] = useState({});
+  const [lastSavedValues, setLastSavedValues] = useState({});
 
   const [shareButton, setShareButton] = useState(null);
   const [isDescriptionEdited, setIsDescriptionEdited] = useState(false);
+  const [isNameEdited, setIsNameEdited] = useState(false);
+  const [isTagsEdited, setIsTagsEdited] = useState(false);
+
+  const [tagsFormError, setTagsFormError] = useState("");
 
   // This sets the value of the description field (so that it'll be present in our edit component)
   useEffect(() => {
-    if (
-      !room
-      // ||
-      // !currentUserProfile ||
-      // !currentUserProfile.uid ||
-      // room.user_ID !== currentUserProfile.uid
-    )
-      return;
-      console.log("setting the description before")
-
-    if (room.description)
-      console.log("setting the description")
-      setValues((val) => {
-        return { ...val, description: room.description };
-      });
+    if (!room) return;
+    setValues((val) => {
+      return {
+        ...val,
+        description: room.description,
+        title: room.title,
+        name: room.name,
+        tags: room.tags,
+      };
+    });
   }, [currentUserProfile, room]);
 
-  const renderTags = () => {
-    return room.tags.map((el) => {
+  const renderTags = (tags) => {
+    return tags.map((el) => {
       return (
         <div
           className="room__tag"
@@ -86,8 +95,7 @@ const RoomInfo = ({
   return room ? (
     <div
       className={
-        (room && room.accepting_donations) ||
-        (currentUserProfile && room && currentUserProfile.uid === room.user_ID)
+        (room && (room.accepting_donations || room.selling_merch)) || isOwner
           ? "room-info details__info--with-donations section__container"
           : "room-info details__info--without-donations section__container"
       }
@@ -95,10 +103,62 @@ const RoomInfo = ({
       <div className="section__title">Room Info</div>
 
       <div className="room__top">
+        {isNameEdited? (
+          <>
+            <div className="tiny-margin-bottom tiny-margin-top">
+              <InputField
+                type="text"
+                placeHolder="Room name"
+                value={values && values.name}
+                onChange={(name) => {
+                  if (name.length < 80 && validateWordsLength(name, 25))
+                    setValues({ ...values, name });
+                }}
+              />
+            </div>
 
-        <div className="room__title">
-          {capitalizeSentances(room.title ? room.title : room.name)}
-        </div>
+            {isOwner ? (
+              <div
+                className="button-colored"
+                onClick={() => {
+                  if (values.name) {
+                    updateRoom(
+                      {
+                        ...room,
+                        name: values.name,
+                      },
+                      "name",
+                      () => {
+                        setIsNameEdited(false);
+                        setLastSavedValues({
+                          ...lastSavedValues,
+                          name: values.name,
+                        });
+                      }
+                    );
+                  }
+                }}
+              >
+                Save name
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <>
+            <div className="room__title">
+              {values.name ? capitalizeSentances(values.name) : null}
+            </div>
+
+            {isOwner && !floor ? (
+              <div
+                className="button-colored"
+                onClick={() => setIsNameEdited(true)}
+              >
+                Edit name
+              </div>
+            ) : null}
+          </>
+        )}
 
         {room.language && room.language !== "lir" ? (
           <div className="room__languages--base extra-tiny-margin-top">
@@ -120,27 +180,45 @@ const RoomInfo = ({
               />
             </div>
 
-            {currentUserProfile &&
-            room &&
-            currentUserProfile.uid === room.user_ID ? (
-              <div
-                className="button-colored"
-                onClick={() => {
-                  if (values.description) {
-                    updateRoom(
-                      {
-                        ...room,
-                        description: values.description,
-                      },
-                      "description",
-                      () => {
-                        setIsDescriptionEdited(false);
-                      }
-                    );
-                  }
-                }}
-              >
-                Save
+            {isOwner ? (
+              <div className="max-max">
+                <div
+                  className="button-colored"
+                  onClick={() => {
+                    if (values.description) {
+                      updateRoom(
+                        {
+                          ...room,
+                          description: values.description,
+                        },
+                        "description",
+                        () => {
+                          setIsDescriptionEdited(false);
+                          setLastSavedValues({
+                            ...lastSavedValues,
+                            description: values.description,
+                          });
+                        }
+                      );
+                    }
+                  }}
+                >
+                  Save description
+                </div>
+                <div
+                  className="button-colored"
+                  onClick={() => {
+                    setValues((val) => {
+                      return {
+                        ...val,
+                        description: lastSavedValues.description,
+                      };
+                    });
+                    setIsDescriptionEdited(false);
+                  }}
+                >
+                  Cancel
+                </div>
               </div>
             ) : null}
           </>
@@ -150,23 +228,89 @@ const RoomInfo = ({
               {values.description}
             </div>
 
-            {currentUserProfile &&
-            room &&
-            currentUserProfile.uid === room.user_ID ? (
+            {isOwner && !floor ? (
               <div
-                className="button-colored tiny-margin-top"
+                className="button-colored"
                 onClick={() => setIsDescriptionEdited(true)}
               >
-                Edit
+                Edit description
               </div>
             ) : null}
           </>
         )}
-        {room.tags ? (
-          <div className="tiny-margin-top">{renderTags()}</div>
-        ) : null}
+
+        {isTagsEdited  ? (
+          <>
+            <div className="tiny-margin-bottom tiny-margin-top">
+              <Tags
+                values={values}
+                setValues={setValues}
+                errorMessages={errorMessages}
+                formError={tagsFormError}
+                setFormError={setTagsFormError}
+              />
+            </div>
+
+            {isOwner ? (
+              <div className="max-max">
+                <div
+                  className="button-colored"
+                  onClick={() => {
+                    if (values.tags) {
+                      updateRoom(
+                        {
+                          ...room,
+                          tags: values.tags,
+                        },
+                        "tags",
+                        () => {
+                          setIsTagsEdited(false);
+                          setLastSavedValues({
+                            ...lastSavedValues,
+                            tags: values.tags,
+                          });
+                        }
+                      );
+                    }
+                  }}
+                >
+                  Save tags
+                </div>
+                <div
+                  className="button-colored"
+                  onClick={() => {
+                    setValues((val) => {
+                      return {
+                        ...val,
+                        tags: lastSavedValues.tags,
+                      };
+                    });
+                    setIsTagsEdited(false);
+                  }}
+                >
+                  Cancel
+                </div>
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <>
+            {values.tags  && !floor ? (
+              <div className="tiny-margin-top">{renderTags(values.tags)}</div>
+            ) : null}
+
+            {isOwner && !floor ? (
+              <div
+                className="button-colored"
+                onClick={() => setIsTagsEdited(true)}
+              >
+                Edit tags
+              </div>
+            ) : null}
+          </>
+        )}
       </div>
-      {room.tags ? (
+      {!floor ? (
         <div className="room__actions--pair tiny-margin-top">
           <CopyToClipboard
             text={`https://salon.express/room/${room.id}`}

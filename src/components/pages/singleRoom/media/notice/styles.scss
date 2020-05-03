@@ -1,0 +1,11 @@
+@import '../../../../../styles/imports';
+
+.notice{
+    border: $border;
+    border-radius: $borderRadius;
+    color: $mainColor;
+    padding: 1rem;
+    text-align: center;
+    // margin-top: 2rem;
+    // line-height: 2.2rem;
+}

@@ -54,6 +54,7 @@ import {
   SET_FLOORS,
   ADD_FLOOR,
   SET_FLOOR_PLANS,
+  SET_CURRENT_FLOOR,
 } from "./types";
 
 import { titleToKey } from "../utils/strings";
@@ -490,14 +491,14 @@ export const fetchSingleRoom = (
 };
 
 export const listenToMultiverse = (
-  room_ID,
+  entityID,
   setMultiverse,
   setMultiverseArray,
   newPortal
 ) => () => {
   multiverseListener = db
     .collection("multiverses")
-    .doc(room_ID)
+    .doc(entityID)
     .onSnapshot((docMultiverse) => {
       if (docMultiverse.data()) {
         setMultiverse(docMultiverse.data());
@@ -518,7 +519,7 @@ export const detachListener = () => () => {
 };
 
 // Setting the active audio channel
-export const setActiveChannel = (roomID, channel, cb) => () => {
+export const setActiveChannel = (channel, roomID, cb) => () => {
   db.collection("active_channels")
     .doc(roomID)
     .set({
@@ -530,10 +531,44 @@ export const setActiveChannel = (roomID, channel, cb) => () => {
     });
 };
 
-// Enter a portal
-export const enterPortal = (room, portal, uid) => () => {
+// Setting the active audio channel
+export const setActiveChannelFloorRoom = (
+  channel,
+  roomIndex,
+  floor,
+  cb
+) => () => {
   const batch = db.batch();
-  const portalDoc = db.collection("multiverses").doc(room.id);
+  const docRef = db.collection("floors").doc(floor.id);
+  const updatedFloor = {
+    ...floor,
+    rooms: {
+      ...floor.rooms,
+      [roomIndex]: {
+        ...floor.rooms[roomIndex],
+        active_channel: {
+          link: channel ? channel.link : null,
+          source: channel ? channel.source : null,
+        },
+      },
+    },
+  };
+
+  batch.set(docRef, updatedFloor, { merge: true });
+
+  batch
+    .commit()
+    .then(() => {
+      if (cb) cb();
+      analytics.logEvent("floor_room_active_channel_changed");
+    })
+    .catch((e) => console.error("promise Error update room", e));
+};
+
+// Enter a portal
+export const enterPortal = (entityID, portal, uid) => () => {
+  const batch = db.batch();
+  const portalDoc = db.collection("multiverses").doc(entityID);
   const key = titleToKey(portal.title);
 
   batch.set(
@@ -552,9 +587,9 @@ export const enterPortal = (room, portal, uid) => () => {
 };
 
 // Leave a portal
-export const leavePortal = (room, portal, uids) => () => {
+export const leavePortal = (entityID, portal, uids) => () => {
   const batch = db.batch();
-  const portalDoc = db.collection("multiverses").doc(room.id);
+  const portalDoc = db.collection("multiverses").doc(entityID);
   const key = titleToKey(portal.title);
 
   uids.forEach((uid) => {
@@ -615,7 +650,7 @@ export const replaceTimestampWithUid = (
 };
 
 // Opening a new portal
-export const newPortal = (newPortal, oldPortal, room, uid, cb) => () => {
+export const newPortal = (newPortal, oldPortal, entityID, uid, cb) => () => {
   const portalObj = {
     title: newPortal,
     members: [uid],
@@ -623,7 +658,7 @@ export const newPortal = (newPortal, oldPortal, room, uid, cb) => () => {
   };
 
   const batch = db.batch();
-  const verseDoc = db.collection("multiverses").doc(room.id);
+  const verseDoc = db.collection("multiverses").doc(entityID);
 
   let newPortalKey = titleToKey(newPortal);
   let oldPortalKey = oldPortal ? titleToKey(oldPortal.title) : null;
@@ -681,30 +716,42 @@ export const addChannel = (channel, room, cb) => async (dispatch) => {
     .catch((e) => console.error("promise Error add chanen", e));
 };
 
-export const addChannelToFloorRoom = (channel,floor, room, cb) => async (dispatch) => {
+export const addChannelFloorRoom = (
+  channel,
+  roomIndex,
+  floor,
+  cb
+) => async () => {
   const channelObj = {
     ...channel,
     source: channel.source.toLowerCase(),
     id: uuidv1(),
   };
 
-  // db.collection("floors")
-  //   .doc(floor.id)
-  //   .set(
-  //     {
-  //     rooms:{}  audio_channels: firebase.firestore.FieldValue.arrayUnion(channelObj),
-  //     },
-  //     { merge: true }
-  //   )
-  //   .then(() => {
-  //     cb();
+  const batch = db.batch();
+  const docRef = db.collection("floors").doc(floor.id);
+  const updatedFloor = {
+    ...floor,
+    rooms: {
+      ...floor.rooms,
+      [roomIndex]: {
+        ...floor.rooms[roomIndex],
+        audio_channels: floor.rooms[roomIndex].audio_channels
+          ? [...floor.rooms[roomIndex].audio_channels, channelObj]
+          : [channelObj],
+      },
+    },
+  };
 
-  //     dispatch({
-  //       type: ADD_CHANNEL,
-  //       payload: channelObj,
-  //     });
-  //   })
-  //   .catch((e) => console.error("promise Error add chanen", e));
+  batch.set(docRef, updatedFloor, { merge: true });
+
+  batch
+    .commit()
+    .then(() => {
+      cb();
+      analytics.logEvent("floor_room_event_added");
+    })
+    .catch((e) => console.error("promise Error update room", e));
 };
 
 export const deleteChannel = (channel, room, cb) => async (dispatch) => {
@@ -722,6 +769,38 @@ export const deleteChannel = (channel, room, cb) => async (dispatch) => {
       });
     })
     .catch((e) => console.error("promise Error delete channel", e));
+};
+
+export const deleteChannelFloorRoom = (
+  channel,
+  roomIndex,
+  floor,
+  cb
+) => async () => {
+  const batch = db.batch();
+  const docRef = db.collection("floors").doc(floor.id);
+  const updatedFloor = {
+    ...floor,
+    rooms: {
+      ...floor.rooms,
+      [roomIndex]: {
+        ...floor.rooms[roomIndex],
+        audio_channels: floor.rooms[roomIndex].audio_channels.filter(
+          (cha) => cha.id !== channel.id
+        ),
+      },
+    },
+  };
+
+  batch.set(docRef, updatedFloor, { merge: true });
+
+  batch
+    .commit()
+    .then(() => {
+      cb();
+      analytics.logEvent("floor_room_event_added");
+    })
+    .catch((e) => console.error("promise Error update room", e));
 };
 
 export const saveArrayOrder = (collection, key, array, parent, reset) => () => {
@@ -765,6 +844,33 @@ export const addEvent = (event, room, cb) => async (dispatch) => {
     .catch((e) => console.error("promise Error add event", e));
 };
 
+export const addEventFloor = (event, roomIndex, floor, cb) => async () => {
+  const batch = db.batch();
+  const docRef = db.collection("floors").doc(floor.id);
+  const updatedFloor = {
+    ...floor,
+    rooms: {
+      ...floor.rooms,
+      [roomIndex]: {
+        ...floor.rooms[roomIndex],
+        events: floor.rooms[roomIndex].events
+          ? [...floor.rooms[roomIndex].events, event]
+          : [event],
+      },
+    },
+  };
+
+  batch.set(docRef, updatedFloor, { merge: true });
+
+  batch
+    .commit()
+    .then(() => {
+      cb();
+      analytics.logEvent("floor_room_event_added");
+    })
+    .catch((e) => console.error("promise Error update room", e));
+};
+
 export const deleteEvent = (event) => async (dispatch) => {
   db.collection("events")
     .doc(event.id)
@@ -776,18 +882,6 @@ export const deleteEvent = (event) => async (dispatch) => {
       });
     })
     .catch((e) => console.error("promise Error delete event", e));
-};
-
-export const fetchRoomComments = (roomID, setComments) => async () => {
-  const data = await db
-    .collection("comments")
-    .orderBy("created_on", "desc")
-    .where("room_ID", "==", roomID)
-    .get()
-    .catch((e) => console.error("promise Error fetch room comme", e));
-  if (data.docs) {
-    setComments(data.docs.map((doc) => doc.data()));
-  }
 };
 
 export const associateWithRoom = (room, associate) => async (dispatch) => {
@@ -854,11 +948,11 @@ export const newRoom = (values, reset) => async (dispatch) => {
     .catch((e) => console.error("promise Error new room", e));
 };
 
-export const updateRoom = (values, parameter, reset) => (dispatch) => {
+export const updateRoom = (updatedRoom, parameter, reset) => (dispatch) => {
   const batch = db.batch();
-  const docRef = db.collection("rooms").doc(values.id);
+  const docRef = db.collection("rooms").doc(updatedRoom.id);
 
-  batch.set(docRef, values, { merge: true });
+  batch.set(docRef, updatedRoom, { merge: true });
 
   batch
     .commit()
@@ -869,8 +963,40 @@ export const updateRoom = (values, parameter, reset) => (dispatch) => {
 
       dispatch({
         type: EDIT_ROOM,
-        payload: values,
+        payload: updatedRoom,
       });
+    })
+    .catch((e) => console.error("promise Error update room", e));
+};
+
+export const updateFloorRoom = (
+  updatedRoom,
+  roomIndex,
+  floor,
+  parameter,
+  reset
+) => (dispatch) => {
+  const batch = db.batch();
+  const docRef = db.collection("floors").doc(floor.id);
+  const updatedFloor = {
+    ...floor,
+    rooms: { ...floor.rooms, [roomIndex]: updatedRoom },
+  };
+
+  batch.set(docRef, updatedFloor, { merge: true });
+
+  batch
+    .commit()
+    .then(() => {
+      reset();
+      window.location.hash = "";
+      analytics.logEvent("floor_room_updated", { parameter });
+
+      // listens to changes anyway
+      // dispatch({
+      //   type: EDIT_ROOM,
+      //   payload: updatedRoom,
+      // });
     })
     .catch((e) => console.error("promise Error update room", e));
 };
@@ -894,16 +1020,51 @@ export const removeRoom = (room) => (dispatch) => {
     .catch((e) => console.error("promise Error remove room", e));
 };
 
+// COMMENTS //
+
+export const fetchRoomComments = (roomID, setComments) => async () => {
+  const data = await db
+    .collection("comments")
+    .orderBy("created_on", "desc")
+    .where("room_ID", "==", roomID)
+    .get()
+    .catch((e) => console.error("promise Error fetch room comme", e));
+  if (data.docs) {
+    setComments(data.docs.map((doc) => doc.data()));
+  }
+};
+
 export const newComment = (values, cb) => async () => {
   const commentDoc = await db.collection("comments").doc();
   const comment = { ...values, created_on: new Date(), id: commentDoc.id };
-  console.log("minee comment", "setting new comment");
+
   commentDoc
     .set(comment)
     .then(() => {
+      analytics.logEvent("comment_new");
       cb();
     })
     .catch((e) => console.error("promise Error new comment", e));
+};
+
+export const updateComment = (comment, commentID, cb) => async () => {
+  const commentDoc = await db.collection("comments").doc(commentID);
+
+  commentDoc.set({ body: comment }, { merge: true }).then(() => {
+    analytics.logEvent("comment_update");
+
+    cb();
+  });
+};
+
+export const deleteComment = (commentID, cb) => async () => {
+  const commentDoc = await db.collection("comments").doc(commentID);
+
+  commentDoc.delete().then(() => {
+    analytics.logEvent("comment_delete");
+
+    cb();
+  });
 };
 
 // FLOOR //
@@ -924,7 +1085,9 @@ export const fetchFloors = (currentUserProfile, cb) => async (dispatch) => {
   });
 };
 
-export const fetchFloor = (floor_ID, setFloor) => async (dispatch) => {
+let floorListener;
+
+export const fetchFloor = (floor_ID) => async (dispatch) => {
   const docFloor = await db
     .collection("floors")
     .doc(floor_ID)
@@ -939,6 +1102,20 @@ export const fetchFloor = (floor_ID, setFloor) => async (dispatch) => {
       payload: docFloor.data(),
     });
   }
+};
+
+export const fetchCurrentFloor = (floor_ID) => async (dispatch) => {
+  floorListener = db
+    .collection("floors")
+    .doc(floor_ID)
+    .onSnapshot((docFloor) => {
+      if (docFloor.data()) {
+        dispatch({
+          type: SET_CURRENT_FLOOR,
+          payload: docFloor.data(),
+        });
+      }
+    });
 };
 
 export const fetchFloorRooms = (floor_ID, setFloorRooms) => async (
@@ -1194,16 +1371,17 @@ export const fetchPositions = () => async (dispatch) => {
 
   dispatch({
     type: FETCH_POSITIONS,
-    payload: !!data.docs
-      ? data.docs.map((doc) => {
-          return doc.data();
-        })
-      : [],
+    payload:
+      data && data.docs
+        ? data.docs.map((doc) => {
+            return doc.data();
+          })
+        : [],
   });
 };
 
 export const fetchSinglePosition = (id) => async (dispatch) => {
-  const data = await db
+  const doc = await db
     .collection("positions")
     .doc(id)
     .get()
@@ -1211,7 +1389,7 @@ export const fetchSinglePosition = (id) => async (dispatch) => {
 
   dispatch({
     type: FETCH_SINGLE_POSITION,
-    payload: data.data() ? data.data() : {},
+    payload: doc.data() ? doc.data() : {},
   });
 };
 

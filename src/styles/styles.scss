@@ -222,12 +222,10 @@ h3 {
 
 .small-button {
   font-size: 1.2rem;
-  margin-top: 0.4rem;
   background-color: $mainColor;
   border-radius: $borderRadius;
   color: white !important;
   padding: 0.2rem 0.8rem;
-  align-self: flex-start;
   border: none;
   outline: none;
   cursor: pointer;
@@ -247,14 +245,14 @@ h3 {
   color: white !important;
   padding: 0.3rem 3rem 0.5rem 3rem;
   border-radius: $borderRadius;
-  box-shadow: 0 0.2rem 1rem rgb(170, 170, 170);
+  box-shadow: 0 0.2rem 1rem $shadowColor;
   border: none;
   outline: none;
   cursor: pointer;
   transition: all 0.2s;
   &:hover {
     transform: translateY(-0.2rem);
-    box-shadow: 0 0.4rem 1.4rem rgb(170, 170, 170);
+    box-shadow: 0 0.4rem 1.4rem $shadowColor;
     color: white !important;
   }
 
@@ -408,9 +406,15 @@ h3 {
     display: flex;
     flex-direction: column;
     height: 100%;
+    transition: all .15s;
     // @include resize(1500px) {
     //   padding: 1rem;
     // }
+
+    &:hover{
+      transform: translateY(-0.2rem);
+      box-shadow: 0 0.4rem 1.2rem $shadowColor;
+    }
   }
   &__title {
     font-size: 1.2rem;
@@ -502,8 +506,9 @@ h3 {
     display: grid;
     grid-template-columns: 1fr max-content;
     justify-self: stretch;
-    width: 100%;
+    width: max-content;
     margin-top: 0rem;
+    margin-left: auto;
     cursor: pointer;
 
     &-text {

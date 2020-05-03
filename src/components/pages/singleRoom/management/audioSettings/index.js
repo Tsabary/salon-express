@@ -7,30 +7,24 @@ import ReactTooltip from "react-tooltip";
 import {
   updateRoom,
   addChannel,
-  addChannelToFloorRoom,
+  addChannelFloorRoom,
 } from "../../../../../actions";
 import { connect } from "react-redux";
 
 import InputField from "../../../../formComponents/inputField";
 import SingleChannel from "./singleChannel";
 import { isMobile } from "react-device-detect";
-import { FloorContext } from "../../../../../providers/Floor";
 
 const AudioSettings = ({
+  room,
+  roomIndex,
+  floor,
+  currentAudioChannel,
   audioChannels,
   addChannel,
-  addChannelToFloorRoom,
-  room,
-  currentAudioChannel,
+  addChannelFloorRoom,
 }) => {
-  const { floor } = useContext(FloorContext);
   const [newChannel, setNewChannel] = useState(null);
-  const [isFloor, setIsFloor] = useState(false);
-
-  useEffect(() => {
-    if (!room) return;
-    setIsFloor(!!room.coords);
-  }, [room]);
 
   const renderChannels = (channels) => {
     return channels.map((channel) => {
@@ -38,6 +32,8 @@ const AudioSettings = ({
         <SingleChannel
           channel={channel}
           room={room}
+          roomIndex={roomIndex}
+          floor={floor}
           currentAudioChannel={currentAudioChannel}
           key={channel.id}
         />
@@ -134,11 +130,11 @@ const AudioSettings = ({
         autoComplete="off"
         onSubmit={(e) => {
           e.preventDefault();
-          isFloor
-            ? addChannelToFloorRoom(newChannel, floor, room, () =>
+          !floor
+            ? addChannel(newChannel, room, () => setNewChannel(null))
+            : addChannelFloorRoom(newChannel, roomIndex, floor, () =>
                 setNewChannel(null)
-              )
-            : addChannel(newChannel, room, () => setNewChannel(null));
+              );
         }}
       >
         <div className="tile-form">
@@ -184,7 +180,14 @@ const AudioSettings = ({
         </div>
       </form>
 
-      {renderChannels(audioChannels)}
+      {audioChannels.length ||
+      (floor && floor.rooms[roomIndex] && floor.rooms[roomIndex].audio_channels)
+        ? renderChannels(
+            floor
+              ? floor.rooms[roomIndex].audio_channels
+              : audioChannels
+          )
+        : null}
     </div>
   );
 };
@@ -198,5 +201,5 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   updateRoom,
   addChannel,
-  addChannelToFloorRoom,
+  addChannelFloorRoom,
 })(AudioSettings);

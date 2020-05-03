@@ -8,7 +8,7 @@ import { AuthContext } from "../../../providers/Auth";
 
 import { updateProfile } from "../../../actions";
 import { validateWordsLength } from "../../../utils/strings";
-import { errorMessages } from "../../../utils/forms";
+import { errorMessages, trimURL } from "../../../utils/forms";
 import {
   renderLanguageOptions,
   getLanguageCode,
@@ -83,11 +83,28 @@ const UpdateProfile = ({ updateProfile }) => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     if (validateForm()) {
+      const newProfile = {};
+
+      Object.keys(values).forEach((el) => {
+        console.log(values[el]);
+        console.log(typeof values[el] === "string");
+        console.log(
+          typeof values[el] === "string" && validator.isURL(values[el])
+        );
+        newProfile[el] =
+          typeof values[el] === "string" &&
+          validator.isURL(values[el]) &&
+          values[el] === "avatar"
+            ? trimURL(values[el])
+            : values[el];
+      });
+
       setSubmitting(true);
       updateProfile(
-        values,
+        newProfile,
         currentUser,
         currentUserProfile,
         imageAsFile,
@@ -128,7 +145,7 @@ const UpdateProfile = ({ updateProfile }) => {
         <div
           className="popup__close-text"
           onClick={() => {
-            window.location.hash=""
+            window.location.hash = "";
           }}
         >
           Close
@@ -137,7 +154,7 @@ const UpdateProfile = ({ updateProfile }) => {
       {!submitting ? (
         <div>
           {/* <div className="popup__title">Update Profile</div> */}
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={(e) => handleSubmit(e)}>
             <div className="update-profile__top">
               <span>
                 <label
@@ -161,7 +178,7 @@ const UpdateProfile = ({ updateProfile }) => {
                   onChange={handleImageAsFile}
                 />
               </span>
-{/* 
+              {/* 
               <div className="update-profile__message">
                 The following info would appear in your profile. You don't have
                 to include any of these details, but they might help others form
@@ -329,4 +346,4 @@ const UpdateProfile = ({ updateProfile }) => {
   );
 };
 
-export default connect(null, { updateProfile})(UpdateProfile);
+export default connect(null, { updateProfile })(UpdateProfile);

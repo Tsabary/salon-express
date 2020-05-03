@@ -33,7 +33,7 @@ import {
 import InputField from "../../formComponents/inputField";
 import Tags from "../../formComponents/tags";
 
-const NewFloor = ({floorPlans, newFloor, fetchFloorPlans }) => {
+const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
   const { currentUserProfile } = useContext(AuthContext);
   const { addToast } = useToasts();
 
@@ -122,7 +122,9 @@ const NewFloor = ({floorPlans, newFloor, fetchFloorPlans }) => {
       <div>
         {!submitting ? (
           <div>
-            <div className="popup__title">Open a Floor</div>
+            <div className="popup__title" onClick={() => console.log(values)}>
+              Open a Floor
+            </div>
             <form
               onSubmit={(e) => {
                 console.log("nothing");
@@ -137,7 +139,9 @@ const NewFloor = ({floorPlans, newFloor, fetchFloorPlans }) => {
                   value={values.name}
                   onChange={(name) => {
                     if (name.length < 80 && validateWordsLength(name, 25))
-                      setValues({ ...values, name });
+                      setValues((val) => {
+                        return { ...val, name };
+                      });
                   }}
                 />
               </div>
@@ -159,13 +163,14 @@ const NewFloor = ({floorPlans, newFloor, fetchFloorPlans }) => {
                 {renderLanguageOptions("Choose a language")}
               </Form.Control>
               <div className="new-floor-plan__image-container">
-              <img
-                className="new-floor-plan__image-preview"
-                src={
-                  (chosenPlan && chosenPlan.image) ||
-                  "../../../imgs/placeholder.jpg"
-                }
-              /></div>
+                <img
+                  className="new-floor-plan__image-preview"
+                  src={
+                    (chosenPlan && chosenPlan.image) ||
+                    "../../../imgs/placeholder.jpg"
+                  }
+                />
+              </div>
               <div className="tiny-margin-bottom tiny-margin-top">
                 <CarouselProvider
                   naturalSlideWidth={12}

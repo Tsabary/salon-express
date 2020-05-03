@@ -7,4 +7,9 @@
     grid-template-columns: 1fr max-content;
     gap: 1.5rem;
   }
+
+  &__button{
+    align-self: flex-start;
+    margin-top: .4rem;
+  }
 }

@@ -1,18 +1,19 @@
+import "./styles.scss";
 import React, { useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
 import firebase from "firebase/app";
-import history from "../../../../history";
+import history from "../../../history";
 
-import { AuthContext } from "../../../../providers/Auth";
-import { PageContext } from "../../../../providers/Page";
-import { FloorContext } from "../../../../providers/Floor";
+import { AuthContext } from "../../../providers/Auth";
+import { PageContext } from "../../../providers/Page";
+import { FloorContext } from "../../../providers/Floor";
 
-import { listenToProfile, stopListeningToProfile } from "../../../../actions";
+import { listenToProfile, stopListeningToProfile } from "../../../actions";
 
-import AuthOptions from "../authOptions";
-import UserOptions from "../userOptions";
-import MobileMenu from "../mobileMenu";
+import AuthOptions from "./authOptions";
+import UserOptions from "./userOptions";
+import MobileMenu from "./mobileMenu";
 import { connect } from "react-redux";
 
 const FloorHeader = ({ listenToProfile, stopListeningToProfile }) => {
@@ -39,27 +40,13 @@ const FloorHeader = ({ listenToProfile, stopListeningToProfile }) => {
   const renderAuth = () => {
     switch (true) {
       case !!currentUser:
-        return <UserOptions />;
+        return <UserOptions isFloor />;
 
       case !currentUser:
         return <AuthOptions />;
       default:
         return null;
     }
-  };
-
-  const renderButton = () => {
-    return currentUser && floor && currentUser.uid === floor.user_ID ? (
-      <div
-        className="header__new-room boxed-button"
-        onClick={() => {
-          window.location.hash = "add-floor-room";
-          firebase.analytics().logEvent("floor_room_open_button_click");
-        }}
-      >
-        New Room
-      </div>
-    ) : null;
   };
 
   return (
@@ -74,8 +61,9 @@ const FloorHeader = ({ listenToProfile, stopListeningToProfile }) => {
       >
         <div className="header__logo-container">
           <div onClick={handleChange} className="header__title-full">
-            <div className="header__title-main ">Salon.</div>
-            <div className="header__title-sub">Humans Talking</div>
+            <div className="header__title-main header__title-main--floor">Salon.</div>
+            <div className="header__title-sub header__title-sub--floor">Humans Talking</div>
+
           </div>
           <div
             className="header__title header__title-lean"
@@ -84,8 +72,8 @@ const FloorHeader = ({ listenToProfile, stopListeningToProfile }) => {
             <div className="header__title-main ">S.</div>
           </div>
         </div>
+
         <div />
-        {renderButton()}
 
         <div className="header__auth">{renderAuth()}</div>
       </div>
@@ -93,8 +81,7 @@ const FloorHeader = ({ listenToProfile, stopListeningToProfile }) => {
       <div className="header-without-logo">
         <div />
         <div />
-        {renderButton()}
-
+        <div />
         <div className="header__auth">{renderAuth()}</div>
       </div>
     </div>

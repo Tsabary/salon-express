@@ -14,7 +14,8 @@ import Media from "./media";
 import Details from "./details";
 import Management from "./management";
 
-const SingleRoom = ({ match, fetchSingleRoom }) => {
+const PublicRoom = ({ match, fetchSingleRoom }) => {
+  const { currentUserProfile } = useContext(AuthContext);
   const { setGlobalCurrentAudioChannel } = useContext(RoomContext);
   const { setGlobalRoom } = useContext(RoomContext);
 
@@ -24,6 +25,13 @@ const SingleRoom = ({ match, fetchSingleRoom }) => {
   // This is our room
   const [room, setRoom] = useState(null);
   const [currentAudioChannel, setCurrentAudioChannel] = useState(null);
+  const [isOwner, setIsOwner] = useState(false);
+
+  useEffect(() => {
+    setIsOwner(
+      currentUserProfile && room && currentUserProfile.uid === room.user_ID
+    );
+  }, [currentUserProfile, room]);
 
   // This happens when the room first loads. We take the id of the room and also the fake uid (return if it's not set yet) and we fetch the rooms data. There's also a callback for creating a new portal called home in case there aren't any portals in this room yet
   useEffect(() => {
@@ -44,21 +52,27 @@ const SingleRoom = ({ match, fetchSingleRoom }) => {
       <Media
         room={room}
         currentAudioChannel={currentAudioChannel}
-        match={match}
+        // Calling this entity ID and not room ID, because here it might just be the room ID, but in  floor it's a mix of the floor ID with the room ID
+        entityID={match.params.id}
+        isOwner={isOwner}
       />
 
       {/** This is the room info the calendar and the donations*/}
-      <Details room={room} setRoom={setRoom} />
+      <Details room={room} setRoom={setRoom} isOwner={isOwner} />
 
       {/** This is the audio settings and the admin*/}
-      <Management room={room} currentAudioChannel={currentAudioChannel} />
+      <Management
+        room={room}
+        currentAudioChannel={currentAudioChannel}
+        isOwner={isOwner}
+      />
 
       {/** This is the comments*/}
-      {room ? <Comments room={room} match={match} /> : null}
+      {room ? <Comments room={room} entityID={match.params.id} /> : null}
     </div>
   );
 };
 
 export default connect(null, {
   fetchSingleRoom,
-})(SingleRoom);
+})(PublicRoom);

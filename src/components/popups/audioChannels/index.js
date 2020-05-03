@@ -5,12 +5,18 @@ import { connect } from "react-redux";
 import { Droppable, DragDropContext } from "react-beautiful-dnd";
 
 import { RoomContext } from "../../../providers/Room";
+import { FloorContext } from "../../../providers/Floor";
+
 import { saveArrayOrder } from "../../../actions";
 
 import InnerList from "./innerList";
 
 const AudioChannels = ({ audioChannels, saveArrayOrder }) => {
   const { globalRoom } = useContext(RoomContext);
+
+  const { globalFloor, globalFloorRoom, globalFloorRoomIndex } = useContext(
+    FloorContext
+  );
 
   // These are the group products. They are created after all the products are filtered with the IDs of the group products
   const [orderedChannels, setOrderedChannels] = useState(null);
@@ -25,11 +31,22 @@ const AudioChannels = ({ audioChannels, saveArrayOrder }) => {
   const [isOrderDifferent, setIsOrderDifferent] = useState(false);
 
   useEffect(() => {
-    if (audioChannels) {
+    // If we have channels set in the reducer then we're in the main page and we use those channels
+    if (audioChannels.length) {
       setLocalChannelIds(audioChannels.map((ch) => ch.id));
       setLastSavedChannelIds(audioChannels.map((ch) => ch.id));
     }
-  }, [audioChannels]);
+
+    // If we have a floor room set, meaning we're currently in a festival room, we use that as our channels
+    if (
+      globalFloorRoom &&
+      globalFloorRoom.audio_channels &&
+      globalFloorRoom.audio_channels.length
+    ) {
+      setLocalChannelIds(globalFloorRoom.audio_channels.map((ch) => ch.id));
+      setLastSavedChannelIds(globalFloorRoom.audio_channels.map((ch) => ch.id));
+    }
+  }, [audioChannels, globalFloorRoom]);
 
   /* When the order of our products changes (indicated by 'localProductIds'), or the products in the store change, we:
   1. If there are no products at all, we just return.
@@ -40,18 +57,31 @@ const AudioChannels = ({ audioChannels, saveArrayOrder }) => {
   6. Set the state of "group products" to this new array. 
   */
   useEffect(() => {
-    if (!audioChannels || !audioChannels.length) return;
     if (!localChannelIds) return;
-
-    const newOrderedChannels = localChannelIds
-      .map(
-        (groupId) =>
-        audioChannels.filter((el) => el.id === groupId)[0]
-      )
-      .filter((el) => el);
+    // if (
+    //   (audio_channels && audioChannels.length) ||
+    //   (globalFloorRoom &&
+    //     globalFloorRoom.audio_channels &&
+    //     globalFloorRoom.audio_channels.length)
+    // )
+    const newOrderedChannels =
+      globalFloorRoom && globalFloorRoom.audio_channels
+        ? localChannelIds
+            .map(
+              (groupId) =>
+                globalFloorRoom.audio_channels.filter(
+                  (el) => el.id === groupId
+                )[0]
+            )
+            .filter((el) => el)
+        : localChannelIds
+            .map(
+              (groupId) => audioChannels.filter((el) => el.id === groupId)[0]
+            )
+            .filter((el) => el);
 
     setOrderedChannels(newOrderedChannels);
-  }, [localChannelIds, audioChannels]);
+  }, [localChannelIds, audioChannels, globalFloorRoom]);
 
   const onDragEnd = (
     result,
@@ -141,7 +171,12 @@ const AudioChannels = ({ audioChannels, saveArrayOrder }) => {
               ) : null}
               <div className="audio-channels__channels small-margin-top">
                 {orderedChannels ? (
-                  <InnerList channels={orderedChannels} room={globalRoom} />
+                  <InnerList
+                    channels={orderedChannels}
+                    room={globalRoom}
+                    roomIndex={globalFloorRoomIndex}
+                    floor={globalFloor}
+                  />
                 ) : null}
               </div>
 

@@ -48,7 +48,10 @@ export const REMOVE_EVENT = "REMOVE_EVENT";
 // FLOORS //
 export const SET_FLOORS = "SET_FLOORS";
 export const ADD_FLOOR = "ADD_FLOOR";
+export const EDIT_FLOOR = "EDIT_FLOOR";
 export const REMOVE_FLOOR = "REMOVE_FLOOR";
+
+export const SET_CURRENT_FLOOR = "SET_CURRENT_FLOOR";
 
 export const SET_FLOOR_PLANS = "SET_FLOOR_PLANS";
 

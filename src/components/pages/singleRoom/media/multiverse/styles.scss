@@ -1,4 +1,4 @@
-@import '../../../../../styles/imports';
+@import "../../../../../styles/imports";
 
 .multiverse {
   display: grid;
@@ -20,11 +20,28 @@
   }
 
   &__form {
-    @include gridVariation;
+    display: grid;
+    gap: 1rem;
+    align-items: center;
     grid-template-columns: 1fr max-content;
+    // @include resize(1300px) {
+    //   grid-template-columns: 1fr;
+    // }
+  }
 
-    @include resize(1300px) {
-      grid-template-columns: 1fr;
+  &__emoji {
+    position: relative;
+    // &:hover .multiverse__emoji--picker {
+    //   display: block;
+    // }
+
+    &--current {
+      background-color: chocolate;
+      width: 2rem;
+      height: 2rem;
     }
+    // &--picker {
+
+    // }
   }
 }

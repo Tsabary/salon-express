@@ -33,7 +33,7 @@ export const checkValidity = (
 ) => {
   switch (true) {
 
-    case !values.title:
+    case !values.title && !values.name:
       setFormError(errorMessages.title);
       return false;
 

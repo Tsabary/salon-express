@@ -60,7 +60,7 @@ const Footer = () => {
           title: "Pages",
           pages: [
             { title: "Home", path: "" },
-            // { title: "Floor Managment", path: "floor-management" },
+            { title: "Floor Managment", path: "floor-management" },
             { title: "FAQ", path: "frequently-asked-questions" },
           ],
         },
@@ -68,7 +68,7 @@ const Footer = () => {
         {
           title: "Company",
           pages: [
-            { title: "Careers", path: "careers" },
+            // { title: "Careers", path: "careers" },
             { title: "Contact", path: "contact" },
           ],
         },

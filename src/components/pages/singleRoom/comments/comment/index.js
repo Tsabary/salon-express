@@ -1,18 +1,39 @@
 import "./styles.scss";
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
-
 import Moment from "react-moment";
 
 import history from "../../../../../history";
 
-const Comment = ({ comment }) => {
+import { AuthContext } from "../../../../../providers/Auth";
+import { validateWordsLength } from "../../../../../utils/strings";
+import { updateComment, deleteComment } from "../../../../../actions";
+import TextArea from "../../../../formComponents/textArea";
+import { connect } from "react-redux";
+
+const Comment = ({ comment, setComments, updateComment, deleteComment }) => {
   const myHistory = useHistory(history);
+  const { currentUserProfile } = useContext(AuthContext);
+
+  const [isOwner, setIsOwner] = useState(false);
+  const [isEdited, setIsEdited] = useState(false);
+  const [values, setValues] = useState("");
+  const [lastSavedValues, setLastSavedValues] = useState({});
 
   const createdOn =
     Object.prototype.toString.call(comment.created_on) === "[object Date]"
       ? comment.created_on
       : comment.created_on.toDate();
+
+  useEffect(() => {
+    setValues(comment.body);
+  }, [comment]);
+
+  useEffect(() => {
+    setIsOwner(
+      currentUserProfile && comment.user_ID === currentUserProfile.uid
+    );
+  }, [currentUserProfile]);
 
   return (
     <div className="comment">
@@ -21,16 +42,103 @@ const Comment = ({ comment }) => {
         onClick={() => myHistory.push(`/${comment.user_username}`)}
       >
         <div className="max-fr">
-          <img className="comment__avatar" src={comment.user_avatar} alt="comment author"/>
+          <img
+            className="comment__avatar"
+            src={comment.user_avatar}
+            alt="comment author"
+          />
           <div className="comment__user-name">{comment.user_name}</div>
         </div>
         <div className="comment__time">
           <Moment fromNow>{createdOn}</Moment>
         </div>
       </div>
-      <div className="comment__body">{comment.body}</div>
+
+      {isEdited ? (
+        <>
+          <div className="tiny-margin-bottom tiny-margin-top">
+            <TextArea
+              type="text"
+              placeHolder="Your comment"
+              value={values}
+              onChange={(val) => {
+                if (val.length < 500 && validateWordsLength(val, 50))
+                  setValues(val);
+              }}
+            />
+          </div>
+
+          {isOwner ? (
+            <div className="max-max tiny-margin-top">
+              <div
+                className="button-colored"
+                onClick={() => {
+                  if (values) {
+                    updateComment(values, comment.id, () => {
+                      setIsEdited(false);
+                      setComments((vals) => {
+                        return vals.map((com) =>
+                          com.id !== comment.id
+                            ? com
+                            : { ...comment, body: values }
+                        );
+                      });
+
+                      setLastSavedValues(values);
+                    });
+                  }
+                }}
+              >
+                Save
+              </div>
+
+              <div
+                className="button-colored"
+                onClick={() => {
+                  setValues(comment.body);
+                  setIsEdited(false);
+                }}
+              >
+                Cancel
+              </div>
+            </div>
+          ) : null}
+        </>
+      ) : (
+        <>
+          <div className="room__description tiny-margin-top">
+            <div className="comment__body">{values}</div>
+          </div>
+
+          {isOwner ? (
+            <div className="max-max tiny-margin-top">
+              <div
+                className="button-colored "
+                onClick={() => setIsEdited(true)}
+              >
+                Edit
+              </div>
+
+              <div
+                className="button-colored"
+                onClick={() => {
+                  if (values) {
+                    deleteComment(comment.id, () => {
+                      setComments((vals) => {
+                        return vals.filter((com) => com.id !== comment.id);
+                      });
+                    });
+                  }
+                }}
+              >
+                Delete
+              </div>
+            </div>
+          ) : null}
+        </>
+      )}
     </div>
   );
 };
 
-export default Comment;
+export default connect(null, { updateComment, deleteComment })(Comment);

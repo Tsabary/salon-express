@@ -54,73 +54,86 @@ const Home = ({ popupShown, togglePopup, detachListener }) => {
         </div>
       ) : null}
 
-      {currentUser ? (
-        <div className="home__menu">
-          <ul>
-            {page === 1 && currentUser ? (
-              <div className="default-active">Explore</div>
-            ) : (
-              <li
-                onClick={() => {
-                  setPage(1);
-                  firebase
-                    .analytics()
-                    .logEvent("home_navigation", { feed: "Explore" });
-                }}
-              >
-                <a href="#">Explore</a>
-              </li>
-            )}
+      <div className="home__menu">
+        <ul>
+          {page === 1 ? (
+            <div className="default-active">Explore</div>
+          ) : currentUser ? (
+            <li
+              onClick={() => {
+                setPage(1);
+                firebase
+                  .analytics()
+                  .logEvent("home_navigation", { feed: "Explore" });
+              }}
+            >
+              <a href="#">Explore</a>
+            </li>
+          ) : (
+            <li
+              onClick={() => {
+                firebase.analytics().logEvent("home_navigation_unregistered", {
+                  feed: "Explore",
+                });
+              }}
+            >
+              <a href="#sign-up">Explore</a>
+            </li>
+          )}
 
-            {page === 2 && currentUser ? (
-              <div className="default-active">Favorites</div>
-            ) : currentUser ? (
-              <li
-                onClick={() => {
-                  setPage(2);
-                  firebase
-                    .analytics()
-                    .logEvent("home_navigation", { feed: "Favorites" });
-                }}
-              >
-                <a href="#">Favorites</a>
-              </li>
-            ) : null}
+          {page === 2 ? (
+            <div className="default-active">Favorites</div>
+          ) : currentUser ? (
+            <li
+              onClick={() => {
+                setPage(2);
+                firebase
+                  .analytics()
+                  .logEvent("home_navigation", { feed: "Favorites" });
+              }}
+            >
+              <a href="#">Favorites</a>
+            </li>
+          ) : (
+            <li
+              onClick={() => {
+                firebase.analytics().logEvent("home_navigation_unregistered", {
+                  feed: "Favorites",
+                });
+              }}
+            >
+              <a href="#sign-up">Favorites</a>
+            </li>
+          )}
 
-            {page === 3 && currentUser ? (
-              <div className="default-active">My Rooms</div>
-            ) : currentUser ? (
-              <li
-                onClick={() => {
-                  setPage(3);
-                  firebase
-                    .analytics()
-                    .logEvent("home_navigation", { feed: "My Rooms" });
-                }}
-              >
-                <a href="#">My Rooms</a>
-              </li>
-            ) : null}
-          </ul>
-        </div>
-      ) : null}
+          {page === 3 ? (
+            <div className="default-active">My Rooms</div>
+          ) : currentUser ? (
+            <li
+              onClick={() => {
+                setPage(3);
+                firebase
+                  .analytics()
+                  .logEvent("home_navigation", { feed: "My Rooms" });
+              }}
+            >
+              <a href="#">My Rooms</a>
+            </li>
+          ) : (
+            <li
+              onClick={() => {
+                firebase.analytics().logEvent("home_navigation_unregistered", {
+                  feed: "My Rooms",
+                });
+              }}
+            >
+              <a href="#sign-up">My Rooms</a>
+            </li>
+          )}
+        </ul>
+      </div>
 
       {renderContent(page)}
-
-      {/* NEW ROOM BUTTON */}
-      {/* <a
-        style={{ display: popupShown ? "none" : "" }}
-        onClick={() => {
-          togglePopup(true);
-          firebase.analytics().logEvent("room_open_button_click");
-        }}
-        className="post-button"
-        href={
-          currentUser && currentUser.emailVerified ? "#add-room" : "#sign-up"
-        }
-      >
-        New Room
-      </a> */}
     </div>
   );
 };

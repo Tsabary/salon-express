@@ -15,8 +15,17 @@ import Twitch from "./twitch";
 import Multiverse from "./multiverse";
 import MobileMultiverse from "./mobileMultiverse";
 import Mixlr from "./mixlr";
+import { connect } from "react-redux";
+import Notice from "./notice";
 
-const Media = ({ match, room, currentAudioChannel }) => {
+const Media = ({
+  room,
+  currentAudioChannel,
+  entityID,
+  floor,
+  isOwner,
+  enterPortal,
+}) => {
   // This is a fake unique id based on current timestamp. We use it to identify users that aren't logged in, so we can manage the coun of users in each portal
   const { uniqueId } = useContext(UniqueIdContext);
   const { currentUserProfile } = useContext(AuthContext);
@@ -26,6 +35,9 @@ const Media = ({ match, room, currentAudioChannel }) => {
 
   // This holds the state of the media toggle - are we viewing the chat or the stream
   const [mediaState, setMediaState] = useState(false);
+
+  // This keeps track if it's our first time loading. On our first load, we set the portal to the fullest one in our multiverse. After that it's up to the user to decide. It's important to have it because we set the portal when we get an update for the multiverse
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   // Holds permissions status
   const [
@@ -39,16 +51,27 @@ const Media = ({ match, room, currentAudioChannel }) => {
 
   // Whenever the room or the current portal change, we set a new portal url
   useEffect(() => {
+    console.log("porrrtal", "fun start");
     if (!currentPortal || !room) return;
-    setCurrentPortalUrl(titleToKey(currentPortal.title + room.id));
+    console.log("porrrtal", "fun continuew");
+
+    setCurrentPortalUrl(
+      titleToKey(
+        floor
+          ? currentPortal.title + floor.id + room.id
+          : currentPortal.title + room.id
+      )
+    );
     if (microphonePermissionGranted && cameraPermissionGranted)
-      enterPortal(
-        room,
-        currentPortal,
-        currentUserProfile && currentUserProfile.uid
-          ? currentUserProfile.uid
-          : uniqueId
-      );
+      console.log("porrrtal", "fun start");
+
+    enterPortal(
+      entityID,
+      currentPortal,
+      currentUserProfile && currentUserProfile.uid
+        ? currentUserProfile.uid
+        : uniqueId
+    );
   }, [
     currentPortal,
     room,
@@ -71,7 +94,6 @@ const Media = ({ match, room, currentAudioChannel }) => {
           <div
             className="media__button media__button--unactive"
             onClick={() => setMediaState(!mediaState)}
-            // htmlFor="media-toggle-checkbox"
           >
             Chat
           </div>
@@ -83,7 +105,6 @@ const Media = ({ match, room, currentAudioChannel }) => {
           <div
             className="media__button media__button--unactive"
             onClick={() => setMediaState(!mediaState)}
-            // htmlFor="media-toggle-checkbox"
           >
             Stream
           </div>
@@ -94,14 +115,20 @@ const Media = ({ match, room, currentAudioChannel }) => {
     );
   };
 
-
   return (
     <div className="media single-room__media">
       {isMobile ? (
-        <div className="media__no-mobile">
-          To join the party on mobile, you will need the Jitsi app. Choose a
-          portal from the multiverse to join.
-        </div>
+        <Notice
+          text="To join the party on mobile, you will need the Jitsi app. Choose a
+              portal from the multiverse to join."
+        />
+      ) : null}
+
+      {!isMobile && currentAudioChannel ? (
+        <Notice
+          text="Please listen to the music using a headset, or disable your
+            microphone in the chat to prevent noise for the other participants"
+        />
       ) : null}
 
       {/** This is the multiverse*/}
@@ -113,7 +140,9 @@ const Media = ({ match, room, currentAudioChannel }) => {
           currentAudioChannel={currentAudioChannel}
           microphonePermissionGranted={microphonePermissionGranted}
           cameraPermissionGranted={cameraPermissionGranted}
-          match={match}
+          entityID={entityID}
+          isFirstLoad={isFirstLoad}
+          setIsFirstLoad={setIsFirstLoad}
         />
       ) : null}
 
@@ -145,6 +174,7 @@ const Media = ({ match, room, currentAudioChannel }) => {
               <span className="media__toggle-container--visible">
                 <Chat
                   room={room}
+                  floor={floor}
                   currentPortalUrl={currentPortalUrl}
                   cameraPermissionGranted={cameraPermissionGranted}
                   setCameraPermissionGranted={setCameraPermissionGranted}
@@ -152,6 +182,7 @@ const Media = ({ match, room, currentAudioChannel }) => {
                   setMicrophonePermissionGranted={
                     setMicrophonePermissionGranted
                   }
+                  isFirstLoad={isFirstLoad}
                 />
               </span>
               {currentAudioChannel &&
@@ -171,21 +202,12 @@ const Media = ({ match, room, currentAudioChannel }) => {
             {currentAudioChannel &&
             ["youtube", "twitch"].includes(currentAudioChannel.source)
               ? renderControllers()
-              : null}{" "}
+              : null}
           </>
-        ) : null}
-
-        {!isMobile &&
-        currentAudioChannel &&
-        ["youtube", "twitch"].includes(currentAudioChannel.source) ? (
-          <div className="media__no-mobile">
-            Please listen to the music using a headset, or disable your
-            microphone in the chat to prevent noise for the other participants
-          </div>
         ) : null}
       </div>
     </div>
   );
 };
 
-export default Media;
+export default connect(null, { enterPortal })(Media);

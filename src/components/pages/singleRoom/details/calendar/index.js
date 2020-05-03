@@ -1,5 +1,5 @@
 import "./styles.scss";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 
 import Form from "react-bootstrap/Form";
@@ -7,25 +7,29 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactTooltip from "react-tooltip";
 
-import { AuthContext } from "../../../../../providers/Auth";
-
-import { fetchEvents, addEvent, deleteEvent } from "../../../../../actions";
+import {
+  fetchEvents,
+  addEvent,
+  addEventFloor,
+  deleteEvent,
+} from "../../../../../actions";
 
 import Event from "./event";
 import InputField from "../../../../formComponents/inputField";
 import { renderHours, renderMinutes } from "../../../../../utils/forms";
-import { FloorContext } from "../../../../../providers/Floor";
 
 const Calendar = ({
   events,
   room,
+  roomIndex,
+  floor,
   donations,
+  isOwner,
   fetchEvents,
   addEvent,
+  addEventFloor,
   deleteEvent,
 }) => {
-  const { currentUserProfile } = useContext(AuthContext);
-  const { floor } = useContext(FloorContext);
   const [event, setEvent] = useState({});
 
   const [hours, setHours] = useState("");
@@ -59,10 +63,7 @@ const Calendar = ({
   return (
     <div
       className={
-        donations ||
-        (currentUserProfile &&
-          (currentUserProfile.uid === room.user_ID ||
-            (floor && currentUserProfile.uid === floor.user_ID)))
+        donations || isOwner
           ? "details__calendar--with-donations section__container"
           : "details__calendar--without-donations section__container"
       }
@@ -87,15 +88,15 @@ const Calendar = ({
         </>
       </div>
 
-      {currentUserProfile &&
-      (currentUserProfile.uid === room.user_ID ||
-        (floor && currentUserProfile.uid === floor.user_ID)) ? (
+      {isOwner ? (
         <form
           autoComplete="off"
           onSubmit={(e) => {
             e.preventDefault();
             if (event && event.title && event.start)
-              addEvent(event, room, () => setEvent({}));
+              !floor
+                ? addEvent(event, room, () => setEvent({}))
+                : addEventFloor(event, roomIndex, floor, () => setEvent({}));
           }}
         >
           <div className="tile-form">
@@ -171,9 +172,15 @@ const Calendar = ({
         </form>
       ) : null}
 
-      <div className="calendar__events tiny-margin-top">
-        {renderEvents(events)}
-      </div>
+      {(!floor && events.length) || (floor && floor.rooms[roomIndex] && floor.rooms[roomIndex].events) ? (
+        <div className="calendar__events tiny-margin-top">
+          {renderEvents(floor ? floor.rooms[roomIndex].events : events)}
+        </div>
+      ) : (
+        <div className="calendar__empty">
+          This Room has no future events planned at the moment
+        </div>
+      )}
     </div>
   );
 };
@@ -184,6 +191,9 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { fetchEvents, addEvent, deleteEvent })(
-  Calendar
-);
+export default connect(mapStateToProps, {
+  fetchEvents,
+  addEvent,
+  addEventFloor,
+  deleteEvent,
+})(Calendar);

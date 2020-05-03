@@ -8,13 +8,58 @@ const PrivacyPolicy = () => {
 
   return (
     <div className="privacy">
+      <div>Last updated: May 2nd, 2020</div>
       <div>
-        By using our site you agree to the Privacy Policy bellow, and to the
-        Privacy Policy of the compeny "8×8", who provides the video conference.
+        <div>
+          By using our site you agree to the Privacy Policy bellow, and to the
+          Privacy Policy of the compeny "8×8", who provides the video
+          conference.
+        </div>
+        <a
+          href="https://jitsi.org/meet-jit-si-privacy/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          To read "8×8" Privacy Policy click here
+        </a>
       </div>
-      <a href="https://jitsi.org/meet-jit-si-privacy/" target="_blank" rel="noopener noreferrer">
-        To read "8×8" Privacy Policy click here
-      </a>
+
+      <div className="tiny-margin-top">
+        <div>
+          If you are streaming content using one of the providers we allow on
+          Salon.express, you must comply to the Privacy Policy of that
+          provider. Any violations of those terms would be settled between the
+          prosecuter, the streamer and the stream provider.
+        </div>
+
+        <div className="extra-tiny-margin-top">
+          <a
+            href="https://www.twitch.tv/p/legal/privacy-notice/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Twitch terms and conditions
+          </a>
+        </div>
+        <div className="extra-tiny-margin-top">
+          <a
+            href="https://www.youtube.com/about/policies"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Youtube terms and conditions
+          </a>
+        </div>
+        <div className="extra-tiny-margin-top">
+          <a
+            href="https://mixlr.com/privacy/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Mixlr privacy policy
+          </a>
+        </div>
+      </div>
 
       <div dangerouslySetInnerHTML={policy} />
     </div>

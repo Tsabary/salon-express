@@ -57,8 +57,10 @@ const Tags = ({
 
   const handleTagInputChange = (input) => {
     const cleanTag = input
-      .replace(/^([^-]*-)|-/g, "$1")
-      .replace(/[^\p{L}\s\d-]+/gu, "")
+      // .replace(/^([^-]*-)|-/g, "$1")
+      // .replace(/[^\p{L}\s\d-]+/gu, "")
+      .replace(/^-+|(-){2,}/g, "$1")
+      .replace(/[^\p{L}\s-]+/gu, "")
       .toLowerCase()
       .split(" ")
       .join("-");

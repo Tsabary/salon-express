@@ -1,4 +1,4 @@
-@import "../../../../styles/imports";
+@import "../../../styles/imports";
 
 .header {
   max-width: 160rem;
@@ -17,8 +17,6 @@
   @include resize(1000px) {
     padding: 5rem 5rem;
   }
-
-
 
   &__center {
     font-size: 5rem;
@@ -66,14 +64,12 @@
       display: none;
     }
 
-    &--logged-in{
-      grid-template-columns: max-content 1fr max-content max-content;
-
+    &--logged-in {
+      grid-template-columns: max-content 1fr max-content;
     }
 
-    &--logged-out{
+    &--logged-out {
       grid-template-columns: max-content 1fr max-content;
-
     }
   }
 
@@ -156,14 +152,20 @@
       font-size: 4rem;
       text-align: center;
       color: $mainColor;
-      margin-bottom: .6rem;
+      margin-bottom: 0.6rem;
       transition: all 0.2s;
+      &--floor {
+        color: rgba(220, 220, 220, 0.2) !important;
+      }
     }
 
     &-sub {
       color: $mainColor;
       margin-top: -0.5rem;
       margin-left: 0.3rem;
+      &--floor {
+        color: rgba(220, 220, 220, 0.2) !important;
+      }
     }
 
     &-full {

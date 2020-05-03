@@ -6,11 +6,11 @@ import { Link } from "react-router-dom";
 import firebase from "firebase/app";
 import { AuthContext } from "../../../../providers/Auth";
 
-import { logOut, resendVerification, togglePopup } from "../../../../actions";
+import { logOut, resendVerification } from "../../../../actions";
 
 import TextButton from "../../../formComponents/textButton";
 
-const UserOptions = ({ logOut, resendVerification, togglePopup }) => {
+const UserOptions = ({ logOut, resendVerification, isFloor }) => {
   const { currentUserProfile, currentUser } = useContext(AuthContext);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -31,9 +31,13 @@ const UserOptions = ({ logOut, resendVerification, togglePopup }) => {
   }, [currentUserProfile]);
 
   return (
-    <div className="user-options ">
+    <div className="user-options">
       <div className="user-options__container-full">
-        <div className="user-options__name">
+        <div
+          className={
+            isFloor ? "user-options__name user-options__name--floor" : "user-options__name"
+          }
+        >
           {!!currentUserProfile ? currentUserProfile.name : currentUser.email}
         </div>
         <div className="user-options__image-container ">
@@ -64,7 +68,6 @@ const UserOptions = ({ logOut, resendVerification, togglePopup }) => {
           className="user-options__option"
           onClick={() => {
             window.location.hash = "update-profile";
-            togglePopup(true);
             firebase.analytics().logEvent("profile_update_clicked");
           }}
         >
@@ -78,6 +81,4 @@ const UserOptions = ({ logOut, resendVerification, togglePopup }) => {
     </div>
   );
 };
-export default connect(null, { logOut, resendVerification, togglePopup })(
-  UserOptions
-);
+export default connect(null, { logOut, resendVerification })(UserOptions);

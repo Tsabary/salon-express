@@ -74,12 +74,12 @@ const Room = ({
           ) : null}
 
           <div
-            className="room__title"
+            className="room__title clickable"
             onClick={() => {
               myHistory.push(`/room/${room.id}`);
             }}
           >
-            {capitalizeSentances(room.title)}
+            {capitalizeSentances(room.name)}
           </div>
 
           {room.language !== "lir" ? (

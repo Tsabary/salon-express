@@ -1,35 +1,41 @@
 import "./styles.scss";
-import React, { useContext } from "react";
-import { AuthContext } from "../../../../providers/Auth";
+import React from "react";
 
 import Calendar from "./calendar";
 import Donations from "./donations";
 import RoomInfo from "./roomInfo";
 
-const Details = ({ room, setRoom }) => {
-  const { currentUserProfile } = useContext(AuthContext);
-
-
-    
+const Details = ({ room, roomIndex, setRoom, floor, isOwner }) => {
   return (
     <div className="details single-room__details">
       {room ? (
-        <Calendar room={room} donations={room.accepting_donations} />
+        <Calendar
+          room={room}
+          roomIndex={roomIndex}
+          floor={floor}
+          donations={room.accepting_donations}
+          isOwner={isOwner}
+        />
       ) : null}
 
       {/** This is the donations tile*/}
-      {(room && room.accepting_donations) ||
-      (currentUserProfile &&
-        room &&
-        currentUserProfile.uid === room.user_ID) ? (
-        <Donations room={room} />
+      {(room && (room.accepting_donations || room.selling_merch)) || isOwner ? (
+        <Donations
+          room={room}
+          roomIndex={roomIndex}
+          floor={floor}
+          isOwner={isOwner}
+        />
       ) : null}
 
       {/** This is the room info tile*/}
       {room ? (
         <RoomInfo
           room={room}
+          roomIndex={roomIndex}
+          floor={floor}
           setRoom={setRoom}
+          isOwner={isOwner}
         />
       ) : null}
     </div>

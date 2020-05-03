@@ -17,6 +17,7 @@ import Social from "../../../../otherComponents/social";
 
 const Admin = ({
   room,
+  isOwner,
   keepRoomListed,
   associateWithRoom,
   fetchStrangerProfile,
@@ -26,17 +27,9 @@ const Admin = ({
   const { currentUserProfile } = useContext(AuthContext);
 
   const [admin, setAdmin] = useState(null);
-  const [isOwner, setIsOwner] = useState(false);
-
-  useEffect(() => {
-    setIsOwner(
-      currentUserProfile && room && currentUserProfile.uid === room.user_ID
-    );
-  }, [currentUserProfile, room]);
 
   useEffect(() => {
     if (room && room.associate) {
-      console.log("mine", "fethcing profile");
       fetchStrangerProfile(room.user_username, setAdmin);
     }
   }, [room]);
@@ -76,8 +69,19 @@ const Admin = ({
             className="max-max"
             onClick={() => myHistory.push(`/${room.user_username}`)}
           >
-            <img className="comment__avatar" src={room.user_avatar} />
-            <div className="comment__user-name">{room.user_name}</div>
+            <img
+              className="comment__avatar"
+              src={
+                room && room.user_avatar
+                  ? room.user_avatar
+                  : "../../../imgs/logo.jpeg"
+              }
+            />
+            <div className="comment__user-name">
+              {room.user_username === room.user_ID
+                ? room.user_name
+                : room.user_username}
+            </div>
           </div>
 
           <div className="admin__social">

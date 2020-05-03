@@ -2,6 +2,10 @@
 
 .about {
   background-color: $bgColor;
+  width: 100%;
+  max-width: 160rem;
+  margin-right: auto;
+  margin-left: auto;
   @include padding;
 
   &__container {
@@ -9,7 +13,7 @@
     border: $border;
     border-radius: $borderRadius;
     padding: 4rem;
-  background-color: white;
+    background-color: white;
   }
 
   &__title {

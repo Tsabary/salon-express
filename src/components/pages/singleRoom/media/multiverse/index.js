@@ -1,6 +1,8 @@
 import "./styles.scss";
 import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
+import "emoji-mart/css/emoji-mart.css";
+import { Picker } from "emoji-mart";
 
 import { AuthContext } from "../../../../../providers/Auth";
 import { UniqueIdContext } from "../../../../../providers/UniqueId";
@@ -19,7 +21,7 @@ import Portal from "./portal";
 import InputField from "../../../../formComponents/inputField";
 
 const Multiverse = ({
-  match,
+  entityID,
   room,
   currentPortal,
   setCurrentPortal,
@@ -30,8 +32,9 @@ const Multiverse = ({
   newPortal,
   leavePortal,
   detachListener,
-  logGuestEntry,
   replaceTimestampWithUid,
+  isFirstLoad,
+  setIsFirstLoad,
 }) => {
   const { currentUserProfile } = useContext(AuthContext);
   const { uniqueId } = useContext(UniqueIdContext);
@@ -46,41 +49,38 @@ const Multiverse = ({
   const [multiverse, setMultiverse] = useState(null);
 
   // This is the same multiverse just as an array of objects rather as an object
-  const [multiverseArray, setMultiverseArray] = useState(null);
+  const [multiverseArray, setMultiverseArray] = useState(null) ;
 
   // We use this to filter portals by user text search
   const [query, setQuery] = useState("");
 
-  // This keeps track if it's our first time loading. On our first load, we set the portal to the fullest one in our multiverse. After that it's up to the user to decide. It's important to have it because we set the portal when we get an update for the multiverse
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  // // This is our cleanup event for when the window closes ( remove the user from the portal)
+  // useEffect(() => {
+  //   const cleanup = () => {
+  //     leavePortal(
+  //       room,
+  //       currentPortal,
+  //       currentUserProfile && currentUserProfile.uid
+  //         ? [currentUserProfile.uid, uniqueId]
+  //         : [uniqueId]
+  //     );
+  //     detachListener();
+  //   };
 
-  // This is our cleanup event for when the window closes ( remove the user from the portal)
-  useEffect(() => {
-    const cleanup = () => {
-      leavePortal(
-        room,
-        currentPortal,
-        currentUserProfile && currentUserProfile.uid
-          ? [currentUserProfile.uid, uniqueId]
-          : [uniqueId]
-      );
-      detachListener();
-    };
+  //   window.addEventListener("beforeunload", cleanup);
 
-    window.addEventListener("beforeunload", cleanup);
-
-    return () => {
-      window.removeEventListener("beforeunload", cleanup);
-    };
-  }, [room, currentUserProfile, currentPortal, uniqueId]);
+  //   return () => {
+  //     window.removeEventListener("beforeunload", cleanup);
+  //   };
+  // }, [room, currentUserProfile, currentPortal, uniqueId]);
 
   // This is our cleanup event for when the comonent unloads ( remove the user from the portal)
   useEffect(() => {
-    listenToMultiverse(room.id, setMultiverse, setMultiverseArray, () => {
+    listenToMultiverse(entityID, setMultiverse, setMultiverseArray, () => {
       newPortal(
         "Home",
         currentPortal,
-        { id: match.params.id },
+        entityID,
         currentUserProfile && currentUserProfile.uid
           ? currentUserProfile.uid
           : uniqueId,
@@ -90,11 +90,9 @@ const Multiverse = ({
         }
       );
     });
-
-    return function cleanup() {
-      if (!room || !currentPortal) return;
+    const myCleanup = () => {
       leavePortal(
-        room,
+        entityID,
         currentPortal,
         currentUserProfile && currentUserProfile.uid
           ? [currentUserProfile.uid, uniqueId]
@@ -102,13 +100,15 @@ const Multiverse = ({
       );
       detachListener();
     };
-  }, [room, currentUserProfile, currentPortal, uniqueId]);
 
-  // Send the update to all followers that someone has entered the room. Only do it when isFirstLoad is false, becasue that's the indicatir they've actually entered the room
-  useEffect(() => {
-    if (isFirstLoad) return;
-    logGuestEntry(room, currentUserProfile);
-  }, [isFirstLoad]);
+    window.addEventListener("beforeunload", myCleanup);
+
+    return function cleanup() {
+      if (!room || !currentPortal) return;
+      myCleanup();
+      window.removeEventListener("beforeunload", cleanup);
+    };
+  }, [room, currentUserProfile, currentPortal, uniqueId]);
 
   // If it's not the first load or if we don't have anything in the multiverse array then return, because we either don't need to automatically pick the portal (not the first load) or there is no portal to choose
   useEffect(() => {
@@ -162,6 +162,10 @@ const Multiverse = ({
       });
   };
 
+  const addEmoji = (emo) => {
+    console.log("what is", emo);
+  };
+
   return (
     <div
       className={
@@ -191,7 +195,7 @@ const Multiverse = ({
           newPortal(
             portal,
             currentPortal,
-            room,
+            entityID,
             currentUserProfile.uid,
             (portalObj) => {
               setPortal("");
@@ -214,16 +218,19 @@ const Multiverse = ({
               );
           }}
         />
+        {/* <div className="multiverse__emoji">
+          <div className="multiverse__emoji--current" />
+        </div> */}
 
         {currentUserProfile ? (
-          <>
+          <div>
             <button
               type="submit"
               className="small-button single-room__comment--boxed"
             >
               Open
             </button>
-          </>
+          </div>
         ) : (
           <div
             className="small-button single-room__comment--boxed"
@@ -233,6 +240,22 @@ const Multiverse = ({
           </div>
         )}
       </form>
+      {/* <div>
+        <Picker
+          set="apple"
+          onSelect={addEmoji}
+          title="Pick your emoji…"
+          emoji="point_up"
+          style={{ position: "absolute", bottom: "20px", right: "20px" }}
+          i18n={{
+            search: "Recherche",
+            categories: {
+              search: "Résultats de recherche",
+              recent: "Récents",
+            },
+          }}
+        />{" "}
+      </div> */}
 
       {portalError ? (
         <div className="form-error tiny-margin-top">{portalError}</div>

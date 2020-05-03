@@ -1,7 +1,9 @@
 @import "../../../styles/imports";
 
 .contact {
-  width: 50%;
+  max-width: 160rem;
+  margin-right: auto;
+  margin-left: auto;
   @include padding;
 
   @include resize(1000px) {

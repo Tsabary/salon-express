@@ -16,8 +16,8 @@
   &__container-lean {
     display: none;
     margin-top: -1rem;
-
     grid-template-columns: max-content;
+    
     @include resize(950px) {
       display: grid;
     }
@@ -54,7 +54,7 @@
     display: grid;
     grid-gap: 0.5rem;
     padding: 1.5rem;
-    box-shadow: 0 0.4rem 1.4rem rgb(210, 210, 210);
+    box-shadow: 0 0.4rem 1.4rem $shadowColor;
   }
 
   &__name {
@@ -66,6 +66,11 @@
     user-select: none;
     @include resize(750px) {
       display: none;
+    }
+
+    &--floor {
+      
+      color: white !important;
     }
   }
   &__option {
@@ -106,7 +111,7 @@
       overflow: hidden;
       margin: auto;
       border: rgba(255, 255, 255, 0.5) solid 0.2rem;
-      box-shadow: 0 0.2rem 1rem rgb(170, 170, 170);
+      box-shadow: 0 0.2rem 1rem rgba(0, 0, 0, 0.2);
       transition: all 0.1s;
     }
   }

@@ -1,29 +1,39 @@
 import "./styles.scss";
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 
 import { isMobile } from "react-device-detect";
 import Iframe from "react-iframe";
 
+import { logGuestEntry } from "../../../../../actions";
+import { connect } from "react-redux";
+import { AuthContext } from "../../../../../providers/Auth";
+
 const Chat = ({
   room,
+  floor,
   currentPortalUrl,
   cameraPermissionGranted,
   setCameraPermissionGranted,
   microphonePermissionGranted,
   setMicrophonePermissionGranted,
+  isFirstLoad,
+  logGuestEntry,
 }) => {
+  const { currentUserProfile } = useContext(AuthContext);
+
+  // Send the update to all followers that someone has entered the room. Only do it when isFirstLoad is false, becasue that's the indicatir they've actually entered the room
   useEffect(() => {
-    console.log("mineperms", cameraPermissionGranted);
-    console.log("mineperms", microphonePermissionGranted);
-  }, [cameraPermissionGranted, microphonePermissionGranted]);
+    if (!cameraPermissionGranted || !microphonePermissionGranted || isFirstLoad || floor)
+      return;
+    logGuestEntry(room, currentUserProfile);
+  }, [cameraPermissionGranted, microphonePermissionGranted, isFirstLoad]);
 
   useEffect(() => {
     if (!navigator || (navigator && !navigator.permissions)) return;
-    console.log("mineperms", "procceeding");
+
     navigator.permissions
       .query({ name: "microphone" })
       .then((permissionStatus) => {
-        console.log("mineperms status mic", permissionStatus);
 
         setMicrophonePermissionGranted(permissionStatus.state === "granted");
 
@@ -125,4 +135,4 @@ const Chat = ({
   ) : null;
 };
 
-export default Chat;
+export default connect(null, { logGuestEntry })(Chat);

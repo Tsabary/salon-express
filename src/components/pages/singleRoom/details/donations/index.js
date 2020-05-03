@@ -6,18 +6,24 @@ import validator from "validator";
 import ReactTooltip from "react-tooltip";
 
 import { AuthContext } from "../../../../../providers/Auth";
-import { updateRoom } from "../../../../../actions";
+import { updateRoom, updateFloorRoom } from "../../../../../actions";
 
 import InputField from "../../../../formComponents/inputField";
 import ToggleField from "../../../../formComponents/toggleField";
 import TextArea from "../../../../formComponents/textArea";
-import { FloorContext } from "../../../../../providers/Floor";
 
-const Donations = ({ room, updateRoom }) => {
+const Donations = ({
+  room,
+  roomIndex,
+  floor,
+  isOwner,
+  updateRoom,
+  updateFloorRoom,
+}) => {
   const { currentUserProfile } = useContext(AuthContext);
-  const { floor } = useContext(FloorContext);
 
   const [values, setValues] = useState({});
+  const [lastSavedValues, setLastSavedValues] = useState({});
 
   // This holdes the donations error if any ("Not a valid URL")
   const [donationsError, setDonationsError] = useState(null);
@@ -38,13 +44,7 @@ const Donations = ({ room, updateRoom }) => {
 
   // This sets the value of the description field (so that it'll be present in our edit component)
   useEffect(() => {
-    if (
-      !room ||
-      !currentUserProfile ||
-      !currentUserProfile.uid ||
-      room.user_ID !== currentUserProfile.uid
-    )
-      return;
+    if (!room || !isOwner) return;
 
     if (room.donations_url)
       setValues((val) => {
@@ -65,10 +65,8 @@ const Donations = ({ room, updateRoom }) => {
   return (
     <div className="donations details__donations section__container">
       <div className="max-max">
-        <div className="section__title">Link for Donations</div>
-        {currentUserProfile &&
-        (currentUserProfile.uid === room.user_ID ||
-          (floor && currentUserProfile.uid === floor.user_ID)) ? (
+        <div className="section__title">Support</div>
+        {isOwner ? (
           <>
             <div
               className="info clickable"
@@ -98,49 +96,85 @@ const Donations = ({ room, updateRoom }) => {
             />
           </div>
           {donationsError ? donationsError : null}
-          {currentUserProfile &&
-          (currentUserProfile.uid === room.user_ID ||
-            (floor && currentUserProfile.uid === floor.user_ID)) ? (
-            <div
-              className="button-colored"
-              onClick={() => {
-                if (
-                  values.donations_url &&
-                  validator.isURL(values.donations_url)
-                ) {
-                  updateRoom(
-                    {
-                      ...room,
-                      donations_url: values.donations_url,
-                    },
-                    "accepting donations",
-                    () => {
-                      setIsDonationsUrlEdited(false);
-                    }
-                  );
-                } else {
-                  setDonationsError("Please enter a valid url");
-                }
-              }}
-            >
-              Save
+          {isOwner ? (
+            <div className="max-max">
+              <div
+                className="button-colored"
+                onClick={() => {
+                  if (
+                    values.donations_url &&
+                    validator.isURL(values.donations_url)
+                  ) {
+                    !floor
+                      ? updateRoom(
+                          {
+                            ...room,
+                            donations_url: values.donations_url,
+                          },
+
+                          "accepting donations",
+                          () => {
+                            setIsDonationsUrlEdited(false);
+                            setLastSavedValues({
+                              ...lastSavedValues,
+                              donations_url: values.donations_url,
+                            });
+                          }
+                        )
+                      : updateFloorRoom(
+                          {
+                            ...room,
+                            donations_url: values.donations_url,
+                          },
+                          roomIndex,
+                          floor,
+                          "accepting donations",
+                          () => {
+                            setIsDonationsUrlEdited(false);
+                            setLastSavedValues({
+                              ...lastSavedValues,
+                              donations_url: values.donations_url,
+                            });
+                          }
+                        );
+                  } else {
+                    setDonationsError("Please enter a valid url");
+                  }
+                }}
+              >
+                Save
+              </div>
+              <div
+                className="button-colored"
+                onClick={() => {
+                  setValues((val) => {
+                    return {
+                      ...val,
+                      donations_url: lastSavedValues.donations_url,
+                    };
+                  });
+                  setIsDonationsUrlEdited(false);
+                }}
+              >
+                Cancel
+              </div>
             </div>
           ) : null}
         </>
       ) : (
         <>
-          <a
-            href={values.donations_url}
-            target="_blank"
-            className="boxed-button"
-            rel="noopener noreferrer"
-          >
-            Donations
-          </a>
+          {(room && room.donations_url && room.accepting_donations) || isOwner ? (
+            <a
+              href={values.donations_url}
+              target="_blank"
+              className="boxed-button"
+              rel="noopener noreferrer"
+            >
+              Donations
+            </a>
+          ) : null}
 
-          {currentUserProfile &&
-          room &&
-          currentUserProfile.uid === room.user_ID ? (
+          {isOwner ? (
             <div
               className="button-colored tiny-margin-top"
               onClick={() => setIsDonationsUrlEdited(true)}
@@ -162,46 +196,81 @@ const Donations = ({ room, updateRoom }) => {
             />
           </div>
           {merchError ? merchError : null}
-          {currentUserProfile &&
-          room &&
-          currentUserProfile.uid === room.user_ID ? (
-            <div
-              className="button-colored"
-              onClick={() => {
-                if (values.merch_url && validator.isURL(values.merch_url)) {
-                  updateRoom(
-                    {
-                      ...room,
-                      merch_url: values.merch_url,
-                    },
-                    "merchandise link",
-                    () => {
-                      setIsMerchDetailsEdited(false);
-                    }
-                  );
-                } else {
-                  setMerchError("Please enter a valid url");
-                }
-              }}
-            >
-              Save
+          {isOwner ? (
+            <div className="max-max">
+              <div
+                className="button-colored"
+                onClick={() => {
+                  if (values.merch_url && validator.isURL(values.merch_url)) {
+                    !floor
+                      ? updateRoom(
+                          {
+                            ...room,
+                            merch_url: values.merch_url,
+                          },
+                          "merchandise link",
+                          () => {
+                            setIsMerchDetailsEdited(false);
+                            setLastSavedValues({
+                              ...lastSavedValues,
+                              merch_url: values.merch_url,
+                            });
+                          }
+                        )
+                      : updateFloorRoom(
+                          {
+                            ...room,
+                            merch_url: values.merch_url,
+                          },
+                          roomIndex,
+                          floor,
+                          "merchandise link",
+                          () => {
+                            setIsMerchDetailsEdited(false);
+                            setLastSavedValues({
+                              ...lastSavedValues,
+                              merch_url: values.merch_url,
+                            });
+                          }
+                        );
+                  } else {
+                    setMerchError("Please enter a valid url");
+                  }
+                }}
+              >
+                Save
+              </div>
+              <div
+                className="button-colored"
+                onClick={() => {
+                  setValues((val) => {
+                    return {
+                      ...val,
+                      merch_url: lastSavedValues.merch_url,
+                    };
+                  });
+                  setIsMerchDetailsEdited(false);
+                }}
+              >
+                Cancel
+              </div>
             </div>
           ) : null}
         </div>
       ) : (
         <>
-          <a
-            href={room.merch_url}
-            target="_blank"
-            className="boxed-button tiny-margin-top"
-            rel="noopener noreferrer"
-          >
-            Merchandise
-          </a>
+          {(room && room.merch_url && room.selling_merch) || isOwner  ? (
+            <a
+              href={room.merch_url}
+              target="_blank"
+              className="boxed-button tiny-margin-top"
+              rel="noopener noreferrer"
+            >
+              Merchandise
+            </a>
+          ) : null}
 
-          {currentUserProfile &&
-          (currentUserProfile.uid === room.user_ID ||
-            (floor && currentUserProfile.uid === floor.user_ID)) ? (
+          {isOwner ? (
             <div
               className="button-colored tiny-margin-top"
               onClick={() => setIsMerchDetailsEdited(true)}
@@ -219,30 +288,68 @@ const Donations = ({ room, updateRoom }) => {
               type="text"
               placeHolder="Add some details explaining why you're collecting tips"
               value={values && values.donations_info}
-              onChange={(val) => setValues({ ...values, donations_info: val })}
+              onChange={(val) => {
+                setValues({ ...values, donations_info: val });
+              }}
             />
           </div>
-          {currentUserProfile &&
-          (currentUserProfile.uid === room.user_ID ||
-            (floor && currentUserProfile.uid === floor.user_ID)) ? (
-            <div
-              className="button-colored"
-              onClick={() => {
-                if (values.donations_info) {
-                  updateRoom(
-                    {
-                      ...room,
-                      donations_info: values.donations_info,
-                    },
-                    "donations details",
-                    () => {
-                      setIsDonationsDetailsEdited(false);
-                    }
-                  );
-                }
-              }}
-            >
-              Save
+          {isOwner ? (
+            <div className="max-max">
+              <div
+                className="button-colored"
+                onClick={() => {
+                  if (values.donations_info) {
+                    !floor
+                      ? updateRoom(
+                          {
+                            ...room,
+                            donations_info: values.donations_info,
+                          },
+                          "donations details",
+                          () => {
+                            setIsDonationsDetailsEdited(false);
+                            setLastSavedValues({
+                              ...lastSavedValues,
+                              donations_info: values.donations_info,
+                            });
+                          }
+                        )
+                      : updateFloorRoom(
+                          {
+                            ...room,
+                            donations_info: values.donations_info,
+                          },
+                          roomIndex,
+                          floor,
+                          "donations details",
+                          () => {
+                            setIsDonationsDetailsEdited(false);
+                            setLastSavedValues({
+                              ...lastSavedValues,
+                              donations_info: values.donations_info,
+                            });
+                          }
+                        );
+                  }
+                }}
+              >
+                Save
+              </div>
+
+              <div
+                className="button-colored"
+                onClick={() => {
+                  setValues((val) => {
+                    return {
+                      ...val,
+                      donations_info: lastSavedValues.donations_info,
+                    };
+                  });
+                  setIsDonationsDetailsEdited(false);
+                }}
+              >
+                Cancel
+              </div>
             </div>
           ) : null}
         </>
@@ -254,9 +361,7 @@ const Donations = ({ room, updateRoom }) => {
             </div>
           ) : null}
 
-          {currentUserProfile &&
-          (currentUserProfile.uid === room.user_ID ||
-            (floor && currentUserProfile.uid === floor.user_ID)) ? (
+          {isOwner ? (
             <div
               className="button-colored tiny-margin-top"
               onClick={() => setIsDonationsDetailsEdited(true)}
@@ -267,39 +372,107 @@ const Donations = ({ room, updateRoom }) => {
         </>
       )}
 
-      {room &&
-      room.donations_url &&
-      currentUserProfile &&
-      (currentUserProfile.uid === room.user_ID ||
-        (floor && currentUserProfile.uid === floor.user_ID)) ? (
+      {room && room.donations_url && isOwner ? (
         <ToggleField
           id="acceptingDonationsToggle"
           text="Currently accepting donations"
           toggleOn={() =>
-            updateRoom(
-              {
-                ...room,
-                accepting_donations: true,
-              },
-              "Enabled donations",
-              () => console.log("Enabled donations")
-            )
+            !floor
+              ? updateRoom(
+                  {
+                    ...room,
+                    accepting_donations: true,
+                  },
+                  "Enabled donations",
+                  () => console.log("Enabled donations")
+                )
+              : updateFloorRoom(
+                  {
+                    ...room,
+                    accepting_donations: true,
+                  },
+                  roomIndex,
+                  floor,
+                  "Enabled donations",
+                  () => console.log("Enabled donations")
+                )
           }
           toggleOff={() =>
-            updateRoom(
-              {
-                ...room,
-                accepting_donations: false,
-              },
-              "Dissabled donations",
-              () => console.log("Dissabled donations")
-            )
+            !floor
+              ? updateRoom(
+                  {
+                    ...room,
+                    accepting_donations: false,
+                  },
+                  "Dissabled donations",
+                  () => console.log("Dissabled donations")
+                )
+              : updateFloorRoom(
+                  {
+                    ...room,
+                    accepting_donations: false,
+                  },
+                  roomIndex,
+                  floor,
+                  "Dissabled donations",
+                  () => console.log("Dissabled donations")
+                )
           }
           isChecked={room.accepting_donations}
+        />
+      ) : null}
+
+      {room && room.merch_url && isOwner ? (
+        <ToggleField
+          id="sellingMerchToggle"
+          text="Currently selling merchandise"
+          toggleOn={() =>
+            !floor
+              ? updateRoom(
+                  {
+                    ...room,
+                    selling_merch: true,
+                  },
+                  "Enabled merchandise",
+                  () => console.log("Enabled merchandise")
+                )
+              : updateFloorRoom(
+                  {
+                    ...room,
+                    selling_merch: true,
+                  },
+                  roomIndex,
+                  floor,
+                  "Enabled donations",
+                  () => console.log("Enabled merchandise")
+                )
+          }
+          toggleOff={() =>
+            !floor
+              ? updateRoom(
+                  {
+                    ...room,
+                    selling_merch: false,
+                  },
+                  "Dissabled donations",
+                  () => console.log("Dissabled merchandise")
+                )
+              : updateFloorRoom(
+                  {
+                    ...room,
+                    selling_merch: false,
+                  },
+                  roomIndex,
+                  floor,
+                  "Dissabled donations",
+                  () => console.log("Dissabled merchandise")
+                )
+          }
+          isChecked={room.selling_merch}
         />
       ) : null}
     </div>
   );
 };
 
-export default connect(null, { updateRoom })(Donations);
+export default connect(null, { updateRoom, updateFloorRoom })(Donations);

@@ -1,8 +1,8 @@
 import "../styles/styles.scss";
 import "./styles.scss";
 
-import React from "react";
-import { Router, Route, Switch } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Router, Route, Switch, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 
 import { isMobile } from "react-device-detect";
@@ -19,8 +19,9 @@ import { stopListeningToProfile, detachListener } from "../actions";
 
 import history from "../history";
 
-import MainHeader from "./staticComponents/header/main";
-import FloorHeader from "./staticComponents/header/floor";
+import MainHeader from "./staticComponents/header/Main";
+import FloorHeader from "./staticComponents/header/Floor";
+import FloorRoomHeader from "./staticComponents/header/FloorRoom";
 import Footer from "./staticComponents/footer";
 
 import SignUp from "./popups/signUp";
@@ -50,6 +51,35 @@ import AudioChannels from "./popups/audioChannels";
 import NewFloorRoom from "./popups/newFloorRoom";
 
 const App = () => {
+  const [isFloor, setIsFloor] = useState(
+    window.location.href.includes("floor") &&
+      !window.location.href.includes("management") &&
+      window.location.href.split("/").length === 5
+  );
+
+  const [isFloorRoom, setIsFloorRoom] = useState(
+    window.location.href.includes("floor") &&
+      !window.location.href.includes("management") &&
+      window.location.href.split("/").length === 6
+  );
+
+  
+  useEffect(() => {
+    return history.listen((location) => {
+      setIsFloor(
+        location.pathname.includes("floor") &&
+          !location.pathname.includes("management") &&
+          location.pathname.split("/").length === 3
+      );
+
+      setIsFloorRoom(
+        location.pathname.includes("floor") &&
+          !location.pathname.includes("management") &&
+          location.pathname.split("/").length === 4
+      );
+    });
+  }, [history]);
+
   return (
     <AuthProvider>
       <PageProvider>
@@ -68,13 +98,9 @@ const App = () => {
                       <NewFloorPlan />
                       <AudioChannels />
                       {/* <EditRoom /> */}
-                      {window.location.href.split("/")[3] !== "floor" ? (
-                        <MainHeader />
-                      ) : (
-                        <FloorHeader />
-                      )}
+                      {isFloor ?<FloorHeader /> : isFloorRoom ? <FloorRoomHeader/>: <MainHeader /> }
 
-                      {!isMobile ? <Updates /> : null}
+                      {!isMobile && !isFloor ? <Updates /> : null}
 
                       <Switch>
                         <Route path="/" exact component={Home} />
@@ -104,7 +130,11 @@ const App = () => {
                           component={EditFloor}
                         />
                         <Route path="/floor/:id" exact component={Floor} />
-                        {/* <Route path="/floor/:id/:room" exact component={SingleRoomFloor} /> */}
+                        <Route
+                          path="/floor/:id/:room"
+                          exact
+                          component={SingleRoomFloor}
+                        />
                         <Route
                           path="/privacy-policy"
                           exact
@@ -118,10 +148,11 @@ const App = () => {
                         />
                         <Route path="/:id" exact component={Stranger} />
                       </Switch>
-
-                      <div className="app__footer">
-                        <Footer />
-                      </div>
+                      {isFloor ? null : (
+                        <div className="app__footer">
+                          <Footer />
+                        </div>
+                      )}
                     </div>
                   </Router>
                 </UniqueIdProvider>

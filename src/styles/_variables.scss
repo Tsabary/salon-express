@@ -49,8 +49,11 @@ $youtubeColor: #ff0000;
 
 $borderRadius: 0.5rem;
 $border: 1px solid $mainColor;
-$containerBoxShadow: 0 0.2rem 3rem rgb(228, 228, 228);
+$shadowColor : rgba(0, 0, 0, 0.2);
+
+$containerBoxShadow: 0 0.2rem 3rem $shadowColor;
 
 $floorRows: 15% 15% 30% 20% 10% 15%;
 
 $beatCubic: cubic-bezier(0.17, 1.68, 0.4, -1.29);
+

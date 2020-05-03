@@ -46,44 +46,46 @@ const Contact = () => {
 
   return (
     <div className="contact medium-margin-bottom">
-      <h2 className="small-margin-top">
-        Do you have any questions? Suggestions?
-        <br />
-        Experiencing any bugs? We're here for you.
-      </h2>
+      <div className="section__container">
+        <h2 className="small-margin-top">
+          Do you have any questions? Suggestions?
+          <br />
+          Experiencing any bugs? We're here for you.
+        </h2>
 
-      {!sent ? (
-        <form onSubmit={handleSubmit} className="small-margin-top">
-          <div className="tiny-margin-bottom">
-            <InputField
-              type="email"
-              placeHolder="Email address"
-              value={values.email}
-              onChange={(email) => setValues({ ...values, email })}
+        {!sent ? (
+          <form onSubmit={handleSubmit} className="small-margin-top">
+            <div className="tiny-margin-bottom">
+              <InputField
+                type="email"
+                placeHolder="Email address"
+                value={values.email}
+                onChange={(email) => setValues({ ...values, email })}
+              />
+            </div>
+
+            <TextArea
+              type="text"
+              placeHolder="What would you like to tell us?"
+              value={values.content}
+              onChange={(content) => setValues({ ...values, content })}
             />
+            <div className="fr-max">
+              <div />
+              <button
+                type="submit"
+                className="boxed-button small-margin-top justify-end"
+              >
+                Send
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div>
+            Thank you! We've received your message and would get in touch soon!
           </div>
-
-          <TextArea
-            type="text"
-            placeHolder="What would you like to tell us?"
-            value={values.content}
-            onChange={(content) => setValues({ ...values, content })}
-          />
-          <div className="fr-max">
-            <div />
-            <button
-              type="submit"
-              className="boxed-button small-margin-top justify-end"
-            >
-              Send
-            </button>
-          </div>
-        </form>
-      ) : (
-        <div>
-          Thank you! We've received your message and would get in touch soon!
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

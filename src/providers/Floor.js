@@ -3,14 +3,19 @@ import React, { useState } from "react";
 export const FloorContext = React.createContext();
 
 export const FloorProvider = ({ children }) => {
-  const [floor, setFloor] = useState(null);
-  const [floorRooms, setFloorRooms] = useState(null);
+  const [globalFloor, setGlobalFloor] = useState(null);
+  const [globalFloorRoom, setGlobalFloorRoom] = useState(null);
+  const [globalFloorRoomIndex, setGlobalFloorRoomIndex] = useState(null);
 
   return (
     <FloorContext.Provider
       value={{
-        floor,
-        setFloor,
+        globalFloor,
+        setGlobalFloor,
+        globalFloorRoom,
+        setGlobalFloorRoom,
+        globalFloorRoomIndex,
+        setGlobalFloorRoomIndex,
       }}
     >
       {children}
