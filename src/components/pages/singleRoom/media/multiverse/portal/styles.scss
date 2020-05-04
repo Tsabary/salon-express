@@ -4,13 +4,13 @@
   padding: 0.5rem 1.5rem;
   display: grid;
   grid-template-columns: 1fr max-content;
-  
+  cursor: pointer;
+
   @include resize(1500px) {
     grid-template-columns: 1fr;
     line-height: 1.6rem;
   }
   &__title {
-    cursor: pointer;
     transition: all 0.2s;
     &:hover {
       font-size: 1.4rem;
@@ -19,7 +19,6 @@
     &--current {
       font-family: $fontBold, $fontHebrewBold;
       color: $mainColor;
-      cursor: pointer;
       transition: all 0.2s;
       &:hover {
         font-size: 1.4rem;
@@ -28,7 +27,6 @@
   }
 
   &__members {
-    cursor: default;
     color: $grey;
     font-size: 1.2rem;
   }

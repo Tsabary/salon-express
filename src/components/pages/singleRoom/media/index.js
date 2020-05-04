@@ -6,7 +6,11 @@ import { isMobile } from "react-device-detect";
 import { UniqueIdContext } from "../../../../providers/UniqueId";
 import { AuthContext } from "../../../../providers/Auth";
 
-import { enterPortal } from "../../../../actions";
+import {
+  listenToMultiverse,
+  detachListener,
+  newPortal,
+} from "../../../../actions";
 import { titleToKey } from "../../../../utils/strings";
 
 import Chat from "./chat";
@@ -23,8 +27,9 @@ const Media = ({
   currentAudioChannel,
   entityID,
   floor,
-  isOwner,
-  enterPortal,
+  listenToMultiverse,
+  detachListener,
+  newPortal,
 }) => {
   // This is a fake unique id based on current timestamp. We use it to identify users that aren't logged in, so we can manage the coun of users in each portal
   const { uniqueId } = useContext(UniqueIdContext);
@@ -32,6 +37,15 @@ const Media = ({
 
   // This holds the current portal were in (its title)
   const [currentPortal, setCurrentPortal] = useState(null);
+
+  // This holds the url og the current portal (it's a mix of the portal's title with the room's ID)
+  const [currentPortalUrl, setCurrentPortalUrl] = useState(null);
+
+  // This is the multivers - a documents with info of all our portals
+  const [multiverse, setMultiverse] = useState(null);
+
+  // This is the same multiverse just as an array of objects rather as an object
+  const [multiverseArray, setMultiverseArray] = useState(null);
 
   // This holds the state of the media toggle - are we viewing the chat or the stream
   const [mediaState, setMediaState] = useState(false);
@@ -46,14 +60,29 @@ const Media = ({
   ] = useState(false);
   const [cameraPermissionGranted, setCameraPermissionGranted] = useState(false);
 
-  // This holds the url og the current portal (it's a mix of the portal's title with the room's ID)
-  const [currentPortalUrl, setCurrentPortalUrl] = useState(null);
+  useEffect(() => {
+    listenToMultiverse(entityID, setMultiverse, setMultiverseArray, () => {
+      if (!isMobile)
+        newPortal(
+          "Home",
+          currentPortal,
+          entityID,
+          currentUserProfile && currentUserProfile.uid
+            ? currentUserProfile.uid
+            : uniqueId,
+          (portalObj) => {
+            setCurrentPortal(portalObj);
+          }
+        );
+    });
+    return function cleanup() {
+      detachListener();
+    };
+  }, [entityID, currentPortal, currentUserProfile, uniqueId]);
 
   // Whenever the room or the current portal change, we set a new portal url
   useEffect(() => {
-    console.log("porrrtal", "fun start");
     if (!currentPortal || !room) return;
-    console.log("porrrtal", "fun continuew");
 
     setCurrentPortalUrl(
       titleToKey(
@@ -62,16 +91,15 @@ const Media = ({
           : currentPortal.title + room.id
       )
     );
-    if (microphonePermissionGranted && cameraPermissionGranted)
-      console.log("porrrtal", "fun start");
+    // if (microphonePermissionGranted && cameraPermissionGranted)
 
-    enterPortal(
-      entityID,
-      currentPortal,
-      currentUserProfile && currentUserProfile.uid
-        ? currentUserProfile.uid
-        : uniqueId
-    );
+    // enterPortal(
+    //   entityID,
+    //   currentPortal,
+    //   currentUserProfile && currentUserProfile.uid
+    //     ? currentUserProfile.uid
+    //     : uniqueId
+    // );
   }, [
     currentPortal,
     room,
@@ -124,7 +152,7 @@ const Media = ({
         />
       ) : null}
 
-      {!isMobile && currentAudioChannel ? (
+      {!isMobile && currentAudioChannel && currentAudioChannel.source ? (
         <Notice
           text="Please listen to the music using a headset, or disable your
             microphone in the chat to prevent noise for the other participants"
@@ -137,6 +165,8 @@ const Media = ({
           room={room}
           currentPortal={currentPortal}
           setCurrentPortal={setCurrentPortal}
+          multiverse={multiverse}
+          multiverseArray={multiverseArray}
           currentAudioChannel={currentAudioChannel}
           microphonePermissionGranted={microphonePermissionGranted}
           cameraPermissionGranted={cameraPermissionGranted}
@@ -146,7 +176,12 @@ const Media = ({
         />
       ) : null}
 
-      {isMobile && room ? <MobileMultiverse room={room} /> : null}
+      {isMobile && room ? (
+        <MobileMultiverse
+          entityID={entityID}
+          multiverseArray={multiverseArray}
+        />
+      ) : null}
 
       {currentAudioChannel && currentAudioChannel.source === "mixlr" ? (
         <Mixlr ID={currentAudioChannel.link} />
@@ -210,4 +245,6 @@ const Media = ({
   );
 };
 
-export default connect(null, { enterPortal })(Media);
+export default connect(null, { listenToMultiverse, detachListener, newPortal })(
+  Media
+);

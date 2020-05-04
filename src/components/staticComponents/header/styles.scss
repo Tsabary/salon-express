@@ -65,11 +65,11 @@
     }
 
     &--logged-in {
-      grid-template-columns: max-content 1fr max-content;
+      grid-template-columns: max-content 1fr max-content max-content;
     }
 
     &--logged-out {
-      grid-template-columns: max-content 1fr max-content;
+      grid-template-columns: max-content 1fr max-content max-content;
     }
   }
 

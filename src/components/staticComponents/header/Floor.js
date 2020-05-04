@@ -74,6 +74,7 @@ const FloorHeader = ({ listenToProfile, stopListeningToProfile }) => {
         </div>
 
         <div />
+        <div />
 
         <div className="header__auth">{renderAuth()}</div>
       </div>

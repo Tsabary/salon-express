@@ -1,44 +1,46 @@
 import "./styles.scss";
 import React, { useState, useContext, useEffect } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
-
 import firebase from "firebase/app";
+import { useToasts } from "react-toast-notifications";
+
 import { AuthContext } from "../../../../providers/Auth";
 
 import { logOut, resendVerification } from "../../../../actions";
 
-import TextButton from "../../../formComponents/textButton";
-
 const UserOptions = ({ logOut, resendVerification, isFloor }) => {
   const { currentUserProfile, currentUser } = useContext(AuthContext);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { addToast } = useToasts();
+
+  // const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    if (
-      currentUserProfile &&
-      currentUserProfile.roles &&
-      currentUserProfile.roles.includes("admin")
-    ) {
-      setIsAdmin(true);
-    }
+    // if (
+    //   currentUserProfile &&
+    //   currentUserProfile.roles &&
+    //   currentUserProfile.roles.includes("admin")
+    // ) {
+    //   setIsAdmin(true);
+    // }
 
     if (currentUserProfile && currentUserProfile.languages) {
       firebase
         .analytics()
         .setUserProperties({ languages: currentUserProfile.languages });
     }
-  }, [currentUserProfile]);
+  }, [currentUserProfile, currentUser]);
 
   return (
     <div className="user-options">
       <div className="user-options__container-full">
         <div
           className={
-            isFloor ? "user-options__name user-options__name--floor" : "user-options__name"
+            isFloor
+              ? "user-options__name user-options__name--floor"
+              : "user-options__name"
           }
         >
-          {!!currentUserProfile ? currentUserProfile.name : currentUser.email}
+          {currentUserProfile ? currentUserProfile.name : currentUser.email}
         </div>
         <div className="user-options__image-container ">
           <img
@@ -63,7 +65,7 @@ const UserOptions = ({ logOut, resendVerification, isFloor }) => {
         </div>
       </div>
 
-      <div className="user-options__options">
+      <div className="user-options__options text-button">
         <div
           className="user-options__option"
           onClick={() => {
@@ -71,8 +73,26 @@ const UserOptions = ({ logOut, resendVerification, isFloor }) => {
             firebase.analytics().logEvent("profile_update_clicked");
           }}
         >
-          <TextButton text="Update Profile" />
+          Update Profile
         </div>
+        {!currentUser.emailVerified ? (
+          <div
+            className="user-options__option"
+            onClick={() => {
+              resendVerification(() => {
+                addToast("Check your inbox for our verification email", {
+                  appearance: "success",
+                  autoDismiss: true,
+                });
+              });
+              firebase
+                .analytics()
+                .logEvent("profile_email_verification_requested");
+            }}
+          >
+            Verify you email
+          </div>
+        ) : null}
 
         <div className="user-options__option" onClick={() => logOut()}>
           Log Out

@@ -1,29 +1,14 @@
 import "./styles.scss";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ScrollToBottom from "react-scroll-to-bottom";
 
 import { titleToKey } from "../../../../../utils/strings";
-import { listenToMultiverse, detachListener } from "../../../../../actions";
 
 import Portal from "./portal";
 import { connect } from "react-redux";
 
-const MobileMultiverse = ({ room, listenToMultiverse, detachListener }) => {
+const MobileMultiverse = ({ entityID, multiverseArray }) => {
   const [open, setOpen] = useState(false);
-
-  // This is the multivers - a documents with info of all our portals
-  const [multiverse, setMultiverse] = useState(null);
-
-  // This is the same multiverse just as an array of objects rather as an object
-  const [multiverseArray, setMultiverseArray] = useState(null);
-
-  useEffect(() => {
-    listenToMultiverse(room.id, setMultiverse, setMultiverseArray);
-
-    return function cleanup() {
-      detachListener();
-    };
-  }, [detachListener, room]);
 
   // Render the portals to the page
   const renderPortals = (multiverse) => {
@@ -32,7 +17,7 @@ const MobileMultiverse = ({ room, listenToMultiverse, detachListener }) => {
         <Portal
           portal={portal}
           members={portal.members}
-          room={room}
+          entityID={entityID}
           key={titleToKey(portal.title)}
         />
       );
@@ -62,4 +47,4 @@ const MobileMultiverse = ({ room, listenToMultiverse, detachListener }) => {
   );
 };
 
-export default connect(null, { listenToMultiverse, detachListener })(MobileMultiverse);
+export default connect(null)(MobileMultiverse);

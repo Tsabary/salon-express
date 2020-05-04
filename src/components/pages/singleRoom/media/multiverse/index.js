@@ -11,6 +11,7 @@ import { titleToKey } from "../../../../../utils/strings";
 import {
   listenToMultiverse,
   newPortal,
+  enterPortal,
   leavePortal,
   detachListener,
   logGuestEntry,
@@ -25,11 +26,14 @@ const Multiverse = ({
   room,
   currentPortal,
   setCurrentPortal,
+  multiverse,
+  multiverseArray,
   microphonePermissionGranted,
   cameraPermissionGranted,
   currentAudioChannel,
   listenToMultiverse,
   newPortal,
+  enterPortal,
   leavePortal,
   detachListener,
   replaceTimestampWithUid,
@@ -45,51 +49,21 @@ const Multiverse = ({
   const [portalError, setPortalError] = useState(null);
   const [userID, setUserID] = useState(null);
 
-  // This is the multivers - a documents with info of all our portals
-  const [multiverse, setMultiverse] = useState(null);
-
-  // This is the same multiverse just as an array of objects rather as an object
-  const [multiverseArray, setMultiverseArray] = useState(null) ;
-
   // We use this to filter portals by user text search
   const [query, setQuery] = useState("");
 
-  // // This is our cleanup event for when the window closes ( remove the user from the portal)
-  // useEffect(() => {
-  //   const cleanup = () => {
-  //     leavePortal(
-  //       room,
-  //       currentPortal,
-  //       currentUserProfile && currentUserProfile.uid
-  //         ? [currentUserProfile.uid, uniqueId]
-  //         : [uniqueId]
-  //     );
-  //     detachListener();
-  //   };
-
-  //   window.addEventListener("beforeunload", cleanup);
-
-  //   return () => {
-  //     window.removeEventListener("beforeunload", cleanup);
-  //   };
-  // }, [room, currentUserProfile, currentPortal, uniqueId]);
-
   // This is our cleanup event for when the comonent unloads ( remove the user from the portal)
   useEffect(() => {
-    listenToMultiverse(entityID, setMultiverse, setMultiverseArray, () => {
-      newPortal(
-        "Home",
-        currentPortal,
-        entityID,
-        currentUserProfile && currentUserProfile.uid
-          ? currentUserProfile.uid
-          : uniqueId,
-        (portalObj) => {
-          setPortal("");
-          setCurrentPortal(portalObj);
-        }
-      );
-    });
+    if (!currentPortal || !entityID) return;
+
+    enterPortal(
+      entityID,
+      currentPortal,
+      currentUserProfile && currentUserProfile.uid
+        ? currentUserProfile.uid
+        : uniqueId
+    );
+
     const myCleanup = () => {
       leavePortal(
         entityID,
@@ -98,17 +72,16 @@ const Multiverse = ({
           ? [currentUserProfile.uid, uniqueId]
           : [uniqueId]
       );
-      detachListener();
     };
 
     window.addEventListener("beforeunload", myCleanup);
 
     return function cleanup() {
-      if (!room || !currentPortal) return;
+      if (!entityID || !currentPortal) return;
       myCleanup();
       window.removeEventListener("beforeunload", cleanup);
     };
-  }, [room, currentUserProfile, currentPortal, uniqueId]);
+  }, [entityID, currentPortal, currentUserProfile, uniqueId]);
 
   // If it's not the first load or if we don't have anything in the multiverse array then return, because we either don't need to automatically pick the portal (not the first load) or there is no portal to choose
   useEffect(() => {
@@ -280,6 +253,7 @@ const Multiverse = ({
 export default connect(null, {
   listenToMultiverse,
   newPortal,
+  enterPortal,
   leavePortal,
   detachListener,
   logGuestEntry,

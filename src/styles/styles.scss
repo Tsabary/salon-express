@@ -582,16 +582,16 @@ h3 {
 
 .auth {
   &__button {
-    height: 6rem;
+    // height: 6rem;
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.6rem;
+    // font-size: 1.6rem;
     user-select: none;
     font-family: $font;
 
-    padding: 1.5rem 5rem 1.7rem 5rem;
+    padding: 1.2rem 5rem 1.4rem 5rem;
     border-radius: $borderRadius;
     // box-shadow: 0 0.2rem 1rem rgb(170, 170, 170);
     border: 1px solid $mainColor;

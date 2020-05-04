@@ -496,11 +496,15 @@ export const listenToMultiverse = (
   setMultiverseArray,
   newPortal
 ) => () => {
+  console.log("minnne", "attached listener")
+
   multiverseListener = db
     .collection("multiverses")
     .doc(entityID)
     .onSnapshot((docMultiverse) => {
+
       if (docMultiverse.data()) {
+
         setMultiverse(docMultiverse.data());
 
         const arrayVerse = Object.values(docMultiverse.data());
@@ -514,6 +518,8 @@ export const listenToMultiverse = (
 
 // Deteching the listener for the multiverse
 export const detachListener = () => () => {
+  console.log("minnne", "detached listener")
+
   if (multiverseListener) multiverseListener();
   if (channelListener) channelListener();
 };
@@ -1450,8 +1456,13 @@ export const logOut = () => async (dispatch) => {
     .catch((e) => console.error("promise Error", e));
 };
 
-export const resendVerification = () => () => {
-  firebase.auth().currentUser.sendEmailVerification();
+export const resendVerification = (cb) => () => {
+  firebase
+    .auth()
+    .currentUser.sendEmailVerification()
+    .then(() => {
+      cb();
+    });
 };
 
 export const providerSignIn = (provider, cb) => () => {
@@ -1482,6 +1493,15 @@ export const providerSignIn = (provider, cb) => () => {
     default:
       console.error("Provider", "No proper provider was provided");
   }
+};
+
+export const passwordReset = (email, setSubmitting) => () => {
+  firebase
+    .auth()
+    .sendPasswordResetEmail(email)
+    .then(() => {
+      setSubmitting(6);
+    });
 };
 
 // USER //

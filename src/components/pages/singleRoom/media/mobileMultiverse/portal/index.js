@@ -1,12 +1,16 @@
 import "./styles.scss";
-import React, { useEffect } from "react";
+import React from "react";
 
-import { titleToKey } from '../../../../../../utils/strings';
+import { titleToKey } from "../../../../../../utils/strings";
 
-const Portal = ({ portal, room }) => {
-
+const Portal = ({ portal, entityID }) => {
   return (
-    <a className="portal-mobile" target="_blank" href={`https://meet.jit.si/SalExp-${titleToKey(portal.title + room.id)}`} rel="noopener noreferrer">
+    <a
+      className="portal-mobile"
+      target="_blank"
+      href={`https://meet.jit.si/SalExp-${titleToKey(portal.title + entityID)}`}
+      rel="noopener noreferrer"
+    >
       <div className="portal-mobile__content">
         <div className="portal-mobile__title">{portal.title}</div>
 
