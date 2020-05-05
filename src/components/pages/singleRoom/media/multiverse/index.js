@@ -2,7 +2,7 @@ import "./styles.scss";
 import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import "emoji-mart/css/emoji-mart.css";
-import { Picker } from "emoji-mart";
+import { Emoji, Picker } from "emoji-mart";
 
 import { AuthContext } from "../../../../../providers/Auth";
 import { UniqueIdContext } from "../../../../../providers/UniqueId";
@@ -136,17 +136,28 @@ const Multiverse = ({
   };
 
   const addEmoji = (emo) => {
-    console.log("what is", emo);
+    setPortal({ ...portal, totem: emo });
   };
 
   return (
     <div
       className={
-        currentAudioChannel
-          ? "media__multiverse--with-audio section__container"
-          : "media__multiverse--no-audio section__container"
+        !currentAudioChannel ||
+        (currentAudioChannel && !currentAudioChannel.source)
+          ? "media__multiverse--no-audio section__container"
+          : currentAudioChannel && currentAudioChannel.source === "mixlr"
+          ? "media__multiverse--with-mixlr section__container"
+          : "media__multiverse--with-video section__container"
       }
     >
+      {console.log(
+        "check",
+        !currentAudioChannel
+          ? "1"
+          : currentAudioChannel && currentAudioChannel.source === "mixlr"
+          ? "2"
+          : "3"
+      )}
       <div className="section__title">The Multiverse</div>
 
       <form
@@ -154,11 +165,16 @@ const Multiverse = ({
         autoComplete="off"
         onSubmit={(e) => {
           e.preventDefault();
-          if (!currentUserProfile || !portal || !portal.length) return;
+          if (
+            !currentUserProfile ||
+            (portal && !portal.title) ||
+            !portal.title.length
+          )
+            return;
 
           if (
             multiverse.hasOwnProperty(
-              portal.trim().split(" ").join("").toLowerCase()
+              portal.title.trim().split(" ").join("").toLowerCase()
             )
           ) {
             setPortalError("A portal with that name already exists");
@@ -171,7 +187,7 @@ const Multiverse = ({
             entityID,
             currentUserProfile.uid,
             (portalObj) => {
-              setPortal("");
+              setPortal({});
               setCurrentPortal(portalObj);
               setPortalError(null);
             }
@@ -181,19 +197,43 @@ const Multiverse = ({
         <InputField
           type="text"
           placeHolder="Open a portal"
-          value={portal}
+          value={portal.title}
           onChange={(port) => {
             if (port.length < 30)
-              setPortal(
-                port
+              setPortal({
+                ...portal,
+                title: port
                   .replace(/^([^-]*-)|-/g, "$1")
-                  .replace(/[^\p{L}\s\d-]+/gu, "")
-              );
+                  .replace(/[^\p{L}\s\d-]+/gu, ""),
+              });
           }}
         />
-        {/* <div className="multiverse__emoji">
-          <div className="multiverse__emoji--current" />
-        </div> */}
+        <div className="multiverse__emoji">
+          {portal && portal.totem ? (
+            <Emoji emoji={portal.totem} size={16} />
+          ) : (
+            <img
+              className="multiverse__emoji--current"
+              src="../../../imgs/emoji.png"
+            />
+          )}
+
+          <div className="multiverse__emoji--picker">
+            <Picker
+              set="apple"
+              onSelect={addEmoji}
+              title="Pick your emoji…"
+              emoji="point_up"
+              i18n={{
+                search: "Recherche",
+                categories: {
+                  search: "Résultats de recherche",
+                  recent: "Récents",
+                },
+              }}
+            />
+          </div>
+        </div>
 
         {currentUserProfile ? (
           <div>
@@ -213,22 +253,6 @@ const Multiverse = ({
           </div>
         )}
       </form>
-      {/* <div>
-        <Picker
-          set="apple"
-          onSelect={addEmoji}
-          title="Pick your emoji…"
-          emoji="point_up"
-          style={{ position: "absolute", bottom: "20px", right: "20px" }}
-          i18n={{
-            search: "Recherche",
-            categories: {
-              search: "Résultats de recherche",
-              recent: "Récents",
-            },
-          }}
-        />{" "}
-      </div> */}
 
       {portalError ? (
         <div className="form-error tiny-margin-top">{portalError}</div>

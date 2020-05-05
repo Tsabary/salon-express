@@ -496,15 +496,13 @@ export const listenToMultiverse = (
   setMultiverseArray,
   newPortal
 ) => () => {
-  console.log("minnne", "attached listener")
+  console.log("minnne", "attached listener");
 
   multiverseListener = db
     .collection("multiverses")
     .doc(entityID)
     .onSnapshot((docMultiverse) => {
-
       if (docMultiverse.data()) {
-
         setMultiverse(docMultiverse.data());
 
         const arrayVerse = Object.values(docMultiverse.data());
@@ -518,7 +516,7 @@ export const listenToMultiverse = (
 
 // Deteching the listener for the multiverse
 export const detachListener = () => () => {
-  console.log("minnne", "detached listener")
+  console.log("minnne", "detached listener");
 
   if (multiverseListener) multiverseListener();
   if (channelListener) channelListener();
@@ -658,7 +656,8 @@ export const replaceTimestampWithUid = (
 // Opening a new portal
 export const newPortal = (newPortal, oldPortal, entityID, uid, cb) => () => {
   const portalObj = {
-    title: newPortal,
+    title: newPortal.title,
+    totem: newPortal.totem,
     members: [uid],
     created_on: new Date(),
   };
@@ -666,7 +665,7 @@ export const newPortal = (newPortal, oldPortal, entityID, uid, cb) => () => {
   const batch = db.batch();
   const verseDoc = db.collection("multiverses").doc(entityID);
 
-  let newPortalKey = titleToKey(newPortal);
+  let newPortalKey = titleToKey(newPortal.title);
   let oldPortalKey = oldPortal ? titleToKey(oldPortal.title) : null;
 
   batch.set(
@@ -1181,45 +1180,70 @@ export const newFloor = (values, reset) => async (dispatch) => {
     .catch((e) => console.error("promise Error new floor", e));
 };
 
-export const saveFloor = (floor, image, cb) => async () => {
-  if (image) {
-    const uploadTask = storage
-      .ref(`/images/floor_logos/${floor.id}`)
-      .put(image);
+export const saveFloor = (floor, logoFile, tracks, cb) => async () => {
+  const newFloor = { ...floor };
 
-    uploadTask.on(
-      "state_changed",
-      (snapShot) => {
-        //takes a snap shot of the process as it is happening
-      },
-      (err) => {
-        //catches the errors
-      },
-      () => {
-        // gets the functions from storage refences the image storage in firebase by the children
-        // gets the download url then sets the image from firebase as the value for the imgUrl key:
-        storage
-          .ref(`/images/floor_logos`)
-          .child(floor.id)
-          .getDownloadURL()
-          .then((fireBaseUrl) => {
-            db.collection("floors")
-              .doc(floor.id)
-              .set({ ...floor, logo: fireBaseUrl })
-              .then(() => {
-                cb();
-              });
-          });
-      }
-    );
-  } else {
-    db.collection("floors")
-      .doc(floor.id)
-      .set(floor)
-      .then(() => {
-        cb();
-      });
+  if (logoFile) {
+    const ref = storage.ref(`/images/floor_logos/${floor.id}`);
+
+    const upload = await ref.put(logoFile);
+    if (!upload) return;
+
+    const downloadUrl = await ref.getDownloadURL();
+    if (!downloadUrl) return;
+
+    newFloor.logo = downloadUrl;
   }
+
+  if (tracks) {
+    for (const trackKey of Object.keys(tracks)) { 
+
+      const track = tracks[trackKey];
+
+      const ref = storage.ref(
+        `/audio/floor_tracks/${floor.id}/${trackKey}/${track.name}`
+      );
+
+      const upload = await ref.put(track);
+      if (!upload) return;
+
+      const downloadUrl = await ref.getDownloadURL();
+      if (!downloadUrl) return;
+
+      newFloor.rooms[trackKey].track = { name: track.name, file: downloadUrl };
+      console.log("this is the floor", "Just finsihed one track");
+
+    }
+
+    // await Object.keys(tracks).forEach(async (trackKey) => {
+    //   const track = tracks[trackKey];
+
+    //   const ref = storage.ref(
+    //     `/audio/floor_tracks/${floor.id}/${trackKey}/${track.name}`
+    //   );
+
+    //   const upload = await ref.put(track);
+    //   if (!upload) return;
+
+    //   const downloadUrl = await ref.getDownloadURL();
+    //   if (!downloadUrl) return;
+
+    //   newFloor.rooms[trackKey].track = { name: track.name, file: downloadUrl };
+    //   console.log("this is the floor", "Just finsihed one track");
+    // });
+    console.log("this is the floor", "Just finsihed all tracks");
+  }
+  console.log("this is the floor", newFloor.rooms);
+
+  db.collection("floors")
+    .doc(floor.id)
+    .set(newFloor)
+    .then(() => {
+      cb();
+    })
+    .catch((e) => {
+      console.log("Saving to db failed", e);
+    });
 };
 
 export const newFloorRoom = (values, reset) => async () => {

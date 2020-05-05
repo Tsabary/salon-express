@@ -56,6 +56,7 @@ const Updates = ({
         type="checkbox"
         id="updates"
         onChange={() => setOpen(!open)}
+        // readOnly
       />
       <label className="max-max updates__top" htmlFor="updates">
         <div className="updates__title">Live Updates</div>

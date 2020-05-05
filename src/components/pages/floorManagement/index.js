@@ -12,10 +12,6 @@ const FloorManagement = ({ fetchFloors }) => {
   const [floors, setFloors] = useState(null);
 
   useEffect(() => {
-    console.log("floors", floors);
-  }, [floors]);
-
-  useEffect(() => {
     if (currentUserProfile && !floors)
       fetchFloors(currentUserProfile, (data) => setFloors(data));
   }, [currentUserProfile]);

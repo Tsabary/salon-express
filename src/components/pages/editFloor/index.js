@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 
-import { v4 as uuidv4 } from "uuid";
 import Form from "react-bootstrap/Form";
 
 import {
@@ -21,8 +20,8 @@ import history from "../../../history";
 import { fetchFloor, saveFloor } from "../../../actions";
 
 import InputField from "../../formComponents/inputField";
-import TextArea from "../../formComponents/textArea";
 import Tags from "../../formComponents/tags";
+import SingleEditRoom from "./singleEditRoom";
 
 import { validateWordsLength } from "../../../utils/strings";
 import {
@@ -39,6 +38,8 @@ const EditFloor = ({ match, myFloors, floorPlans, fetchFloor, saveFloor }) => {
   const [chosenPlan, setChosenPlan] = useState(null);
   const [values, setValues] = useState({});
   const [formError, setFormError] = useState(null);
+
+  const [tracks, setTracks] = useState({});
 
   const [rooms, setRooms] = useState({});
 
@@ -113,39 +114,15 @@ const EditFloor = ({ match, myFloors, floorPlans, fetchFloor, saveFloor }) => {
   const renderRooms = (chosenPlan, roomsArray) => {
     return chosenPlan.rooms.map((room, index) => {
       return (
-        <div key={index}>
-          <div className="extra-tiny-margin-bottom">Room {index + 1}</div>
-          <InputField
-            type="text"
-            placeHolder="Room name"
-            value={roomsArray[index] && roomsArray[index].name}
-            onChange={(name) =>
-              setRooms({
-                ...rooms,
-                [index]: {
-                  ...rooms[index],
-                  name,
-                  coords: room.coords,
-                  shape: room.shape,
-                  id: room.id ? room.id : uuidv4(),
-                },
-              })
-            }
-          />
-          <div className="extra-tiny-margin-top">
-            <TextArea
-              type="text"
-              placeHolder="Room description"
-              value={roomsArray[index] && roomsArray[index].description}
-              onChange={(description) =>
-                setRooms({
-                  ...rooms,
-                  [index]: { ...rooms[index], description },
-                })
-              }
-            />
-          </div>
-        </div>
+        <SingleEditRoom
+          room={room}
+          rooms={rooms}
+          setRooms={setRooms}
+          roomsArray={roomsArray}
+          setTracks={setTracks}
+          index={index}
+          key={index}
+        />
       );
     });
   };
@@ -153,7 +130,9 @@ const EditFloor = ({ match, myFloors, floorPlans, fetchFloor, saveFloor }) => {
   const handleSave = () => {
     // Chck values somehow //
     const newFloor = { ...values, rooms };
-    saveFloor(newFloor, imageAsFile, () => myHistory.push(`/floor-management`));
+    saveFloor(newFloor, imageAsFile, tracks, () =>
+      myHistory.push(`/floor-management`)
+    );
   };
 
   return (
@@ -219,6 +198,7 @@ const EditFloor = ({ match, myFloors, floorPlans, fetchFloor, saveFloor }) => {
               id="edit-floor-logo"
               className="update-profile__upload"
               type="file"
+              accept=".jpg,.jpeg,.png"
               onChange={handleImageAsFile}
             />
           </span>

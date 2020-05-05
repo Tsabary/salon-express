@@ -66,7 +66,7 @@ const SignUp = ({ signUp, providerSignIn, passwordReset }) => {
               />
               <span className="sign-up__toggle--visible">
                 <form onSubmit={handleSubmit} autoComplete="off">
-                  <div className="fr-fr">
+                  <div className="sign-up__email-fields">
                     <div className="tiny-margin-bottom">
                       <InputField
                         type="email"

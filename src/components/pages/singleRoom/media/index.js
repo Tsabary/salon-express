@@ -62,7 +62,6 @@ const Media = ({
 
   useEffect(() => {
     listenToMultiverse(entityID, setMultiverse, setMultiverseArray, () => {
-      if (!isMobile)
         newPortal(
           "Home",
           currentPortal,
@@ -202,6 +201,7 @@ const Media = ({
             setMediaState(!mediaState);
           }}
           checked={mediaState}
+          // readOnly
         />
         {!isMobile ? (
           <>

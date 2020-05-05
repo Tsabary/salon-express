@@ -17,6 +17,7 @@ const ToggleButton = ({ id, toggleOn, toggleOff, isChecked }) => {
         defaultChecked={isChecked}
         id={id}
         onChange={() => setChecked(!checked)}
+        // readOnly
       />
       <label className="toggle-button__label" htmlFor={id}>
         <div className="toggle-button__component" id="component" />

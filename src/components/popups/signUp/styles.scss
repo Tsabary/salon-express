@@ -1,6 +1,16 @@
 @import "../../../styles/imports";
 
 .sign-up {
+  &__email-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    @include resize(650px) {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+
   &__toggle {
     position: relative;
     overflow: hidden;
@@ -18,11 +28,11 @@
     }
   }
 
-  &__forgot-password{
-      width: 100%;
-      color: $grey;
-      text-align: center;
-      margin-bottom: 1.5rem;
-      cursor: pointer;
+  &__forgot-password {
+    width: 100%;
+    color: $grey;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
   }
 }

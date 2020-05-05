@@ -406,12 +406,12 @@ h3 {
     display: flex;
     flex-direction: column;
     height: 100%;
-    transition: all .15s;
+    transition: all 0.15s;
     // @include resize(1500px) {
     //   padding: 1rem;
     // }
 
-    &:hover{
+    &:hover {
       transform: translateY(-0.2rem);
       box-shadow: 0 0.4rem 1.2rem $shadowColor;
     }
@@ -456,6 +456,7 @@ h3 {
 .my-iframe {
   border: none;
   outline: none;
+  z-index: 20;
 }
 
 .popup {
@@ -469,21 +470,32 @@ h3 {
   margin: 15rem auto;
   left: 0;
   right: 0;
-  overflow: hidden;
+  overflow-y: scroll;
   flex-direction: column;
   z-index: 10000;
   padding: 5rem 8rem;
   border-radius: $borderRadius;
   border: 1px $mainColor solid;
-  box-shadow: 0 0.2rem 9rem rgb(228, 228, 228);
+  box-shadow: 0 0.2rem 9rem $shadowColor;
   background-color: white;
+
+  &::-webkit-scrollbar {
+    width: 0.5em;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $mainColor;
+    outline: 1px solid slategrey;
+  }
 
   @include resize(800px) {
     max-width: 80%;
+    padding: 5rem 4rem;
+
   }
 
   @include resize(600px) {
-    padding: 5rem;
+    padding: 3em 3rem;
   }
 
   @include resize(750px) {
@@ -494,6 +506,7 @@ h3 {
     height: 100vh;
     margin: 0;
     border: none;
+    z-index: 20000;
   }
 
   &:target {
@@ -527,9 +540,15 @@ h3 {
     text-align: center;
     font-family: $fontBold, $fontHebrew;
     font-size: 5rem;
+    line-height: 5rem;
     color: $mainColor;
     // margin-bottom: 4rem;
     margin-top: 2rem;
+
+    @include resize(700px) {
+      font-size: 3rem;
+      line-height: 3rem;
+    }
   }
 
   &__button {

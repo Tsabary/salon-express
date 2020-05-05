@@ -36,7 +36,7 @@ const FollowBtn = ({
     >
       {handlingFollow ? (
         <div className="centered">
-          <Loader type="ThreeDots" color="#ffffff" height={20} width={20} />
+          <Loader type="ThreeDots" color="#6f00ff" height={20} width={20} />
         </div>
       ) : (
         textFollow

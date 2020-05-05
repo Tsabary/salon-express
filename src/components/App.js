@@ -22,7 +22,8 @@ import history from "../history";
 import MainHeader from "./staticComponents/header/Main";
 import FloorHeader from "./staticComponents/header/Floor";
 import FloorRoomHeader from "./staticComponents/header/FloorRoom";
-import Footer from "./staticComponents/footer";
+import Footer from "./staticComponents/footer/main";
+import FooterFloor from "./staticComponents/footer/floor";
 
 import SignUp from "./popups/signUp";
 import UpdateProfile from "./popups/updateProfile";
@@ -63,7 +64,6 @@ const App = () => {
       window.location.href.split("/").length === 6
   );
 
-  
   useEffect(() => {
     return history.listen((location) => {
       setIsFloor(
@@ -98,7 +98,13 @@ const App = () => {
                       <NewFloorPlan />
                       <AudioChannels />
                       {/* <EditRoom /> */}
-                      {isFloor ?<FloorHeader /> : isFloorRoom ? <FloorRoomHeader/>: <MainHeader /> }
+                      {isFloor ? (
+                        <FloorHeader />
+                      ) : isFloorRoom ? (
+                        <FloorRoomHeader />
+                      ) : (
+                        <MainHeader />
+                      )}
 
                       {!isMobile && !isFloor ? <Updates /> : null}
 
@@ -148,11 +154,16 @@ const App = () => {
                         />
                         <Route path="/:id" exact component={Stranger} />
                       </Switch>
-                      {isFloor ? null : (
+                      <div className="app__footer">
+                        <Footer isFloor={isFloor} />
+                      </div>
+                      {/* {isFloor ? (
+                        <FooterFloor />
+                      ) : (
                         <div className="app__footer">
-                          <Footer />
+                            <Footer isFloor={isFloor}/>
                         </div>
-                      )}
+                      )} */}
                     </div>
                   </Router>
                 </UniqueIdProvider>

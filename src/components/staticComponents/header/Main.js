@@ -14,14 +14,15 @@ import { listenToProfile, stopListeningToProfile } from "../../../actions";
 import AuthOptions from "./authOptions";
 import UserOptions from "./userOptions";
 import FilterInput from "./filterInput";
-import MobileMenu from "./mobileMenu";
+import MobileMenu from "./mobileDrawer";
 import { connect } from "react-redux";
 
 const Header = ({ listenToProfile, stopListeningToProfile }) => {
+  const myHistory = useHistory(history);
+
   const { currentUser, setCurrentUserProfile } = useContext(AuthContext);
   const { page, setPage } = useContext(PageContext);
   const { setSearchTerm } = useContext(SearchContext);
-  const myHistory = useHistory(history);
 
   useEffect(() => {
     if (currentUser) {

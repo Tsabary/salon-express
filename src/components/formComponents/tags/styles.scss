@@ -10,15 +10,20 @@
   margin-bottom: 1rem;
   cursor: pointer;
   user-select: none;
-  transition: all .15s;
+  transition: all 0.15s;
+
+  
+  @include resize(700px) {
+    padding: .5rem 1rem;
+  }
+
   &-suggestion {
     background-color: white;
     color: $mainColor;
     border: $mainColor 1px solid;
 
-    &:hover{
+    &:hover {
       border: $mainColor 2px solid;
-
     }
     &__count {
       color: $grey;
@@ -35,7 +40,7 @@
   width: 100%;
   border-radius: $borderRadius;
   // background-color: white;
-  padding: 1rem 0 0 1rem;
+  padding: 1rem 0 0 0;
 
   &__container {
     display: grid;
@@ -50,9 +55,13 @@
     font-family: $font;
     // margin-top: 1rem;
     background-color: $mainColor;
-    padding: 1rem 2rem;
+    padding: .5rem 2rem;
     border-radius: $borderRadius;
     color: white;
     cursor: pointer;
+
+    @include resize(700px) {
+      padding: .5rem 1rem;
+    }
   }
 }

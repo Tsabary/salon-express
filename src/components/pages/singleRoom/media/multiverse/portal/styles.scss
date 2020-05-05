@@ -10,6 +10,13 @@
     grid-template-columns: 1fr;
     line-height: 1.6rem;
   }
+
+  &__title-container {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: max-content 1fr;
+  }
+
   &__title {
     transition: all 0.2s;
     &:hover {

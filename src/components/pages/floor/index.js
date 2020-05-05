@@ -1,61 +1,32 @@
 import "./styles.scss";
 import React, { useEffect, useState, useContext } from "react";
 import { connect } from "react-redux";
-import { useHistory } from "react-router-dom";
+
 import ImageMapper from "react-image-mapper";
-import updateSound from "../../../files/update.mp3";
-import dubstepTrack from "../../../files/dubstep.mp3";
-import houseTrack from "../../../files/house.mp3";
-import hiphopTrack from "../../../files/hiphop.mp3";
+import { Howl, Howler } from "howler";
 
-import bgTrack from "../../../files/bg.mp3";
-
-import history from "../../../history";
-
+import { AuthContext } from "../../../providers/Auth";
 import { FloorContext } from "../../../providers/Floor";
 import { fetchCurrentFloor, fetchFloorRooms } from "../../../actions";
-import { titleToKey } from "../../../utils/strings";
-import { Howl, Howler } from "howler";
 import FloorRoom from "../singleRoom/floorRoom";
-import { AuthContext } from "../../../providers/Auth";
-
-const dub = new Howl({
-  src: [dubstepTrack],
-});
-
-const house = new Howl({
-  src: [houseTrack],
-});
-
-const hiphop = new Howl({
-  src: [hiphopTrack],
-});
-
-// const bgSound = new Howl({
-//   src: [bgTrack],
-//   loop: true,
-//   volume: 1,
-//   onend: function () {
-//     console.log("Finished!");
-//   },
-//   onplay: () => {
-//     console.log("starting!");
-//   },
-// });
 
 const Floor = ({ match, currentFloor, fetchCurrentFloor }) => {
-  const myHistory = useHistory(history);
-
   const { currentUserProfile } = useContext(AuthContext);
+  const {
+    globalFloor,
+    setGlobalFloor,
+    globalFloorRoom,
+    setGlobalFloorRoom,
+  } = useContext(FloorContext);
 
-  const { globalFloor, setGlobalFloor, setGlobalFloorRoom } = useContext(FloorContext);
   const [isOwner, setIsOwner] = useState(false);
-
-  const [room, setRoom] = useState(null);
+  const [sound, setSound] = useState();
 
   useEffect(() => {
     setIsOwner(
-      currentUserProfile && globalFloor && currentUserProfile.uid === globalFloor.user_ID
+      currentUserProfile &&
+        globalFloor &&
+        currentUserProfile.uid === globalFloor.user_ID
     );
   }, [currentUserProfile, globalFloor]);
 
@@ -66,16 +37,27 @@ const Floor = ({ match, currentFloor, fetchCurrentFloor }) => {
   });
 
   useEffect(() => {
-    console.log("this flooor", currentFloor);
-    !currentFloor ? fetchCurrentFloor(match.params.id) : setGlobalFloor(currentFloor);
+    !currentFloor
+      ? fetchCurrentFloor(match.params.id)
+      : setGlobalFloor(currentFloor);
   }, [match.params.id, currentFloor]);
 
+  useEffect(() => {
+    if (sound) sound.play();
+  }, [sound]);
+
   const playSound = (area) => {
-    area > 7 ? dub.play() : area < 4 ? house.play() : hiphop.play();
+    if (!area.track) return;
+
+    setSound(
+      new Howl({
+        src: [area.track.file],
+      })
+    );
   };
 
-  const pauseSound = (area) => {
-    area > 7 ? dub.stop() : area < 4 ? house.stop() : hiphop.stop();
+  const pauseSound = (s) => {
+    s.stop();
   };
 
   const load = () => {
@@ -85,15 +67,8 @@ const Floor = ({ match, currentFloor, fetchCurrentFloor }) => {
   };
 
   const clicked = (area) => {
-    // myHistory.push(`/floor/${globalFloor.id}/${titleToKey(area.name)}`);
-    setRoom(area);
     setGlobalFloorRoom(area);
-    pauseSound(
-      Object.values(globalFloor.rooms)
-        .map((ro) => ro.id)
-        .indexOf(area.id)
-    );
-    // bgSound.stop();
+    pauseSound();
     setValues((val) => {
       return {
         ...val,
@@ -105,11 +80,12 @@ const Floor = ({ match, currentFloor, fetchCurrentFloor }) => {
   };
 
   const enterArea = (area) => {
-    playSound(
-      Object.values(globalFloor.rooms)
-        .map((ro) => ro.id)
-        .indexOf(area.id)
-    );
+    playSound(area);
+    // playSound(
+    //   Object.values(globalFloor.rooms)
+    //     .map((ro) => ro.id)
+    //     .indexOf(area.id)
+    // );
 
     setValues((val) => {
       return { ...val, hoveredArea: area };
@@ -117,18 +93,19 @@ const Floor = ({ match, currentFloor, fetchCurrentFloor }) => {
   };
 
   const leaveArea = (area) => {
-    pauseSound(
-      Object.values(globalFloor.rooms)
-        .map((ro) => ro.id)
-        .indexOf(area.id)
-    );
+    pauseSound(sound);
+    // pauseSound(
+    //   Object.values(globalFloor.rooms)
+    //     .map((ro) => ro.id)
+    //     .indexOf(area.id)
+    // );
     setValues((val) => {
       return { ...val, hoveredArea: null };
     });
   };
 
   const getTipPosition = (area) => {
-    return { top: `${area.center[1]}px`, left: `${area.center[0] + 200}px` };
+    return { top: `${area.center[1]}px`, left: `${area.center[0]}px` };
   };
 
   const clickedOutside = (evt) => {
@@ -169,25 +146,27 @@ const Floor = ({ match, currentFloor, fetchCurrentFloor }) => {
         type="checkbox"
         id="floor-room-checkbox"
         onChange={() => {
-          console.log("rooom", room);
+          console.log("rooom", globalFloorRoom);
         }}
-        checked={!!room}
+        checked={globalFloorRoom}
       />
 
       <div className="floor__room">
-        {room ? (
+        {globalFloorRoom ? (
           <FloorRoom
             floor={globalFloor}
-            room={room}
+            room={globalFloorRoom}
             isOwner={isOwner}
-            entityID={globalFloor.id + "-" + room.id}
+            entityID={globalFloor.id + "-" + globalFloorRoom.id}
           />
         ) : null}
       </div>
 
       {/* <div className="floor__navigation"> */}
-      <div className="floor__video-overlay" />
-      <img src="../../imgs/colors.jpg" className="floor__video-top" />
+      {/* <div className="floor__video-overlay" /> */}
+      {/* <img src="../../imgs/colors.jpg" className="floor__video-top" /> */}
+      {/* <img src="../../imgs/floorbg.jpg" className="floor__bgimg" /> */}
+
       {/* 
         <div className="floor__video">
           <video autoPlay muted loop>
@@ -202,9 +181,12 @@ const Floor = ({ match, currentFloor, fetchCurrentFloor }) => {
             src={globalFloor.image}
             map={{
               name: "my-map",
-              areas: globalFloor && globalFloor.rooms ? Object.values(globalFloor.rooms) : [],
+              areas:
+                globalFloor && globalFloor.rooms
+                  ? Object.values(globalFloor.rooms)
+                  : [],
             }}
-            width={1200}
+            width={800}
             imgWidth={1500}
             onLoad={() => load()}
             onClick={(area) => clicked(area)}
@@ -215,19 +197,19 @@ const Floor = ({ match, currentFloor, fetchCurrentFloor }) => {
             onImageMouseMove={(evt) => moveOnImage(evt)}
           />
         ) : null}
+
+        {values.hoveredArea && (
+          <span
+            className="floor__tooltip"
+            style={{ ...getTipPosition(values.hoveredArea) }}
+          >
+            <div> {values.hoveredArea && values.hoveredArea.name}</div>
+            <div className="tiny-margin-top">
+              {values.hoveredArea && values.hoveredArea.description}
+            </div>
+          </span>
+        )}
       </div>
-      {values.hoveredArea && (
-        <span
-          className="floor__tooltip"
-          style={{ ...getTipPosition(values.hoveredArea) }}
-        >
-          <div> {values.hoveredArea && values.hoveredArea.name}</div>
-          <div className="tiny-margin-top">
-            {values.hoveredArea && values.hoveredArea.description}
-          </div>
-        </span>
-      )}
-      {/* </div> */}
     </div>
   );
 };

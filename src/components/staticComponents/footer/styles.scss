@@ -1,19 +1,25 @@
 @import "../../../styles/imports";
 
 .footer {
-  padding: 5rem 11rem;
+  width: 100%;
+  height: max-content;
   border-top: $border;
   background-color: $bgColor;
-  // clip-path: polygon(0 13%, 100% 0, 100% 100%, 0% 100%);
-  height: max-content;
-  // background-image: linear-gradient($mainColor, $mainColorDarkest);
-  width: 100%;
   margin-top: 10rem;
-  display: grid;
-  grid-template-columns: repeat(4, max-content);
-  gap: 20rem;
 
-  &__mobile{
+
+  &__container{
+    width: 100%;
+    height: max-content;
+    max-width: 160rem;
+    margin: auto;
+    padding: 5rem 11rem;
+    display: grid;
+    grid-template-columns: repeat(4, max-content);
+    gap: 12rem;
+  }
+
+  &__mobile {
     margin-bottom: 6rem;
   }
 
@@ -57,12 +63,12 @@
     &-title {
       font-weight: 900;
       text-transform: uppercase;
-      color:  $mainColor;
+      color: $mainColor;
       font-size: 1.4rem;
     }
 
     &-item {
-      color:  $mainColor;
+      color: $mainColor;
       font-size: 1.4rem;
       cursor: pointer;
       // margin-top: 2rem;
@@ -71,6 +77,59 @@
       &:hover {
         transform: translateY(-0.08rem);
       }
+    }
+  }
+
+  &__floor {
+    width: 100%;
+    position: absolute;
+    max-width: 140rem;
+    display: grid;
+    grid-template-columns: 1fr max-content;
+
+    padding: 0 10rem;
+    @include resize(1200px) {
+      padding: 0 6rem;
+    }
+
+    @include resize(1000px) {
+      padding: 0 5rem;
+    }
+
+    &-powered {
+      &-container {
+        left: 50%;
+        transform: translateX(-50%);
+        cursor: pointer;
+      }
+      &-salon {
+        font-family: $fontBold;
+        font-size: 4rem;
+        color: $mainColor;
+      }
+      &-powered {
+        font-size: 1rem;
+        color: $mainColor;
+        margin: 0.5rem;
+      }
+    }
+
+    &-hashtag {
+      color: $grey;
+      cursor: pointer;
+      &:hover {
+        color: $mainColor;
+      }
+    }
+    &-container {
+      width: 100%;
+      max-width: 140rem;
+      margin: auto;
+    }
+
+    &-logo {
+      opacity: 0.5;
+      height: 4rem;
     }
   }
 }

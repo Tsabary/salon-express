@@ -172,7 +172,7 @@ const Apply = ({ match, positions, fetchSinglePosition }) => {
             <div className="centered">
               <Loader
                 type="Grid"
-                color="#1472FF"
+                color="#6f00ff"
                 height={100}
                 width={100}
                 timeout={3000} //3 secs

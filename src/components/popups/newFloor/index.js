@@ -215,7 +215,7 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
               {formError ? (
                 <div className="form-error small-margin-top">{formError}</div>
               ) : null}
-              <div className="popup__button medium-margin-top">
+              <div className="popup__button tiny-margin-top">
                 <button
                   type="button"
                   className="boxed-button"

@@ -32,6 +32,7 @@ const MobileMultiverse = ({ entityID, multiverseArray }) => {
           type="checkbox"
           id="mobileMultiverse"
           onChange={() => setOpen(!open)}
+          // readOnly
         />
         <label
           className="max-max mobile-multiverse__top"

@@ -104,7 +104,7 @@ const NewFloorPlan = ({ addFloorPlan }) => {
                 Number of rooms {rooms.length}
               </div>
 
-              <div className="popup__button small-margin-top">
+              <div className="popup__button tiny-margin-top">
                 <button type="submit" className="boxed-button">
                   Add Floor Plan
                 </button>
