@@ -1,10 +1,10 @@
 import React, { useEffect, useContext, useState } from "react";
 import { connect } from "react-redux";
-import { AuthContext } from "../../../providers/Auth";
+import { AuthContext } from "../../../../providers/Auth";
 
-import { fetchFirstMyRooms, fetchMoreMyRooms} from "../../../actions";
+import { fetchFirstMyRooms, fetchMoreMyRooms } from "../../../../actions";
 
-import { renderSection } from "../../../utils/feeds";
+import { renderSection } from "../../../../utils/feeds";
 
 const MyRooms = ({ myRooms, fetchFirstMyRooms, fetchMoreMyRooms }) => {
   const { currentUser, currentUserProfile } = useContext(AuthContext);
@@ -14,11 +14,7 @@ const MyRooms = ({ myRooms, fetchFirstMyRooms, fetchMoreMyRooms }) => {
 
   useEffect(() => {
     if (currentUser && !myRooms.length) {
-      fetchFirstMyRooms(
-        setLastVisible,
-        setReachedLast,
-        currentUser.uid
-      );
+      fetchFirstMyRooms(setLastVisible, setReachedLast, currentUser.uid);
     }
   }, [currentUser, fetchFirstMyRooms, myRooms]);
 
@@ -32,10 +28,12 @@ const MyRooms = ({ myRooms, fetchFirstMyRooms, fetchMoreMyRooms }) => {
         setLastVisible,
         reachedLast,
         setReachedLast,
-        currentUserProfile
+        currentUserProfile,
+        null,
+        false
       )}
 
-      {!myRooms.length  ? (
+      {!myRooms.length ? (
         <div className="empty-feed small-margin-top centered">
           Nothing to see here. Open your new Room!
         </div>
@@ -51,5 +49,6 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  fetchFirstMyRooms, fetchMoreMyRooms
+  fetchFirstMyRooms,
+  fetchMoreMyRooms,
 })(MyRooms);

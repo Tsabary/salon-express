@@ -57,7 +57,6 @@
       @include resize(700px) {
         grid-column: 1/7;
         grid-row: 2/3;
-
       }
       @include resize(500px) {
         grid-column: 1/13;

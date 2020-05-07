@@ -4,16 +4,16 @@ import { connect } from "react-redux";
 
 import { AuthContext } from "../../../providers/Auth";
 
-import { fetchFloors } from "../../../actions";
+import { fetchMyFloors } from "../../../actions";
 import SingleFloor from "./singleFloor";
 
-const FloorManagement = ({ fetchFloors }) => {
+const FloorManagement = ({ fetchMyFloors }) => {
   const { currentUserProfile } = useContext(AuthContext);
   const [floors, setFloors] = useState(null);
 
   useEffect(() => {
     if (currentUserProfile && !floors)
-      fetchFloors(currentUserProfile, (data) => setFloors(data));
+    fetchMyFloors(currentUserProfile, (data) => setFloors(data));
   }, [currentUserProfile]);
 
   const renderTitles = () => {
@@ -64,4 +64,4 @@ const FloorManagement = ({ fetchFloors }) => {
   );
 };
 
-export default connect(null, { fetchFloors })(FloorManagement);
+export default connect(null, { fetchMyFloors })(FloorManagement);

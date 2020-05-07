@@ -53,6 +53,13 @@ service cloud.firestore {
       allow delete: if get(/databases/$(database)/documents/rooms/$(request.resource.data.room_ID)).data.user_ID == request.auth.uid; // need to check that it's the admin
     }
 
+    match /questions/{question}{
+      allow read: if true;
+      allow create: if true;
+      allow update: if request.auth.uid == "KbhtqAE0B9RDAonhQqgZ1CWsg1o1";
+      allow delete: if request.auth.uid == "KbhtqAE0B9RDAonhQqgZ1CWsg1o1";
+    }
+
     match /comments/{room}{
       allow read: if true;
       allow create: if request.auth.uid == request.resource.data.user_ID;

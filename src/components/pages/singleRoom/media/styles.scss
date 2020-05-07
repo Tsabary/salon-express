@@ -48,7 +48,7 @@
 
     &--no-audio {
       grid-column: 4/13;
-      grid-row: 1/4;
+      grid-row: 1/3;
       border-radius: $borderRadius;
       overflow: hidden;
       @include resize(1100px) {

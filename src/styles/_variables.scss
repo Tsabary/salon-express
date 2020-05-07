@@ -17,6 +17,7 @@ $mainColorBlueDarkest: darken($mainColorBlue, 30%);
 $mainColorBlueTransparent: rgba(90, 50, 100, 0.05);
 $blueGradientColor: linear-gradient($mainColorBlue, $mainColorBlueDark);
 
+//#6f00ff
 $mainColor: rgb(111, 0, 255);
 $mainColorLightest: lighten($mainColor, 30%);
 $mainColorLight: lighten($mainColor, 15%);

@@ -1,0 +1,14 @@
+@import "../../../../styles/imports";
+
+.faq {
+  &__container {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 1fr max-content;
+    gap: 1rem;
+  }
+  &__input{
+    outline: none;
+    border: none;
+  }
+}

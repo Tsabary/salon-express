@@ -21,7 +21,7 @@ const SingleFloor = ({ floor }) => {
     <div className="single-floor">
       <div
         className="single-floor__title"
-        onClick={() => handleChange(`/floor/${floor.id}`)}
+        onClick={() => handleChange(`/floor/${floor.url}`)}
       >
         {floor.name}
       </div>

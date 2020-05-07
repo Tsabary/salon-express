@@ -3,13 +3,13 @@ import React, { useContext, useEffect, useState } from "react";
 import UIfx from "uifx";
 // import { Howl, Howler } from "howler";
 
-import updateSound from "../../../files/update.mp3";
+import updateSound from "../../../../files/update.mp3";
 
-import { AuthContext } from "../../../providers/Auth";
+import { AuthContext } from "../../../../providers/Auth";
 import { connect } from "react-redux";
 import ScrollToBottom from "react-scroll-to-bottom";
 
-import { listenToUpdates, resetNotifications } from "../../../actions";
+import { listenToUpdates, resetNotifications } from "../../../../actions";
 
 import Update from "./update";
 
@@ -19,11 +19,6 @@ const Updates = ({
   updates,
   notifications,
 }) => {
-  // var sound = new Howl({
-  //   src: ["update.mp3"],
-  // });
-
-  // sound.play();
 
   const notification = new UIfx(updateSound);
 
@@ -64,11 +59,7 @@ const Updates = ({
           <div className="updates__notifications">{notCount}</div>
         ) : null}
       </label>
-      {/* {updates && updates.length ? (
-          renderUpdates(updates)
-        ) : (
-          <div>Add some Rooms to your favorites to begin receiving updates</div>
-        )} */}
+
       <div className="updates__container">
         <ScrollToBottom scrollViewClassName="updates__scroll">
           {updates && updates.length ? (

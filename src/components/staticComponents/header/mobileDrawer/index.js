@@ -12,7 +12,7 @@ import { logOut } from "../../../../actions";
 import { turnToLowerCaseWithHyphen } from "../../../../utils/strings";
 
 const Drawer = ({ logOut }) => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUserProfile } = useContext(AuthContext);
   const { page, setPage } = useContext(PageContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const myHistory = useHistory(history);
@@ -88,60 +88,73 @@ const Drawer = ({ logOut }) => {
 
       <label htmlFor="navi-toggle" className="navigation__nav">
         <nav className="navigation__nav-menu" id="nav-menu">
-          {/* <ul className="navigation__list">
-          {currentUser && page
-            ? renderMenuItems(["Explore", "Favorites", "My Rooms"], page)
-            : renderMenuItems(["Explore"], page)}
-
-          {currentUser ? (
-            <div
-              onClick={() => {
-                setIsMenuOpen(false);
-                window.location.hash = "add-room";
-              }}
-            >
-              <li className="navigation__item">New Room</li>
+          <div className="navigation__profile-container">
+            <img
+              className="navigation__profile-image"
+              src={
+                (currentUserProfile && currentUserProfile.avatar) ||
+                "../../imgs/logo.jpeg"
+              }
+              alt="Profile"
+            />
+            <div className="navigation__profile-name">
+              {currentUserProfile && currentUserProfile.name}
             </div>
-          ) : null}
+          </div>
 
-          {currentUser ? (
-            <div
-              onClick={() => {
-                setIsMenuOpen(false);
-                window.location.hash = "update-profile";
-              }}
-            >
-              <li className="navigation__item">Update Profile</li>
-            </div>
-          ) : null}
-          <li className="navigation__item" onClick={() => handleChange(6)}>
-            Contact
-          </li>
-          {currentUser ? (
-            <li
-              className="navigation__item"
-              onClick={() => {
-                logOut();
-                setIsMenuOpen(false);
-              }}
-            >
-              Logout
-            </li>
-          ) : (
-            <li>
+          <ul className="navigation__list">
+            {currentUserProfile && page
+              ? renderMenuItems(["Explore", "Favorites", "My Rooms"], page)
+              : renderMenuItems(["Explore"], page)}
+
+            {currentUserProfile ? (
               <div
-                className="navigation__item"
                 onClick={() => {
                   setIsMenuOpen(false);
-                  window.location.hash="sign-up"
+                  window.location.hash = "add-room";
                 }}
               >
-                Sign Up / Login
+                <li className="navigation__item">New Room</li>
               </div>
+            ) : null}
+
+            {currentUserProfile ? (
+              <div
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  window.location.hash = "update-profile";
+                }}
+              >
+                <li className="navigation__item">Update Profile</li>
+              </div>
+            ) : null}
+            <li className="navigation__item" onClick={() => handleChange(6)}>
+              Contact
             </li>
-          )}
-        </ul>
-      */}
+            {currentUserProfile ? (
+              <li
+                className="navigation__item"
+                onClick={() => {
+                  logOut();
+                  setIsMenuOpen(false);
+                }}
+              >
+                Logout
+              </li>
+            ) : (
+              <li>
+                <div
+                  className="navigation__item"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    window.location.hash = "sign-up";
+                  }}
+                >
+                  Sign Up / Login
+                </div>
+              </li>
+            )}
+          </ul>
         </nav>
       </label>
     </div>

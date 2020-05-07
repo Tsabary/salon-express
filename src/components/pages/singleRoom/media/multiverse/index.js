@@ -5,25 +5,15 @@ import "emoji-mart/css/emoji-mart.css";
 import { Emoji, Picker } from "emoji-mart";
 
 import { AuthContext } from "../../../../../providers/Auth";
-import { UniqueIdContext } from "../../../../../providers/UniqueId";
 
 import { titleToKey } from "../../../../../utils/strings";
-import {
-  listenToMultiverse,
-  newPortal,
-  enterPortal,
-  leavePortal,
-  detachListener,
-  logGuestEntry,
-  replaceTimestampWithUid,
-} from "../../../../../actions";
+import { newPortal, logGuestEntry } from "../../../../../actions";
 
 import Portal from "./portal";
 import InputField from "../../../../formComponents/inputField";
 
 const Multiverse = ({
   entityID,
-  room,
   currentPortal,
   setCurrentPortal,
   multiverse,
@@ -31,89 +21,30 @@ const Multiverse = ({
   microphonePermissionGranted,
   cameraPermissionGranted,
   currentAudioChannel,
-  listenToMultiverse,
   newPortal,
-  enterPortal,
-  leavePortal,
-  detachListener,
-  replaceTimestampWithUid,
   isFirstLoad,
   setIsFirstLoad,
 }) => {
   const { currentUserProfile } = useContext(AuthContext);
-  const { uniqueId } = useContext(UniqueIdContext);
 
-  const [portal, setPortal] = useState("");
+  const [newPortalValues, setNewPortalValues] = useState("");
 
   // This holdes the portal error if any (currently only one is "a portal with a similar name exists")
   const [portalError, setPortalError] = useState(null);
-  const [userID, setUserID] = useState(null);
 
   // We use this to filter portals by user text search
   const [query, setQuery] = useState("");
-
-  // This is our cleanup event for when the comonent unloads ( remove the user from the portal)
-  useEffect(() => {
-    if (!currentPortal || !entityID) return;
-
-    enterPortal(
-      entityID,
-      currentPortal,
-      currentUserProfile && currentUserProfile.uid
-        ? currentUserProfile.uid
-        : uniqueId
-    );
-
-    const myCleanup = () => {
-      leavePortal(
-        entityID,
-        currentPortal,
-        currentUserProfile && currentUserProfile.uid
-          ? [currentUserProfile.uid, uniqueId]
-          : [uniqueId]
-      );
-    };
-
-    window.addEventListener("beforeunload", myCleanup);
-
-    return function cleanup() {
-      if (!entityID || !currentPortal) return;
-      myCleanup();
-      window.removeEventListener("beforeunload", cleanup);
-    };
-  }, [entityID, currentPortal, currentUserProfile, uniqueId]);
 
   // If it's not the first load or if we don't have anything in the multiverse array then return, because we either don't need to automatically pick the portal (not the first load) or there is no portal to choose
   useEffect(() => {
     if (!isFirstLoad || !multiverseArray || !multiverseArray.length) return;
     {
-      setCurrentPortal(multiverseArray[0]);
+      setCurrentPortal((val) => {
+        return { new: multiverseArray[0], old: val ? val.new : null };
+      });
       setIsFirstLoad(false);
     }
   }, [multiverseArray]);
-
-  // If we have a hold of the user's profile now, we should replace the fake uid we've used before with the real user uid
-  useEffect(() => {
-    if (microphonePermissionGranted && cameraPermissionGranted)
-      if (
-        currentUserProfile &&
-        currentUserProfile.uid &&
-        room &&
-        room.id &&
-        currentPortal
-      ) {
-        replaceTimestampWithUid(
-          room,
-          currentPortal,
-          uniqueId,
-          currentUserProfile.uid
-        );
-        setUserID(currentUserProfile.uid);
-      } else if (room && currentPortal && userID && uniqueId) {
-        replaceTimestampWithUid(room, currentPortal, userID, uniqueId);
-        setUserID(null);
-      }
-  }, [currentUserProfile, room, currentPortal]);
 
   // Render the portals to the page
   const renderPortals = (multiverse, query) => {
@@ -126,9 +57,11 @@ const Multiverse = ({
         return (
           <Portal
             portal={portal}
-            members={portal.members}
             currentPortal={currentPortal}
             setCurrentPortal={setCurrentPortal}
+            entityID={entityID}
+            microphonePermissionGranted={microphonePermissionGranted}
+            cameraPermissionGranted={cameraPermissionGranted}
             key={titleToKey(portal.title)}
           />
         );
@@ -136,7 +69,7 @@ const Multiverse = ({
   };
 
   const addEmoji = (emo) => {
-    setPortal({ ...portal, totem: emo });
+    setNewPortalValues({ ...newPortalValues, totem: emo });
   };
 
   return (
@@ -167,14 +100,14 @@ const Multiverse = ({
           e.preventDefault();
           if (
             !currentUserProfile ||
-            (portal && !portal.title) ||
-            !portal.title.length
+            (newPortalValues && !newPortalValues.title) ||
+            !newPortalValues.title.length
           )
             return;
 
           if (
             multiverse.hasOwnProperty(
-              portal.title.trim().split(" ").join("").toLowerCase()
+              newPortalValues.title.trim().split(" ").join("").toLowerCase()
             )
           ) {
             setPortalError("A portal with that name already exists");
@@ -182,13 +115,15 @@ const Multiverse = ({
           }
 
           newPortal(
-            portal,
-            currentPortal,
+            newPortalValues,
+            currentPortal.new,
             entityID,
             currentUserProfile.uid,
             (portalObj) => {
-              setPortal({});
-              setCurrentPortal(portalObj);
+              setNewPortalValues({});
+              setCurrentPortal((val) => {
+                return { new: portalObj, old: val.new };
+              });
               setPortalError(null);
             }
           );
@@ -197,11 +132,11 @@ const Multiverse = ({
         <InputField
           type="text"
           placeHolder="Open a portal"
-          value={portal.title}
+          value={newPortalValues.title}
           onChange={(port) => {
             if (port.length < 30)
-              setPortal({
-                ...portal,
+              setNewPortalValues({
+                ...newPortalValues,
                 title: port
                   .replace(/^([^-]*-)|-/g, "$1")
                   .replace(/[^\p{L}\s\d-]+/gu, ""),
@@ -209,8 +144,8 @@ const Multiverse = ({
           }}
         />
         <div className="multiverse__emoji">
-          {portal && portal.totem ? (
-            <Emoji emoji={portal.totem} size={16} />
+          {newPortalValues && newPortalValues.totem ? (
+            <Emoji emoji={newPortalValues.totem} size={16} />
           ) : (
             <img
               className="multiverse__emoji--current"
@@ -275,11 +210,60 @@ const Multiverse = ({
 };
 
 export default connect(null, {
-  listenToMultiverse,
   newPortal,
-  enterPortal,
-  leavePortal,
-  detachListener,
   logGuestEntry,
-  replaceTimestampWithUid,
 })(Multiverse);
+
+// // This is our cleanup event for when the comonent unloads ( remove the user from the portal)
+// useEffect(() => {
+//   if (!currentPortal || !entityID) return;
+
+//   enterPortal(
+//     entityID,
+//     currentPortal,
+//     currentUserProfile && currentUserProfile.uid
+//       ? currentUserProfile.uid
+//       : uniqueId
+//   );
+
+//   const myCleanup = () => {
+//     leavePortal(
+//       entityID,
+//       currentPortal,
+//       currentUserProfile && currentUserProfile.uid
+//         ? [currentUserProfile.uid, uniqueId]
+//         : [uniqueId]
+//     );
+//   };
+
+//   window.addEventListener("beforeunload", myCleanup);
+
+//   return function cleanup() {
+//     if (!entityID || !currentPortal) return;
+//     myCleanup();
+//     window.removeEventListener("beforeunload", cleanup);
+//   };
+// }, [entityID, currentPortal, currentUserProfile, uniqueId]);
+
+// If we have a hold of the user's profile now, we should replace the fake uid we've used before with the real user uid
+// useEffect(() => {
+//   if (microphonePermissionGranted && cameraPermissionGranted)
+//     if (
+//       currentUserProfile &&
+//       currentUserProfile.uid &&
+//       room &&
+//       room.id &&
+//       currentPortal
+//     ) {
+//       replaceTimestampWithUid(
+//         entityID,
+//         currentPortal,
+//         uniqueId,
+//         currentUserProfile.uid
+//       );
+//       setUserID(currentUserProfile.uid);
+//     } else if (room && currentPortal && userID && uniqueId) {
+//       replaceTimestampWithUid(entityID, currentPortal, userID, uniqueId);
+//       setUserID(null);
+//     }
+// }, [currentUserProfile, room, currentPortal]);

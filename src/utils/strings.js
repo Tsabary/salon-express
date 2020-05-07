@@ -98,5 +98,6 @@ export const titleToKey = (string) => {
     .replace("'", "-")
     .replace('"', "-")
     .replace("%", "-")
-    .replace("#", "-");
+    .replace("#", "-")
+    .replace(/[^\p{L}\s]+/gu, '');
 };

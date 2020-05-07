@@ -4,16 +4,17 @@ import { connect } from "react-redux";
 
 import firebase from "firebase/app";
 
-import { togglePopup, detachListener } from "../../../actions";
+import { detachListener } from "../../../actions";
 
 import { PageContext } from "../../../providers/Page";
 import { AuthContext } from "../../../providers/Auth";
 
-import Explore from "../explore";
-import Favorites from "../favorites";
-import MyRooms from "../myRooms";
+import Explore from "./explore";
+import Favorites from "./favorites";
+import MyRooms from "./myRooms";
+import Floors from "./floors";
 
-const Home = ({ popupShown, togglePopup, detachListener }) => {
+const Home = ({ detachListener }) => {
   const { currentUser } = useContext(AuthContext);
   const { page, setPage } = useContext(PageContext);
 
@@ -31,6 +32,9 @@ const Home = ({ popupShown, togglePopup, detachListener }) => {
 
       case 3:
         return <MyRooms />;
+
+      case 4:
+        return <Floors />;
 
       default:
         return null;
@@ -130,6 +134,21 @@ const Home = ({ popupShown, togglePopup, detachListener }) => {
               <a href="#sign-up">My Rooms</a>
             </li>
           )}
+
+          {page === 4 ? (
+            <div className="default-active">Floors</div>
+          ) : (
+            <li
+              onClick={() => {
+                setPage(4);
+                firebase
+                  .analytics()
+                  .logEvent("home_navigation", { feed: "Floors" });
+              }}
+            >
+              <a href="#">Floors</a>
+            </li>
+          )}
         </ul>
       </div>
 
@@ -138,10 +157,4 @@ const Home = ({ popupShown, togglePopup, detachListener }) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    popupShown: state.popupShown,
-  };
-};
-
-export default connect(mapStateToProps, { togglePopup, detachListener })(Home);
+export default connect(null, { detachListener })(Home);

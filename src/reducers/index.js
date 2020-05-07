@@ -20,6 +20,7 @@ import EventsReducer from "./room/EventsReducer";
 import MyFloorsReducer from "./floors/MyFloorsReducer";
 import FloorPlansReducer from "./floors/FloorPlansReducer";
 import CurrentFloorReducer from "./floors/CurrentFloorReducer";
+import FloorsReducer from "./floors/FloorsReducer";
 
 export default combineReducers({
   // GLOBAL //
@@ -35,6 +36,8 @@ export default combineReducers({
   favorites: FavoritesReducer,
 
   myRooms: MyRoomsReducer,
+
+  floors: FloorsReducer,
 
   // SEARCH //
   searched: SearchReducer,

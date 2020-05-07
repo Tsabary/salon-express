@@ -56,7 +56,7 @@ const FloorRoom = ({ floor, room, isOwner, entityID }) => {
 
   // Our main render
   return (
-    <div className="single-room">
+    <div className="single-room single-room--floor">
       {/** This is the video chat, the embedded streams, the Mixlr and the Multiverse*/}
       <Media
         room={room}

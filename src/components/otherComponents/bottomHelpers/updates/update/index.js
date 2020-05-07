@@ -3,7 +3,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import Moment from "react-moment";
 
-import history from "../../../../history";
+import history from "../../../../../history";
 
 const Update = ({ update }) => {
   const myHistory = useHistory(history);

@@ -12,6 +12,10 @@
   align-items: stretch;
   @include padding;
 
+  // &--floor{
+  //   padding: 0 !important;
+  // }
+
   &__media {
     grid-column: 1/13;
     grid-row: 1/2;

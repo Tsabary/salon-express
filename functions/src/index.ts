@@ -9,7 +9,8 @@ const db = admin.firestore();
 const ALGOLIA_ID = functions.config().algoliasalon.id;
 const ALGOLIA_ADMIN_KEY = functions.config().algoliasalon.key;
 const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
-const index = client.initIndex("rooms");
+const roomsIndex = client.initIndex("rooms");
+const questionsIndex = client.initIndex("questions");
 
 // USER CREATED //
 
@@ -145,7 +146,7 @@ exports.roomCreated = functions.firestore
 
     if (room) {
       promises.push(
-        index.saveObject({
+        roomsIndex.saveObject({
           objectID: room.id,
           language: room.language,
           tags: room.tags,
@@ -243,7 +244,7 @@ exports.roomUpdated = functions.firestore
 
     if (newRoom) {
       promises.push(
-        index.saveObject({
+        roomsIndex.saveObject({
           objectID: newRoom.id,
           language: newRoom.language,
           tags: newRoom.tags,
@@ -296,7 +297,35 @@ exports.roomDeleted = functions.firestore
 
     promises.push(batch.commit());
 
-    promises.push(index.deleteObject(room.id));
+    promises.push(roomsIndex.deleteObject(room.id));
+
+    return Promise.all(promises);
+  });
+
+// ROOM UPDATE //
+
+exports.questionUpdated = functions.firestore
+  .document("questions/{questionID}")
+  .onUpdate((change, context) => {
+    const newQ = change.after.data();
+    const oldQ = change.before.data();
+
+    const batch = db.batch();
+    const promises: any = [];
+
+    if (!newQ || !oldQ || newQ === oldQ) return;
+
+    promises.push(batch.commit());
+
+    if (newQ) {
+      promises.push(
+        questionsIndex.saveObject({
+          objectID: newQ.id,
+          question: newQ.question,
+          answer: newQ.answer,
+        })
+      );
+    }
 
     return Promise.all(promises);
   });

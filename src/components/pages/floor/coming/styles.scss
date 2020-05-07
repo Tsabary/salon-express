@@ -1,0 +1,52 @@
+@import "../../../../styles/imports";
+
+.coming {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 3rem;
+
+
+  &__calendar {
+  }
+
+  &__container {
+    padding: 10rem !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &__title {
+    color: $grey;
+    font-size: 2rem;
+    margin-bottom: 4rem;
+  }
+
+  &__count {
+    color: $mainColor;
+    font-family: $fontBold;
+    font-size: 5rem;
+  }
+
+  &__floor-plan {
+    width: 20%;
+    object-fit: contain;
+    margin-bottom: 5rem;
+
+    @include resize(1400px) {
+      width: 30%;
+    }
+
+    @include resize(1200px) {
+      width: 40%;
+    }
+
+    @include resize(900px) {
+      width: 60%;
+    }
+    @include resize(600px) {
+      width: 90%;
+    }
+  }
+}

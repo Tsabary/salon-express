@@ -39,7 +39,7 @@ import Stranger from "./pages/stranger";
 import Contact from "./pages/contact";
 import PrivacyPolicy from "./pages/sheets/PrivacyPolicy";
 import TermsAndConditions from "./pages/sheets/TermsAndConditions";
-import Faq from "./pages/faq";
+import AnswerQuestions from "./pages/answerQuestions";
 import AddQuestion from "./pages/addQuestion";
 import Careers from "./pages/careers";
 import Apply from "./pages/apply";
@@ -47,9 +47,10 @@ import Floor from "./pages/floor";
 import FloorManagement from "./pages/floorManagement";
 import EditFloor from "./pages/editFloor";
 
-import Updates from "./otherComponents/updates";
+// import Updates from "./otherComponents/updates";
 import AudioChannels from "./popups/audioChannels";
 import NewFloorRoom from "./popups/newFloorRoom";
+import BottomHelpers from "./otherComponents/bottomHelpers";
 
 const App = () => {
   const [isFloor, setIsFloor] = useState(
@@ -106,7 +107,7 @@ const App = () => {
                         <MainHeader />
                       )}
 
-                      {!isMobile && !isFloor ? <Updates /> : null}
+                      {!isMobile && !isFloor ? <BottomHelpers /> : null}
 
                       <Switch>
                         <Route path="/" exact component={Home} />
@@ -114,9 +115,9 @@ const App = () => {
                         <Route path="/room/:id" exact component={SingleRoom} />
                         <Route path="/contact" exact component={Contact} />
                         <Route
-                          path="/frequently-asked-questions"
+                          path="/answer-questions"
                           exact
-                          component={Faq}
+                          component={AnswerQuestions}
                         />
                         <Route
                           path="/add-question"
@@ -157,13 +158,7 @@ const App = () => {
                       <div className="app__footer">
                         <Footer isFloor={isFloor} />
                       </div>
-                      {/* {isFloor ? (
-                        <FooterFloor />
-                      ) : (
-                        <div className="app__footer">
-                            <Footer isFloor={isFloor}/>
-                        </div>
-                      )} */}
+
                     </div>
                   </Router>
                 </UniqueIdProvider>

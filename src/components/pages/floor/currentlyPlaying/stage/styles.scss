@@ -1,0 +1,24 @@
+@import "../../../../../styles/imports";
+
+.stage {
+  // border-radius: $borderRadius;
+  border-left: $border;
+  margin-top: 1.5rem;
+  padding-left: 0.5rem;
+  cursor: pointer;
+  transition: all .1s;
+
+  &:hover {
+    padding-left: 1rem;
+  }
+
+  &__title {
+    font-size: 1.1rem;
+    color: $greyDark;
+  }
+
+  &__active {
+    color: $mainColor;
+    font-family: $fontBold;
+  }
+}

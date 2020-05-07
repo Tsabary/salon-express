@@ -52,6 +52,22 @@
     }
   }
 
+  @include resize(800px) {
+    padding: 1rem 5rem;
+  }
+
+  @include resize(700px) {
+    padding: 1rem 3.5rem;
+  }
+
+  @include resize(600px) {
+    padding: 0rem 3rem;
+  }
+
+  // @include resize(500px) {
+  //   padding: 3rem 3rem;
+  // }
+
   &-with-logo {
     // width: 100%;
     display: grid;
@@ -93,21 +109,7 @@
     }
   }
 
-  @include resize(800px) {
-    padding: 3.5rem 5rem;
-  }
 
-  @include resize(700px) {
-    padding: 2rem 3.5rem;
-  }
-
-  @include resize(600px) {
-    padding: 2rem 3rem;
-  }
-
-  // @include resize(500px) {
-  //   padding: 3rem 3rem;
-  // }
 
   &__logo {
     height: 8rem;
@@ -180,7 +182,7 @@
 
     &-lean {
       display: none;
-      margin-top: .5rem;
+      margin-top: 0.5rem;
       cursor: pointer;
 
       @include resize(900px) {

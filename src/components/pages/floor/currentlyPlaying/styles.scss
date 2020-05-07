@@ -1,0 +1,12 @@
+@import '../../../../styles/imports';
+
+.currently-playing{
+    padding: 3rem;
+    align-self: start;
+    &__title{
+        font-family: $fontBold;
+        color: $mainColor;
+        font-size: 1.8rem;
+    }
+
+}

@@ -2,8 +2,9 @@ import React from "react";
 import Masonry from "react-masonry-css";
 import { breakpointColumnsObj } from "../constants";
 import Room from "../components/otherComponents/room";
+import Floor from "../components/otherComponents/floor";
 
-const renderItems = (rooms, currentUserProfile) => {
+const renderRooms = (rooms, currentUserProfile) => {
   return rooms.map((room) => {
     return (
       <Room
@@ -18,8 +19,23 @@ const renderItems = (rooms, currentUserProfile) => {
   });
 };
 
+const renderFloors = (floors, currentUserProfile) => {
+  return floors.map((floor) => {
+    return (
+      <Floor
+        floor={floor}
+        currentUserProfile={
+          currentUserProfile || { uid: "", following: [], followers: [] }
+        }
+        isForFeed
+        key={floor.id}
+      />
+    );
+  });
+};
+
 export const renderSection = (
-  rooms,
+  collection,
   title,
   fetchMore,
   lastVisible,
@@ -27,9 +43,10 @@ export const renderSection = (
   reachedLast,
   setReachedLast,
   currentUserProfile,
-  tag
+  tag,
+  isFloor
 ) => {
-  return rooms.length ? (
+  return collection.length ? (
     <>
       <div className="feed__header">{title}</div>
       <Masonry
@@ -37,10 +54,12 @@ export const renderSection = (
         className="my-masonry-grid"
         columnClassName="my-masonry-grid_column"
       >
-        {renderItems(rooms, currentUserProfile)}
+        {isFloor
+          ? renderFloors(collection, currentUserProfile)
+          : renderRooms(collection, currentUserProfile)}
       </Masonry>
 
-      {rooms.length && !reachedLast ? (
+      {collection.length && !reachedLast ? (
         <div
           className="feed__load-more"
           onClick={() =>

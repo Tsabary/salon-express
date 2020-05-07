@@ -3,6 +3,13 @@
 .edit-floor {
   @include padding;
 
+  &__basic {
+    &-url {
+      border: none;
+      outline: none;
+    }
+  }
+
   &__plans {
     display: grid;
     gap: 4rem;
@@ -15,8 +22,10 @@
     gap: 3rem;
     grid-template-columns: repeat(2, 1fr);
   }
-
-  &__basic-and_logo {
+  &__admin {
+    margin-top: 1.5rem;
+  }
+  &__basic {
     display: grid;
     gap: 3rem;
     grid-template-columns: 3fr 2fr;

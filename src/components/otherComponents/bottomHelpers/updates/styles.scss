@@ -1,11 +1,10 @@
-@import "../../../styles/imports";
+@import "../../../../styles/imports";
 
 .updates {
+  height: max-content;
+  align-self: flex-end;
   min-width: 20rem;
-  position: fixed;
-  z-index: 1000;
-  bottom: 0;
-  right: 5rem;
+
   background-color: white;
   border-radius: $borderRadius $borderRadius 0 0;
   display: flex;
@@ -73,7 +72,9 @@
     margin: 0;
     overflow-y: scroll;
 
-    transition: all 0.2s;
+    transition: transform 0.2s;
+    transition: height 0.2s;
+    transition: width 0.2s;
 
     &::-webkit-scrollbar {
       width: 0.5em;

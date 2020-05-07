@@ -1,10 +1,10 @@
 import React, { useEffect, useContext, useState } from "react";
 import { connect } from "react-redux";
-import { AuthContext } from "../../../providers/Auth";
+import { AuthContext } from "../../../../providers/Auth";
 
-import { fetchFirstFavorites, fetchMoreFavorites } from "../../../actions";
+import { fetchFirstFavorites, fetchMoreFavorites } from "../../../../actions";
 
-import { renderSection } from "../../../utils/feeds";
+import { renderSection } from "../../../../utils/feeds";
 
 const Favorites = ({ favorites, fetchFirstFavorites, fetchMoreFavorites }) => {
   const { currentUser, currentUserProfile } = useContext(AuthContext);
@@ -14,11 +14,7 @@ const Favorites = ({ favorites, fetchFirstFavorites, fetchMoreFavorites }) => {
 
   useEffect(() => {
     if (currentUser && !favorites.length) {
-      fetchFirstFavorites(
-        setLastVisible,
-        setReachedLast,
-        currentUser.uid
-      );
+      fetchFirstFavorites(setLastVisible, setReachedLast, currentUser.uid);
     }
   }, [currentUser, fetchFirstFavorites, favorites]);
 
@@ -32,10 +28,12 @@ const Favorites = ({ favorites, fetchFirstFavorites, fetchMoreFavorites }) => {
         setLastVisible,
         reachedLast,
         setReachedLast,
-        currentUserProfile
+        currentUserProfile,
+        null,
+        false
       )}
 
-      {!favorites.length  ? (
+      {!favorites.length ? (
         <div className="empty-feed small-margin-top centered">
           Nothing to see here. Start keeping your favorite rooms!
         </div>

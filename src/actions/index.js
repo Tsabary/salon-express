@@ -55,6 +55,8 @@ import {
   ADD_FLOOR,
   SET_FLOOR_PLANS,
   SET_CURRENT_FLOOR,
+  FETCH_NEW_FLOORS,
+  FETCH_MORE_FLOORS,
 } from "./types";
 
 import { titleToKey } from "../utils/strings";
@@ -88,7 +90,8 @@ export const fetchFirstExplore = (
           .limit(90)
           .get()
           .catch((e) => console.error("promise Error fetch ex", e));
-  setLastVisible(data.docs[data.docs.length - 1]);
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length === 90) setReachedLast(false);
 
   dispatch({
@@ -124,7 +127,8 @@ export const fetchMoreExplore = (
           .limit(90)
           .get()
           .catch((e) => console.error("promise Error fetch mo ex", e));
-  setLastVisible(data.docs[data.docs.length - 1]);
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length < 90) setReachedLast(true);
 
   analytics.logEvent("fetch_more_explore");
@@ -149,8 +153,8 @@ export const fetchFirstFavorites = (
     .limit(90)
     .get()
     .catch((e) => console.error("promise Error fetch fav", e));
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length === 90) setReachedLast(false);
 
   dispatch({
@@ -173,8 +177,8 @@ export const fetchMoreFavorites = (
     .limit(90)
     .get()
     .catch((e) => console.error("promise Error fetch mo fav", e));
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length < 90) setReachedLast(true);
 
   analytics.logEvent("fetch_more_favorites");
@@ -199,8 +203,8 @@ export const fetchFirstMyRooms = (
     .limit(90)
     .get()
     .catch((e) => console.error("promise Error fetch my", e));
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length === 90) setReachedLast(false);
 
   dispatch({
@@ -223,14 +227,83 @@ export const fetchMoreMyRooms = (
     .limit(90)
     .get()
     .catch((e) => console.error("promise Error fetch m my", e));
-  if (data.docs[data.docs.length - 1])
-    setLastVisible(data.docs[data.docs.length - 1]);
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length < 90) setReachedLast(true);
 
   analytics.logEvent("fetch_more_my_rooms");
 
   dispatch({
     type: FETCH_MORE_MY_ROOMS,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+// FLOORS //
+
+export const fetchFirstFloors = (
+  setLastVisible,
+  setReachedLast,
+  languages
+) => async (dispatch) => {
+  const data =
+    languages && languages.length
+      ? await db
+          .collection("floors")
+          // .where("language", "in", [...languages, "lir"])
+          .orderBy("last_visit", "desc")
+          .limit(90)
+          .get()
+          .catch((e) => console.error("promise Error fetch ex", e))
+      : await db
+          .collection("floors")
+          .orderBy("last_visit", "desc")
+          .limit(90)
+          .get()
+          .catch((e) => console.error("promise Error fetch floors", e));
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length === 90) setReachedLast(false);
+
+  dispatch({
+    type: FETCH_NEW_FLOORS,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+export const fetchMoreFloors = (
+  lastVisible,
+  setLastVisible,
+  setReachedLast,
+  currentUserProfile,
+  tag,
+  languages
+) => async (dispatch) => {
+  const data =
+    languages && languages.length
+      ? await db
+          .collection("floors")
+          // .where("language", "in", [...languages, "lir"])
+          .orderBy("last_visit", "desc")
+          .startAfter(lastVisible)
+          .limit(90)
+          .get()
+          .catch((e) => console.error("promise Error fetch more floors", e))
+      : await db
+          .collection("floors")
+          .orderBy("last_visit", "desc")
+          .startAfter(lastVisible)
+          .limit(90)
+          .get()
+          .catch((e) => console.error("promise Error fetch more floors", e));
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length < 90) setReachedLast(true);
+
+  analytics.logEvent("fetch_more_floors");
+
+  dispatch({
+    type: FETCH_MORE_FLOORS,
     payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
@@ -260,7 +333,8 @@ export const fetchFirstSearched = (
           .limit(90)
           .get()
           .catch((e) => console.error("promise Error fetch sear", e));
-  setLastVisible(data.docs[data.docs.length - 1]);
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length === 90) setReachedLast(false);
 
   analytics.logEvent("search", { term: tag });
@@ -298,7 +372,8 @@ export const fetchMoreSearched = (
           .limit(15)
           .get()
           .catch((e) => console.error("promise Error fetch ore ser", e));
-  setLastVisible(data.docs[data.docs.length - 1]);
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length < 90) setReachedLast(true);
 
   analytics.logEvent("fetch_more_searched");
@@ -494,7 +569,7 @@ export const listenToMultiverse = (
   entityID,
   setMultiverse,
   setMultiverseArray,
-  newPortal
+  cb
 ) => () => {
   console.log("minnne", "attached listener");
 
@@ -509,7 +584,7 @@ export const listenToMultiverse = (
 
         setMultiverseArray(arrayVerse.sort(compare));
       } else {
-        if (newPortal) newPortal();
+        if (cb) cb();
       }
     });
 };
@@ -553,6 +628,7 @@ export const setActiveChannelFloorRoom = (
         active_channel: {
           link: channel ? channel.link : null,
           source: channel ? channel.source : null,
+          title: channel ? channel.title : null,
         },
       },
     },
@@ -570,31 +646,55 @@ export const setActiveChannelFloorRoom = (
 };
 
 // Enter a portal
-export const enterPortal = (entityID, portal, uid) => () => {
+export const enterPortal = (entityID, portal, uid, cb) => () => {
   const batch = db.batch();
   const portalDoc = db.collection("multiverses").doc(entityID);
-  const key = titleToKey(portal.title);
+
+  // const key = titleToKey(portal.title);
+
+  let newPortalKey = titleToKey(portal.new.title);
+  let oldPortalKey = portal && portal.old ? titleToKey(portal.old.title) : null;
+
+  console.log("portals", `entering portal ${portal.new.title}`);
 
   batch.set(
     portalDoc,
     {
-      [key]: {
-        title: portal.title,
-        created_on: portal.created_on,
+      [newPortalKey]: {
+        title: portal.new.title,
+        created_on: portal.new.created_on,
         members: firebase.firestore.FieldValue.arrayUnion(uid),
       },
     },
     { merge: true }
   );
 
-  batch.commit();
+  if (oldPortalKey) {
+    batch.set(
+      portalDoc,
+      {
+        [oldPortalKey]: {
+          title: portal.old.title,
+          created_on: portal.old.created_on,
+          members: firebase.firestore.FieldValue.arrayRemove(uid),
+        },
+      },
+      { merge: true }
+    );
+  }
+
+  batch.commit().then(() => {
+    if (cb) cb();
+  });
 };
 
 // Leave a portal
-export const leavePortal = (entityID, portal, uids) => () => {
+export const leavePortal = (entityID, portal, uids, cb) => () => {
   const batch = db.batch();
   const portalDoc = db.collection("multiverses").doc(entityID);
   const key = titleToKey(portal.title);
+
+  console.log("portals", `leaving portal ${portal.title}`);
 
   uids.forEach((uid) => {
     batch.set(
@@ -610,19 +710,24 @@ export const leavePortal = (entityID, portal, uids) => () => {
     );
   });
 
-  batch.commit();
+  batch.commit().then(() => {
+    if (cb) cb();
+  });
 };
 
 //Replacing between UUID and UID in the portal logs
 export const replaceTimestampWithUid = (
-  room,
+  entityID,
   portal,
   previousID,
-  newID
+  newID,
+  cb
 ) => () => {
   const batch = db.batch();
-  const portalDoc = db.collection("multiverses").doc(room.id);
+  const portalDoc = db.collection("multiverses").doc(entityID);
   const key = titleToKey(portal.title);
+
+  console.log("portals", `replacing ids previous: ${previousID} next ${newID}`);
 
   batch.set(
     portalDoc,
@@ -650,17 +755,21 @@ export const replaceTimestampWithUid = (
     { merge: true }
   );
 
-  batch.commit();
+  batch.commit().then(() => {
+    cb();
+  });
 };
 
 // Opening a new portal
 export const newPortal = (newPortal, oldPortal, entityID, uid, cb) => () => {
   const portalObj = {
     title: newPortal.title,
-    totem: newPortal.totem,
     members: [uid],
     created_on: new Date(),
   };
+  if (newPortal.totem) {
+    portalObj.totem = newPortal.totem;
+  }
 
   const batch = db.batch();
   const verseDoc = db.collection("multiverses").doc(entityID);
@@ -676,7 +785,8 @@ export const newPortal = (newPortal, oldPortal, entityID, uid, cb) => () => {
     { merge: true }
   );
 
-  if (oldPortal) {
+  /// MAYBE HEREE//////////////////////////////////////
+  if (oldPortalKey) {
     batch.set(
       verseDoc,
       {
@@ -1074,10 +1184,18 @@ export const deleteComment = (commentID, cb) => async () => {
 
 // FLOOR //
 
-export const fetchFloors = (currentUserProfile, cb) => async (dispatch) => {
+// resetting the audio settings so they won't interfere
+export const resetPublicAudioSettings = () => {
+  return {
+    type: SET_CHANNELS,
+    payload: [],
+  };
+};
+
+export const fetchMyFloors = (currentUserProfile, cb) => async (dispatch) => {
   const data = await db
     .collection("floors")
-    .where("user_ID", "==", currentUserProfile.uid)
+    .where("admins", "array-contains", currentUserProfile.email)
     .get();
 
   const floors = data.docs ? data.docs.map((doc) => doc.data()) : [];
@@ -1110,17 +1228,24 @@ export const fetchFloor = (floor_ID) => async (dispatch) => {
 };
 
 export const fetchCurrentFloor = (floor_ID) => async (dispatch) => {
-  floorListener = db
+  const query = await db
     .collection("floors")
-    .doc(floor_ID)
-    .onSnapshot((docFloor) => {
-      if (docFloor.data()) {
-        dispatch({
-          type: SET_CURRENT_FLOOR,
-          payload: docFloor.data(),
-        });
-      }
-    });
+    .where("url", "==", floor_ID)
+    .get();
+
+  if (query.docs.length) {
+    floorListener = db
+      .collection("floors")
+      .doc(query.docs[0].data().id)
+      .onSnapshot((docFloor) => {
+        if (docFloor.data()) {
+          dispatch({
+            type: SET_CURRENT_FLOOR,
+            payload: docFloor.data(),
+          });
+        }
+      });
+  }
 };
 
 export const fetchFloorRooms = (floor_ID, setFloorRooms) => async (
@@ -1157,6 +1282,8 @@ export const newFloor = (values, reset) => async (dispatch) => {
 
   const floor = {
     ...values,
+    last_visit: new Date(),
+    url: newDoc.id,
     id: newDoc.id,
   };
 
@@ -1196,8 +1323,7 @@ export const saveFloor = (floor, logoFile, tracks, cb) => async () => {
   }
 
   if (tracks) {
-    for (const trackKey of Object.keys(tracks)) { 
-
+    for (const trackKey of Object.keys(tracks)) {
       const track = tracks[trackKey];
 
       const ref = storage.ref(
@@ -1211,30 +1337,8 @@ export const saveFloor = (floor, logoFile, tracks, cb) => async () => {
       if (!downloadUrl) return;
 
       newFloor.rooms[trackKey].track = { name: track.name, file: downloadUrl };
-      console.log("this is the floor", "Just finsihed one track");
-
     }
-
-    // await Object.keys(tracks).forEach(async (trackKey) => {
-    //   const track = tracks[trackKey];
-
-    //   const ref = storage.ref(
-    //     `/audio/floor_tracks/${floor.id}/${trackKey}/${track.name}`
-    //   );
-
-    //   const upload = await ref.put(track);
-    //   if (!upload) return;
-
-    //   const downloadUrl = await ref.getDownloadURL();
-    //   if (!downloadUrl) return;
-
-    //   newFloor.rooms[trackKey].track = { name: track.name, file: downloadUrl };
-    //   console.log("this is the floor", "Just finsihed one track");
-    // });
-    console.log("this is the floor", "Just finsihed all tracks");
   }
-  console.log("this is the floor", newFloor.rooms);
-
   db.collection("floors")
     .doc(floor.id)
     .set(newFloor)
@@ -1244,6 +1348,25 @@ export const saveFloor = (floor, logoFile, tracks, cb) => async () => {
     .catch((e) => {
       console.log("Saving to db failed", e);
     });
+};
+
+export const checkUrlAvailability = (url, errorCB, approvedCB) => async () => {
+  const urlData = await db.collection("floors").where("url", "==", url).get();
+
+  const idData = await db.collection("floors").where("id", "==", url).get();
+
+  if (
+    urlData.docs &&
+    !urlData.docs.length &&
+    idData.docs &&
+    !idData.docs.length
+  ) {
+    approvedCB();
+  } else {
+    console.log("urlData", urlData);
+    console.log("idData", idData);
+    errorCB();
+  }
 };
 
 export const newFloorRoom = (values, reset) => async () => {
@@ -1368,10 +1491,27 @@ export const unfollow = (
 
 // FAQ //
 
+export const newQuestion = (question, currentUserProfile, cb) => () => {
+  const questionDoc = db.collection("questions").doc();
+  const QObj = { question, created_on: new Date(), id: questionDoc.id };
+  if (currentUserProfile) QObj.user_ID = currentUserProfile.uid;
+  questionDoc.set(QObj).then(() => {
+    cb();
+  });
+};
+
+export const answerQuestion = (answer, question, cb) => () => {
+  const questionDoc = db.collection("questions").doc(question.id);
+
+  questionDoc.set({ answer }, { merge: true }).then(() => {
+    cb();
+  });
+};
+
 export const fetchQuestions = () => async (dispatch) => {
   const data = await db
     .collection("questions")
-    .orderBy("placement", "asc")
+    // .orderBy("placement", "asc")
     .get()
     .catch((e) => console.error("promise Error", e));
 

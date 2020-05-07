@@ -211,6 +211,7 @@ h3 {
 .cover-image {
   &__preview {
     @include image;
+    padding: 2rem;
   }
 
   &__container {
@@ -229,6 +230,12 @@ h3 {
   border: none;
   outline: none;
   cursor: pointer;
+
+  &--disabled {
+    background-color: $greyLight !important;
+    color: $greyDark !important;
+  }
+
   &:focus {
     border: none;
     outline: none;
@@ -491,7 +498,6 @@ h3 {
   @include resize(800px) {
     max-width: 80%;
     padding: 5rem 4rem;
-
   }
 
   @include resize(600px) {

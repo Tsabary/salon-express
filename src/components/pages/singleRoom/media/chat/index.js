@@ -88,7 +88,7 @@ const Chat = ({
   return currentPortalUrl && !isMobile ? (
     cameraPermissionGranted && microphonePermissionGranted ? (
       <Iframe
-        url={room ? "https://meet.jit.si/SalExp-" + currentPortalUrl : ""}
+        url={room ? "https://meet.jit.si/salexp" + currentPortalUrl : ""}
         width="100%"
         height="450px"
         id="myId"

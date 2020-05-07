@@ -63,8 +63,8 @@ const Media = ({
   useEffect(() => {
     listenToMultiverse(entityID, setMultiverse, setMultiverseArray, () => {
         newPortal(
-          "Home",
-          currentPortal,
+          {title: "Home"},
+          null,
           entityID,
           currentUserProfile && currentUserProfile.uid
             ? currentUserProfile.uid
@@ -86,8 +86,8 @@ const Media = ({
     setCurrentPortalUrl(
       titleToKey(
         floor
-          ? currentPortal.title + floor.id + room.id
-          : currentPortal.title + room.id
+          ? currentPortal.new.title + floor.id + room.id
+          : currentPortal.new.title + room.id
       )
     );
     // if (microphonePermissionGranted && cameraPermissionGranted)
@@ -197,11 +197,11 @@ const Media = ({
           className="media__toggle-checkbox"
           type="checkbox"
           id="media-toggle-checkbox"
-          onChange={() => {
-            setMediaState(!mediaState);
-          }}
-          checked={mediaState}
-          // readOnly
+          // onChange={() => {
+          //   setMediaState(!mediaState);
+          // }}
+          checked={!!mediaState}
+          readOnly
         />
         {!isMobile ? (
           <>

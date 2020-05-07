@@ -179,13 +179,13 @@ const AudioSettings = ({
           </button>
         </div>
       </form>
-
+      {floor && floor.rooms[roomIndex] && floor.rooms[roomIndex].audio_channels
+        ? console.log("chhhh", floor.rooms[roomIndex])
+        : null}
       {audioChannels.length ||
       (floor && floor.rooms[roomIndex] && floor.rooms[roomIndex].audio_channels)
         ? renderChannels(
-            floor
-              ? floor.rooms[roomIndex].audio_channels
-              : audioChannels
+            floor ? floor.rooms[roomIndex].audio_channels : audioChannels
           )
         : null}
     </div>
