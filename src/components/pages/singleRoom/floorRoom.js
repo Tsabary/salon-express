@@ -11,7 +11,7 @@ import Media from "./media";
 import Management from "./management";
 import Details from "./details";
 
-const FloorRoom = ({ floor, room, isOwner, entityID }) => {
+const FloorRoom = ({ floor, room, activeChannel, audioChannels, isOwner, entityID }) => {
   const {setGlobalFloorRoomIndex} = useContext(FloorContext)
   const [roomIndex, setRoomIndex] = useState(null);
 
@@ -79,6 +79,8 @@ const FloorRoom = ({ floor, room, isOwner, entityID }) => {
         roomIndex={roomIndex}
         floor={floor}
         currentAudioChannel={currentAudioChannel}
+        activeChannel={activeChannel}
+        audioChannels={audioChannels}
         isOwner={isOwner}
       />
 

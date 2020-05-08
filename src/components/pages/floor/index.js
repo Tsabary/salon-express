@@ -4,14 +4,24 @@ import { connect } from "react-redux";
 
 import { AuthContext } from "../../../providers/Auth";
 import { FloorContext } from "../../../providers/Floor";
-import { fetchCurrentFloor, fetchFloorRooms, resetPublicAudioSettings } from "../../../actions";
+import {
+  fetchCurrentFloor,
+  fetchFloorRooms,
+  resetPublicAudioSettings,
+  detachFloorListener,
+} from "../../../actions";
 
 import FloorRoom from "../singleRoom/floorRoom";
 import Coming from "./coming";
 import CurrentlyPlaying from "./currentlyPlaying";
 import ImageMap from "./imageMap";
 
-const Floor = ({ match, currentFloor, fetchCurrentFloor, resetPublicAudioSettings }) => {
+const Floor = ({
+  match,
+  fetchCurrentFloor,
+  resetPublicAudioSettings,
+  detachFloorListener,
+}) => {
   const { currentUserProfile } = useContext(AuthContext);
   const { globalFloor, setGlobalFloor, globalFloorRoom } = useContext(
     FloorContext
@@ -30,25 +40,36 @@ const Floor = ({ match, currentFloor, fetchCurrentFloor, resetPublicAudioSetting
   }, [currentUserProfile, globalFloor]);
 
   useEffect(() => {
+    resetPublicAudioSettings();
 
-    resetPublicAudioSettings()
+    fetchCurrentFloor(match.params.id, (fl) => {
+      setGlobalFloor(fl)
+    })
 
-    !currentFloor
-      ? fetchCurrentFloor(match.params.id)
-      : setGlobalFloor(currentFloor);
 
     setOpenDate(
-      !currentFloor
+      !globalFloor
         ? null
-        : Object.prototype.toString.call(currentFloor.open) === "[object Date]"
-        ? currentFloor.open
-        : currentFloor.open.toDate()
+        : Object.prototype.toString.call(globalFloor.open) === "[object Date]"
+        ? globalFloor.open
+        : globalFloor.open.toDate()
     );
-  }, [match.params.id, currentFloor]);
+
+    const myCleanup = () => {
+      detachFloorListener();
+    };
+
+    window.addEventListener("beforeunload", myCleanup);
+
+    return function cleanup() {
+      myCleanup();
+      window.removeEventListener("beforeunload", cleanup);
+    };
+  }, [match.params.id]);
 
   return (
     <div className="floor">
-      {/* {openDate < new Date() || isOwner ? ( */}
+      {openDate < new Date() || isOwner ? (
         <>
           <input
             className="floor__checkbox"
@@ -66,6 +87,16 @@ const Floor = ({ match, currentFloor, fetchCurrentFloor, resetPublicAudioSetting
               <FloorRoom
                 floor={globalFloor}
                 room={globalFloorRoom}
+                activeChannel={
+                  globalFloorRoom && globalFloorRoom.active_channel
+                    ? globalFloorRoom.active_channel
+                    : null
+                }
+                audioChannels={
+                  globalFloorRoom && globalFloorRoom.audio_channels
+                    ? globalFloorRoom.audio_channels
+                    : null
+                }
                 isOwner={isOwner}
                 entityID={globalFloor.id + "-" + globalFloorRoom.id}
               />
@@ -73,17 +104,17 @@ const Floor = ({ match, currentFloor, fetchCurrentFloor, resetPublicAudioSetting
           </div>
 
           <div className="floor__body">
-            <div className="floor__body-content edit-floor__section">
+            <div className="floor__body-content">
               <CurrentlyPlaying />
               <ImageMap />
             </div>
           </div>
         </>
-      {/* ) : (
+      ) : (
         <div className="floor__body">
           <Coming openDate={openDate} />
         </div>
-      )} */}
+      )}
     </div>
   );
 };
@@ -94,9 +125,12 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { fetchCurrentFloor, fetchFloorRooms, resetPublicAudioSettings })(
-  Floor
-);
+export default connect(null, {
+  fetchCurrentFloor,
+  fetchFloorRooms,
+  resetPublicAudioSettings,
+  detachFloorListener,
+})(Floor);
 
 {
   /* <div className="floor__navigation"> */

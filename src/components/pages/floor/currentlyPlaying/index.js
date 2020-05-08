@@ -7,8 +7,8 @@ import Stage from "./stage";
 const CurrentlyPlaying = () => {
   const { globalFloor } = useContext(FloorContext);
 
-  const renderLineup = (floor) => {
-    return Object.values(floor.rooms).map((ro) => {
+  const renderLineup = (rooms) => {
+    return rooms.map((ro) => {
       return <Stage room={ro} key={ro.coords.join("")} />;
     });
   };
@@ -16,7 +16,9 @@ const CurrentlyPlaying = () => {
   return (
     <div className="currently-playing">
       <div className="currently-playing__title">Currently Playing</div>
-      {globalFloor ? renderLineup(globalFloor) : null}
+      <div className="currently-playing__stages">
+        {globalFloor ? renderLineup(Object.values(globalFloor.rooms)) : null}
+      </div>
     </div>
   );
 };

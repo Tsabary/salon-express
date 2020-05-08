@@ -107,7 +107,7 @@ const App = () => {
                         <MainHeader />
                       )}
 
-                      {!isMobile && !isFloor ? <BottomHelpers /> : null}
+                      {!isMobile ? <BottomHelpers /> : null}
 
                       <Switch>
                         <Route path="/" exact component={Home} />

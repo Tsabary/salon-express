@@ -321,14 +321,16 @@ export const fetchFirstSearched = (
       ? await db
           .collection("rooms")
           // .where("language", "in", [...languages, "lir"])
-          .where("tags", "array-contains", tag)
+        .where("tags", "array-contains", tag)
+        .where("listed", "==", true)
           .orderBy("last_visit", "desc")
           .limit(90)
           .get()
           .catch((e) => console.error("promise Error fetch searc", e))
       : await db
           .collection("rooms")
-          .where("tags", "array-contains", tag)
+        .where("tags", "array-contains", tag)
+        .where("listed", "==", true)
           .orderBy("last_visit", "desc")
           .limit(90)
           .get()
@@ -358,7 +360,8 @@ export const fetchMoreSearched = (
       ? await db
           .collection("rooms")
           // .where("language", "in", [...languages, "lir"])
-          .where("tags", "array-contains", tag)
+        .where("tags", "array-contains", tag)
+        .where("listed", "==", true)
           .orderBy("last_visit", "desc")
           .startAfter(lastVisible)
           .limit(90)
@@ -366,7 +369,8 @@ export const fetchMoreSearched = (
           .catch((e) => console.error("promise Error feth mo sear", e))
       : await db
           .collection("rooms")
-          .where("tags", "array-contains", tag)
+        .where("tags", "array-contains", tag)
+        .where("listed", "==", true)
           .orderBy("last_visit", "desc")
           .startAfter(lastVisible)
           .limit(15)
@@ -591,8 +595,6 @@ export const listenToMultiverse = (
 
 // Deteching the listener for the multiverse
 export const detachListener = () => () => {
-  console.log("minnne", "detached listener");
-
   if (multiverseListener) multiverseListener();
   if (channelListener) channelListener();
 };
@@ -1227,7 +1229,7 @@ export const fetchFloor = (floor_ID) => async (dispatch) => {
   }
 };
 
-export const fetchCurrentFloor = (floor_ID) => async (dispatch) => {
+export const fetchCurrentFloor = (floor_ID, cb) => async (dispatch) => {
   const query = await db
     .collection("floors")
     .where("url", "==", floor_ID)
@@ -1239,12 +1241,18 @@ export const fetchCurrentFloor = (floor_ID) => async (dispatch) => {
       .doc(query.docs[0].data().id)
       .onSnapshot((docFloor) => {
         if (docFloor.data()) {
-          dispatch({
-            type: SET_CURRENT_FLOOR,
-            payload: docFloor.data(),
-          });
+          console.log("flooor", "gettingg");
+          cb(docFloor.data());
         }
       });
+  }
+};
+
+// Deteching the listener for the floor
+export const detachFloorListener = () => async (dispatch) => {
+  if (floorListener) {
+    floorListener();
+    console.log("flooor", "deteching");
   }
 };
 
@@ -1307,7 +1315,7 @@ export const newFloor = (values, reset) => async (dispatch) => {
     .catch((e) => console.error("promise Error new floor", e));
 };
 
-export const saveFloor = (floor, logoFile, tracks, cb) => async () => {
+export const saveFloor = (floor, logoFile, tracks, cb, ecb) => async () => {
   const newFloor = { ...floor };
 
   if (logoFile) {
@@ -1346,7 +1354,7 @@ export const saveFloor = (floor, logoFile, tracks, cb) => async () => {
       cb();
     })
     .catch((e) => {
-      console.log("Saving to db failed", e);
+      ecb(e);
     });
 };
 

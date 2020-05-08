@@ -54,7 +54,7 @@ export default combineReducers({
   events: EventsReducer,
   myFloors: MyFloorsReducer,
   floorPlans: FloorPlansReducer,
-  currentFloor : CurrentFloorReducer,
+  // currentFloor : CurrentFloorReducer, // We don't really need this because we're using contest for all that
 
   // CAREERS //
   positions: PositionsReducer,

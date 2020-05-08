@@ -1,7 +1,6 @@
 import "./styles.scss";
 import React, { useContext, useEffect, useState } from "react";
-import UIfx from "uifx";
-// import { Howl, Howler } from "howler";
+import { Howl, Howler } from "howler";
 
 import updateSound from "../../../../files/update.mp3";
 
@@ -19,8 +18,9 @@ const Updates = ({
   updates,
   notifications,
 }) => {
-
-  const notification = new UIfx(updateSound);
+  const notification = new Howl({
+    src: [updateSound],
+  });
 
   const { currentUserProfile } = useContext(AuthContext);
 
@@ -37,7 +37,7 @@ const Updates = ({
   }, [currentUserProfile]);
 
   const renderUpdates = (updates) => {
-    return updates.reverse().map((update) => {
+    return updates.map((update) => {
       return (
         <Update update={update} key={update.created_on + update.room_ID} />
       );
@@ -60,18 +60,19 @@ const Updates = ({
         ) : null}
       </label>
 
-      <div className="updates__container">
-        <ScrollToBottom scrollViewClassName="updates__scroll">
+      {/* <div className="updates__container"> */}
+        <ScrollToBottom mode="bottom" scrollViewClassName="updates__scoll" className="updates__container">
           {updates && updates.length ? (
-            renderUpdates(updates)
+            <div style={{ padding: "10px" }}>{renderUpdates(updates)}</div>
           ) : (
-            <div>
+            <div style={{ padding: "10px" }}>
               Add some Rooms to your favorites to begin receiving updates
             </div>
           )}
+          {/* {updates && updates.length ? renderUpdates(updates) : null} */}
         </ScrollToBottom>
       </div>
-    </div>
+    // </div>
   );
 };
 

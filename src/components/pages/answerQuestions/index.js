@@ -30,7 +30,7 @@ const AnswerQuestions = ({ fetchQuestions, questions }) => {
 
   const renderQuestions = (questions) => {
     return questions.map((q) => {
-      return <SingleQuestion q={q} />;
+      return <SingleQuestion q={q} setAnswered={setAnswered} setUnanswered={setUnanswered}/>;
     });
   };
 

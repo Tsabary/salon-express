@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 
 import { answerQuestion } from "../../../../actions";
 
-const SingleQuestion = ({ q, answerQuestion }) => {
+const SingleQuestion = ({ q, answerQuestion, setAnswered, setUnanswered }) => {
   const [values, setValues] = useState();
 
   return (
@@ -21,7 +21,15 @@ const SingleQuestion = ({ q, answerQuestion }) => {
         className="small-button"
         onClick={() =>
           answerQuestion(values, q, () => {
-            console.log("do something");
+            setAnswered((ans) => {
+              return [...ans, q];
+            });
+
+            setUnanswered((ans) => {
+              return ans.filter((a) => a.id !== q.id);
+            });
+
+            setValues("");
           })
         }
       >

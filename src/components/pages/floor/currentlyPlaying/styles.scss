@@ -1,12 +1,37 @@
-@import '../../../../styles/imports';
+@import "../../../../styles/imports";
 
-.currently-playing{
+.currently-playing {
+    width: 100%;
     padding: 3rem;
-    align-self: start;
-    &__title{
-        font-family: $fontBold;
-        color: $mainColor;
-        font-size: 1.8rem;
+  align-self: start;
+  &__title {
+    font-family: $fontBold;
+    color: $mainColor;
+    font-size: 1.8rem;
+  }
+
+  &__stages {
+    display: grid;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+
+    @include resize(1000px) {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 3rem;
+      margin-top: 3rem;
     }
 
+    @include resize(900px) {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 3rem;
+    }
+
+    @include resize(600px) {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 3rem;
+    }
+  }
 }

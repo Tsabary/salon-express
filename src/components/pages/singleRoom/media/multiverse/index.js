@@ -160,10 +160,10 @@ const Multiverse = ({
               title="Pick your emoji…"
               emoji="point_up"
               i18n={{
-                search: "Recherche",
+                search: "Search",
                 categories: {
-                  search: "Résultats de recherche",
-                  recent: "Récents",
+                  search: "Search Results",
+                  recent: "Recents",
                 },
               }}
             />

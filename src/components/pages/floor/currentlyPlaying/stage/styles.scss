@@ -13,8 +13,10 @@
   }
 
   &__title {
+    max-width: 100%;
     font-size: 1.1rem;
     color: $greyDark;
+    overflow-wrap: break-word;
   }
 
   &__active {

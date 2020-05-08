@@ -94,7 +94,7 @@ const Header = ({ listenToProfile, stopListeningToProfile }) => {
             <div className="header__title-main ">S.</div>
           </div>
         </div>
-        {page === 1 || page === 5 ? <FilterInput /> : <div />}
+        {renderCenter(page)}
         {currentUser ? (
           <a
             className="header__new-room boxed-button"

@@ -203,17 +203,15 @@ const UpdateProfile = ({ updateProfile }) => {
                 placeHolder="Username"
                 value={values.username !== values.uid ? values.username : null}
                 onChange={(username) => {
-                  if (
-                    username.length < 30 &&
-                    validateWordsLength(username, 30) &&
-                    /^[a-z0-9]+$/.test(username)
-                  )
+                  if (username.length < 30 && validateWordsLength(username, 30))
                     setValues({
                       ...values,
-                      username: username.trim().toLowerCase(),
+                      username: username
+                        .toLowerCase()
+                        .replace(/[^\p{L}\s]+/gu, "")
+                        .trim(),
                     });
                 }}
-                required={true}
               />
 
               <InputField

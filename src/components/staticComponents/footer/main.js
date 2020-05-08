@@ -69,7 +69,7 @@ const Footer = ({ isFloor }) => {
             pages: [
               { title: "Home", path: "" },
               { title: "Floor Managment", path: "floor-management" },
-              { title: "FAQ", path: "frequently-asked-questions" },
+              // { title: "FAQ", path: "frequently-asked-questions" },
             ],
           },
 

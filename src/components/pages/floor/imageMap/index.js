@@ -9,11 +9,54 @@ import { Howl, Howler } from "howler";
 const ImageMap = () => {
   const { globalFloor, setGlobalFloorRoom } = useContext(FloorContext);
 
+  useEffect(() => {
+    console.log("floor", globalFloor)
+  },[globalFloor])
+
   const [sound, setSound] = useState();
   const [values, setValues] = useState({
     hoveredArea: null,
     msg: null,
     moveMsg: null,
+  });
+  const [windowDimensions, setWindowDimensions] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+  const [mapWidth, setMapWidth] = useState(0);
+
+  useEffect(() => {
+    switch (true) {
+      case windowDimensions.width > 1000:
+        setMapWidth(windowDimensions.width * 0.6);
+        break;
+
+      case windowDimensions.width < 1000:
+        setMapWidth(windowDimensions.width * 0.6);
+        break;
+
+      case windowDimensions.width < 500:
+        setMapWidth(windowDimensions.width * 0.4);
+        break;
+
+      default:
+        setMapWidth(windowDimensions.width * 0.3);
+    }
+  }, [windowDimensions]);
+
+  const updateWindowDimensions = () => {
+    setWindowDimensions({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", updateWindowDimensions);
+
+    return function cleanup() {
+      window.removeEventListener("resize", updateWindowDimensions);
+    };
   });
 
   useEffect(() => {
@@ -21,6 +64,7 @@ const ImageMap = () => {
   }, [sound]);
 
   const playSound = (area) => {
+    pauseSound(sound)
     if (!area.track) return;
 
     setSound(
@@ -79,11 +123,14 @@ const ImageMap = () => {
                 ? Object.values(globalFloor.rooms)
                 : [],
           }}
-          width={800}
+          width={mapWidth}
           imgWidth={1500}
           onClick={(area) => clicked(area)}
           onMouseEnter={(area) => enterArea(area)}
           onMouseLeave={(area) => leaveArea(area)}
+          onImageMouseMove={() => {
+            pauseSound(sound);
+          }}
         />
       ) : null}
 
@@ -92,8 +139,11 @@ const ImageMap = () => {
           className="image-map__tooltip"
           style={{ ...getTipPosition(values.hoveredArea) }}
         >
-          <div> {values.hoveredArea && values.hoveredArea.name}</div>
-          <div className="tiny-margin-top">
+          <div className="image-map__tooltip--name">
+
+            {values.hoveredArea && values.hoveredArea.name}
+          </div>
+          <div className="image-map__tooltip--description tiny-margin-top">
             {values.hoveredArea && values.hoveredArea.description}
           </div>
         </span>
