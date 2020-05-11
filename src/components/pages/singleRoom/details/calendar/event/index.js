@@ -9,11 +9,12 @@ import { google, outlook, yahoo, ics } from "calendar-link";
 
 import { AuthContext } from "../../../../../../providers/Auth";
 
-import { deleteEvent } from "../../../../../../actions";
+import { deleteEvent, deleteEventFloor } from "../../../../../../actions";
 import { renderGoogleLink } from "../../../../../../utils/others";
+import { FloorContext } from "../../../../../../providers/Floor";
 
-const Event = ({ event, room, deleteEvent }) => {
-  const { currentUserProfile } = useContext(AuthContext);
+const Event = ({ event, deleteEvent, deleteEventFloor, isOwner }) => {
+  const { globalFloor } = useContext(FloorContext);
 
   const startDate =
     Object.prototype.toString.call(event.start) === "[object Date]"
@@ -39,8 +40,15 @@ const Event = ({ event, room, deleteEvent }) => {
       </div>
       <div className="event__main">
         <div className="event__title">{event.title}</div>
-        {currentUserProfile && currentUserProfile.uid === room.user_ID ? (
-          <div className="clickable" onClick={() => deleteEvent(event)}>
+        {isOwner ? (
+          <div
+            className="clickable"
+            onClick={() => {
+              globalFloor ?
+              deleteEventFloor(event):
+              deleteEvent(event);
+            }}
+          >
             <ReactSVG
               src="../svgs/trash.svg"
               wrapper="div"
@@ -92,4 +100,4 @@ const Event = ({ event, room, deleteEvent }) => {
   );
 };
 
-export default connect(null, { deleteEvent })(Event);
+export default connect(null, { deleteEvent, deleteEventFloor })(Event);

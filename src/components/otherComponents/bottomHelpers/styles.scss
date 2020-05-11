@@ -1,14 +1,41 @@
-@import '../../../styles/imports';
+@import "../../../styles/imports";
 
-.bottom-helpers{
-    min-width: 20rem;
-    position: fixed;
-    z-index: 10000;
-    bottom: 0;
-    right: 5rem;
+.bottom-helpers {
+  width: 100%;
+  min-width: 20rem;
+  position: fixed;
+  z-index: 10000;
+
+  align-content: flex-end;
+  justify-content: flex-end;
+  bottom: 0;
+
+  &__chats {
     display: grid;
-    grid-template-columns: repeat(2,max-content);
+    grid-template-columns: repeat(2, max-content);
     gap: 2rem;
-    align-content: flex-end;
-    justify-content: flex-end;
+    position: absolute;
+    right: 5rem;
+    bottom: 0;
+  }
+
+  &__notice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem;
+    border-top: $border;
+    margin: auto;
+    background-color: $bgColor;
+    &--title {
+      font-family: $fontBold;
+      font-size: 4rem;
+      color: $mainColor;
+    }
+
+    &--body {
+      font-family: $fontBold;
+      color: $mainColor;
+    }
+  }
 }

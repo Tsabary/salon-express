@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import {
   enterPortal,
   leavePortal,
-  replaceTimestampWithUid,
+  replaceUids,
 } from "../../../../../../actions";
 
 const Portal = ({
@@ -20,7 +20,7 @@ const Portal = ({
   cameraPermissionGranted,
   enterPortal,
   leavePortal,
-  replaceTimestampWithUid,
+  replaceUids,
 }) => {
   // Here are out IDs: First is our logged in user, second is a random UUID that we use for identification untill the user loggs in and the third is the logged in user's ID. The reason we save the third, is so we have a hold of it to remove it when the user logs out.
   const { currentUser } = useContext(AuthContext);
@@ -101,14 +101,23 @@ const Portal = ({
     if (currentPortal.new.title === portal.title && !isCurrent) {
       console.log("portal", currentPortal);
 
-      enterPortal(
-        entityID,
-        currentPortal,
-        currentUser && currentUser.uid ? currentUser.uid : uniqueId
-        // () => {
-        //   setWasCurrent(true);
-        // }
-      );
+      
+      currentUser
+      ? replaceUids(entityID,currentPortal, uniqueId, currentUser.uid, () =>
+          console.log("Makena", 2)
+        )
+      : replaceUids(entityID,currentPortal, userID, uniqueId, () =>
+          console.log("Makena", 3)
+        );
+
+      // enterPortal(
+      //   entityID,
+      //   currentPortal,
+      //   currentUser && currentUser.uid ? currentUser.uid : uniqueId
+      //   // () => {
+      //   //   setWasCurrent(true);
+      //   // }
+      // );
 
       setIsCurrent(true);
     } else if (currentPortal.new.title !== portal.title && isCurrent) {
@@ -207,7 +216,7 @@ const Portal = ({
 export default connect(null, {
   enterPortal,
   leavePortal,
-  replaceTimestampWithUid,
+  replaceUids,
 })(Portal);
 
 // This is our cleanup event for when the comonent unloads ( remove the user from the portal)

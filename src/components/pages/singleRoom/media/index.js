@@ -21,12 +21,15 @@ import MobileMultiverse from "./mobileMultiverse";
 import Mixlr from "./mixlr";
 import { connect } from "react-redux";
 import Notice from "./notice";
+import { FloorContext } from "../../../../providers/Floor";
 
 const Media = ({
   room,
+  roomIndex,
+  floor,
   currentAudioChannel,
   entityID,
-  floor,
+  isOwner,
   listenToMultiverse,
   detachListener,
   newPortal,
@@ -34,6 +37,7 @@ const Media = ({
   // This is a fake unique id based on current timestamp. We use it to identify users that aren't logged in, so we can manage the coun of users in each portal
   const { uniqueId } = useContext(UniqueIdContext);
   const { currentUserProfile } = useContext(AuthContext);
+  const { setFloorTempVideoChat } = useContext(FloorContext);
 
   // This holds the current portal were in (its title)
   const [currentPortal, setCurrentPortal] = useState(null);
@@ -62,17 +66,17 @@ const Media = ({
 
   useEffect(() => {
     listenToMultiverse(entityID, setMultiverse, setMultiverseArray, () => {
-        newPortal(
-          {title: "Home"},
-          null,
-          entityID,
-          currentUserProfile && currentUserProfile.uid
-            ? currentUserProfile.uid
-            : uniqueId,
-          (portalObj) => {
-            setCurrentPortal(portalObj);
-          }
-        );
+      newPortal(
+        { title: "Home" },
+        null,
+        entityID,
+        currentUserProfile && currentUserProfile.uid
+          ? currentUserProfile.uid
+          : uniqueId,
+        (portalObj) => {
+          setCurrentPortal(portalObj);
+        }
+      );
     });
     return function cleanup() {
       detachListener();
@@ -83,13 +87,15 @@ const Media = ({
   useEffect(() => {
     if (!currentPortal || !room) return;
 
-    setCurrentPortalUrl(
-      titleToKey(
-        floor
-          ? currentPortal.new.title + floor.id + room.id
-          : currentPortal.new.title + room.id
-      )
+    const portalUrlKey = titleToKey(
+      floor
+        ? currentPortal.new.title + floor.id + room.id
+        : currentPortal.new.title + room.id
     );
+
+    setCurrentPortalUrl(portalUrlKey);
+    setFloorTempVideoChat(portalUrlKey);
+
     // if (microphonePermissionGranted && cameraPermissionGranted)
 
     // enterPortal(
@@ -146,8 +152,7 @@ const Media = ({
     <div className="media single-room__media">
       {isMobile ? (
         <Notice
-          text="To join the party on mobile, you will need the Jitsi app. Choose a
-              portal from the multiverse to join."
+          text='To join the party on mobile, you will need to switch to desktop mode in your browser app. On Chrome, click the three dots at the top right of your screen and check "Desktop site".'
         />
       ) : null}
 
@@ -155,6 +160,7 @@ const Media = ({
         <Notice
           text="Please listen to the music using a headset, or disable your
             microphone in the chat to prevent noise for the other participants"
+          currentAudioChannel={currentAudioChannel}
         />
       ) : null}
 

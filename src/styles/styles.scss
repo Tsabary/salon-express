@@ -464,6 +464,13 @@ h3 {
   border: none;
   outline: none;
   z-index: 20;
+
+  &--mixlr{
+    border: $border !important;
+    border-radius: $borderRadius;
+    overflow: hidden;
+    background-color: white;
+  }
 }
 
 .popup {

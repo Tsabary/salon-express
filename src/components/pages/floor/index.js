@@ -9,27 +9,35 @@ import {
   fetchFloorRooms,
   resetPublicAudioSettings,
   detachFloorListener,
+  replaceFloorUids,
 } from "../../../actions";
 
 import FloorRoom from "../singleRoom/floorRoom";
 import Coming from "./coming";
 import CurrentlyPlaying from "./currentlyPlaying";
 import ImageMap from "./imageMap";
+// import TempMedia from "./tempVideoChat";
+import { UniqueIdContext } from "../../../providers/UniqueId";
 
 const Floor = ({
   match,
   fetchCurrentFloor,
   resetPublicAudioSettings,
   detachFloorListener,
+  replaceFloorUids,
 }) => {
-  const { currentUserProfile } = useContext(AuthContext);
-  const { globalFloor, setGlobalFloor, globalFloorRoom } = useContext(
-    FloorContext
-  );
+  const { currentUser, currentUserProfile } = useContext(AuthContext);
+  const { uniqueId } = useContext(UniqueIdContext);
+  const {
+    globalFloor,
+    setGlobalFloor,
+    globalFloorRoom,
+    floorTempVideoChat,
+  } = useContext(FloorContext);
 
   const [isOwner, setIsOwner] = useState(false);
-
   const [openDate, setOpenDate] = useState(null);
+  const [userID, setUserID] = useState(currentUser ? currentUser.uid : null);
 
   useEffect(() => {
     setIsOwner(
@@ -40,13 +48,21 @@ const Floor = ({
   }, [currentUserProfile, globalFloor]);
 
   useEffect(() => {
-    resetPublicAudioSettings();
+    if (currentUser) {
+      setUserID(currentUser.uid);
+    }
 
-    fetchCurrentFloor(match.params.id, (fl) => {
-      setGlobalFloor(fl)
-    })
+    if (!globalFloor || !uniqueId) return;
+    currentUser
+      ? replaceFloorUids(globalFloor, uniqueId, currentUser.uid, () =>
+          console.log("Makena", 2)
+        )
+      : replaceFloorUids(globalFloor, userID, uniqueId, () =>
+          console.log("Makena", 3)
+        );
+  }, [currentUser, globalFloor, uniqueId]);
 
-
+  useEffect(() => {
     setOpenDate(
       !globalFloor
         ? null
@@ -54,6 +70,14 @@ const Floor = ({
         ? globalFloor.open
         : globalFloor.open.toDate()
     );
+  }, [globalFloor]);
+
+  useEffect(() => {
+    resetPublicAudioSettings();
+
+    fetchCurrentFloor(match.params.id, (fl) => {
+      setGlobalFloor(fl);
+    });
 
     const myCleanup = () => {
       detachFloorListener();
@@ -82,21 +106,13 @@ const Floor = ({
             readOnly
           />
 
+          {/* {floorTempVideoChat && !globalFloorRoom ? <TempMedia /> : null} */}
+
           <div className="floor__room">
             {globalFloorRoom ? (
               <FloorRoom
                 floor={globalFloor}
                 room={globalFloorRoom}
-                activeChannel={
-                  globalFloorRoom && globalFloorRoom.active_channel
-                    ? globalFloorRoom.active_channel
-                    : null
-                }
-                audioChannels={
-                  globalFloorRoom && globalFloorRoom.audio_channels
-                    ? globalFloorRoom.audio_channels
-                    : null
-                }
                 isOwner={isOwner}
                 entityID={globalFloor.id + "-" + globalFloorRoom.id}
               />
@@ -112,24 +128,25 @@ const Floor = ({
         </>
       ) : (
         <div className="floor__body">
-          <Coming openDate={openDate} />
+          {openDate ? <Coming openDate={openDate} /> : null}
         </div>
       )}
     </div>
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    currentFloor: state.currentFloor,
-  };
-};
+// const mapStateToProps = (state) => {
+//   return {
+//     currentFloor: state.currentFloor,
+//   };
+// };
 
 export default connect(null, {
   fetchCurrentFloor,
   fetchFloorRooms,
   resetPublicAudioSettings,
   detachFloorListener,
+  replaceFloorUids,
 })(Floor);
 
 {

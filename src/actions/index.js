@@ -321,16 +321,16 @@ export const fetchFirstSearched = (
       ? await db
           .collection("rooms")
           // .where("language", "in", [...languages, "lir"])
-        .where("tags", "array-contains", tag)
-        .where("listed", "==", true)
+          .where("tags", "array-contains", tag)
+          .where("listed", "==", true)
           .orderBy("last_visit", "desc")
           .limit(90)
           .get()
           .catch((e) => console.error("promise Error fetch searc", e))
       : await db
           .collection("rooms")
-        .where("tags", "array-contains", tag)
-        .where("listed", "==", true)
+          .where("tags", "array-contains", tag)
+          .where("listed", "==", true)
           .orderBy("last_visit", "desc")
           .limit(90)
           .get()
@@ -360,8 +360,8 @@ export const fetchMoreSearched = (
       ? await db
           .collection("rooms")
           // .where("language", "in", [...languages, "lir"])
-        .where("tags", "array-contains", tag)
-        .where("listed", "==", true)
+          .where("tags", "array-contains", tag)
+          .where("listed", "==", true)
           .orderBy("last_visit", "desc")
           .startAfter(lastVisible)
           .limit(90)
@@ -369,8 +369,8 @@ export const fetchMoreSearched = (
           .catch((e) => console.error("promise Error feth mo sear", e))
       : await db
           .collection("rooms")
-        .where("tags", "array-contains", tag)
-        .where("listed", "==", true)
+          .where("tags", "array-contains", tag)
+          .where("listed", "==", true)
           .orderBy("last_visit", "desc")
           .startAfter(lastVisible)
           .limit(15)
@@ -718,44 +718,69 @@ export const leavePortal = (entityID, portal, uids, cb) => () => {
 };
 
 //Replacing between UUID and UID in the portal logs
-export const replaceTimestampWithUid = (
-  entityID,
-  portal,
-  previousID,
-  newID,
-  cb
-) => () => {
+export const replaceUids = (entityID, portal, previousID, newID, cb) => () => {
   const batch = db.batch();
   const portalDoc = db.collection("multiverses").doc(entityID);
-  const key = titleToKey(portal.title);
+  const key = titleToKey(portal.new.title);
 
-  console.log("portals", `replacing ids previous: ${previousID} next ${newID}`);
-
-  batch.set(
-    portalDoc,
-    {
-      [key]: {
-        title: portal.title,
-        created_on: portal.created_on,
-        members: firebase.firestore.FieldValue.arrayRemove(previousID),
-      },
-    },
-
-    { merge: true }
-  );
+  // console.log("portals", `replacing ids previous: ${previousID} next ${newID}`);
 
   batch.set(
     portalDoc,
     {
       [key]: {
-        title: portal.title,
-        created_on: portal.created_on,
+        title: portal.new.title,
+        created_on: portal.new.created_on,
         members: firebase.firestore.FieldValue.arrayUnion(newID),
       },
     },
 
     { merge: true }
   );
+  if (previousID) {
+    batch.set(
+      portalDoc,
+      {
+        [key]: {
+          title: portal.new.title,
+          created_on: portal.new.created_on,
+          members: firebase.firestore.FieldValue.arrayRemove(previousID),
+        },
+      },
+
+      { merge: true }
+    );
+  }
+
+  batch.commit().then(() => {
+    cb();
+  });
+};
+
+//Replacing between UUID and UID in the portal logs
+export const replaceFloorUids = (floor, previousID, newID, cb) => () => {
+  const batch = db.batch();
+  const floorDoc = db.collection("visitors").doc(floor.id);
+
+  batch.set(
+    floorDoc,
+    {
+      visitors: firebase.firestore.FieldValue.arrayUnion(newID),
+    },
+
+    { merge: true }
+  );
+
+  if (previousID) {
+    batch.set(
+      floorDoc,
+      {
+        visitors: firebase.firestore.FieldValue.arrayRemove(previousID),
+      },
+
+      { merge: true }
+    );
+  }
 
   batch.commit().then(() => {
     cb();
@@ -768,6 +793,7 @@ export const newPortal = (newPortal, oldPortal, entityID, uid, cb) => () => {
     title: newPortal.title,
     members: [uid],
     created_on: new Date(),
+    user_ID: uid,
   };
   if (newPortal.totem) {
     portalObj.totem = newPortal.totem;
@@ -924,7 +950,34 @@ export const saveArrayOrder = (collection, key, array, parent, reset) => () => {
   db.collection(collection)
     .doc(parent.id)
     .set({ [key]: array }, { merge: true })
-    .then(() => reset());
+    .then(() => {
+      console.log("savee", "success");
+      reset();
+    });
+};
+
+export const saveFloorRoomArrayOrder = (
+  floor,
+  floorRoom,
+  floorRoomIndex,
+  array,
+  reset
+) => () => {
+  const newFloor = {
+    ...floor,
+    rooms: {
+      ...floor.rooms,
+      [floorRoomIndex]: { ...floorRoom, audio_channels: array },
+    },
+  };
+
+  db.collection("floors")
+    .doc(floor.id)
+    .set(newFloor)
+    .then(() => {
+      console.log("savee", "success");
+      reset();
+    });
 };
 
 // EVENTS //
@@ -989,6 +1042,7 @@ export const addEventFloor = (event, roomIndex, floor, cb) => async () => {
 };
 
 export const deleteEvent = (event) => async (dispatch) => {
+  console.log("event", event)
   db.collection("events")
     .doc(event.id)
     .delete()
@@ -999,6 +1053,31 @@ export const deleteEvent = (event) => async (dispatch) => {
       });
     })
     .catch((e) => console.error("promise Error delete event", e));
+};
+
+export const deleteEventFloor = (event, roomIndex, floor, cb) => async () => {
+  const batch = db.batch();
+  const docRef = db.collection("floors").doc(floor.id);
+  const updatedFloor = {
+    ...floor,
+    rooms: {
+      ...floor.rooms,
+      [roomIndex]: {
+        ...floor.rooms[roomIndex],
+        events: floor.rooms[roomIndex].events.filter(ev => ev.id !== event.id)
+      },
+    },
+  };
+
+  batch.set(docRef, updatedFloor, { merge: true });
+
+  batch
+    .commit()
+    .then(() => {
+      cb();
+      analytics.logEvent("floor_room_event_deleted");
+    })
+    .catch((e) => console.error("promise Error update room", e));
 };
 
 export const associateWithRoom = (room, associate) => async (dispatch) => {
@@ -1317,6 +1396,9 @@ export const newFloor = (values, reset) => async (dispatch) => {
 
 export const saveFloor = (floor, logoFile, tracks, cb, ecb) => async () => {
   const newFloor = { ...floor };
+
+  console.log("admins", "newFloor.admins");
+  console.log("admins", newFloor);
 
   if (logoFile) {
     const ref = storage.ref(`/images/floor_logos/${floor.id}`);

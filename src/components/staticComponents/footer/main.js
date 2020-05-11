@@ -49,7 +49,7 @@ const Footer = ({ isFloor }) => {
   };
 
   return (
-    <div className="footer">
+    <div className="footer big-margin-bottom">
       <div className="footer__container">
         {isFloor ? (
           <div className="footer__section footer__left-cul">

@@ -67,7 +67,7 @@ const AudioSettings = ({
             onChange={(link) => {
               setNewChannel({ ...newChannel, link });
             }}
-            numbersAndLetters
+            // numbersAndLetters
           />
         );
 
@@ -80,7 +80,7 @@ const AudioSettings = ({
             onChange={(link) => {
               setNewChannel({ ...newChannel, link });
             }}
-            numbersAndLetters
+            // numbersAndLetters
           />
         );
 
@@ -92,7 +92,7 @@ const AudioSettings = ({
   return (
     <div className="management__audio-settings section__container">
       <div className="max-fr-max">
-        <div className="section__title">Audio Settings</div>
+        <div className="section__title">Stream Settings</div>
 
         <>
           <div
@@ -130,11 +130,17 @@ const AudioSettings = ({
         autoComplete="off"
         onSubmit={(e) => {
           e.preventDefault();
-          !floor
-            ? addChannel(newChannel, room, () => setNewChannel(null))
-            : addChannelFloorRoom(newChannel, roomIndex, floor, () =>
-                setNewChannel(null)
-              );
+          if (
+            newChannel &&
+            newChannel.title &&
+            newChannel.source &&
+            newChannel.link
+          )
+            !floor
+              ? addChannel(newChannel, room, () => setNewChannel(null))
+              : addChannelFloorRoom(newChannel, roomIndex, floor, () =>
+                  setNewChannel(null)
+                );
         }}
       >
         <div className="tile-form">

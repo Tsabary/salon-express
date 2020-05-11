@@ -6,13 +6,9 @@ import Form from "react-bootstrap/Form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactTooltip from "react-tooltip";
+import { v4 as uuidv4 } from "uuid";
 
-import {
-  fetchEvents,
-  addEvent,
-  addEventFloor,
-  deleteEvent,
-} from "../../../../../actions";
+import { fetchEvents, addEvent, addEventFloor } from "../../../../../actions";
 
 import Event from "./event";
 import InputField from "../../../../formComponents/inputField";
@@ -28,7 +24,6 @@ const Calendar = ({
   fetchEvents,
   addEvent,
   addEventFloor,
-  deleteEvent,
 }) => {
   const [event, setEvent] = useState({});
 
@@ -56,7 +51,7 @@ const Calendar = ({
 
   const renderEvents = (events) => {
     return events.map((event) => {
-      return <Event event={event} room={room} key={event.id} />;
+      return <Event event={event} isOwner={isOwner} key={event.id} />;
     });
   };
 
@@ -96,7 +91,12 @@ const Calendar = ({
             if (event && event.title && event.start)
               !floor
                 ? addEvent(event, room, () => setEvent({}))
-                : addEventFloor(event, roomIndex, floor, () => setEvent({}));
+                : addEventFloor(
+                    { ...event, id: uuidv4() },
+                    roomIndex,
+                    floor,
+                    () => setEvent({})
+                  );
           }}
         >
           <div className="tile-form">
@@ -131,7 +131,7 @@ const Calendar = ({
                   }}
                   showTimeSelect
                   timeFormat="HH:mm"
-                  timeIntervals={30}
+                  timeIntervals={15}
                   timeCaption="time"
                   dateFormat="MMMM d, yyyy h:mm aa"
                   className="input-field__input clickable"
@@ -172,7 +172,8 @@ const Calendar = ({
         </form>
       ) : null}
 
-      {(!floor && events.length) || (floor && floor.rooms[roomIndex] && floor.rooms[roomIndex].events) ? (
+      {(!floor && events.length) ||
+      (floor && floor.rooms[roomIndex] && floor.rooms[roomIndex].events) ? (
         <div className="calendar__events tiny-margin-top">
           {renderEvents(floor ? floor.rooms[roomIndex].events : events)}
         </div>
@@ -195,5 +196,4 @@ export default connect(mapStateToProps, {
   fetchEvents,
   addEvent,
   addEventFloor,
-  deleteEvent,
 })(Calendar);

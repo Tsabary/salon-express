@@ -21,6 +21,13 @@ service cloud.firestore {
       allow delete: if request.auth.uid == resource.data.user_ID;
     }
 
+    match /visitors/{entity}{
+      allow read: if true;
+      allow create: if true;
+      allow update: if true; 
+      allow delete: if request.auth.uid == resource.data.user_ID;
+    }
+
     match /floor_rooms/{room}{
       allow read: if true;
       allow create: if request.auth.uid == request.resource.data.user_ID;

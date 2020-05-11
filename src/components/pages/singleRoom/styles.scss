@@ -30,6 +30,7 @@
     grid-column: 1/4;
     grid-row: 3/4;
 
+
     @include resize(900px) {
       grid-column: 1/13;
       grid-row: 4/5;

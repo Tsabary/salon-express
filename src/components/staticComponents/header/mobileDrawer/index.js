@@ -28,6 +28,10 @@ const Drawer = ({ logOut }) => {
       case "My Rooms":
         return 3;
 
+      case "Floors":
+        console.log("item number", 4);
+        return 4;
+
       default:
         return null;
     }
@@ -86,7 +90,7 @@ const Drawer = ({ logOut }) => {
       </label>
       <div className="navigation__background">&nbsp;</div>
 
-      <label htmlFor="navi-toggle" className="navigation__nav">
+      <label className="navigation__nav" htmlFor="navi-toggle">
         <nav className="navigation__nav-menu" id="nav-menu">
           <div className="navigation__profile-container">
             <img
@@ -104,7 +108,10 @@ const Drawer = ({ logOut }) => {
 
           <ul className="navigation__list">
             {currentUserProfile && page
-              ? renderMenuItems(["Explore", "Favorites", "My Rooms"], page)
+              ? renderMenuItems(
+                  ["Explore", "Favorites", "My Rooms", "Floors"],
+                  page
+                )
               : renderMenuItems(["Explore"], page)}
 
             {currentUserProfile ? (
@@ -155,6 +162,10 @@ const Drawer = ({ logOut }) => {
               </li>
             )}
           </ul>
+
+          <div className="navigation__event" onClick={()=>myHistory.push("/floor/inqlusiv")}>
+            INQLUSIV
+          </div>
         </nav>
       </label>
     </div>

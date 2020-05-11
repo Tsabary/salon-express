@@ -33,7 +33,10 @@ const Updates = ({
 
   useEffect(() => {
     if (!currentUserProfile) return;
-    listenToUpdates(currentUserProfile, () => notification.play());
+    listenToUpdates(currentUserProfile, () => {
+      console.log("new update")
+      // notification.play();
+    });
   }, [currentUserProfile]);
 
   const renderUpdates = (updates) => {
@@ -61,17 +64,21 @@ const Updates = ({
       </label>
 
       {/* <div className="updates__container"> */}
-        <ScrollToBottom mode="bottom" scrollViewClassName="updates__scoll" className="updates__container">
-          {updates && updates.length ? (
-            <div style={{ padding: "10px" }}>{renderUpdates(updates)}</div>
-          ) : (
-            <div style={{ padding: "10px" }}>
-              Add some Rooms to your favorites to begin receiving updates
-            </div>
-          )}
-          {/* {updates && updates.length ? renderUpdates(updates) : null} */}
-        </ScrollToBottom>
-      </div>
+      <ScrollToBottom
+        mode="bottom"
+        scrollViewClassName="updates__scoll"
+        className="updates__container"
+      >
+        {updates && updates.length ? (
+          <div style={{ padding: "10px" }}>{renderUpdates(updates)}</div>
+        ) : (
+          <div style={{ padding: "10px" }}>
+            Add some Rooms to your favorites to begin receiving updates
+          </div>
+        )}
+        {/* {updates && updates.length ? renderUpdates(updates) : null} */}
+      </ScrollToBottom>
+    </div>
     // </div>
   );
 };

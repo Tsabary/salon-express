@@ -4,6 +4,7 @@
   padding: 0.5rem 1.5rem;
   display: grid;
   grid-template-columns: 1fr max-content;
+  border-bottom: 1px solid $bgColor;
   cursor: pointer;
 
   @include resize(1500px) {

@@ -7,11 +7,11 @@ import { Droppable, DragDropContext } from "react-beautiful-dnd";
 import { RoomContext } from "../../../providers/Room";
 import { FloorContext } from "../../../providers/Floor";
 
-import { saveArrayOrder } from "../../../actions";
+import { saveArrayOrder, saveFloorRoomArrayOrder } from "../../../actions";
 
 import InnerList from "./innerList";
 
-const AudioChannels = ({ audioChannels, saveArrayOrder }) => {
+const AudioChannels = ({ audioChannels, saveArrayOrder, saveFloorRoomArrayOrder }) => {
   const { globalRoom } = useContext(RoomContext);
 
   const { globalFloor, globalFloorRoom, globalFloorRoomIndex } = useContext(
@@ -155,18 +155,29 @@ const AudioChannels = ({ audioChannels, saveArrayOrder }) => {
               {isOrderDifferent ? (
                 <div
                   className="audio-channels__save-order small-margin-top"
-                  onClick={() =>
-                    saveArrayOrder(
-                      "rooms",
-                      "audio_channels",
-                      orderedChannels,
-                      globalRoom,
-                      () => {
-                        setIsOrderDifferent(false);
-                        setLastSavedChannelIds(localChannelIds);
-                      }
-                    )
-                  }
+                  onClick={() => {
+                    globalFloorRoom
+                      ? saveFloorRoomArrayOrder(
+                          globalFloor,
+                          globalFloorRoom,
+                          globalFloorRoomIndex,
+                          orderedChannels,
+                          () => {
+                            setIsOrderDifferent(false);
+                            setLastSavedChannelIds(localChannelIds);
+                          }
+                        )
+                      : saveArrayOrder(
+                          "rooms",
+                          "audio_channels",
+                          orderedChannels,
+                          globalRoom,
+                          () => {
+                            setIsOrderDifferent(false);
+                            setLastSavedChannelIds(localChannelIds);
+                          }
+                        );
+                  }}
                 />
               ) : null}
               <div className="audio-channels__channels small-margin-top">
@@ -195,4 +206,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { saveArrayOrder })(AudioChannels);
+export default connect(mapStateToProps, { saveArrayOrder, saveFloorRoomArrayOrder })(AudioChannels);

@@ -58,7 +58,9 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
   const reset = (currentUserProfile) => {
     setValues({
       user_ID: currentUserProfile.uid,
-      visitors_count: 0,
+      admins: [currentUserProfile.email],
+      open: new Date(),
+      visitors: [],
     });
     setSubmitting(false);
   };

@@ -20,7 +20,9 @@ const FloorHeader = ({ listenToProfile, stopListeningToProfile }) => {
   const myHistory = useHistory(history);
 
   const { currentUser, setCurrentUserProfile } = useContext(AuthContext);
-  const { globalFloor, setGlobalFloorRoom } = useContext(FloorContext);
+  const { globalFloor, globalFloorRoom, setGlobalFloorRoom } = useContext(
+    FloorContext
+  );
   const { page, setPage } = useContext(PageContext);
   const { floor } = useContext(FloorContext);
 
@@ -34,7 +36,7 @@ const FloorHeader = ({ listenToProfile, stopListeningToProfile }) => {
   }, [currentUser]);
 
   const handleChange = () => {
-    setGlobalFloorRoom(null)
+    setGlobalFloorRoom(null);
     // setPage(1);
     // myHistory.push(`/floor/${globalFloor.id}`);
   };
@@ -62,12 +64,16 @@ const FloorHeader = ({ listenToProfile, stopListeningToProfile }) => {
         }
       >
         <div className="header__logo-container">
-          <div onClick={handleChange} className="header__title-full">
-            <img
-              src={globalFloor ? globalFloor.logo : ""}
-              className="floor__footer-logo"
-            />
-          </div>
+          {globalFloorRoom ? (
+            <div className="header__back" onClick={handleChange} >&larr; Back to all stages</div>
+          ) : (
+            <div onClick={handleChange} className="header__title-full">
+              <img
+                src={globalFloor ? globalFloor.logo : ""}
+                className="floor__footer-logo"
+              />
+            </div>
+          )}
           <div
             className="header__title header__title-lean"
             onClick={handleChange}

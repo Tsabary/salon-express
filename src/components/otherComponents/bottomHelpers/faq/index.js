@@ -26,7 +26,6 @@ const Faq = ({ newQuestion }) => {
     index
       .search(question)
       .then(({ hits }) => {
-        console.log(hits);
         setQuestions(hits);
       })
       .catch((e) => {
@@ -35,6 +34,7 @@ const Faq = ({ newQuestion }) => {
   }, [question]);
 
   const handleSubmit = () => {
+    if (!question) return;
     setInProcess(true);
     newQuestion(question, currentUserProfile, () => {
       setQuestion("");

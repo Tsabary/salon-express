@@ -152,7 +152,11 @@ const EditFloor = ({
       newFloor,
       imageAsFile,
       tracks,
-      () => myHistory.push(`/floor-management`),
+      () => {
+        myHistory.push(`/floor-management`);
+        console.log("admins", "newFloor.admins")
+
+      },
       (e) => console.error(e)
     );
   };
@@ -366,7 +370,11 @@ const EditFloor = ({
             <div className="edit-floor__admins">
               {values && values.admins
                 ? values.admins.map((ad) => {
-                    return <div className="edit-floor__admin" key={ad}>{ad}</div>;
+                    return (
+                      <div className="edit-floor__admin" key={ad}>
+                        {ad}
+                      </div>
+                    );
                   })
                 : null}
             </div>
