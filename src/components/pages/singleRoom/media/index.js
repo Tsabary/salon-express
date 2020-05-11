@@ -54,6 +54,9 @@ const Media = ({
   // This holds the state of the media toggle - are we viewing the chat or the stream
   const [mediaState, setMediaState] = useState(false);
 
+  const [isChatVisible, setIsChatVisible] = useState(true);
+  const [isVideoVisible, setIsVideoVisible] = useState(true);
+
   // This keeps track if it's our first time loading. On our first load, we set the portal to the fullest one in our multiverse. After that it's up to the user to decide. It's important to have it because we set the portal when we get an update for the multiverse
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
@@ -113,47 +116,87 @@ const Media = ({
   ]);
 
   useEffect(() => {
-    setMediaState(
+    console.log("audio channel media", currentAudioChannel);
+    if (
       currentAudioChannel &&
-        currentAudioChannel.source &&
-        ["youtube", "twitch"].includes(currentAudioChannel.source)
-    );
+      currentAudioChannel.source &&
+      ["youtube", "twitch"].includes(currentAudioChannel.source)
+    ) {
+      setIsVideoVisible(true);
+      // setMediaState(1);
+    }
   }, [currentAudioChannel]);
 
   const renderControllers = () => {
     return (
       <div className="media__buttons">
-        {mediaState ? (
+        {isChatVisible ? (
           <div
-            className="media__button media__button--unactive"
-            onClick={() => setMediaState(!mediaState)}
+            className="media__button media__button--active"
+            onClick={() => setIsChatVisible(false)}
           >
             Chat
           </div>
         ) : (
-          <div className="media__button media__button--active">Chat</div>
-        )}
-
-        {!mediaState ? (
           <div
             className="media__button media__button--unactive"
-            onClick={() => setMediaState(!mediaState)}
+            onClick={() => setIsChatVisible(true)}
+          >
+            Chat
+          </div>
+        )}
+
+        {isVideoVisible ? (
+          <div
+            className="media__button media__button--active"
+            onClick={() => setIsVideoVisible(false)}
           >
             Stream
           </div>
         ) : (
-          <div className="media__button media__button--active">Stream</div>
+          <div
+            className="media__button media__button--unactive"
+            onClick={() => setIsVideoVisible(true)}
+          >
+            Stream
+          </div>
         )}
       </div>
     );
   };
 
+  // const renderControllers = () => {
+  //   return (
+  //     <div className="media__buttons">
+  //       {mediaState ? (
+  //         <div
+  //           className="media__button media__button--unactive"
+  //           onClick={() => setMediaState(0)}
+  //         >
+  //           Chat
+  //         </div>
+  //       ) : (
+  //         <div className="media__button media__button--active">Chat</div>
+  //       )}
+
+  //       {!mediaState ? (
+  //         <div
+  //           className="media__button media__button--unactive"
+  //           onClick={() => setMediaState(1)}
+  //         >
+  //           Stream
+  //         </div>
+  //       ) : (
+  //         <div className="media__button media__button--active">Stream</div>
+  //       )}
+  //     </div>
+  //   );
+  // };
+
   return (
     <div className="media single-room__media">
       {isMobile ? (
-        <Notice
-          text='To join the party on mobile, you will need to switch to desktop mode in your browser app. On Chrome, click the three dots at the top right of your screen and check "Desktop site".'
-        />
+        <Notice text='To join the party on mobile, you will need to switch to desktop mode in your browser app. On Chrome, click the three dots at the top right of your screen and check "Desktop site".' />
       ) : null}
 
       {!isMobile && currentAudioChannel && currentAudioChannel.source ? (
@@ -200,19 +243,26 @@ const Media = ({
         }
       >
         <input
-          className="media__toggle-checkbox"
+          className="media__chat-checkbox"
           type="checkbox"
-          id="media-toggle-checkbox"
-          // onChange={() => {
-          //   setMediaState(!mediaState);
-          // }}
-          checked={!!mediaState}
+          id="chat-visibility-checkbox"
+          checked={isChatVisible}
           readOnly
         />
+
+        <input
+          className="media__video-checkbox"
+          type="checkbox"
+          id="video-visibility-checkbox"
+          checked={isVideoVisible}
+          readOnly
+        />
+
         {!isMobile ? (
           <>
-            <div className="media__toggle-container">
-              <span className="media__toggle-container--visible">
+            {/* <div className="media__chat-stream-container"> */}
+            {isChatVisible ? (
+              <span className="media__chat">
                 <Chat
                   room={room}
                   floor={floor}
@@ -226,24 +276,27 @@ const Media = ({
                   isFirstLoad={isFirstLoad}
                 />
               </span>
-              {currentAudioChannel &&
-              currentAudioChannel.source === "youtube" ? (
-                <span className="media__toggle-container--hidden">
-                  <Youtube ID={currentAudioChannel.link} />
-                </span>
-              ) : null}
+            ) : null}
 
-              {currentAudioChannel &&
-              currentAudioChannel.source === "twitch" ? (
-                <span className="media__toggle-container--hidden">
-                  <Twitch ID={currentAudioChannel.link} />
-                </span>
-              ) : null}
-            </div>
-            {currentAudioChannel &&
+            {currentAudioChannel && currentAudioChannel.source === "youtube" ? (
+              <span className="media__stream">
+                <Youtube ID={currentAudioChannel.link} isVideoVisible={isVideoVisible}/>
+              </span>
+            ) : null}
+
+            {currentAudioChannel && currentAudioChannel.source === "twitch" ? (
+              <span className="media__stream">
+                <Twitch ID={currentAudioChannel.link} isVideoVisible={isVideoVisible}/>
+              </span>
+            ) : null}
+            {/* </div> */}
+
+            {renderControllers()}
+
+            {/* {currentAudioChannel &&
             ["youtube", "twitch"].includes(currentAudioChannel.source)
               ? renderControllers()
-              : null}
+              : null} */}
           </>
         ) : null}
       </div>
@@ -254,3 +307,41 @@ const Media = ({
 export default connect(null, { listenToMultiverse, detachListener, newPortal })(
   Media
 );
+
+// {!isMobile ? (
+//   <>
+//     <div className="media__toggle-container">
+//       <span className="media__toggle-container--visible">
+//         <Chat
+//           room={room}
+//           floor={floor}
+//           currentPortalUrl={currentPortalUrl}
+//           cameraPermissionGranted={cameraPermissionGranted}
+//           setCameraPermissionGranted={setCameraPermissionGranted}
+//           microphonePermissionGranted={microphonePermissionGranted}
+//           setMicrophonePermissionGranted={
+//             setMicrophonePermissionGranted
+//           }
+//           isFirstLoad={isFirstLoad}
+//         />
+//       </span>
+//       {currentAudioChannel &&
+//       currentAudioChannel.source === "youtube" ? (
+//         <span className="media__toggle-container--hidden">
+//           <Youtube ID={currentAudioChannel.link} />
+//         </span>
+//       ) : null}
+
+//       {currentAudioChannel &&
+//       currentAudioChannel.source === "twitch" ? (
+//         <span className="media__toggle-container--hidden">
+//           <Twitch ID={currentAudioChannel.link} />
+//         </span>
+//       ) : null}
+//     </div>
+//     {currentAudioChannel &&
+//     ["youtube", "twitch"].includes(currentAudioChannel.source)
+//       ? renderControllers()
+//       : null}
+//   </>
+// ) : null}

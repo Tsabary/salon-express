@@ -465,11 +465,15 @@ h3 {
   outline: none;
   z-index: 20;
 
-  &--mixlr{
+  &--mixlr {
     border: $border !important;
     border-radius: $borderRadius;
     overflow: hidden;
     background-color: white;
+  }
+
+  &--invisible {
+    display: none !important;
   }
 }
 

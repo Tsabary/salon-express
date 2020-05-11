@@ -28,6 +28,10 @@ const PublicRoom = ({ match, fetchSingleRoom }) => {
   const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
+    console.log("audio channel public room", currentAudioChannel);
+  }, [currentAudioChannel]);
+
+  useEffect(() => {
     setIsOwner(
       currentUserProfile && room && currentUserProfile.uid === room.user_ID
     );

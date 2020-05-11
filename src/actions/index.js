@@ -558,10 +558,15 @@ export const fetchSingleRoom = (
     });
   }
 
+  console.log("audio channel action 1", room_ID)
+
+
   channelListener = db
     .collection("active_channels")
     .doc(room_ID)
     .onSnapshot((docChannel) => {
+      console.log("audio channel action 2", docChannel.data())
+
       setCurrentAudioChannel(docChannel.data() ? docChannel.data() : null);
       setGlobalCurrentAudioChannel(
         docChannel.data() ? docChannel.data() : null
