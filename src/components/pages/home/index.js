@@ -4,7 +4,8 @@ import { connect } from "react-redux";
 
 import firebase from "firebase/app";
 
-import { detachListener } from "../../../actions";
+import { detachChannelListener } from "../../../actions/rooms";
+import { detachFloorListener } from "../../../actions/floors";
 
 import { PageContext } from "../../../providers/Page";
 import { AuthContext } from "../../../providers/Auth";
@@ -14,12 +15,13 @@ import Favorites from "./favorites";
 import MyRooms from "./myRooms";
 import Floors from "./floors";
 
-const Home = ({ detachListener }) => {
+const Home = ({ detachChannelListener, detachFloorListener }) => {
   const { currentUser } = useContext(AuthContext);
   const { page, setPage } = useContext(PageContext);
 
   useEffect(() => {
-    detachListener();
+    detachChannelListener();
+    detachFloorListener();
   });
 
   const renderContent = (p) => {
@@ -157,4 +159,4 @@ const Home = ({ detachListener }) => {
   );
 };
 
-export default connect(null, { detachListener })(Home);
+export default connect(null, { detachChannelListener, detachFloorListener })(Home);

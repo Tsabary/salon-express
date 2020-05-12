@@ -5,7 +5,7 @@ import Loader from "react-loader-spinner";
 
 import { AuthContext } from "../../../providers/Auth";
 
-import { addFloorPlan } from "../../../actions";
+import { addFloorPlan } from "../../../actions/floors";
 
 import InputField from "../../formComponents/inputField";
 

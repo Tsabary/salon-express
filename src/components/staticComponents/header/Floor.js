@@ -9,7 +9,7 @@ import { AuthContext } from "../../../providers/Auth";
 import { PageContext } from "../../../providers/Page";
 import { FloorContext } from "../../../providers/Floor";
 
-import { listenToProfile, stopListeningToProfile } from "../../../actions";
+import { listenToProfile, stopListeningToProfile } from "../../../actions/users";
 
 import AuthOptions from "./authOptions";
 import UserOptions from "./userOptions";

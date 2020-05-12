@@ -8,9 +8,14 @@ import { AuthContext } from "../../../../providers/Auth";
 
 import {
   listenToMultiverse,
-  detachListener,
+  detachMultiverseListener,
   newPortal,
-} from "../../../../actions";
+} from "../../../../actions/portals";
+
+import {
+  detachChannelListener,
+} from "../../../../actions/rooms";
+
 import { titleToKey } from "../../../../utils/strings";
 
 import Chat from "./chat";
@@ -31,7 +36,8 @@ const Media = ({
   entityID,
   isOwner,
   listenToMultiverse,
-  detachListener,
+  detachMultiverseListener,
+  detachChannelListener,
   newPortal,
 }) => {
   // This is a fake unique id based on current timestamp. We use it to identify users that aren't logged in, so we can manage the coun of users in each portal
@@ -82,7 +88,8 @@ const Media = ({
       );
     });
     return function cleanup() {
-      detachListener();
+      detachMultiverseListener();
+      detachChannelListener()
     };
   }, [entityID, currentPortal, currentUserProfile, uniqueId]);
 
@@ -291,12 +298,12 @@ const Media = ({
             ) : null}
             {/* </div> */}
 
-            {renderControllers()}
+            {/* {renderControllers()} */}
 
-            {/* {currentAudioChannel &&
+            {currentAudioChannel &&
             ["youtube", "twitch"].includes(currentAudioChannel.source)
               ? renderControllers()
-              : null} */}
+              : null}
           </>
         ) : null}
       </div>
@@ -304,7 +311,7 @@ const Media = ({
   );
 };
 
-export default connect(null, { listenToMultiverse, detachListener, newPortal })(
+export default connect(null, { listenToMultiverse, detachMultiverseListener,detachChannelListener, newPortal })(
   Media
 );
 

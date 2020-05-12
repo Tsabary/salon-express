@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import TextArea from "../../../formComponents/textArea";
 import { connect } from "react-redux";
 
-import { answerQuestion } from "../../../../actions";
+import { answerQuestion } from "../../../../actions/faq";
 
 const SingleQuestion = ({ q, answerQuestion, setAnswered, setUnanswered }) => {
   const [values, setValues] = useState();

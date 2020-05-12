@@ -8,7 +8,7 @@ import { AuthContext } from "../../../../providers/Auth";
 import { connect } from "react-redux";
 import ScrollToBottom from "react-scroll-to-bottom";
 
-import { listenToUpdates, resetNotifications } from "../../../../actions";
+import { listenToUpdates, resetNotifications } from "../../../../actions/global";
 
 import Update from "./update";
 

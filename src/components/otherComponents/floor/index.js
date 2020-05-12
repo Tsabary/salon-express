@@ -1,5 +1,4 @@
 import React, { useContext, useState } from "react";
-import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 import Moment from "react-moment";
@@ -13,17 +12,12 @@ import firebase from "firebase/app";
 import { SearchContext } from "../../../providers/Search";
 import { PageContext } from "../../../providers/Page";
 
-import { addToFavorites, removeFromFavorites } from "../../../actions";
-
 import { getLanguageName } from "../../../utils/languages";
 import { capitalizeSentances } from "../../../utils/strings";
 
 const Floor = ({
   floor,
-  // addToFavorites,
-  // removeFromFavorites,
-  currentUserProfile,
-  isForFeed,
+  isForFeed
 }) => {
   const myHistory = useHistory(history);
 
@@ -204,7 +198,4 @@ const Floor = ({
   );
 };
 
-export default connect(null, {
-  addToFavorites,
-  removeFromFavorites,
-})(Floor);
+export default Floor

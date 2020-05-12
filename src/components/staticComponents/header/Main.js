@@ -9,12 +9,12 @@ import { AuthContext } from "../../../providers/Auth";
 import { PageContext } from "../../../providers/Page";
 import { SearchContext } from "../../../providers/Search";
 
-import { listenToProfile, stopListeningToProfile } from "../../../actions";
+import { listenToProfile, stopListeningToProfile } from "../../../actions/users";
 
 import AuthOptions from "./authOptions";
 import UserOptions from "./userOptions";
 import FilterInput from "./filterInput";
-import MobileMenu from "./mobileDrawer";
+import MobileDrawer from "./mobileDrawer";
 import { connect } from "react-redux";
 
 const Header = ({ listenToProfile, stopListeningToProfile }) => {
@@ -74,7 +74,7 @@ const Header = ({ listenToProfile, stopListeningToProfile }) => {
 
   return (
     <div className="header">
-      <MobileMenu />
+      <MobileDrawer />
       <div
         className={
           currentUser

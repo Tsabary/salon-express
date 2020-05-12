@@ -4,7 +4,7 @@ import "./styles.scss";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 
-import { fetchQuestions } from "../../../actions";
+import { fetchQuestions } from "../../../actions/faq";
 
 import SingleQuestion from "./singleQuestion";
 

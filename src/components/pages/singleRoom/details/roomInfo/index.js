@@ -1,9 +1,7 @@
 import "./styles.scss";
 import React, { useContext, useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 
-import Moment from "react-moment";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { ReactSVG } from "react-svg";
 
@@ -17,7 +15,7 @@ import {
   addToFavorites,
   removeFromFavorites,
   updateRoom,
-} from "../../../../../actions";
+} from "../../../../../actions/rooms";
 
 import { getLanguageName } from "../../../../../utils/languages";
 import {
@@ -103,7 +101,7 @@ const RoomInfo = ({
       <div className="section__title">Room Info</div>
 
       <div className="room__top">
-        {isNameEdited? (
+        {isNameEdited ? (
           <>
             <div className="tiny-margin-bottom tiny-margin-top">
               <InputField
@@ -239,7 +237,7 @@ const RoomInfo = ({
           </>
         )}
 
-        {isTagsEdited  ? (
+        {isTagsEdited ? (
           <>
             <div className="tiny-margin-bottom tiny-margin-top">
               <Tags
@@ -295,7 +293,7 @@ const RoomInfo = ({
           </>
         ) : (
           <>
-            {values.tags  && !floor ? (
+            {values.tags && !floor ? (
               <div className="tiny-margin-top">{renderTags(values.tags)}</div>
             ) : null}
 

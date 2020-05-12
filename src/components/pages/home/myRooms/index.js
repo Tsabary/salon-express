@@ -2,7 +2,7 @@ import React, { useEffect, useContext, useState } from "react";
 import { connect } from "react-redux";
 import { AuthContext } from "../../../../providers/Auth";
 
-import { fetchFirstMyRooms, fetchMoreMyRooms } from "../../../../actions";
+import { fetchFirstMyRooms, fetchMoreMyRooms } from "../../../../actions/feeds";
 
 import { renderSection } from "../../../../utils/feeds";
 

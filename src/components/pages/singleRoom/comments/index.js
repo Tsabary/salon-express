@@ -3,7 +3,7 @@ import React, { useContext, useState, useEffect } from "react";
 
 import { AuthContext } from "../../../../providers/Auth";
 
-import { fetchRoomComments, newComment } from "../../../../actions";
+import { fetchRoomComments, newComment } from "../../../../actions/rooms";
 import { connect } from "react-redux";
 
 import Comment from "./comment";

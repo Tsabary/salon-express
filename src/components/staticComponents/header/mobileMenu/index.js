@@ -8,10 +8,10 @@ import history from "../../../../history";
 import { AuthContext } from "../../../../providers/Auth";
 import { PageContext } from "../../../../providers/Page";
 
-import { togglePopup, logOut } from "../../../../actions";
+import {  logOut } from "../../../../actions/users";
 import { turnToLowerCaseWithHyphen } from "../../../../utils/strings";
 
-const Menu = ({ togglePopup, logOut }) => {
+const Menu = ({  logOut }) => {
   const { currentUser } = useContext(AuthContext);
   const { page, setPage } = useContext(PageContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -80,7 +80,6 @@ const Menu = ({ togglePopup, logOut }) => {
         className="navigation__button"
         onClick={() => {
           setIsMenuOpen(!isMenuOpen);
-          togglePopup(!isMenuOpen);
         }}
       >
         <span className="navigation__icon">&nbsp;</span>
@@ -146,4 +145,4 @@ const Menu = ({ togglePopup, logOut }) => {
   );
 };
 
-export default connect(null, { togglePopup, logOut })(Menu);
+export default connect(null, { logOut })(Menu);

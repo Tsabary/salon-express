@@ -7,7 +7,7 @@ import { Emoji, Picker } from "emoji-mart";
 import { AuthContext } from "../../../../../providers/Auth";
 
 import { titleToKey } from "../../../../../utils/strings";
-import { newPortal, logGuestEntry } from "../../../../../actions";
+import { newPortal } from "../../../../../actions/portals";
 
 import Portal from "./portal";
 import InputField from "../../../../formComponents/inputField";
@@ -211,7 +211,6 @@ const Multiverse = ({
 
 export default connect(null, {
   newPortal,
-  logGuestEntry,
 })(Multiverse);
 
 // // This is our cleanup event for when the comonent unloads ( remove the user from the portal)

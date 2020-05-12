@@ -5,7 +5,7 @@ import { ReactSVG } from "react-svg";
 
 import { AuthContext } from "../../../providers/Auth";
 
-import { fetchStrangerProfile } from "../../../actions";
+import { fetchStrangerProfile } from "../../../actions/profiles";
 
 import FollowBtn from "../../otherComponents/followBtn";
 import { getLanguageName } from "../../../utils/languages";

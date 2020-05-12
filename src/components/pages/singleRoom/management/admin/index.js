@@ -9,8 +9,11 @@ import history from "../../../../../history";
 import {
   keepRoomListed,
   associateWithRoom,
+} from "../../../../../actions/rooms";
+
+import {
   fetchStrangerProfile,
-} from "../../../../../actions";
+} from "../../../../../actions/profiles";
 
 import ToggleField from "../../../../formComponents/toggleField";
 import Social from "../../../../otherComponents/social";

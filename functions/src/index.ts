@@ -9,8 +9,10 @@ const db = admin.firestore();
 const ALGOLIA_ID = functions.config().algoliasalon.id;
 const ALGOLIA_ADMIN_KEY = functions.config().algoliasalon.key;
 const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
+
 const roomsIndex = client.initIndex("rooms");
 const questionsIndex = client.initIndex("questions");
+const usersIndex = client.initIndex("users");
 
 // USER CREATED //
 
@@ -43,6 +45,22 @@ exports.userCreated = functions.auth.user().onCreate((user) => {
         : "",
   });
 
+  promises.push(
+    usersIndex.saveObject({
+      objectID: user.uid,
+      email: user.email,
+      username: user.uid,
+      name:
+        user.providerData && user.providerData[0].displayName
+          ? user.providerData[0].displayName
+          : "",
+      avatar:
+        user.providerData && user.providerData[0].photoURL
+          ? user.providerData[0].photoURL
+          : "",
+    })
+  );
+
   promises.push(batch.commit());
 
   return Promise.all(promises);
@@ -57,56 +75,70 @@ exports.userUpdate = functions.firestore
     const profileOld = change.before.data();
 
     const batch = db.batch();
+    const promises: any = [];
 
     if (!profile || !profileOld || profile === profileOld) return;
+    if (
+      profile.username === profileOld.username &&
+      profile.name === profileOld.name &&
+      profile.avatar === profileOld.avatar &&
+      profile.update === profileOld.update
+    )
+      return;
 
     // If the user changed their username, change the user name in all of that user's posts- past or future
-    if (
-      profile.username !== profileOld.username ||
-      profile.name !== profileOld.name ||
-      profile.avatar !== profileOld.avatar
-    ) {
-      const roomsData = await db
-        .collection("rooms")
-        .where("user_ID", "==", profile.uid)
-        .get();
+    const roomsData = await db
+      .collection("rooms")
+      .where("user_ID", "==", profile.uid)
+      .get();
 
-      roomsData.docs.map((doc) => {
-        const room = doc.data();
-        const roomRef = db.collection("rooms").doc(room.id);
+    roomsData.docs.map((doc) => {
+      const room = doc.data();
+      const roomRef = db.collection("rooms").doc(room.id);
 
-        batch.set(
-          roomRef,
-          {
-            user_username: profile.username,
-            user_name: profile.name,
-            user_avatar: profile.avatar,
-          },
-          { merge: true }
-        );
-      });
+      batch.set(
+        roomRef,
+        {
+          user_username: profile.username,
+          user_name: profile.name,
+          user_avatar: profile.avatar,
+        },
+        { merge: true }
+      );
+    });
 
-      const commentsData = await db
-        .collection("comments")
-        .where("user_ID", "==", profile.uid)
-        .get();
+    const commentsData = await db
+      .collection("comments")
+      .where("user_ID", "==", profile.uid)
+      .get();
 
-      commentsData.docs.map((doc) => {
-        const comment = doc.data();
-        const commentRef = db.collection("comments").doc(comment.id);
-        batch.set(
-          commentRef,
-          {
-            user_username: profile.username,
-            user_name: profile.name,
-            user_avatar: profile.avatar,
-          },
-          { merge: true }
-        );
-      });
-    }
+    commentsData.docs.map((doc) => {
+      const comment = doc.data();
+      const commentRef = db.collection("comments").doc(comment.id);
+      batch.set(
+        commentRef,
+        {
+          user_username: profile.username,
+          user_name: profile.name,
+          user_avatar: profile.avatar,
+        },
+        { merge: true }
+      );
+    });
 
-    return batch.commit();
+    promises.push(
+      usersIndex.saveObject({
+        objectID: profile.uid,
+        email: profile.email,
+        username: profile.username,
+        name: profile.name,
+        avatar: profile.avatar,
+      })
+    );
+
+    promises.push(batch.commit());
+
+    return Promise.all(promises);
   });
 
 // ROOM CREATED //

@@ -1,15 +1,16 @@
 import "./styles.scss";
 import React, { useEffect, useState, useContext } from "react";
+import { connect } from "react-redux";
+
 import { Emoji } from "emoji-mart";
 import { UniqueIdContext } from "../../../../../../providers/UniqueId";
 import { AuthContext } from "../../../../../../providers/Auth";
-import { connect } from "react-redux";
 
 import {
   enterPortal,
   leavePortal,
   replaceUids,
-} from "../../../../../../actions";
+} from "../../../../../../actions/portals";
 
 const Portal = ({
   portal,

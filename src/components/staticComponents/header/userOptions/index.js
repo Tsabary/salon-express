@@ -6,7 +6,7 @@ import { useToasts } from "react-toast-notifications";
 
 import { AuthContext } from "../../../../providers/Auth";
 
-import { logOut, resendVerification } from "../../../../actions";
+import { logOut, resendVerification } from "../../../../actions/users";
 
 const UserOptions = ({ logOut, resendVerification, isFloor }) => {
   const { currentUserProfile, currentUser } = useContext(AuthContext);

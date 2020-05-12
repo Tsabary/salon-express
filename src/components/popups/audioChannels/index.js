@@ -7,7 +7,8 @@ import { Droppable, DragDropContext } from "react-beautiful-dnd";
 import { RoomContext } from "../../../providers/Room";
 import { FloorContext } from "../../../providers/Floor";
 
-import { saveArrayOrder, saveFloorRoomArrayOrder } from "../../../actions";
+import { saveArrayOrder } from "../../../actions/rooms";
+import { saveFloorRoomArrayOrder } from "../../../actions/floors";
 
 import InnerList from "./innerList";
 

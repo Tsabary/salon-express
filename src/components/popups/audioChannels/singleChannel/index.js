@@ -6,7 +6,7 @@ import { Draggable } from "react-beautiful-dnd";
 import { ReactSVG } from "react-svg";
 import ReactTooltip from "react-tooltip";
 
-import { setActiveChannel, deleteChannel } from "../../../../actions";
+import { setActiveChannel, deleteChannel } from "../../../../actions/rooms";
 import { RoomContext } from "../../../../providers/Room";
 
 const SingleChannel = ({

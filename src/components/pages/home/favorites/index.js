@@ -2,7 +2,7 @@ import React, { useEffect, useContext, useState } from "react";
 import { connect } from "react-redux";
 import { AuthContext } from "../../../../providers/Auth";
 
-import { fetchFirstFavorites, fetchMoreFavorites } from "../../../../actions";
+import { fetchFirstFavorites, fetchMoreFavorites } from "../../../../actions/feeds";
 
 import { renderSection } from "../../../../utils/feeds";
 

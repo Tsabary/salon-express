@@ -1,11 +1,11 @@
 import "./styles.scss";
 import React, { useEffect, useContext } from "react";
+import { connect } from "react-redux";
 
 import { isMobile } from "react-device-detect";
 import Iframe from "react-iframe";
 
-import { logGuestEntry } from "../../../../../actions";
-import { connect } from "react-redux";
+import { logGuestEntry } from "../../../../../actions/rooms";
 import { AuthContext } from "../../../../../providers/Auth";
 
 const Chat = ({

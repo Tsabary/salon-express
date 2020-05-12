@@ -7,7 +7,7 @@ import firebase from "firebase/app";
 
 import history from "../../../../history";
 
-import { fetchTags } from "../../../../actions";
+import { fetchTags } from "../../../../actions/global";
 import { SearchContext } from "../../../../providers/Search";
 import { PageContext } from "../../../../providers/Page";
 

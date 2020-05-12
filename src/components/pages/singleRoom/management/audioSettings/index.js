@@ -1,19 +1,17 @@
 import "./styles.scss";
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import { ReactSVG } from "react-svg";
 import ReactTooltip from "react-tooltip";
+import { isMobile } from "react-device-detect";
 
-import {
-  updateRoom,
-  addChannel,
-  addChannelFloorRoom,
-} from "../../../../../actions";
+import { updateRoom, addChannel } from "../../../../../actions/rooms";
+import { addChannelFloorRoom } from "../../../../../actions/floors";
+
 import { connect } from "react-redux";
 
 import InputField from "../../../../formComponents/inputField";
 import SingleChannel from "./singleChannel";
-import { isMobile } from "react-device-detect";
 
 const AudioSettings = ({
   room,

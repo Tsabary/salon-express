@@ -678,6 +678,11 @@ h3 {
   grid-template-columns: repeat(2, 1fr);
 }
 
+.fr-fr-fr {
+  @include gridVariation;
+  grid-template-columns: repeat(3, 1fr);
+}
+
 .fr-fr-max {
   @include gridVariation;
   grid-template-columns: repeat(2, 1fr) max-content;

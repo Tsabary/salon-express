@@ -6,7 +6,8 @@ import validator from "validator";
 import ReactTooltip from "react-tooltip";
 
 import { AuthContext } from "../../../../../providers/Auth";
-import { updateRoom, updateFloorRoom } from "../../../../../actions";
+import { updateRoom } from "../../../../../actions/rooms";
+import { updateFloorRoom } from "../../../../../actions/floors";
 
 import InputField from "../../../../formComponents/inputField";
 import ToggleField from "../../../../formComponents/toggleField";

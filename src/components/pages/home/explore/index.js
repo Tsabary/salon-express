@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { AuthContext } from "../../../../providers/Auth";
 import { renderSection } from "../../../../utils/feeds";
 
-import { fetchFirstExplore, fetchMoreExplore } from "../../../../actions";
+import { fetchFirstExplore, fetchMoreExplore } from "../../../../actions/feeds";
 
 const Explore = ({ explore, fetchFirstExplore, fetchMoreExplore }) => {
   const { currentUserProfile } = useContext(AuthContext);

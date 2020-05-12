@@ -9,7 +9,8 @@ import { google, outlook, yahoo, ics } from "calendar-link";
 
 import { AuthContext } from "../../../../../../providers/Auth";
 
-import { deleteEvent, deleteEventFloor } from "../../../../../../actions";
+import { deleteEvent } from "../../../../../../actions/rooms";
+import { deleteEventFloor } from "../../../../../../actions/floors";
 import { renderGoogleLink } from "../../../../../../utils/others";
 import { FloorContext } from "../../../../../../providers/Floor";
 
@@ -44,9 +45,7 @@ const Event = ({ event, deleteEvent, deleteEventFloor, isOwner }) => {
           <div
             className="clickable"
             onClick={() => {
-              globalFloor ?
-              deleteEventFloor(event):
-              deleteEvent(event);
+              globalFloor ? deleteEventFloor(event) : deleteEvent(event);
             }}
           >
             <ReactSVG

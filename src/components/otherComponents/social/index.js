@@ -20,6 +20,20 @@ const Social = ({ data }) => {
         </div>
       ) : null}
 
+{data.twitch ? (
+        <div className="social__icon--twitch">
+          <a href={"https://" + data.twitch} target="_blank" rel="noopener noreferrer">
+            <ReactSVG
+              src="../svgs/twitch.svg"
+              wrapper="div"
+              beforeInjection={(svg) => {
+                svg.classList.add("social__icon");
+              }}
+            />
+          </a>
+        </div>
+      ) : null}
+
       {data.twitter ? (
         <div className="social__icon--twitter">
           <a href={"https://" + data.twitter} target="_blank" rel="noopener noreferrer">

@@ -20,7 +20,7 @@ import "pure-react-carousel/dist/react-carousel.es.css";
 
 import { AuthContext } from "../../../providers/Auth";
 
-import { newFloor, fetchFloorPlans } from "../../../actions";
+import { newFloor, fetchFloorPlans } from "../../../actions/floors";
 import { checkValidity, errorMessages } from "../../../utils/forms";
 
 import { validateWordsLength } from "../../../utils/strings";

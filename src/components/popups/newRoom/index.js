@@ -12,7 +12,7 @@ import ReactTooltip from "react-tooltip";
 
 import { AuthContext } from "../../../providers/Auth";
 
-import { newRoom } from "../../../actions";
+import { newRoom } from "../../../actions/rooms";
 import { checkValidity, errorMessages } from "../../../utils/forms";
 
 import { validateWordsLength } from "../../../utils/strings";

@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 
 import { ReactSVG } from "react-svg";
 
-import { fetchPositions } from "../../../actions";
+import { fetchPositions } from "../../../actions/careers";
 import Position from "./position";
 
 const Careers = ({ positions, fetchPositions }) => {

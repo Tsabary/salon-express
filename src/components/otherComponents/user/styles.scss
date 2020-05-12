@@ -1,0 +1,14 @@
+@import '../../../styles/imports';
+
+.user{
+
+&__avatar{
+    width: 3.5rem;
+    height: 3.5rem;
+    border: 1px white solid;
+    box-shadow: 0 0.4rem 1.4rem rgb(170, 170, 170);
+    border-radius: 10rem;
+    outline: none;
+    cursor: pointer;
+}
+}

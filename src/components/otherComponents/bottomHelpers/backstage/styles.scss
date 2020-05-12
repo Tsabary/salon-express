@@ -1,0 +1,35 @@
+@import "../../../../styles/imports";
+
+.faq {
+  &__input {
+    outline: none;
+    border: none;
+  }
+
+  &__questions {
+    margin-bottom: 6rem;
+    padding: 1rem;
+  }
+
+  &__question {
+    cursor: pointer;
+    background-color: $bgColor;
+    border-radius: 0 1rem 0 1rem;
+    padding: 1rem;
+    margin-top: .5rem;
+    &:hover{
+      color: $mainColor;
+    }
+  }
+
+  &__ask {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    // left: 0;
+    width: inherit;
+    background-color: white;
+    border-top: $border;
+    padding: 1rem;
+  }
+}

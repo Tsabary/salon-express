@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { AuthContext } from "../../../../providers/Auth";
 import { renderSection } from "../../../../utils/feeds";
 
-import { fetchFirstFloors, fetchMoreFloors } from "../../../../actions";
+import { fetchFirstFloors, fetchMoreFloors } from "../../../../actions/feeds";
 
 const Floors = ({ floors, fetchFirstFloors, fetchMoreFloors }) => {
   const { currentUserProfile } = useContext(AuthContext);

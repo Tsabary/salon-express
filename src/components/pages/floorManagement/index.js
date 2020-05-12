@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 
 import { AuthContext } from "../../../providers/Auth";
 
-import { fetchMyFloors } from "../../../actions";
+import { fetchMyFloors } from "../../../actions/floors";
 import SingleFloor from "./singleFloor";
 
 const FloorManagement = ({ fetchMyFloors }) => {

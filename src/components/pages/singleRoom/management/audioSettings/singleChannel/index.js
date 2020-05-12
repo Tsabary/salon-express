@@ -10,9 +10,12 @@ import { RoomContext } from "../../../../../../providers/Room";
 import {
   setActiveChannel,
   deleteChannel,
-  deleteChannelFloorRoom,
+} from "../../../../../../actions/rooms";
+
+import {
   setActiveChannelFloorRoom,
-} from "../../../../../../actions";
+  deleteChannelFloorRoom,
+} from "../../../../../../actions/floors";
 
 const SingleChannel = ({
   channel,

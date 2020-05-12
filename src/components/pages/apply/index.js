@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
-import { fetchSinglePosition } from "../../../actions";
+import { fetchSinglePosition } from "../../../actions/careers";
 import InputField from "../../formComponents/inputField";
 import TextArea from "../../formComponents/textArea";
 

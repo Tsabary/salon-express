@@ -14,7 +14,7 @@ import firebase from "firebase/app";
 import { SearchContext } from "../../../providers/Search";
 import { PageContext } from "../../../providers/Page";
 
-import { addToFavorites, removeFromFavorites } from "../../../actions";
+import { addToFavorites, removeFromFavorites } from "../../../actions/rooms";
 
 import { getLanguageName } from "../../../utils/languages";
 import { capitalizeSentances } from "../../../utils/strings";

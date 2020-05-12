@@ -2,8 +2,7 @@ import "../styles/styles.scss";
 import "./styles.scss";
 
 import React, { useState, useEffect } from "react";
-import { Router, Route, Switch, useHistory } from "react-router-dom";
-import { connect } from "react-redux";
+import { Router, Route, Switch } from "react-router-dom";
 
 import { isMobile } from "react-device-detect";
 import { ToastProvider } from "react-toast-notifications";
@@ -15,7 +14,6 @@ import { UniqueIdProvider } from "../providers/UniqueId";
 import { RoomProvider } from "../providers/Room";
 import { FloorProvider } from "../providers/Floor";
 
-import { stopListeningToProfile, detachListener } from "../actions";
 
 import history from "../history";
 
@@ -40,7 +38,6 @@ import Contact from "./pages/contact";
 import PrivacyPolicy from "./pages/sheets/PrivacyPolicy";
 import TermsAndConditions from "./pages/sheets/TermsAndConditions";
 import AnswerQuestions from "./pages/answerQuestions";
-import AddQuestion from "./pages/addQuestion";
 import Careers from "./pages/careers";
 import Apply from "./pages/apply";
 import Floor from "./pages/floor";
@@ -49,7 +46,7 @@ import EditFloor from "./pages/editFloor";
 
 // import Updates from "./otherComponents/updates";
 import AudioChannels from "./popups/audioChannels";
-import NewFloorRoom from "./popups/newFloorRoom";
+// import NewFloorRoom from "./popups/newFloorRoom";
 import BottomHelpers from "./otherComponents/bottomHelpers";
 
 const App = () => {
@@ -95,7 +92,7 @@ const App = () => {
                       <UpdateProfile />
                       <NewRoom />
                       <NewFloor />
-                      <NewFloorRoom />
+                      {/* <NewFloorRoom /> */}
                       <NewFloorPlan />
                       <AudioChannels />
                       {/* <EditRoom /> */}
@@ -119,11 +116,7 @@ const App = () => {
                           exact
                           component={AnswerQuestions}
                         />
-                        <Route
-                          path="/add-question"
-                          exact
-                          component={AddQuestion}
-                        />
+      
                         <Route path="/careers" exact component={Careers} />
                         <Route path="/careers/:id" exact component={Apply} />
                         <Route
@@ -171,4 +164,4 @@ const App = () => {
   );
 };
 
-export default connect(null, { stopListeningToProfile, detachListener })(App);
+export default App;

@@ -9,7 +9,7 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import history from "../../../history";
 import firebase from "firebase/app";
 
-import { signUp, providerSignIn, passwordReset } from "../../../actions";
+import { signUp, providerSignIn, passwordReset } from "../../../actions/users";
 
 import InputField from "../../formComponents/inputField";
 import validator from "validator";

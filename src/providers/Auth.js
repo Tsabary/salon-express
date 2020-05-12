@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import firebase from "firebase/app";
 
-import { listenToProfile, stopListeningToProfile } from "../actions";
+import { listenToProfile, stopListeningToProfile } from "../actions/users";
 
 export const AuthContext = React.createContext();
 

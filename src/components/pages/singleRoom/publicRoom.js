@@ -6,7 +6,7 @@ import { AuthContext } from "../../../providers/Auth";
 import { UniqueIdContext } from "../../../providers/UniqueId";
 import { RoomContext } from "../../../providers/Room";
 
-import { fetchSingleRoom } from "../../../actions";
+import { fetchSingleRoom } from "../../../actions/rooms";
 
 import Comments from "./comments";
 

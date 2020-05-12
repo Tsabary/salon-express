@@ -7,18 +7,9 @@ import { AuthContext } from "../../../providers/Auth";
 import { renderSection } from "../../../utils/feeds";
 import { capitalizeAndRemoveHyphens } from "../../../utils/strings";
 
-import {
-  fetchFirstSearched,
-  fetchMoreSearched,
-  togglePopup,
-} from "../../../actions";
+import { fetchFirstSearched, fetchMoreSearched } from "../../../actions/feeds";
 
-const Search = ({
-  match,
-  searched,
-  fetchFirstSearched,
-  fetchMoreSearched,
-}) => {
+const Search = ({ match, searched, fetchFirstSearched, fetchMoreSearched }) => {
   const { currentUserProfile } = useContext(AuthContext);
 
   const [lastVisible, setLastVisible] = useState(null);
@@ -33,16 +24,13 @@ const Search = ({
         ? currentUserProfile.languages
         : null
     );
-
   }, [currentUserProfile]);
 
   return (
     <div className="search">
       {renderSection(
         searched,
-        `Rooms related to ${capitalizeAndRemoveHyphens(
-          match.params.id
-        )}`,
+        `Rooms related to ${capitalizeAndRemoveHyphens(match.params.id)}`,
         fetchMoreSearched,
         lastVisible,
         setLastVisible,
@@ -52,7 +40,7 @@ const Search = ({
         match.params.id
       )}
 
-      {!searched.length  ? (
+      {!searched.length ? (
         <div className="empty-feed small-margin-top centered">
           This is a fresh topic! Want to talk about it? Open a new Room!
         </div>
@@ -71,5 +59,4 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   fetchFirstSearched,
   fetchMoreSearched,
-  togglePopup,
 })(Search);

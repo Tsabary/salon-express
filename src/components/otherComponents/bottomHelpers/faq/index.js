@@ -6,7 +6,7 @@ import algoliasearch from "algoliasearch/lite";
 
 import { AuthContext } from "../../../../providers/Auth";
 
-import { newQuestion } from "../../../../actions";
+import { newQuestion } from "../../../../actions/faq";
 
 const searchClient = algoliasearch(
   process.env.REACT_APP_ALGOLIA_ID,

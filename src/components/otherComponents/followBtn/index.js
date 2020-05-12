@@ -4,7 +4,7 @@ import React, { useState, useContext } from "react";
 import Loader from "react-loader-spinner";
 import { connect } from "react-redux";
 
-import { follow, unfollow } from "../../../actions";
+import { follow, unfollow } from "../../../actions/profiles";
 import { AuthContext } from "../../../providers/Auth";
 
 const FollowBtn = ({

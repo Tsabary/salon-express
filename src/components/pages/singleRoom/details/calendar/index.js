@@ -8,7 +8,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import ReactTooltip from "react-tooltip";
 import { v4 as uuidv4 } from "uuid";
 
-import { fetchEvents, addEvent, addEventFloor } from "../../../../../actions";
+import { fetchEvents, addEvent } from "../../../../../actions/rooms";
+import { addEventFloor } from "../../../../../actions/floors";
 
 import Event from "./event";
 import InputField from "../../../../formComponents/inputField";
@@ -46,10 +47,38 @@ const Calendar = ({
   }, [event.start, hours, minutes]);
 
   useEffect(() => {
-    if (room) fetchEvents(room);
+    if (room && !floor) fetchEvents(room);
   }, [room]);
 
+  const dateCompare = (a, b) => {
+    return a.start.toDate() > b.start.toDate()
+      ? 1
+      : a.start.toDate() === b.start.toDate()
+      ? a.end.toDate() > b.end.toDate()
+        ? 1
+        : -1
+      : -1;
+  };
+
   const renderEvents = (events) => {
+    return events.map((event) => {
+      return <Event event={event} isOwner={isOwner} key={event.id} />;
+    });
+  };
+
+  const filterFloorEvents = (events) => {
+    console.log("eventtt", "Called");
+
+    console.log(
+      "eventtt",
+      events.filter((ev) => ev.start.toDate() > new Date()).sort(dateCompare)
+    );
+    return events
+      .filter((ev) => ev.start.toDate() > new Date())
+      .sort(dateCompare);
+  };
+
+  const renderFloorEvents = (events) => {
     return events.map((event) => {
       return <Event event={event} isOwner={isOwner} key={event.id} />;
     });
@@ -173,9 +202,14 @@ const Calendar = ({
       ) : null}
 
       {(!floor && events.length) ||
-      (floor && floor.rooms[roomIndex] && floor.rooms[roomIndex].events) ? (
+      (floor &&
+        floor.rooms[roomIndex] &&
+        floor.rooms[roomIndex].events &&
+        filterFloorEvents(floor.rooms[roomIndex].events)) ? (
         <div className="calendar__events tiny-margin-top">
-          {renderEvents(floor ? floor.rooms[roomIndex].events : events)}
+          {renderEvents(
+            floor ? filterFloorEvents(floor.rooms[roomIndex].events) : events
+          )}
         </div>
       ) : (
         <div className="calendar__empty">

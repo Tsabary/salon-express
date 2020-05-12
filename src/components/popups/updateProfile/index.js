@@ -6,7 +6,7 @@ import Form from "react-bootstrap/Form";
 
 import { AuthContext } from "../../../providers/Auth";
 
-import { updateProfile } from "../../../actions";
+import { updateProfile } from "../../../actions/users";
 import { validateWordsLength } from "../../../utils/strings";
 import { errorMessages, trimURL } from "../../../utils/forms";
 import {
@@ -234,6 +234,15 @@ const UpdateProfile = ({ updateProfile }) => {
                 value={values.instagram}
                 onChange={(instagram) => {
                   setValues({ ...values, instagram });
+                }}
+              />
+
+              <InputField
+                type="text"
+                placeHolder="Your Twitch channel"
+                value={values.twitch}
+                onChange={(twitch) => {
+                  setValues({ ...values, twitch });
                 }}
               />
 

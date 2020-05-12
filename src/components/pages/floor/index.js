@@ -10,7 +10,7 @@ import {
   resetPublicAudioSettings,
   detachFloorListener,
   replaceFloorUids,
-} from "../../../actions";
+} from "../../../actions/floors";
 
 import FloorRoom from "../singleRoom/floorRoom";
 import Coming from "./coming";
@@ -43,7 +43,7 @@ const Floor = ({
     setIsOwner(
       currentUserProfile &&
         globalFloor &&
-        globalFloor.admins.includes(currentUserProfile.email)
+        globalFloor.admins.map(ad=>ad.user_ID).includes(currentUserProfile.email)
     );
   }, [currentUserProfile, globalFloor]);
 

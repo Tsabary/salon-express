@@ -8,7 +8,7 @@ import history from "../../../../history";
 import { AuthContext } from "../../../../providers/Auth";
 import { PageContext } from "../../../../providers/Page";
 
-import { logOut } from "../../../../actions";
+import { logOut } from "../../../../actions/users";
 import { turnToLowerCaseWithHyphen } from "../../../../utils/strings";
 
 const Drawer = ({ logOut }) => {

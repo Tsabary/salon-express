@@ -7,7 +7,7 @@ import history from "../../../../../history";
 
 import { AuthContext } from "../../../../../providers/Auth";
 import { validateWordsLength } from "../../../../../utils/strings";
-import { updateComment, deleteComment } from "../../../../../actions";
+import { updateComment, deleteComment } from "../../../../../actions/rooms";
 import TextArea from "../../../../formComponents/textArea";
 import { connect } from "react-redux";
 
@@ -44,7 +44,7 @@ const Comment = ({ comment, setComments, updateComment, deleteComment }) => {
         <div className="max-fr">
           <img
             className="comment__avatar"
-            src={comment.user_avatar}
+            src={comment.user_avatar? comment.user_avatar : "../../../imgs/avatar.png"}
             alt="comment author"
           />
           <div className="comment__user-name">{comment.user_name}</div>
