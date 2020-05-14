@@ -99,5 +99,21 @@ export const titleToKey = (string) => {
     .replace('"', "-")
     .replace("%", "-")
     .replace("#", "-")
-    .replace(/[^\p{L}\s]+/gu, '');
+    .replace(/[^\p{L}\s]+/gu, "");
+};
+
+export const titleToUrl = (string) => {
+  return string
+    .replace(/[^\p{L}\s]+/gu, "")
+    .trim()
+    .split(" ")
+    .join("-")
+    .toLowerCase()
+    .replace("?", "-")
+    .replace("&", "-")
+    .replace(":", "-")
+    .replace("'", "-")
+    .replace('"', "-")
+    .replace("%", "-")
+    .replace("#", "-");
 };

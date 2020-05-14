@@ -15,6 +15,7 @@ import {
   addToFavorites,
   removeFromFavorites,
   updateRoom,
+  addImageToRoom,
 } from "../../../../../actions/rooms";
 
 import { getLanguageName } from "../../../../../utils/languages";
@@ -27,6 +28,7 @@ import { errorMessages } from "../../../../../utils/forms";
 import TextArea from "../../../../formComponents/textArea";
 import InputField from "../../../../formComponents/inputField";
 import Tags from "../../../../formComponents/tags";
+import { RoomContext } from "../../../../../providers/Room";
 
 const RoomInfo = ({
   room,
@@ -34,12 +36,14 @@ const RoomInfo = ({
   isOwner,
   floor,
   updateRoom,
+  addImageToRoom,
   addToFavorites,
   removeFromFavorites,
 }) => {
   const { currentUserProfile } = useContext(AuthContext);
   const { setSearchTerm } = useContext(SearchContext);
   const { setPage } = useContext(PageContext);
+  const { setGlobalRoom } = useContext(RoomContext);
 
   // We use this state to hold
   const [values, setValues] = useState({});
@@ -51,6 +55,22 @@ const RoomInfo = ({
   const [isTagsEdited, setIsTagsEdited] = useState(false);
 
   const [tagsFormError, setTagsFormError] = useState("");
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageAsFile, setImageAsFile] = useState(null);
+  const [imageError, setImageError] = useState(null);
+
+  const handleImageAsFile = (e) => {
+    const image = e.target.files[0];
+
+    if (image && image.size > 500000) {
+      setImageError("Maximum image size is 500kb");
+      return;
+    }
+
+    setImageAsFile(() => image);
+    setSelectedImage(URL.createObjectURL(image));
+  };
 
   // This sets the value of the description field (so that it'll be present in our edit component)
   useEffect(() => {
@@ -69,7 +89,7 @@ const RoomInfo = ({
   const renderTags = (tags) => {
     return tags.map((el) => {
       return (
-        <div
+        <h3
           className="room__tag"
           key={el}
           onClick={() => {
@@ -79,7 +99,7 @@ const RoomInfo = ({
           }}
         >
           {el}
-        </div>
+        </h3>
       );
     });
   };
@@ -101,62 +121,120 @@ const RoomInfo = ({
       <div className="section__title">Room Info</div>
 
       <div className="room__top">
-        {isNameEdited ? (
-          <>
-            <div className="tiny-margin-bottom tiny-margin-top">
-              <InputField
-                type="text"
-                placeHolder="Room name"
-                value={values && values.name}
-                onChange={(name) => {
-                  if (name.length < 80 && validateWordsLength(name, 25))
-                    setValues({ ...values, name });
-                }}
+        <div className="max-fr">
+          <div className="room-info__image">
+            <label
+              htmlFor={`room-info-image-${room.id}`}
+              className="room-info__image-container"
+            >
+              <img
+                className="room-info__image-preview clickable"
+                src={selectedImage || room.image || "../../imgs/placeholder.jpg"}
+                alt="Room"
               />
-            </div>
+            </label>
+            <input
+              id={`room-info-image-${room.id}`}
+              className="invisible"
+              type="file"
+              onChange={handleImageAsFile}
+            />
+            {imageAsFile ? (
+              <div className="room-info__image-btn room-info__image-approve">
+                <ReactSVG
+                  src="../../svgs/check.svg"
+                  wrapper="div"
+                  beforeInjection={(svg) => {
+                    svg.classList.add("svg-icon--normal");
+                  }}
+                  onClick={() => {
+                    addImageToRoom(room, imageAsFile, (updRoom) => {
+                      setGlobalRoom(updRoom);
+                      setImageAsFile(null);
+                      setSelectedImage(null);
+                    });
+                  }}
+                />
+              </div>
+            ) : null}
 
-            {isOwner ? (
-              <div
-                className="button-colored"
-                onClick={() => {
-                  if (values.name) {
-                    updateRoom(
-                      {
-                        ...room,
-                        name: values.name,
-                      },
-                      "name",
-                      () => {
-                        setIsNameEdited(false);
-                        setLastSavedValues({
-                          ...lastSavedValues,
-                          name: values.name,
-                        });
+            {imageAsFile ? (
+              <div className="room-info__image-btn room-info__image-cancel">
+                <ReactSVG
+                  src="../../svgs/x.svg"
+                  wrapper="div"
+                  beforeInjection={(svg) => {
+                    svg.classList.add("svg-icon--normal");
+                  }}
+                  onClick={() => {
+                    setImageAsFile(null);
+                    setSelectedImage(null);
+                  }}
+                />
+              </div>
+            ) : null}
+          </div>
+
+          <div>
+            {isNameEdited ? (
+              <>
+                <div className="tiny-margin-bottom tiny-margin-top">
+                  <InputField
+                    type="text"
+                    placeHolder="Room name"
+                    value={values && values.name}
+                    onChange={(name) => {
+                      if (name.length < 80 && validateWordsLength(name, 25))
+                        setValues({ ...values, name });
+                    }}
+                  />
+                </div>
+
+                {isOwner ? (
+                  <div
+                    className="button-colored"
+                    onClick={() => {
+                      if (values.name) {
+                        updateRoom(
+                          {
+                            ...room,
+                            name: values.name,
+                          },
+                          "name",
+                          () => {
+                            setIsNameEdited(false);
+                            setLastSavedValues({
+                              ...lastSavedValues,
+                              name: values.name,
+                            });
+                          }
+                        );
                       }
-                    );
-                  }
-                }}
-              >
-                Save name
-              </div>
-            ) : null}
-          </>
-        ) : (
-          <>
-            <div className="room__title">
-              {values.name ? capitalizeSentances(values.name) : null}
-            </div>
+                    }}
+                  >
+                    Save name
+                  </div>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <h1 className="room__title">
+                  {values.name ? capitalizeSentances(values.name) : null}
+                </h1>
 
-            {isOwner && !floor ? (
-              <div
-                className="button-colored"
-                onClick={() => setIsNameEdited(true)}
-              >
-                Edit name
-              </div>
-            ) : null}
-          </>
-        )}
+                {isOwner && !floor ? (
+                  <div
+                    className="button-colored"
+                    onClick={() => setIsNameEdited(true)}
+                  >
+                    Edit name
+                  </div>
+                ) : null}
+              </>
+            )}
+          </div>
+        </div>
+        {imageError ? <div className="form-error">{imageError}</div> : null}
 
         {room.language && room.language !== "lir" ? (
           <div className="room__languages--base extra-tiny-margin-top">
@@ -222,9 +300,9 @@ const RoomInfo = ({
           </>
         ) : (
           <>
-            <div className="room__description tiny-margin-top">
+            <h2 className="room-info__description tiny-margin-top">
               {values.description}
-            </div>
+            </h2>
 
             {isOwner && !floor ? (
               <div
@@ -419,4 +497,5 @@ export default connect(null, {
   updateRoom,
   addToFavorites,
   removeFromFavorites,
+  addImageToRoom,
 })(RoomInfo);

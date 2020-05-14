@@ -1,7 +1,7 @@
 import React from "react";
 import Iframe from "react-iframe";
 
-const Youtube = ({ ID }) => {
+const Youtube = ({ ID, isVideoVisible }) => {
   return (
     <Iframe
       width="100%"
@@ -9,10 +9,11 @@ const Youtube = ({ ID }) => {
       src={`https://www.youtube.com/embed/${ID}`}
       frameborder="0"
       allow="fullscreen; accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-      className="my-iframe"
+      className={
+        isVideoVisible ? "my-iframe" : "my-iframe my-iframe--invisible"
+      }
     />
   );
 };
 
 export default Youtube;
-

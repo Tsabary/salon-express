@@ -11,12 +11,11 @@ import {
   associateWithRoom,
 } from "../../../../../actions/rooms";
 
-import {
-  fetchStrangerProfile,
-} from "../../../../../actions/profiles";
+import { fetchStrangerProfile } from "../../../../../actions/profiles";
 
 import ToggleField from "../../../../formComponents/toggleField";
 import Social from "../../../../otherComponents/social";
+import User from "../../../../otherComponents/user";
 
 const Admin = ({
   room,
@@ -31,11 +30,26 @@ const Admin = ({
 
   const [admin, setAdmin] = useState(null);
 
-  useEffect(() => {
-    if (room && room.associate) {
-      fetchStrangerProfile(room.user_username, setAdmin);
-    }
-  }, [room]);
+  // useEffect(() => {
+  //   if (room && room.associate) {
+  //     fetchStrangerProfile(room.user_username, (profile) => setAdmin(profile));
+  //   }
+  // }, [room]);
+
+  const renderAdmins = (admins) => {
+    return admins.map((admin) => {
+      return (
+        <User
+          user={{
+            avatar: admin.avatar,
+            name: admin.name,
+            username: admin.username,
+          }}
+          userID={admin.uid}
+        />
+      );
+    });
+  };
 
   return (room && room.associate) || isOwner ? (
     <div
@@ -45,7 +59,14 @@ const Admin = ({
           : "management__admin--visitor section__container"
       }
     >
-      <div className="section__title">Admin</div>
+      <div
+        className="section__title"
+        onClick={() => {
+          console.log("switchhh");
+        }}
+      >
+        Admin
+      </div>
 
       {isOwner ? (
         <>
@@ -56,22 +77,25 @@ const Admin = ({
             toggleOff={() => keepRoomListed(room, false)}
             isChecked={room.listed}
           />
-          <ToggleField
+          {/* <ToggleField
             id="singleRoomAssociate"
             text="Associate me with this Room"
             toggleOn={() => associateWithRoom(room, true)}
             toggleOff={() => associateWithRoom(room, false)}
             isChecked={room.associate}
-          />
+          /> */}
         </>
       ) : null}
 
-      {room && room.associate ? (
+      {room.admins ? renderAdmins(room.admins) : null}
+
+      {/* {room && room.associate ? (
         <>
           <div
             className="max-max"
             onClick={() => myHistory.push(`/${room.user_username}`)}
           >
+
             <img
               className="comment__avatar"
               src={
@@ -91,7 +115,7 @@ const Admin = ({
             {admin ? <Social data={admin} /> : null}
           </div>
         </>
-      ) : null}
+      ) : null} */}
     </div>
   ) : null;
 };

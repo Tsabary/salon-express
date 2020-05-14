@@ -95,7 +95,7 @@ const Chat = ({
         display="initial"
         position="relative"
         allow="fullscreen; camera; microphone"
-        className="my-iframe"
+        className="chat__content"
       />
     ) : (
       <div className="chat__access-container">

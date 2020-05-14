@@ -7,12 +7,17 @@ import { ReactSVG } from "react-svg";
 import ReactTooltip from "react-tooltip";
 
 import { setActiveChannel, deleteChannel } from "../../../../actions/rooms";
+import {
+  setActiveChannelFloorRoom,
+  deleteChannelFloorRoom,
+} from "../../../../actions/floors";
 import { RoomContext } from "../../../../providers/Room";
 
 const SingleChannel = ({
   channel,
   room,
   index,
+  floor,
   currentAudioChannel,
   setActiveChannel,
   deleteChannel,
@@ -63,15 +68,28 @@ const SingleChannel = ({
               <div
                 className="clickable"
                 onClick={() =>
-                  deleteChannel(channel, room, () => {
-                    if (
-                      globalCurrentAudioChannel &&
-                      globalCurrentAudioChannel.link === channel.link
-                    )
-                      setActiveChannel(room.id, null, () =>
-                        setGlobalCurrentAudioChannel(null)
-                      );
-                  })
+                  !floor
+                    ? deleteChannel(channel, room, () => {
+                        if (
+                          currentAudioChannel &&
+                          currentAudioChannel.link === channel.link
+                        )
+                          setActiveChannel(null, room.id, () =>
+                            setGlobalCurrentAudioChannel(null)
+                          );
+                      })
+                    : deleteChannelFloorRoom(channel, index, floor, () => {
+                        if (
+                          currentAudioChannel &&
+                          currentAudioChannel.link === channel.link
+                        )
+                          setActiveChannelFloorRoom(
+                            null,
+                            index,
+                            floor,
+                            () => setGlobalCurrentAudioChannel(null)
+                          );
+                      })
                 }
               >
                 <ReactSVG
@@ -97,9 +115,13 @@ const SingleChannel = ({
                 <div
                   className="clickable"
                   onClick={() => {
-                    setActiveChannel(room.id, null, () =>
-                      setGlobalCurrentAudioChannel(null)
-                    );
+                    !floor
+                      ? setActiveChannel(null, room.id, () =>
+                          setGlobalCurrentAudioChannel(null)
+                        )
+                      : setActiveChannelFloorRoom(null, index, floor, () =>
+                          setGlobalCurrentAudioChannel(null)
+                        );
                   }}
                 >
                   <ReactSVG
@@ -114,9 +136,16 @@ const SingleChannel = ({
                 <div
                   className="clickable"
                   onClick={() => {
-                    setActiveChannel(room.id, channel, () =>
-                      setGlobalCurrentAudioChannel(channel)
-                    );
+                    !floor
+                      ? setActiveChannel(channel, room.id, () =>
+                          setGlobalCurrentAudioChannel(channel)
+                        )
+                      : setActiveChannelFloorRoom(
+                          channel,
+                          index,
+                          floor,
+                          () => setGlobalCurrentAudioChannel(channel)
+                        );
                   }}
                 >
                   <ReactSVG

@@ -5,9 +5,9 @@
     position: relative;
     width: 100%;
     height: min-content;
-    font-family: $font, Arimo;
-    font-size: 1.2rem;
-    padding: .3rem 1.7rem;
+    font-size: 1.1rem;
+    font-family: $font, $fontHebrew;
+    padding: 0.3rem 1.7rem;
     outline: none;
     border: none;
     background-color: white;
@@ -16,7 +16,25 @@
     display: block;
     border-bottom: 2px solid transparent;
 
-    &:hover{
+    &--big {
+      font-family: $fontBlog !important;
+      // font-weight: 700;
+      font-size: 3rem !important;
+      line-height: 4rem;
+      padding:1.5rem 2rem;
+      height: 100% !important;
+    }
+
+    &--medium {
+      font-family: $fontBlogBody !important;
+      color: $greyDark !important;
+      font-size: 2rem;
+      line-height: 2.2rem;
+      padding:1.5rem 2rem;
+      height: 100% !important;
+    }
+
+    &:hover {
       border: $border;
     }
 
@@ -27,8 +45,7 @@
       border-bottom: 2px solid rgb(216, 6, 6);
     }
 
-
-    &--required{
+    &--required {
       &:placeholder-shown {
         border-bottom: 2px solid $mainColor;
       }

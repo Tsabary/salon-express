@@ -1,4 +1,17 @@
+@import "../../../styles/imports";
+
 .follow-btn {
+  padding: 0 0.7rem;
+  font-size: 1.1rem;
+  width: max-content;
+  border-radius: $borderRadius;
+  border: $border;
+
+  &--full {
+    // background-color: $mainColor;
+    color: $mainColor;
+  }
+
   &__empty {
     display: none;
   }

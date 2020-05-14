@@ -69,18 +69,31 @@ const AudioSettings = ({
           />
         );
 
-      case "Twitch":
-        return (
-          <InputField
-            type="text"
-            placeHolder="Channel ID"
-            value={newChannel && newChannel.link}
-            onChange={(link) => {
-              setNewChannel({ ...newChannel, link });
-            }}
-            // numbersAndLetters
-          />
+        case "Twitch":
+          return (
+            <InputField
+              type="text"
+              placeHolder="Channel ID"
+              value={newChannel && newChannel.link}
+              onChange={(link) => {
+                setNewChannel({ ...newChannel, link });
+              }}
+              // numbersAndLetters
+            />
         );
+      
+      
+        case "Website":
+          return (
+            <InputField
+              type="text"
+              placeHolder="Website URL"
+              value={newChannel && newChannel.link}
+              onChange={(link) => {
+                setNewChannel({ ...newChannel, link });
+              }}
+            />
+          );
 
       default:
         return null;
@@ -90,7 +103,7 @@ const AudioSettings = ({
   return (
     <div className="management__audio-settings section__container">
       <div className="max-fr-max">
-        <div className="section__title">Stream Settings</div>
+        <div className="section__title">Media Settings</div>
 
         <>
           <div
@@ -174,6 +187,7 @@ const AudioSettings = ({
               <option className="form-drop">Twitch</option>
               <option className="form-drop">Youtube</option>
               <option className="form-drop">Mixlr</option>
+              <option className="form-drop">Website</option>
             </Form.Control>
 
             {renderIdInput(newChannel)}
@@ -183,9 +197,8 @@ const AudioSettings = ({
           </button>
         </div>
       </form>
-      {floor && floor.rooms[roomIndex] && floor.rooms[roomIndex].audio_channels
-        ? console.log("chhhh", floor.rooms[roomIndex])
-        : null}
+
+      
       {audioChannels.length ||
       (floor && floor.rooms[roomIndex] && floor.rooms[roomIndex].audio_channels)
         ? renderChannels(

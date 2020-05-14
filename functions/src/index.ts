@@ -13,6 +13,7 @@ const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
 const roomsIndex = client.initIndex("rooms");
 const questionsIndex = client.initIndex("questions");
 const usersIndex = client.initIndex("users");
+const blogPostsIndex = client.initIndex("blog_posts");
 
 // USER CREATED //
 
@@ -334,7 +335,7 @@ exports.roomDeleted = functions.firestore
     return Promise.all(promises);
   });
 
-// ROOM UPDATE //
+// QUESTION UPDATE //
 
 exports.questionUpdated = functions.firestore
   .document("questions/{questionID}")
@@ -358,6 +359,85 @@ exports.questionUpdated = functions.firestore
         })
       );
     }
+
+    return Promise.all(promises);
+  });
+
+/////////// BLOG POSTS //////////
+
+const wordCount = (string: string) => {
+  return string
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+};
+
+// BLOG POST CREATE //
+
+exports.BloPostCreated = functions.firestore
+  .document("blog_posts/{postID}")
+  .onCreate((snap, context) => {
+    const bp = snap.data();
+    const promises: any = [];
+
+    if (!bp) return;
+
+    promises.push(
+      blogPostsIndex.saveObject({
+        objectID: bp.id,
+        created_on: bp.created_on,
+        image: bp.image,
+        body: wordCount(bp.body),
+        title: bp.title,
+        subtitle: bp.subtitle,
+      })
+    );
+
+    return Promise.all(promises);
+  });
+
+// BLOG POST UPDATE //
+
+exports.blogPostUpdated = functions.firestore
+  .document("blog_posts/{postID}")
+  .onUpdate((change, context) => {
+    const newBP = change.after.data();
+    const oldBP = change.before.data();
+
+    const batch = db.batch();
+    const promises: any = [];
+
+    if (!newBP || !oldBP || newBP === oldBP) return;
+
+    promises.push(batch.commit());
+
+    if (newBP) {
+      promises.push(
+        blogPostsIndex.saveObject({
+          objectID: newBP.id,
+          created_on: newBP.created_on,
+          image: newBP.image,
+          body: wordCount(newBP.body),
+          title: newBP.title,
+          subtitle: newBP.subtitle,
+        })
+      );
+    }
+
+    return Promise.all(promises);
+  });
+
+// BLOG POST DELETE //
+
+exports.blogPostDeleted = functions.firestore
+  .document("blog_posts/{postID}")
+  .onDelete((snap, context) => {
+    const bp = snap.data();
+    const promises: any = [];
+
+    if (!bp) return;
+
+    promises.push(blogPostsIndex.deleteObject(bp.id));
 
     return Promise.all(promises);
   });

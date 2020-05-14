@@ -6,7 +6,7 @@ import { AuthContext } from "../../../providers/Auth";
 import { UniqueIdContext } from "../../../providers/UniqueId";
 import { RoomContext } from "../../../providers/Room";
 
-import { fetchSingleRoom } from "../../../actions/rooms";
+import { fetchSingleRoom, detachChannelListener } from "../../../actions/rooms";
 
 import Comments from "./comments";
 
@@ -14,10 +14,11 @@ import Media from "./media";
 import Details from "./details";
 import Management from "./management";
 
-const PublicRoom = ({ match, fetchSingleRoom }) => {
+const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
   const { currentUserProfile } = useContext(AuthContext);
   const { setGlobalCurrentAudioChannel } = useContext(RoomContext);
   const { setGlobalRoom } = useContext(RoomContext);
+  const [roomId, setRoomId] = useState(null)
 
   // This is a fake unique id based on current timestamp. We use it to identify users that aren't logged in, so we can manage the coun of users in each portal
   const { uniqueId } = useContext(UniqueIdContext);
@@ -28,36 +29,42 @@ const PublicRoom = ({ match, fetchSingleRoom }) => {
   const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
-    console.log("audio channel public room", currentAudioChannel);
-  }, [currentAudioChannel]);
-
-  useEffect(() => {
     setIsOwner(
-      currentUserProfile && room && currentUserProfile.uid === room.user_ID
+      currentUserProfile &&
+        room &&
+        room.admins_ID.includes(currentUserProfile.uid)
     );
   }, [currentUserProfile, room]);
 
   // This happens when the room first loads. We take the id of the room and also the fake uid (return if it's not set yet) and we fetch the rooms data. There's also a callback for creating a new portal called home in case there aren't any portals in this room yet
   useEffect(() => {
     if (!uniqueId) return;
+
+    const id = match.params.id.split("-");
+    setRoomId(id[id.length - 1])
+
     fetchSingleRoom(
-      match.params.id,
+      id[id.length - 1],
       setRoom,
       setGlobalRoom,
       setCurrentAudioChannel,
       setGlobalCurrentAudioChannel
     );
+
+    return function cleanup() {
+      detachChannelListener();
+    };
   }, [match.params.id, uniqueId]);
 
   // Our main render
-  return (
+  return roomId ?(
     <div className="single-room">
       {/** This is the video chat, the embedded streams, the Mixlr and the Multiverse*/}
       <Media
         room={room}
         currentAudioChannel={currentAudioChannel}
         // Calling this entity ID and not room ID, because here it might just be the room ID, but in  floor it's a mix of the floor ID with the room ID
-        entityID={match.params.id}
+        entityID={roomId}
         isOwner={isOwner}
       />
 
@@ -72,11 +79,12 @@ const PublicRoom = ({ match, fetchSingleRoom }) => {
       />
 
       {/** This is the comments*/}
-      {room ? <Comments room={room} entityID={match.params.id} /> : null}
+      {room ? <Comments room={room} entityID={roomId} /> : null}
     </div>
-  );
+  ) : null;
 };
 
 export default connect(null, {
   fetchSingleRoom,
+  detachChannelListener,
 })(PublicRoom);

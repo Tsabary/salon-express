@@ -21,6 +21,8 @@ import MyFloorsReducer from "./floors/MyFloorsReducer";
 import FloorPlansReducer from "./floors/FloorPlansReducer";
 import CurrentFloorReducer from "./floors/CurrentFloorReducer";
 import FloorsReducer from "./floors/FloorsReducer";
+import BackstageReducer from "./user/BackstageReducer";
+import BlogReducer from "./blog/BlogReducer";
 
 export default combineReducers({
   // GLOBAL //
@@ -47,6 +49,7 @@ export default combineReducers({
 
   // USER //
   updates: UpdatesReducer,
+  backstage: BackstageReducer,
   notifications: NotificationReducer,
 
   // ROOM //
@@ -58,4 +61,6 @@ export default combineReducers({
 
   // CAREERS //
   positions: PositionsReducer,
+
+  blogPosts: BlogReducer,
 });

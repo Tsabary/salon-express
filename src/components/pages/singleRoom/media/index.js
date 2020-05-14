@@ -12,10 +12,6 @@ import {
   newPortal,
 } from "../../../../actions/portals";
 
-import {
-  detachChannelListener,
-} from "../../../../actions/rooms";
-
 import { titleToKey } from "../../../../utils/strings";
 
 import Chat from "./chat";
@@ -27,6 +23,7 @@ import Mixlr from "./mixlr";
 import { connect } from "react-redux";
 import Notice from "./notice";
 import { FloorContext } from "../../../../providers/Floor";
+import IFrame from "./iframe";
 
 const Media = ({
   room,
@@ -37,7 +34,6 @@ const Media = ({
   isOwner,
   listenToMultiverse,
   detachMultiverseListener,
-  detachChannelListener,
   newPortal,
 }) => {
   // This is a fake unique id based on current timestamp. We use it to identify users that aren't logged in, so we can manage the coun of users in each portal
@@ -89,7 +85,6 @@ const Media = ({
     });
     return function cleanup() {
       detachMultiverseListener();
-      detachChannelListener()
     };
   }, [entityID, currentPortal, currentUserProfile, uniqueId]);
 
@@ -200,6 +195,19 @@ const Media = ({
   //   );
   // };
 
+  const getIframeUrl = (audioChannel) => {
+    switch (audioChannel.source) {
+      case "youtube":
+        return `https://www.youtube.com/embed/${audioChannel.link}`;
+
+      case "twitch":
+        return `https://player.twitch.tv/?channel=${audioChannel.link}`;
+
+      default:
+        return audioChannel.link;
+    }
+  };
+
   return (
     <div className="media single-room__media">
       {isMobile ? (
@@ -285,23 +293,20 @@ const Media = ({
               </span>
             ) : null}
 
-            {currentAudioChannel && currentAudioChannel.source === "youtube" ? (
+            {currentAudioChannel &&
+            currentAudioChannel.source &&
+            currentAudioChannel.source !== "mixlr" ? (
               <span className="media__stream">
-                <Youtube ID={currentAudioChannel.link} isVideoVisible={isVideoVisible}/>
+                <IFrame
+                  url={getIframeUrl(currentAudioChannel)}
+                  source={currentAudioChannel.source}
+                  isVideoVisible={isVideoVisible}
+                />
               </span>
             ) : null}
-
-            {currentAudioChannel && currentAudioChannel.source === "twitch" ? (
-              <span className="media__stream">
-                <Twitch ID={currentAudioChannel.link} isVideoVisible={isVideoVisible}/>
-              </span>
-            ) : null}
-            {/* </div> */}
-
-            {/* {renderControllers()} */}
 
             {currentAudioChannel &&
-            ["youtube", "twitch"].includes(currentAudioChannel.source)
+            ["youtube", "twitch","website"].includes(currentAudioChannel.source)
               ? renderControllers()
               : null}
           </>
@@ -311,9 +316,11 @@ const Media = ({
   );
 };
 
-export default connect(null, { listenToMultiverse, detachMultiverseListener,detachChannelListener, newPortal })(
-  Media
-);
+export default connect(null, {
+  listenToMultiverse,
+  detachMultiverseListener,
+  newPortal,
+})(Media);
 
 // {!isMobile ? (
 //   <>
@@ -352,3 +359,30 @@ export default connect(null, { listenToMultiverse, detachMultiverseListener,deta
 //       : null}
 //   </>
 // ) : null}
+
+{
+  /* {currentAudioChannel && currentAudioChannel.source === "youtube" ? (
+              <span className="media__stream">
+                <Youtube
+                  ID={currentAudioChannel.link}
+                  isVideoVisible={isVideoVisible}
+                />
+              </span>
+            ) : null}
+
+            {currentAudioChannel && currentAudioChannel.source === "twitch" ? (
+              <span className="media__stream">
+                <Twitch
+                  ID={currentAudioChannel.link}
+                  isVideoVisible={isVideoVisible}
+                />
+              </span>
+            ) : null} */
+}
+{
+  /* </div> */
+}
+
+{
+  /* {renderControllers()} */
+}

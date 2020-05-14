@@ -32,6 +32,9 @@ const Basic = ({
   const [urlError, setUrlError] = useState(null);
   const [urlApproved, setUrlApproved] = useState(false);
   const [urlButton, setUrlButton] = useState("Check Availability");
+  const [isFloorOpen, setIsFloorOpen] = useState(
+    floor && floor.open && floor.open.toDate() < new Date()
+  );
   const [floorOpen, setFloorOpen] = useState(true);
   const [tempUrl, setTempUrl] = useState("");
 
@@ -48,6 +51,11 @@ const Basic = ({
         image: floor.image,
         rooms: [...Object.values(floor.rooms)],
       });
+
+      // if (floor.open) {
+      //   setValues({ ...values, open: floor.open.toDate() });
+      //   setIsFloorOpen(floor.open.toDate() < new Date())
+      // }
     }
   }, [floor]);
 
@@ -144,38 +152,37 @@ const Basic = ({
 
         <div
           className={
-            floorOpen ? "section__container" : "fr-fr section__container"
+            isFloorOpen ? "section__container" : "fr-fr section__container"
           }
         >
           <ToggleField
             id="isFloorOpen"
             text="This Floor is open"
             toggleOn={() => {
-              setFloorOpen(true);
+              setIsFloorOpen(true);
               setValues({ ...values, open: new Date() });
             }}
             toggleOff={() => {
-              setFloorOpen(false);
+              setIsFloorOpen(false);
               setValues({ ...values, open: new Date() });
             }}
-            isChecked={floorOpen}
+            isChecked={isFloorOpen}
           />
-          {floorOpen ? null : (
+          {!values.open ? null : isFloorOpen ? null : (
             <div style={{ width: "100%", justifySelf: "stretch" }}>
               <div>Set opening time</div>
               <DatePicker
-                selected={values.open}
+                selected={
+                  Object.prototype.toString.call(values.open) ===
+                  "[object Date]"
+                    ? values.open
+                    : values.open.toDate()
+                }
                 onChange={(open) => {
-                  if (
-                    Object.prototype.toString.call(open) === "[object Date]"
-                  ) {
-                    setValues({
-                      ...values,
-                      open,
-                    });
-                  } else {
-                    delete values.open;
-                  }
+                  setValues({
+                    ...values,
+                    open,
+                  });
                 }}
                 showTimeSelect
                 timeFormat="HH:mm"

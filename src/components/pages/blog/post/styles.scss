@@ -1,0 +1,28 @@
+@import "../../../../styles/imports";
+
+.post {
+  @include padding;
+
+  &__body {
+    width: 100%;
+    max-width: 70rem !important;
+    margin: 4rem auto;
+  }
+
+  &__content {
+    margin-top: 2rem;
+    font-size: 1.6rem;
+    font-family: $fontBlogBody;
+    font-weight: 100;
+    line-height: 3rem;
+    color: $greyDarkest;
+
+    a {
+      color: $mainColor !important;
+      &:hover{
+        color: $mainColor !important;
+        text-decoration: underline  !important;
+      }
+    }
+  }
+}

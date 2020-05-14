@@ -16,7 +16,8 @@ const Stranger = ({ match, strangerProfile, fetchStrangerProfile }) => {
   const [stranger, setStranger] = useState(null);
 
   useEffect(() => {
-    if (match.params.id) fetchStrangerProfile(match.params.id, setStranger);
+    if (match.params.id)
+      fetchStrangerProfile(match.params.id, (profile) => setStranger(profile));
   }, [match.params.id]);
 
   return !stranger ? null : (

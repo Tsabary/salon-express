@@ -43,7 +43,7 @@ const Floor = ({
     setIsOwner(
       currentUserProfile &&
         globalFloor &&
-        globalFloor.admins.map(ad=>ad.user_ID).includes(currentUserProfile.email)
+        globalFloor.admins_ID.includes(currentUserProfile.uid)
     );
   }, [currentUserProfile, globalFloor]);
 

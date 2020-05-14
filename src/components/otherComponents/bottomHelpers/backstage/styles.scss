@@ -1,34 +1,87 @@
 @import "../../../../styles/imports";
 
-.faq {
-  &__input {
-    outline: none;
-    border: none;
+.backstage {
+
+
+  &__checkbox {
+    visibility: hidden;
+    display: none;
+    opacity: 0;
+
+    &:checked ~ .backstage__container {
+      height: 40rem;
+      width: 40rem;
+      // padding: 2rem;
+      margin: 0;
+    }
+
+    &:checked ~ .backstage__container #backstage__send {
+      display: grid;
+    }
+
   }
 
-  &__questions {
-    margin-bottom: 6rem;
-    padding: 1rem;
-  }
 
-  &__question {
-    cursor: pointer;
-    background-color: $bgColor;
-    border-radius: 0 1rem 0 1rem;
-    padding: 1rem;
-    margin-top: .5rem;
-    &:hover{
-      color: $mainColor;
+  &__scroll{
+    height: 35rem;
+    width: 40rem;
+    position: relative;
+    padding: 0rem;
+    margin: 0;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+      width: 0.5em;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: $mainColor;
+      outline: 1px solid slategrey;
     }
   }
 
-  &__ask {
+  &__scroll-inner{
+    padding: 2rem;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+      width: 0.5em;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: $mainColor;
+      outline: 1px solid slategrey;
+    }
+  }
+
+
+  &__container {
+    position: relative;
+    width: 0;
+    height: 0;
+    padding: 0rem;
+    margin: 0;
+    overflow-y: hidden;
+
+    transition: transform 0.2s;
+    transition: height 0.2s;
+    transition: width 0.2s;
+
+    // &::-webkit-scrollbar {
+    //   width: 0.5em;
+    // }
+
+    // &::-webkit-scrollbar-thumb {
+    //   background-color: $mainColor;
+    //   outline: 1px solid slategrey;
+    // }
+  }
+
+  &__send {
     display: none;
     position: fixed;
     bottom: 0;
-    // left: 0;
     width: inherit;
-    background-color: white;
     border-top: $border;
     padding: 1rem;
   }

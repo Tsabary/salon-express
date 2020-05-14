@@ -1,0 +1,43 @@
+@import "../../../styles/imports";
+
+.chat-message {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 1.5rem;
+  align-items: flex-end;
+  background-color: $bgColor;
+  border-radius: 2rem;
+  padding: 1.5rem;
+  margin-right: 15%;
+  &__body {
+  }
+
+  &__avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 100%;
+    outline: none;
+    cursor: pointer;
+  }
+
+  &__body {
+    // margin-top: 1rem;
+  }
+
+  &__user-name {
+    color: $mainColor;
+
+    // margin-top: 1rem;
+    cursor: pointer;
+  }
+
+  &__time {
+    color: $grey;
+  }
+
+  &__timestamp{
+      font-size: 1.2rem;
+      color: $grey;
+  }
+}

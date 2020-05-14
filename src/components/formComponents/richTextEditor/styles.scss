@@ -4,16 +4,21 @@
   position: relative;
   width: 100%;
   height: max-content;
-  font-family: $font;
-  font-size: 1.6rem;
+  font-family: $fontBlogBody;
+  font-size: 1.9rem !important;
+  line-height: 3.4rem;
   margin-top: 3rem;
-  padding: 3rem;
+  padding: 4rem 5rem;
   outline: none;
   border: none;
   background-color: white;
   box-shadow: 0 0.2rem 2rem rgb(228, 228, 228);
   border-radius: $borderRadius;
   display: block;
+
+  a {
+    color: $mainColor !important;
+  }
 
   &__container {
     height: 100%;

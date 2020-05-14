@@ -15,22 +15,19 @@ const FollowBtn = ({
   textFollow,
   textUnfollow,
 }) => {
-  const { setCurrentUserProfile } = useContext(AuthContext);
-
   const [handlingFollow, setHandlingFollow] = useState(false);
 
   return !currentUserProfile ||
     (currentUserProfile && !currentUserProfile.uid) ||
     (currentUserProfile && currentUserProfile.uid === strangerID) ? (
     <div className="follow-btn__empty" />
-  ) : currentUserProfile &&
-    !currentUserProfile.following.includes(strangerID) ? (
+  ) : (currentUserProfile && !currentUserProfile.following) ||
+    (currentUserProfile.following &&
+      !currentUserProfile.following.includes(strangerID)) ? (
     <div
-      className="room__button room__button-full clickable"
+      className="follow-btn follow-btn--full clickable"
       onClick={() => {
-        follow(currentUserProfile, strangerID, setCurrentUserProfile, () =>
-          setHandlingFollow(false)
-        );
+        follow(currentUserProfile, strangerID, () => setHandlingFollow(false));
         setHandlingFollow(true);
       }}
     >
@@ -44,10 +41,10 @@ const FollowBtn = ({
     </div>
   ) : (
     <div
-      className="room__button room__button-line clickable"
+      className="follow-btn follow-btn--line clickable"
       onClick={() => {
         {
-          unfollow(currentUserProfile, strangerID, setCurrentUserProfile, () =>
+          unfollow(currentUserProfile, strangerID, () =>
             setHandlingFollow(false)
           );
           setHandlingFollow(true);

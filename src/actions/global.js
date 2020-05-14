@@ -9,8 +9,8 @@ import {
   FETCH_TAGS,
   SET_EDITED_ROOM,
   FETCH_UPDATES,
-  ADD_NOTIFICATION,
-  RESET_NOTIFICATIONS,
+  ADD_UPDATES_NOTIFICATION,
+  RESET_UPDATES_NOTIFICATIONS,
 } from "./types";
 
 const db = firebase.firestore();
@@ -31,14 +31,14 @@ export const listenToUpdates = (currentUserProfile, notification) => async (
     });
 
     dispatch({
-      type: ADD_NOTIFICATION,
+      type: ADD_UPDATES_NOTIFICATION,
     });
   });
 };
 
-export const resetNotifications = () => {
+export const resetUpdatesNotifications = () => {
   return {
-    type: RESET_NOTIFICATIONS,
+    type: RESET_UPDATES_NOTIFICATIONS,
   };
 };
 

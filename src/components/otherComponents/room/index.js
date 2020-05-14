@@ -17,7 +17,7 @@ import { PageContext } from "../../../providers/Page";
 import { addToFavorites, removeFromFavorites } from "../../../actions/rooms";
 
 import { getLanguageName } from "../../../utils/languages";
-import { capitalizeSentances } from "../../../utils/strings";
+import { capitalizeSentances, titleToUrl } from "../../../utils/strings";
 
 const Room = ({
   room,
@@ -65,6 +65,11 @@ const Room = ({
 
   return (
     <div className={isForFeed ? "room room-feed" : "room"}>
+      {room && room.image ? (
+        <div className="room__cover-img">
+          <img src={room.image} alt="Room" />
+        </div>
+      ) : null}
       <div className="room__top">
         <div className="room__content">
           {lastVisit ? (
@@ -76,7 +81,7 @@ const Room = ({
           <div
             className="room__title clickable"
             onClick={() => {
-              myHistory.push(`/room/${room.id}`);
+              myHistory.push(`/room/${titleToUrl(room.title)}-${room.id}`);
             }}
           >
             {capitalizeSentances(room.name)}

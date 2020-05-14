@@ -4,11 +4,15 @@ import { connect } from "react-redux";
 import firebase from "firebase/app";
 import { useToasts } from "react-toast-notifications";
 
+import history from "../../../../history";
+
 import { AuthContext } from "../../../../providers/Auth";
 
 import { logOut, resendVerification } from "../../../../actions/users";
+import { useHistory } from "react-router-dom";
 
 const UserOptions = ({ logOut, resendVerification, isFloor }) => {
+  const myHistory = useHistory(history);
   const { currentUserProfile, currentUser } = useContext(AuthContext);
   const { addToast } = useToasts();
 
@@ -66,6 +70,16 @@ const UserOptions = ({ logOut, resendVerification, isFloor }) => {
       </div>
 
       <div className="user-options__options text-button">
+        <div
+          className="user-options__option"
+          onClick={() => {
+            myHistory.push("/blog/new");
+            firebase.analytics().logEvent("blog_new_pot_clicked");
+          }}
+        >
+          Write a blog post
+        </div>
+
         <div
           className="user-options__option"
           onClick={() => {

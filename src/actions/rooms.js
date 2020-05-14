@@ -13,29 +13,18 @@ import {
   EDIT_ROOM,
   ADD_TO_FAVORITES,
   REMOVE_FROM_FAVORITES,
-
-  // STRANGER PROFILE //
-  FETCH_STRANGER_PROFILE,
   ADD_CHANNEL,
   SET_CHANNELS,
   REMOVE_CHANNEL,
   FETCH_EVENTS,
   REMOVE_EVENT,
   ADD_EVENT,
-  
 } from "./types";
-
-import { titleToKey } from "../utils/strings";
 
 const db = firebase.firestore();
 const analytics = firebase.analytics();
 const RTDB = firebase.database();
-
-
-
-
-
-
+const storage = firebase.storage();
 
 let channelListener;
 
@@ -79,23 +68,19 @@ export const fetchSingleRoom = (
     });
 };
 
-
 // Deteching the listener for the multiverse
 export const detachChannelListener = () => () => {
-    if (channelListener) channelListener();
-  };
-  
+  if (channelListener) channelListener();
+};
 
-
-  export const saveArrayOrder = (collection, key, array, parent, reset) => () => {
-    db.collection(collection)
-      .doc(parent.id)
-      .set({ [key]: array }, { merge: true })
-      .then(() => {
-        reset();
-      });
-  };
-
+export const saveArrayOrder = (collection, key, array, parent, reset) => () => {
+  db.collection(collection)
+    .doc(parent.id)
+    .set({ [key]: array }, { merge: true })
+    .then(() => {
+      reset();
+    });
+};
 
 // LOG //
 export const logGuestEntry = (room, currentUserProfile) => () => {
@@ -208,155 +193,172 @@ export const removeFromFavorites = (currentUserProfile, room, cb) => async (
 };
 
 export const addChannel = (channel, room, cb) => async (dispatch) => {
-    const channelObj = {
-      ...channel,
-      source: channel.source.toLowerCase(),
-      id: uuidv1(),
-    };
-  
-    db.collection("rooms")
-      .doc(room.id)
-      .set(
-        {
-          audio_channels: firebase.firestore.FieldValue.arrayUnion(channelObj),
-        },
-        { merge: true }
-      )
-      .then(() => {
-        cb();
-  
-        dispatch({
-          type: ADD_CHANNEL,
-          payload: channelObj,
-        });
-      })
-      .catch((e) => console.error("promise Error add chanen", e));
-};
-  
+  const channelObj = {
+    ...channel,
+    source: channel.source.toLowerCase(),
+    id: uuidv1(),
+  };
 
+  db.collection("rooms")
+    .doc(room.id)
+    .set(
+      {
+        audio_channels: firebase.firestore.FieldValue.arrayUnion(channelObj),
+      },
+      { merge: true }
+    )
+    .then(() => {
+      cb();
+
+      dispatch({
+        type: ADD_CHANNEL,
+        payload: channelObj,
+      });
+    })
+    .catch((e) => console.error("promise Error add chanen", e));
+};
 
 // Setting the active audio channel
 export const setActiveChannel = (channel, roomID, cb) => () => {
-    db.collection("active_channels")
-      .doc(roomID)
-      .set({
-        link: channel ? channel.link : null,
-        source: channel ? channel.source : null,
-      })
-      .then(() => {
-        if (cb) cb();
-      });
+  db.collection("active_channels")
+    .doc(roomID)
+    .set({
+      link: channel ? channel.link : null,
+      source: channel ? channel.source : null,
+    })
+    .then(() => {
+      if (cb) cb();
+    });
 };
-  
-
-
 
 export const deleteChannel = (channel, room, cb) => async (dispatch) => {
-    db.collection("rooms")
-      .doc(room.id)
-      .set(
-        { audio_channels: firebase.firestore.FieldValue.arrayRemove(channel) },
-        { merge: true }
-      )
-      .then(() => {
-        cb();
-        dispatch({
-          type: REMOVE_CHANNEL,
-          payload: channel,
-        });
-      })
-      .catch((e) => console.error("promise Error delete channel", e));
-  };
-  
-
-
-  
-export const associateWithRoom = (room, associate) => async (dispatch) => {
-    const newRoom = { ...room, associate };
-  
-    db.collection("rooms")
-      .doc(room.id)
-      .set({ associate }, { merge: true })
-      .then(() => {
-        dispatch({
-          type: EDIT_ROOM,
-          payload: newRoom,
-        });
-      })
-      .catch((e) => console.error("promise Error associate with r", e));
-  };
-  
-  export const keepRoomListed = (room, listed) => async (dispatch) => {
-    const newRoom = { ...room, listed };
-  
-    db.collection("rooms")
-      .doc(room.id)
-      .set({ listed }, { merge: true })
-      .then(() => {
-        dispatch({
-          type: EDIT_ROOM,
-          payload: newRoom,
-        });
-      })
-      .catch((e) => console.error("promise Error keep listed", e));
-  };
-  
-  // ROOM //
-  
-  export const newRoom = (values, reset) => async (dispatch) => {
-    window.scrollTo(0, 0);
-  
-    const batch = db.batch();
-    const newDoc = await db.collection("rooms").doc();
-  
-    const room = {
-      ...values,
-      last_visit: new Date(),
-      id: newDoc.id,
-    };
-  
-    batch.set(newDoc, room);
-  
-    batch
-      .commit()
-      .then((d) => {
-        analytics.logEvent("room_opened", {
-          language: values.language,
-          tags: values.tags,
-        });
-  
-        reset();
-  
-        dispatch({
-          type: NEW_ROOM,
-          payload: room,
-        });
-      })
-      .catch((e) => console.error("promise Error new room", e));
-  };
-  
-  export const updateRoom = (updatedRoom, parameter, reset) => (dispatch) => {
-    const batch = db.batch();
-    const docRef = db.collection("rooms").doc(updatedRoom.id);
-  
-    batch.set(docRef, updatedRoom, { merge: true });
-  
-    batch
-      .commit()
-      .then(() => {
-        reset();
-        window.location.hash = "";
-        analytics.logEvent("room_updated", { parameter });
-  
-        dispatch({
-          type: EDIT_ROOM,
-          payload: updatedRoom,
-        });
-      })
-      .catch((e) => console.error("promise Error update room", e));
+  db.collection("rooms")
+    .doc(room.id)
+    .set(
+      { audio_channels: firebase.firestore.FieldValue.arrayRemove(channel) },
+      { merge: true }
+    )
+    .then(() => {
+      cb();
+      dispatch({
+        type: REMOVE_CHANNEL,
+        payload: channel,
+      });
+    })
+    .catch((e) => console.error("promise Error delete channel", e));
 };
-  
 
+export const associateWithRoom = (room, associate) => async (dispatch) => {
+  const newRoom = { ...room, associate };
+
+  db.collection("rooms")
+    .doc(room.id)
+    .set({ associate }, { merge: true })
+    .then(() => {
+      dispatch({
+        type: EDIT_ROOM,
+        payload: newRoom,
+      });
+    })
+    .catch((e) => console.error("promise Error associate with r", e));
+};
+
+export const keepRoomListed = (room, listed) => async (dispatch) => {
+  const newRoom = { ...room, listed };
+
+  db.collection("rooms")
+    .doc(room.id)
+    .set({ listed }, { merge: true })
+    .then(() => {
+      dispatch({
+        type: EDIT_ROOM,
+        payload: newRoom,
+      });
+    })
+    .catch((e) => console.error("promise Error keep listed", e));
+};
+
+// ROOM //
+
+export const newRoom = (values, reset) => async (dispatch) => {
+  window.scrollTo(0, 0);
+
+  const batch = db.batch();
+  const newDoc = await db.collection("rooms").doc();
+
+  const room = {
+    ...values,
+    last_visit: new Date(),
+    id: newDoc.id,
+  };
+
+  batch.set(newDoc, room);
+
+  batch
+    .commit()
+    .then((d) => {
+      analytics.logEvent("room_opened", {
+        language: values.language,
+        tags: values.tags,
+      });
+
+      reset();
+
+      dispatch({
+        type: NEW_ROOM,
+        payload: room,
+      });
+    })
+    .catch((e) => console.error("promise Error new room", e));
+};
+
+export const updateRoom = (updatedRoom, parameter, reset) => async (
+  dispatch
+) => {
+  const batch = db.batch();
+  const docRef = db.collection("rooms").doc(updatedRoom.id);
+
+  batch.set(docRef, updatedRoom, { merge: true });
+
+  batch
+    .commit()
+    .then(() => {
+      reset();
+      window.location.hash = "";
+      analytics.logEvent("room_updated", { parameter });
+
+      dispatch({
+        type: EDIT_ROOM,
+        payload: updatedRoom,
+      });
+    })
+    .catch((e) => console.error("promise Error update room", e));
+};
+
+export const addImageToRoom = (room, image, reset) => async () => {
+  const batch = db.batch();
+  const docRef = db.collection("rooms").doc(room.id);
+
+  if (!image) return;
+
+  const ref = storage.ref(`/images/rooms/${room.id}/`);
+
+  const upload = await ref.put(image);
+  if (!upload) return;
+
+  const downloadUrl = await ref.getDownloadURL();
+  if (!downloadUrl) return;
+
+  batch.set(docRef, { image: downloadUrl }, { merge: true });
+
+  batch
+    .commit()
+    .then(() => {
+      reset({ ...room, image: downloadUrl });
+      analytics.logEvent("room_image_updated");
+    })
+    .catch((e) => console.error("promise Error update room image", e));
+};
 
 export const removeRoom = (room) => (dispatch) => {
   const batch = db.batch();
@@ -376,7 +378,6 @@ export const removeRoom = (room) => (dispatch) => {
     })
     .catch((e) => console.error("promise Error remove room", e));
 };
-
 
 // COMMENTS //
 
@@ -425,9 +426,7 @@ export const deleteComment = (commentID, cb) => async () => {
   });
 };
 
-
 // EVENTS //
-
 
 export const fetchEvents = (room) => async (dispatch) => {
   const data = await db
@@ -443,9 +442,6 @@ export const fetchEvents = (room) => async (dispatch) => {
     payload: data && data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
-
-
-
 
 export const addEvent = (event, room, cb) => async (dispatch) => {
   const eventDoc = db.collection("events").doc();
@@ -464,8 +460,6 @@ export const addEvent = (event, room, cb) => async (dispatch) => {
     .catch((e) => console.error("promise Error add event", e));
 };
 
-
-
 export const deleteEvent = (event) => async (dispatch) => {
   console.log("event", event);
   db.collection("events")
@@ -479,3 +473,40 @@ export const deleteEvent = (event) => async (dispatch) => {
     })
     .catch((e) => console.error("promise Error delete event", e));
 };
+
+// export const uidToAdmin = () => async () => {
+//   const query = await db
+//     .collection("rooms")
+//     .get();
+
+//   if (!query.docs) return;
+
+//   const rooms = query.docs.map((doc) => doc.data());
+
+//   rooms.forEach(async (doc) => {
+//     const adminID = doc.user_ID;
+
+//     const adminDoc = await db.collection("users").doc(adminID).get();
+
+//     if (!adminDoc.data()) return;
+
+//     await db
+//       .collection("rooms")
+//       .doc(doc.id)
+//       .set(
+//         {
+//           admins: [
+//             {
+//               avatar: adminDoc.data().avatar,
+//               email: adminDoc.data().email,
+//               name: adminDoc.data().name,
+//               uid: adminDoc.data().uid,
+//               username: adminDoc.data().username,
+//             },
+//           ],
+//           admins_ID: [adminID],
+//         },
+//         { merge: true }
+//       );
+//   });
+// };

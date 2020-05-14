@@ -7,7 +7,15 @@ import "firebase/database";
 
 import { v1 as uuidv1 } from "uuid";
 
-import { SET_FLOORS, ADD_FLOOR, SET_FLOOR_PLANS, SET_CHANNELS } from "./types";
+import {
+  SET_FLOORS,
+  ADD_FLOOR,
+  SET_FLOOR_PLANS,
+  SET_CHANNELS,
+  RESET_BACKSTAGE_NOTIFICATIONS,
+  ADD_BACKSTAGE_NOTIFICATION,
+  FETCH_BACKSTAGE,
+} from "./types";
 
 const db = firebase.firestore();
 const storage = firebase.storage();
@@ -93,6 +101,7 @@ export const fetchFloorRooms = (floor_ID, setFloorRooms) => async (
 export const fetchFloorPlans = () => async (dispatch) => {
   const data = await db
     .collection("floor_plans")
+    .where("public", "==", true)
     .get()
     .catch((e) => console.error("promise Error fetch floor plans", e));
 
@@ -178,48 +187,52 @@ export const saveFloor = (floor, logoFile, tracks, cb, ecb) => async () => {
     });
 };
 
-export const newBackstageMessage = (room, currentUserProfile) => () => {
-  const roomRef = db.collection("rooms").doc(room.id);
-  roomRef
-    .set(
-      {
-        last_visit: new Date(),
-        visitors_count: firebase.firestore.FieldValue.increment(1),
-      },
-      { merge: true }
-    )
-    .catch((e) => console.error("promise Error log gues", e));
+export const newBackstageMessage = (
+  message,
+  floor,
+  currentUserProfile,
+  cb
+) => () => {
+  const msgObj = {
+    body: message,
+    user_ID: currentUserProfile.uid,
+    user_avatar: currentUserProfile.avatar,
+    user_name: currentUserProfile.name,
+    created_on: Date.now(),
+  };
 
-  analytics.logEvent("room_entered");
+  if (currentUserProfile.username !== currentUserProfile.uid) {
+    msgObj.user_username = currentUserProfile.username;
+  }
 
-  if (!room.favorites) return;
+  RTDB.ref("backstage/" + floor.id)
+    .push()
+    .set(msgObj)
+    .then(() => cb())
+    .catch((e) => console.error("promise Error log guest", e));
+};
 
-  currentUserProfile && currentUserProfile.uid
-    ? room.favorites.forEach((userID) => {
-        if (userID !== currentUserProfile.uid) {
-          RTDB.ref("updates/" + userID)
-            .push()
-            .set({
-              user_ID: currentUserProfile.uid,
-              user_name: currentUserProfile.name,
-              user_username: currentUserProfile.username,
-              room_ID: room.id,
-              room_name: room.name,
-              created_on: Date.now(),
-            })
-            .catch((e) => console.error("promise Error log guest", e));
-        }
-      })
-    : room.favorites.forEach((userID) => {
-        RTDB.ref("updates/" + userID)
-          .push()
-          .set({
-            room_ID: room.id,
-            room_name: room.name,
-            created_on: Date.now(),
-          })
-          .catch((e) => console.error("promise Error log guest", e));
+export const listenToBackstage = (floor) => async (dispatch) => {
+  firebase
+    .database()
+    .ref("backstage/" + floor.id)
+    .limitToLast(10)
+    .on("value", (snapshot) => {
+      dispatch({
+        type: FETCH_BACKSTAGE,
+        payload: snapshot.val() ? Object.values(snapshot.val()) : [],
       });
+
+      dispatch({
+        type: ADD_BACKSTAGE_NOTIFICATION,
+      });
+    });
+};
+
+export const resetBackstageNotifications = () => {
+  return {
+    type: RESET_BACKSTAGE_NOTIFICATIONS,
+  };
 };
 
 export const checkUrlAvailability = (url, errorCB, approvedCB) => async () => {

@@ -8,13 +8,16 @@ import { AuthContext } from "../../../../providers/Auth";
 import { connect } from "react-redux";
 import ScrollToBottom from "react-scroll-to-bottom";
 
-import { listenToUpdates, resetNotifications } from "../../../../actions/global";
+import {
+  listenToUpdates,
+  resetUpdatesNotifications,
+} from "../../../../actions/global";
 
 import Update from "./update";
 
 const Updates = ({
   listenToUpdates,
-  resetNotifications,
+  resetUpdatesNotifications,
   updates,
   notifications,
 }) => {
@@ -28,13 +31,16 @@ const Updates = ({
   const [notCount, setNotCount] = useState(0);
 
   useEffect(() => {
-    open ? resetNotifications() : setNotCount(notifications);
-  }, [notifications, open]);
+    if (open) resetUpdatesNotifications();
+  }, [open]);
+
+  useEffect(() => {
+    setNotCount(notifications.updates);
+  }, [notifications]);
 
   useEffect(() => {
     if (!currentUserProfile) return;
     listenToUpdates(currentUserProfile, () => {
-      console.log("new update")
       // notification.play();
     });
   }, [currentUserProfile]);
@@ -58,12 +64,11 @@ const Updates = ({
       />
       <label className="max-max updates__top" htmlFor="updates">
         <div className="updates__title">Live Updates</div>
-        {notifications ? (
+        {notCount ? (
           <div className="updates__notifications">{notCount}</div>
         ) : null}
       </label>
 
-      {/* <div className="updates__container"> */}
       <ScrollToBottom
         mode="bottom"
         scrollViewClassName="updates__scoll"
@@ -92,5 +97,5 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   listenToUpdates,
-  resetNotifications,
+  resetUpdatesNotifications,
 })(Updates);

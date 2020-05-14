@@ -1,0 +1,23 @@
+@import "../../../../../styles/imports";
+
+.post-header {
+  &__title {
+    font-size: 3.5rem;
+    font-family: $fontBlog;
+    line-height: 4.5rem;
+    color: $greyDarkest;
+    margin-top: 2rem;
+  }
+
+  &__subtitle {
+    margin-top: 2rem;
+    font-size: 2rem;
+    // font-family: $fontBlog;
+    line-height: 3rem;
+    color: $greyDark;
+  }
+
+  &__times {
+    color: $grey;
+  }
+}

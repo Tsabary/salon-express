@@ -1,6 +1,12 @@
 @import '../../../../../styles/imports';
 
 .chat {
+
+  &__content{
+    border: none;
+    outline: none;
+  }
+
   &__access {
     &-container {
       height: 450px;

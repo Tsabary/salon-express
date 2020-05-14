@@ -46,6 +46,11 @@ const Multiverse = ({
     }
   }, [multiverseArray]);
 
+  useEffect(() => {
+    if (!currentUserProfile) return;
+    setNewPortalValues({ ...newPortalValues, user_ID: currentUserProfile.uid });
+  }, [currentUserProfile]);
+
   // Render the portals to the page
   const renderPortals = (multiverse, query) => {
     return multiverse

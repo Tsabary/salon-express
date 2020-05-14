@@ -1,25 +1,14 @@
-@import '../../../styles/imports';
+@import "../../../styles/imports";
 
 .social {
+  margin-right: 0rem;
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(6, max-content);
-
-  @include resize(1350px){
-    grid-template-columns: repeat(4, max-content);
-  }
-
-  @include resize(1000px){
-    grid-template-columns: repeat(3, max-content);
-  }
-
-  @include resize(900px){
-    grid-template-columns: repeat(6, max-content);
-  }
-
+  grid-template-columns: repeat(auto-fill, 2rem);
+  direction: rtl;
   &__icon {
-    height: 3rem;
-    width: 3rem;
+    height: 2rem;
+    width: 2rem;
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 
     &:hover {

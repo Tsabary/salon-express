@@ -38,12 +38,8 @@ const InputField = ({
         id={placeHolder}
         type={type}
         placeholder={placeHolder}
-        // autocomplete="no"
-        // autoComplete="no"
         value={value || ""}
         onChange={(e) => handleChange(e.target.value)}
-        // required={required}
-        // pattern={pattern}
       />
       {label ? (
         <label htmlFor={placeHolder} className="input-field__label">

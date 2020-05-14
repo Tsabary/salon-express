@@ -1,6 +1,9 @@
-@import '../../../../../../styles/imports';
+@import "../../../../../../styles/imports";
 
 .single-channel {
+  width: 100%;
+  // max-width: 10rem;
+  word-break: break-all;
   margin-top: 2rem;
   background-color: $bgColor;
   border-radius: $borderRadius;
@@ -10,18 +13,22 @@
     border: $border;
   }
 
-  &__title{
+  &__title {
+    width: 100%;
+
     font-family: $fontBold;
 
-    &--active{
+    &--active {
       font-family: $fontBold;
       color: $mainColor;
     }
   }
 
-  &__link{
+  &__link {
     color: $grey;
-    &--active{
+    width: 100%;
+    word-break: break-all;
+    &--active {
       color: $mainColor;
     }
   }

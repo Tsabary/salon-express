@@ -1,0 +1,13 @@
+@import "../../../../styles/imports";
+
+.blog {
+  // background-color: white !important;
+  @include padding;
+
+  &__posts {
+    width: max-content;
+    display: grid;
+    gap: 3rem;
+    margin: auto;
+  }
+}

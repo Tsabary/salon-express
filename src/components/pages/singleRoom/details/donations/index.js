@@ -41,26 +41,40 @@ const Donations = ({
   );
 
   // These are controllers for the different containers - do we show the static or the edit mode
-  const [isMerchDetailsEdited, setIsMerchDetailsEdited] = useState(false);
+  const [isMerchUrlEdited, setIsMerchUrlEdited] = useState(false);
 
   // This sets the value of the description field (so that it'll be present in our edit component)
   useEffect(() => {
     if (!room || !isOwner) return;
 
-    if (room.donations_url)
+    if (room.donations_url) {
       setValues((val) => {
         return { ...val, donations_url: room.donations_url };
       });
+      setLastSavedValues((val) => {
+        return { ...val, donations_url: room.donations_url };
+      });
+    }
 
-    if (room.merch_url)
+    if (room.merch_url) {
       setValues((val) => {
         return { ...val, merch_url: room.merch_url };
       });
 
-    if (room.donations_info)
+      setLastSavedValues((val) => {
+        return { ...val, merch_url: room.merch_url };
+      });
+    }
+
+    if (room.donations_info) {
       setValues((val) => {
         return { ...val, donations_info: room.donations_info };
       });
+
+      setLastSavedValues((val) => {
+        return { ...val, donations_info: room.donations_info };
+      });
+    }
   }, [currentUserProfile, room]);
 
   return (
@@ -164,7 +178,8 @@ const Donations = ({
         </>
       ) : (
         <>
-          {(room && room.donations_url && room.accepting_donations) || isOwner ? (
+          {(room && room.donations_url && room.accepting_donations) ||
+          isOwner ? (
             <a
               href={values.donations_url}
               target="_blank"
@@ -186,7 +201,7 @@ const Donations = ({
         </>
       )}
 
-      {isMerchDetailsEdited ? (
+      {isMerchUrlEdited ? (
         <div className="small-margin-top">
           <div className="tiny-margin-bottom">
             <InputField
@@ -211,7 +226,7 @@ const Donations = ({
                           },
                           "merchandise link",
                           () => {
-                            setIsMerchDetailsEdited(false);
+                            setIsMerchUrlEdited(false);
                             setLastSavedValues({
                               ...lastSavedValues,
                               merch_url: values.merch_url,
@@ -227,7 +242,7 @@ const Donations = ({
                           floor,
                           "merchandise link",
                           () => {
-                            setIsMerchDetailsEdited(false);
+                            setIsMerchUrlEdited(false);
                             setLastSavedValues({
                               ...lastSavedValues,
                               merch_url: values.merch_url,
@@ -250,7 +265,7 @@ const Donations = ({
                       merch_url: lastSavedValues.merch_url,
                     };
                   });
-                  setIsMerchDetailsEdited(false);
+                  setIsMerchUrlEdited(false);
                 }}
               >
                 Cancel
@@ -260,7 +275,7 @@ const Donations = ({
         </div>
       ) : (
         <>
-          {(room && room.merch_url && room.selling_merch) || isOwner  ? (
+          {(room && room.merch_url && room.selling_merch) || isOwner ? (
             <a
               href={room.merch_url}
               target="_blank"
@@ -274,7 +289,7 @@ const Donations = ({
           {isOwner ? (
             <div
               className="button-colored tiny-margin-top"
-              onClick={() => setIsMerchDetailsEdited(true)}
+              onClick={() => setIsMerchUrlEdited(true)}
             >
               Edit Url
             </div>
@@ -299,39 +314,37 @@ const Donations = ({
               <div
                 className="button-colored"
                 onClick={() => {
-                  if (values.donations_info) {
-                    !floor
-                      ? updateRoom(
-                          {
-                            ...room,
+                  !floor
+                    ? updateRoom(
+                        {
+                          ...room,
+                          donations_info: values.donations_info,
+                        },
+                        "donations details",
+                        () => {
+                          setIsDonationsDetailsEdited(false);
+                          setLastSavedValues({
+                            ...lastSavedValues,
                             donations_info: values.donations_info,
-                          },
-                          "donations details",
-                          () => {
-                            setIsDonationsDetailsEdited(false);
-                            setLastSavedValues({
-                              ...lastSavedValues,
-                              donations_info: values.donations_info,
-                            });
-                          }
-                        )
-                      : updateFloorRoom(
-                          {
-                            ...room,
+                          });
+                        }
+                      )
+                    : updateFloorRoom(
+                        {
+                          ...room,
+                          donations_info: values.donations_info,
+                        },
+                        roomIndex,
+                        floor,
+                        "donations details",
+                        () => {
+                          setIsDonationsDetailsEdited(false);
+                          setLastSavedValues({
+                            ...lastSavedValues,
                             donations_info: values.donations_info,
-                          },
-                          roomIndex,
-                          floor,
-                          "donations details",
-                          () => {
-                            setIsDonationsDetailsEdited(false);
-                            setLastSavedValues({
-                              ...lastSavedValues,
-                              donations_info: values.donations_info,
-                            });
-                          }
-                        );
-                  }
+                          });
+                        }
+                      );
                 }}
               >
                 Save

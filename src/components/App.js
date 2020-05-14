@@ -14,7 +14,6 @@ import { UniqueIdProvider } from "../providers/UniqueId";
 import { RoomProvider } from "../providers/Room";
 import { FloorProvider } from "../providers/Floor";
 
-
 import history from "../history";
 
 import MainHeader from "./staticComponents/header/Main";
@@ -32,7 +31,6 @@ import NewFloorPlan from "./popups/newFloorPlan";
 import Home from "./pages/home";
 import Search from "./pages/search";
 import SingleRoom from "./pages/singleRoom/publicRoom";
-import SingleRoomFloor from "./pages/singleRoom/floorRoom";
 import Stranger from "./pages/stranger";
 import Contact from "./pages/contact";
 import PrivacyPolicy from "./pages/sheets/PrivacyPolicy";
@@ -43,11 +41,15 @@ import Apply from "./pages/apply";
 import Floor from "./pages/floor";
 import FloorManagement from "./pages/floorManagement";
 import EditFloor from "./pages/editFloor";
+import Blog from "./pages/blog/feed";
+import NewPost from "./pages/blog/newPost";
+import Post from "./pages/blog/post";
 
 // import Updates from "./otherComponents/updates";
 import AudioChannels from "./popups/audioChannels";
 // import NewFloorRoom from "./popups/newFloorRoom";
 import BottomHelpers from "./otherComponents/bottomHelpers";
+import EditPost from "./pages/blog/editPost";
 
 const App = () => {
   const [isFloor, setIsFloor] = useState(
@@ -116,7 +118,11 @@ const App = () => {
                           exact
                           component={AnswerQuestions}
                         />
-      
+
+                        <Route path="/blog" exact component={Blog} />
+                        <Route path="/blog/new" exact component={NewPost} />
+                        <Route path="/blog/:id" exact component={Post} />
+                        <Route path="/blog-edit/:id" exact component={EditPost} />
                         <Route path="/careers" exact component={Careers} />
                         <Route path="/careers/:id" exact component={Apply} />
                         <Route
@@ -130,11 +136,7 @@ const App = () => {
                           component={EditFloor}
                         />
                         <Route path="/floor/:id" exact component={Floor} />
-                        <Route
-                          path="/floor/:id/:room"
-                          exact
-                          component={SingleRoomFloor}
-                        />
+
                         <Route
                           path="/privacy-policy"
                           exact
@@ -151,7 +153,6 @@ const App = () => {
                       <div className="app__footer">
                         <Footer isFloor={isFloor} />
                       </div>
-
                     </div>
                   </Router>
                 </UniqueIdProvider>

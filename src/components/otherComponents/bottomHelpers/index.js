@@ -1,30 +1,19 @@
 import "./styles.scss";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { useHistory } from "react-router-dom";
+
+import history from "../../../history";
+import { FloorContext } from "../../../providers/Floor";
+import { AuthContext } from "../../../providers/Auth";
 
 import Updates from "./updates";
 import Faq from "./faq";
-import { FloorContext } from "../../../providers/Floor";
-import { useHistory } from "react-router-dom";
-import history from "../../../history";
+import Backstage from "./backstage";
 
 const BottomHelpers = () => {
   const myHistory = useHistory(history);
-
-  const [isFloor, setIsFloor] = useState(
-    window.location.href.includes("floor") &&
-      !window.location.href.includes("management") &&
-      window.location.href.split("/").length === 5
-  );
-
-  useEffect(() => {
-    return myHistory.listen((location) => {
-      setIsFloor(
-        location.pathname.includes("floor") &&
-          !location.pathname.includes("management") &&
-          location.pathname.split("/").length === 3
-      );
-    });
-  }, [history]);
+  const { globalFloor } = useContext(FloorContext);
+  const { currentUserProfile } = useContext(AuthContext);
 
   return (
     <div className="bottom-helpers">
@@ -32,10 +21,15 @@ const BottomHelpers = () => {
         <div className="bottom-helpers__chats">
           <Faq />
           <Updates />
+          {currentUserProfile &&
+          globalFloor &&
+          globalFloor.admins_ID.includes(currentUserProfile.uid) ? (
+            <Backstage />
+          ) : null}
         </div>
       </div>
       <div>
-        {/* {!isFloor ? (
+        {/* {!globalFloor ? (
           <div
             className="bottom-helpers__notice clickable"
             onClick={() => myHistory.push("/floor/inqlusiv")}

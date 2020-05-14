@@ -58,7 +58,26 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
   const reset = (currentUserProfile) => {
     setValues({
       user_ID: currentUserProfile.uid,
-      admins: [currentUserProfile.email],
+      admins: [
+        {
+          uid: currentUserProfile.uid,
+          email: currentUserProfile.email,
+          name: currentUserProfile.name,
+          username: currentUserProfile.username,
+          avatar: currentUserProfile.avaar,
+        },
+      ],
+      admins_ID: [currentUserProfile.uid],
+      crew: [
+        {
+          uid: currentUserProfile.uid,
+          email: currentUserProfile.email,
+          name: currentUserProfile.name,
+          username: currentUserProfile.username,
+          avatar: currentUserProfile.avaar,
+        },
+      ],
+      crew_ID: [currentUserProfile.uid],
       open: new Date(),
       visitors: [],
     });

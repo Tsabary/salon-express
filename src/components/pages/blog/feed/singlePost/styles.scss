@@ -1,0 +1,44 @@
+@import "../../../../../styles/imports";
+
+.single-post {
+  width: 80rem;
+  padding-right: 4rem;
+  transition: all 0.2s;
+
+
+  &:hover {
+    padding-left: 2rem;
+    border-left: 0.4rem solid $mainColor;
+  }
+
+  &__title {
+    font-size: 2.5rem;
+    font-family: $fontBlog;
+    color: $greyDarkest;
+    line-height: 2.7rem;
+  }
+
+  &__subtitle {
+    font-size:1.6rem;
+    color: $grey;
+    line-height: 2.4rem;
+  }
+
+  &__image {
+    object-fit: cover;
+    width: 14rem;
+    height: 14rem;
+  }
+
+  &__body {
+    height: 100%;
+    display: grid;
+    // grid-template-rows: max-content 1fr max-content;
+justify-content: start;
+    gap: 1rem;
+  }
+
+  &__timestamp {
+    color: $grey;
+  }
+}

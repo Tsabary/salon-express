@@ -13,28 +13,29 @@ service cloud.firestore {
       allow update: if true; // It's true because even when a non logged in user enters a room we need to update the last active field
       allow delete: if request.auth.uid == resource.data.user_ID;
     }
-
+    
     match /floors/{floor}{
       allow read: if true;
-      allow create: if request.auth.uid == request.resource.data.user_ID;
-      allow update: if request.auth.uid == request.resource.data.user_ID; 
+      allow create: if true;// request.auth.uid == request.resource.data.user_ID;
+      allow update: if request.auth.uid in resource.data.admins_ID; 
       allow delete: if request.auth.uid == resource.data.user_ID;
     }
-
-    match /visitors/{entity}{
-      allow read: if true;
-      allow create: if true;
-      allow update: if true; 
-      allow delete: if request.auth.uid == resource.data.user_ID;
-    }
-
+    
+        
     match /floor_rooms/{room}{
       allow read: if true;
       allow create: if request.auth.uid == request.resource.data.user_ID;
       allow update: if request.auth.uid == request.resource.data.user_ID; 
       allow delete: if request.auth.uid == resource.data.user_ID;
     }
-
+    
+    match /visitors/{entity}{
+      allow read: if true;
+      allow create: if true;
+      allow update: if true; 
+      allow delete: if request.auth.uid == resource.data.user_ID;
+    }
+    
     match /floor_plans/{room}{
       allow read, write, delete: if true;
     }
@@ -56,10 +57,10 @@ service cloud.firestore {
     match /events/{event}{
       allow read: if true;
       allow create: if get(/databases/$(database)/documents/rooms/$(request.resource.data.room_ID)).data.user_ID == request.auth.uid; // need to check that it's the admin
-      allow update: if get(/databases/$(database)/documents/rooms/$(request.resource.data.room_ID)).data.user_ID == request.auth.uid; // need to check that it's the admin
-      allow delete: if get(/databases/$(database)/documents/rooms/$(request.resource.data.room_ID)).data.user_ID == request.auth.uid; // need to check that it's the admin
+      allow update: if get(/databases/$(database)/documents/rooms/$(resource.data.room_ID)).data.user_ID == request.auth.uid; // need to check that it's the admin
+      allow delete: if get(/databases/$(database)/documents/rooms/$(resource.data.room_ID)).data.user_ID == request.auth.uid; // need to check that it's the admin
     }
-
+    
     match /questions/{question}{
       allow read: if true;
       allow create: if true;
@@ -84,14 +85,14 @@ service cloud.firestore {
       allow write, delete: if false;
     }
 
-    match /templates/{template}{
+    match /blog_posts/{post}{
       allow read, delete: if request.auth.uid == resource.data.user_ID;
       allow write: if request.auth.uid == request.resource.data.user_ID;
     }
 
     match /users/{userID}{
       allow read: if true;
-      allow write: if request.auth.uid == request.resource.data.uid;
+      allow write: if request.auth.uid == request.resource.data.uid ||request.auth.uid == "KbhtqAE0B9RDAonhQqgZ1CWsg1o1";
       allow delete: if false;
     }
 

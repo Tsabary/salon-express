@@ -1,0 +1,51 @@
+@import "../../../../../styles/imports";
+
+.my-iframe {
+  width: 100%;
+  position: relative;
+
+  z-index: 20;
+
+  &--mixlr {
+    border: $border !important;
+    border-radius: $borderRadius;
+    overflow: hidden;
+    background-color: white;
+  }
+
+  &__content {
+    border: none;
+    outline: none;
+    width: 100%;
+    &--invisible {
+      display: none !important;
+    }
+  }
+
+  &__fullscreen {
+    &-btns {
+      position: absolute;
+      bottom: 3rem;
+      right: 3rem;
+      display: grid;
+      grid-template-columns: repeat(3, max-content);
+      gap: 2rem;
+    }
+
+    &-btn {
+      height: 4rem;
+      width: 4rem;
+      background-color: white;
+      border: 3px solid $mainColor;
+      border-radius: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .2s;
+      &:hover{
+          transform: translateY(-.2rem);
+      }
+    }
+  }
+}

@@ -18,6 +18,10 @@ import "../../../../node_modules/draft-js-emoji-plugin/lib/plugin.css";
 import createUndoPlugin from "draft-js-undo-plugin";
 import "../../../../node_modules/draft-js-undo-plugin/lib/plugin.css";
 
+import createImagePlugin from 'draft-js-image-plugin';
+import '../../../../node_modules/draft-js-image-plugin/lib/plugin.css';
+
+
 ///inline toolbar plugin and style imports. Also import the headline buttons and the other buttons to appear int the toolbar///
 import createInlineToolbarPlugin, {
   Separator
@@ -48,7 +52,6 @@ import "../../../../node_modules/draft-js-divider-plugin/lib/plugin.css";
 import createLinkPlugin from "draft-js-anchor-plugin";
 import "../../../../node_modules/draft-js-anchor-plugin/lib/plugin.css";
 
-import {  } from "../../../actions";
 
 ///create the emoji plugin and extract it's components///
 const emojiPlugin = createEmojiPlugin();
@@ -57,6 +60,8 @@ const { EmojiSuggestions, EmojiSelect } = emojiPlugin;
 ///create the undo/redo plugin and extract it's components///
 const undoPlugin = createUndoPlugin();
 const { UndoButton, RedoButton } = undoPlugin;
+
+const imagePlugin = createImagePlugin();
 
 ///create the inline toolbar plugin and extract it's components///
 const inlineToolbarPlugin = createInlineToolbarPlugin();
@@ -81,6 +86,7 @@ const RichTextEditor = ({ onChange, value, users, fetchAllUsers }) => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
   useEffect(() => {
+    console.log("valuuu", value)
     if (value) {
       setEditorState(EditorState.createWithContent(stateFromHTML(value)));
       onChange(value);
@@ -96,7 +102,8 @@ const RichTextEditor = ({ onChange, value, users, fetchAllUsers }) => {
     focusPlugin,
     dividerPlugin,
     sideToolbarPlugin,
-    linkPlugin
+    linkPlugin,
+    imagePlugin
   ];
 
   const handleChange = editorState => {
@@ -132,21 +139,21 @@ const RichTextEditor = ({ onChange, value, users, fetchAllUsers }) => {
         )}
       </InlineToolbar>
 
-      <SideToolbar>
+      {/* <SideToolbar>
         {externalProps => (
           <div>
             <DividerButton {...externalProps} />
           </div>
         )}
-      </SideToolbar>
-
+      </SideToolbar> */}
+{/* 
       <EmojiSuggestions />
 
       <EmojiSelect />
       <span className="tiny-margin-right" />
       <UndoButton />
       <span className="tiny-margin-right" />
-      <RedoButton />
+      <RedoButton /> */}
     </div>
   );
 };

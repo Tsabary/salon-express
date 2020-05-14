@@ -8,11 +8,13 @@ const User = ({ user, userID, onClick, className }) => {
       onClick={onClick}
       key={userID}
     >
-      <img
-        className="user__avatar"
-        src={user.avatar ? user.avatar : "../../../imgs/avatar.png"}
-        alt="user"
-      />
+      <div className="user__avatar-container">
+        <img
+          className="user__avatar"
+          src={user.avatar ? user.avatar : "../../../imgs/avatar.png"}
+          alt="user"
+        />
+      </div>
       {`${user.name} ${user.username === userID ? "" : `(${user.username})`}`}
     </div>
   );

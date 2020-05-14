@@ -12,7 +12,26 @@
   align-self: stretch;
   cursor: default;
 
-  &-feed{
+  &__cover-img {
+    position: relative;
+    &::after {
+      display: block;
+      content: "";
+      /* 16:9 aspect ratio */
+      padding-bottom: 56.25%;
+    }
+    img {
+      /* Image should match parent box size */
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &-feed {
     margin-bottom: 3rem;
   }
 
@@ -41,7 +60,6 @@
     &:hover {
       text-decoration: underline;
       color: $mainColor !important;
-
     }
   }
 
@@ -66,9 +84,9 @@
 
   &__title {
     font-family: $fontBold, $fontHebrewBold;
-    font-size: 2.4rem;
-    line-height: 2.6rem;
-    color: $greyDarkest;
+    font-size: 2.4rem !important;
+    line-height: 2.6rem !important;
+    color: $greyDarkest !important;
 
     &:hover {
       color: $mainColor;
@@ -85,17 +103,11 @@
       font-size: 1.8rem;
       line-height: 2rem;
     }
-
-    // @include resize(650px) {
-    //   font-size: 1.5rem;
-    //   line-height: 1.7rem;
-    // }
   }
 
   &__body {
     font-size: 1.4rem;
     color: $greyDarkest;
-    // white-space: pre-line;
   }
 
   &__donate-icon {
@@ -129,12 +141,13 @@
   &__tag {
     display: inline-block;
     font-size: 1.2rem;
+    font-family: $font;
     padding: 0.6rem 0.8rem;
     line-height: 1rem;
     border-radius: $borderRadius;
     width: max-content;
     margin-right: 1rem;
-    margin-bottom: .6rem;
+    margin-bottom: 0.6rem;
     user-select: none;
     color: white;
     background-color: $mainColor;
@@ -299,118 +312,3 @@
     }
   }
 }
-
-// .social {
-//   display: grid;
-//   margin: 1.5rem;
-//   grid-template-columns: max-content;
-//   gap: 1rem;
-//   height: max-content;
-//   &__icon {
-//     height: 3rem;
-//     width: 3rem;
-//     cursor: pointer;
-//     fill: $mainColor;
-
-//     &-disabled {
-//       height: 3rem;
-//       width: 3rem;
-//       fill: $grey;
-//     }
-
-//     &--facebook {
-//       &-icon {
-//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-//       }
-//       :hover .social__icon--facebook-icon {
-//         fill: $facebookColor;
-//         transform: rotate(1080deg);
-//       }
-//     }
-
-//     &--instagram {
-//       &-icon {
-//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-//       }
-//       :hover .social__icon--instagram-icon {
-//         fill: $instagramColor;
-//         transform: rotate(1080deg);
-//       }
-//     }
-
-//     &--twitter {
-//       &-icon {
-//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-//       }
-//       :hover .social__icon--twitter-icon {
-//         fill: $twitterColor;
-//         transform: rotate(1080deg);
-//       }
-//     }
-
-//     &--soundcloud {
-//       &-icon {
-//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-//       }
-//       :hover .social__icon--soundcloud-icon {
-//         fill: $soundcloudColor;
-//         transform: rotate(1080deg);
-//       }
-//     }
-
-//     &--spotify {
-//       &-icon {
-//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-//       }
-//       :hover .social__icon--spotify-icon {
-//         fill: $spotifyColor;
-//         transform: rotate(1080deg);
-//       }
-//     }
-
-//     &--youtube {
-//       &-icon {
-//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-//       }
-//       :hover .social__icon--youtube-icon {
-//         fill: $youtubeColor;
-//         transform: rotate(1080deg);
-//       }
-//     }
-
-//     &--linkedin {
-//       &-icon {
-//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-//       }
-//       :hover .social__icon--linkedin-icon {
-//         fill: $linkedinColor;
-//         transform: rotate(1080deg);
-//       }
-//     }
-
-//     &--website {
-//       &-icon {
-//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-//       }
-//       :hover .social__icon--website-icon {
-//         fill: $mainColor;
-//         transform: rotate(1080deg);
-//       }
-//     }
-
-//     &--room {
-//       &-icon {
-//         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-//       }
-//       :hover .social__icon--room-icon {
-//         fill: $mainColor;
-//         transform: rotate(1080deg);
-//       }
-//     }
-//   }
-// }
-
-// .live {
-//   // border: 1px $mainColor solid;
-//   box-shadow: 0 0.2rem 3rem rgba($mainColor, 0.5);
-// }

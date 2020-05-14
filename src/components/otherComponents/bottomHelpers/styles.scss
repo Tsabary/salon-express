@@ -12,7 +12,7 @@
 
   &__chats {
     display: grid;
-    grid-template-columns: repeat(2, max-content);
+    grid-template-columns: repeat(3, max-content);
     gap: 2rem;
     position: absolute;
     right: 5rem;
