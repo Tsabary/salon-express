@@ -420,7 +420,7 @@ export const fetchRoomComments = (roomID, cb) => async () => {
     });
 };
 
-export const detachCommentsListener = () => {
+export const detachCommentsListener = () => ()=> {
  if(commentsListener) commentsListener();
 };
 

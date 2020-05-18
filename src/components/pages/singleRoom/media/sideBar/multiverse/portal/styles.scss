@@ -1,7 +1,7 @@
-@import "../../../../../../styles/imports";
+@import "../../../../../../../styles/imports";
 
 .portal {
-  padding: 0.5rem 1.5rem;
+  padding: 1rem 1.5rem;
   display: grid;
   grid-template-columns: 1fr max-content;
   border-bottom: 1px solid $bgColor;
@@ -9,7 +9,7 @@
 
   @include resize(1500px) {
     grid-template-columns: 1fr;
-    line-height: 1.6rem;
+    line-height: 1.2rem;
   }
 
   &__title-container {
@@ -19,7 +19,9 @@
   }
 
   &__title {
+    font-size: 1.2rem;
     transition: all 0.2s;
+
     &:hover {
       font-size: 1.4rem;
     }
@@ -29,7 +31,7 @@
       color: $mainColor;
       transition: all 0.2s;
       &:hover {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
       }
     }
   }
@@ -38,6 +40,7 @@
     color: $grey;
     font-size: 1.2rem;
     visibility: hidden;
+    display: none;
   }
 
   &__enter {

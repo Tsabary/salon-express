@@ -3,9 +3,11 @@ import React from "react";
 
 import { ReactSVG } from "react-svg";
 
-const Social = ({ data }) => {
+const Social = ({ data, classname }) => {
+console.log("stttttt social", classname)
+
   return (
-    <div className="social">
+    <div className={classname ? `social ${classname}` : "social"}>
       {data.instagram ? (
         <a
           href={"https://" + data.instagram}

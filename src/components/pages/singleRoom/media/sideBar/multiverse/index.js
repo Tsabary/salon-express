@@ -4,13 +4,13 @@ import { connect } from "react-redux";
 import "emoji-mart/css/emoji-mart.css";
 import { Emoji, Picker } from "emoji-mart";
 
-import { AuthContext } from "../../../../../providers/Auth";
+import { AuthContext } from "../../../../../../providers/Auth";
 
-import { titleToKey } from "../../../../../utils/strings";
-import { newPortal } from "../../../../../actions/portals";
+import { titleToKey } from "../../../../../../utils/strings";
+import { newPortal } from "../../../../../../actions/portals";
 
 import Portal from "./portal";
-import InputField from "../../../../formComponents/inputField";
+import InputField from "../../../../../formComponents/inputField";
 
 const Multiverse = ({
   entityID,

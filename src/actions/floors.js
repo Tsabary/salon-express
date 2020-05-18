@@ -196,7 +196,7 @@ export const addImageToFloorRoom = (
 ) => async () => {
   const batch = db.batch();
   const docRef = db.collection("floors").doc(floor.id);
-  console.log("adding o floor room");
+  console.log("imguplp","sarting");
   if (!image) return;
 
   const ref = storage.ref(`/images/floor-rooms/${floor.id}/${roomIndex}`);
@@ -206,6 +206,9 @@ export const addImageToFloorRoom = (
 
   const downloadUrl = await ref.getDownloadURL();
   if (!downloadUrl) return;
+
+  console.log("imguplp","uploaded");
+
 
   const newFoor = {
     ...floor,

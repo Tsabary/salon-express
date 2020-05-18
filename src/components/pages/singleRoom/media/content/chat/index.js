@@ -5,8 +5,8 @@ import { connect } from "react-redux";
 import { isMobile } from "react-device-detect";
 import Iframe from "react-iframe";
 
-import { logGuestEntry } from "../../../../../actions/rooms";
-import { AuthContext } from "../../../../../providers/Auth";
+import { logGuestEntry } from "../../../../../../actions/rooms";
+import { AuthContext } from "../../../../../../providers/Auth";
 
 const Chat = ({
   room,

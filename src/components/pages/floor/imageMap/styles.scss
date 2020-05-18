@@ -3,24 +3,9 @@
 .image-map {
   position: relative;
   width: max-content;
-  margin: auto;
+  margin-right: auto;
+  margin-left: auto;
   z-index: 2000;
   padding: 4rem;
   transition: all 0.3s;
-  &__tooltip {
-    position: absolute;
-    padding: 10px;
-    color: #fff;
-    background: rgba(0, 0, 0, 0.8);
-    border-radius: $borderRadius;
-    pointer-events: none;
-    z-index: 1000;
-
-    &--name {
-      font-size: 1.6;
-      font-family: $fontBold;
-    }
-
-    
-  }
 }

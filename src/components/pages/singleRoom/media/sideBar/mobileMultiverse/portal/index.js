@@ -1,7 +1,7 @@
 import "./styles.scss";
 import React from "react";
 
-import { titleToKey } from "../../../../../../utils/strings";
+import { titleToKey } from "../../../../../../../utils/strings";
 
 const Portal = ({ portal, entityID }) => {
   return (

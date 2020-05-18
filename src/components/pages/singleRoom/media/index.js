@@ -1,10 +1,12 @@
 import "./styles.scss";
 import React, { useEffect, useState, useContext } from "react";
+import { connect } from "react-redux";
 
 import { isMobile } from "react-device-detect";
 
 import { UniqueIdContext } from "../../../../providers/UniqueId";
 import { AuthContext } from "../../../../providers/Auth";
+import { FloorContext } from "../../../../providers/Floor";
 
 import {
   listenToMultiverse,
@@ -14,15 +16,8 @@ import {
 
 import { titleToKey } from "../../../../utils/strings";
 
-import Chat from "./chat";
-import Multiverse from "./multiverse";
-import MobileMultiverse from "./mobileMultiverse";
-import Mixlr from "./mixlr";
-import { connect } from "react-redux";
-import Notice from "./notice";
-import { FloorContext } from "../../../../providers/Floor";
-import IFrame from "./iframe";
-import UserSocial from "../../../otherComponents/userSocial";
+import SideBar from "./sideBar";
+import MediaContent from "./content";
 
 const Media = ({
   room,
@@ -64,6 +59,7 @@ const Media = ({
     setMicrophonePermissionGranted,
   ] = useState(false);
   const [cameraPermissionGranted, setCameraPermissionGranted] = useState(false);
+
 
   useEffect(() => {
     listenToMultiverse(entityID, setMultiverse, setMultiverseArray, () => {
@@ -120,211 +116,50 @@ const Media = ({
       ["youtube", "twitch"].includes(currentAudioChannel.source)
     ) {
       setIsVideoVisible(true);
-      // setMediaState(1);
     }
   }, [currentAudioChannel]);
 
-  const renderControllers = () => {
-    return (
-      <div className="media__buttons">
-        {isChatVisible ? (
-          <div
-            className="media__button media__button--active"
-            onClick={() => setIsChatVisible(false)}
-          >
-            Chat
-          </div>
-        ) : (
-          <div
-            className="media__button media__button--unactive"
-            onClick={() => setIsChatVisible(true)}
-          >
-            Chat
-          </div>
-        )}
-
-        {isVideoVisible ? (
-          <div
-            className="media__button media__button--active"
-            onClick={() => setIsVideoVisible(false)}
-          >
-            Stream
-          </div>
-        ) : (
-          <div
-            className="media__button media__button--unactive"
-            onClick={() => setIsVideoVisible(true)}
-          >
-            Stream
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  // const renderControllers = () => {
-  //   return (
-  //     <div className="media__buttons">
-  //       {mediaState ? (
-  //         <div
-  //           className="media__button media__button--unactive"
-  //           onClick={() => setMediaState(0)}
-  //         >
-  //           Chat
-  //         </div>
-  //       ) : (
-  //         <div className="media__button media__button--active">Chat</div>
-  //       )}
-
-  //       {!mediaState ? (
-  //         <div
-  //           className="media__button media__button--unactive"
-  //           onClick={() => setMediaState(1)}
-  //         >
-  //           Stream
-  //         </div>
-  //       ) : (
-  //         <div className="media__button media__button--active">Stream</div>
-  //       )}
-  //     </div>
-  //   );
-  // };
-
-  const getIframeUrl = (audioChannel) => {
-    switch (audioChannel.source) {
-      case "youtube":
-        return `https://www.youtube.com/embed/${audioChannel.link}`;
-
-      case "twitch":
-        return `https://player.twitch.tv/?channel=${audioChannel.link}`;
-
-      default:
-        return audioChannel.link;
-    }
-  };
-
   return (
     <div className="media single-room__media">
-      {isMobile ? (
-        <Notice text='To join the party on mobile, you will need to switch to desktop mode in your browser app. On Chrome, click the three dots at the top right of your screen and check "Desktop site".' />
-      ) : null}
+      <SideBar
+        room={room}
+        currentAudioChannel={currentAudioChannel}
+        entityID={entityID}
+        currentPortal={currentPortal}
+        setCurrentPortal={setCurrentPortal}
+        multiverse={multiverse}
+        multiverseArray={multiverseArray}
+        microphonePermissionGranted={microphonePermissionGranted}
+        cameraPermissionGranted={cameraPermissionGranted}
+        isFirstLoad={isFirstLoad}
+        setIsFirstLoad={setIsFirstLoad}
+        isChatVisible={isChatVisible}
+        setIsChatVisible={setIsChatVisible}
+        isVideoVisible={isVideoVisible}
+        setIsVideoVisible={setIsVideoVisible}
+      />
 
-      {!isMobile && currentAudioChannel && currentAudioChannel.source ? (
-        <Notice
-          text="Please listen to the music using a headset, or disable your
-            microphone in the chat to prevent noise for the other participants"
-          currentAudioChannel={currentAudioChannel}
-        />
-      ) : null}
-
-      <div
-        className={
-          !currentAudioChannel ||
-          (currentAudioChannel && !currentAudioChannel.source)
-            ? "media__multiverse fr media__multiverse--no-audio"
-            : currentAudioChannel && currentAudioChannel.source === "mixlr"
-            ? "media__multiverse fr media__multiverse--with-mixlr"
-            : "media__multiverse fr media__multiverse--with-video"
-        }
-      >
-        {/** This is the multiverse*/}
-        {!isMobile && room && isChatVisible ? (
-          <Multiverse
-            room={room}
-            currentPortal={currentPortal}
-            setCurrentPortal={setCurrentPortal}
-            multiverse={multiverse}
-            multiverseArray={multiverseArray}
-            currentAudioChannel={currentAudioChannel}
-            microphonePermissionGranted={microphonePermissionGranted}
-            cameraPermissionGranted={cameraPermissionGranted}
-            entityID={entityID}
-            isFirstLoad={isFirstLoad}
-            setIsFirstLoad={setIsFirstLoad}
-          />
-        ) : null}
-
-        {currentAudioChannel && currentAudioChannel.user && isVideoVisible ? (
-          <div className="section__container" style={{height:"100%", minHeight:"450px"}}>
-            <div className="section__title">Currently Live</div>
-            <UserSocial uid={currentAudioChannel.user.uid} />
-          </div>
-        ) : null}
-      </div>
-
-      {isMobile && room ? (
-        <MobileMultiverse
-          entityID={entityID}
-          multiverseArray={multiverseArray}
-        />
-      ) : null}
-
-      {currentAudioChannel && currentAudioChannel.source === "mixlr" ? (
-        <Mixlr ID={currentAudioChannel.link} />
-      ) : null}
-
-      <div
-        className={
-          currentAudioChannel && currentAudioChannel.source
-            ? "media__toggle--with-audio"
-            : "media__toggle--no-audio"
-        }
-      >
-        <input
-          className="media__chat-checkbox"
-          type="checkbox"
-          id="chat-visibility-checkbox"
-          checked={isChatVisible}
-          readOnly
-        />
-        <input
-          className="media__video-checkbox"
-          type="checkbox"
-          id="video-visibility-checkbox"
-          checked={isVideoVisible}
-          readOnly
-        />
-        {!isMobile ? (
-          <div className="fr">
-            {/* <div className="media__chat-stream-container"> */}
-            {isChatVisible ? (
-              <span className="media__chat">
-                <Chat
-                  room={room}
-                  floor={floor}
-                  currentPortalUrl={currentPortalUrl}
-                  cameraPermissionGranted={cameraPermissionGranted}
-                  setCameraPermissionGranted={setCameraPermissionGranted}
-                  microphonePermissionGranted={microphonePermissionGranted}
-                  setMicrophonePermissionGranted={
-                    setMicrophonePermissionGranted
-                  }
-                  isFirstLoad={isFirstLoad}
-                />
-              </span>
-            ) : null}
-
-            {currentAudioChannel &&
-            currentAudioChannel.source &&
-            currentAudioChannel.source !== "mixlr" ? (
-              <span className="media__stream">
-                <IFrame
-                  url={getIframeUrl(currentAudioChannel)}
-                  source={currentAudioChannel.source}
-                  isVideoVisible={isVideoVisible}
-                />
-              </span>
-            ) : null}
-
-            {currentAudioChannel &&
-            ["youtube", "twitch", "website"].includes(
-              currentAudioChannel.source
-            )
-              ? renderControllers()
-              : null}
-          </div>
-        ) : null}
-      </div>
+      <MediaContent
+        room={room}
+        floor={floor}
+        currentAudioChannel={currentAudioChannel}
+        entityID={entityID}
+        currentPortal={currentPortal}
+        setCurrentPortal={setCurrentPortal}
+        multiverse={multiverse}
+        multiverseArray={multiverseArray}
+        microphonePermissionGranted={microphonePermissionGranted}
+        cameraPermissionGranted={cameraPermissionGranted}
+        isFirstLoad={isFirstLoad}
+        setIsFirstLoad={setIsFirstLoad}
+        isChatVisible={isChatVisible}
+        setIsChatVisible={setIsChatVisible}
+        isVideoVisible={isVideoVisible}
+        setIsVideoVisible={setIsVideoVisible}
+        setMicrophonePermissionGranted={setMicrophonePermissionGranted}
+        setCameraPermissionGranted={setCameraPermissionGranted}
+        currentPortalUrl={currentPortalUrl}
+      />
     </div>
   );
 };
@@ -373,8 +208,8 @@ export default connect(null, {
 //   </>
 // ) : null}
 
-{
-  /* {currentAudioChannel && currentAudioChannel.source === "youtube" ? (
+// {
+/* {currentAudioChannel && currentAudioChannel.source === "youtube" ? (
               <span className="media__stream">
                 <Youtube
                   ID={currentAudioChannel.link}
@@ -391,11 +226,39 @@ export default connect(null, {
                 />
               </span>
             ) : null} */
-}
-{
-  /* </div> */
-}
+// }
+// {
+/* </div> */
+// }
 
-{
-  /* {renderControllers()} */
-}
+// {
+/* {renderControllers()} */
+// }
+
+// const renderControllers = () => {
+//   return (
+//     <div className="media__buttons">
+//       {mediaState ? (
+//         <div
+//           className="media__button media__button--unactive"
+//           onClick={() => setMediaState(0)}
+//         >
+//           Chat
+//         </div>
+//       ) : (
+//         <div className="media__button media__button--active">Chat</div>
+//       )}
+
+//       {!mediaState ? (
+//         <div
+//           className="media__button media__button--unactive"
+//           onClick={() => setMediaState(1)}
+//         >
+//           Stream
+//         </div>
+//       ) : (
+//         <div className="media__button media__button--active">Stream</div>
+//       )}
+//     </div>
+//   );
+// };

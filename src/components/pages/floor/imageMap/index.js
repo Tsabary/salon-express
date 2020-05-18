@@ -5,6 +5,7 @@ import { FloorContext } from "../../../../providers/Floor";
 
 import ImageMapper from "react-image-mapper";
 import { Howl, Howler } from "howler";
+import Tooltip from "./tooltip";
 
 const ImageMap = () => {
   const imgElement = React.useRef(null);
@@ -95,7 +96,7 @@ const ImageMap = () => {
   };
 
   const enterArea = (area) => {
-    playSound(area);
+    // playSound(area);
 
     setValues((val) => {
       return { ...val, hoveredArea: area };
@@ -136,7 +137,7 @@ const ImageMap = () => {
           }}
         />
       ) : null}
-    {globalFloor ? (
+      {globalFloor ? (
         <img
           src={globalFloor.image}
           ref={imgElement}
@@ -144,20 +145,13 @@ const ImageMap = () => {
           alt="Room"
           className="invisible"
         />
-      ) : null} 
+      ) : null}
 
       {values.hoveredArea && (
-        <span
-          className="image-map__tooltip"
-          style={{ ...getTipPosition(values.hoveredArea) }}
-        >
-          <div className="image-map__tooltip--name">
-            {values.hoveredArea && values.hoveredArea.name}
-          </div>
-          <div className="image-map__tooltip--description tiny-margin-top">
-            {values.hoveredArea && values.hoveredArea.description}
-          </div>
-        </span>
+        <Tooltip
+          location={getTipPosition(values.hoveredArea)}
+          room={values.hoveredArea}
+        />
       )}
     </div>
   );

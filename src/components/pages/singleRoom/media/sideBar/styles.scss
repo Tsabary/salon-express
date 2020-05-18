@@ -1,0 +1,8 @@
+@import "../../../../../styles/imports";
+
+.sidebar {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr;
+  grid-template-rows: max-content;
+}

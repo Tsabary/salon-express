@@ -149,11 +149,12 @@ const RoomInfo = ({
                 src={
                   selectedImage ||
                   (floor &&
-                    floor.rooms &&
-                    floor.rooms[roomIndex] &&
-                    floor.rooms[roomIndex].image)
+                  floor.rooms &&
+                  floor.rooms[roomIndex] &&
+                  floor.rooms[roomIndex].image
                     ? floor.rooms[roomIndex].image
-                    : room.image || "../../imgs/placeholder.jpg"
+                    : room.image) ||
+                  "../../imgs/placeholder.jpg"
                 }
                 alt="Room"
               />

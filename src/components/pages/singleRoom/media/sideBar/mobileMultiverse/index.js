@@ -1,11 +1,12 @@
 import "./styles.scss";
 import React, { useState } from "react";
+import { connect } from "react-redux";
+
 import ScrollToBottom from "react-scroll-to-bottom";
 
-import { titleToKey } from "../../../../../utils/strings";
+import { titleToKey } from "../../../../../../utils/strings";
 
 import Portal from "./portal";
-import { connect } from "react-redux";
 
 const MobileMultiverse = ({ entityID, multiverseArray }) => {
   const [open, setOpen] = useState(false);

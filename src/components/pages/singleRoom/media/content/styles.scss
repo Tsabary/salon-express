@@ -1,0 +1,50 @@
+@import "../../../../../styles/imports";
+
+.content {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr;
+  border-radius: $borderRadius;
+  overflow: hidden;
+
+  //   &__chat {
+  //     grid-row: 1/2;
+  //   }
+
+  //   &__stream {
+  //     grid-row: 2/3;
+  //   }
+
+  &__buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-radius: $borderRadius;
+  }
+  &__button {
+    cursor: pointer;
+    padding: 1rem 1rem 0.7rem 1rem;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    height: 100%;
+    user-select: none;
+
+    &--active {
+      background-color: $mainColor;
+      color: white;
+      transition: all 0.2s;
+      &:hover {
+        background-color: $mainColorDark;
+      }
+    }
+    &--unactive {
+      background-color: $greyLightest;
+      color: $grey;
+      transition: all 0.2s;
+      &:hover {
+        background-color: $greyLight;
+        color: $greyDark;
+      }
+    }
+  }
+}

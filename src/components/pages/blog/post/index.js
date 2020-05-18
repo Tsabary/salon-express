@@ -3,13 +3,13 @@ import React, { useEffect, useState, useContext } from "react";
 import { connect } from "react-redux";
 
 import { ReactSVG } from "react-svg";
+import { AuthContext } from "../../../../providers/Auth";
 
 import { fetchCurrentPost, postLike } from "../../../../actions/blog";
 import PostHeader from "./header";
 import UserSocial from "../../../otherComponents/userSocial";
-import IFrame from "../../singleRoom/media/iframe";
+import IFrame from "../../singleRoom/media/content/iframe";
 import Comments from "./comments";
-import { AuthContext } from "../../../../providers/Auth";
 
 const Post = ({ match, blogPosts, fetchCurrentPost, postLike }) => {
   const { currentUserProfile } = useContext(AuthContext);
@@ -77,7 +77,7 @@ const Post = ({ match, blogPosts, fetchCurrentPost, postLike }) => {
         <div className="post__body">
           <PostHeader post={post} />
           <div className="tiny-margin-top">
-            <UserSocial uid={post.user_ID} horizontal />
+            <UserSocial uid={post.user_ID} horizontal socialRtl />
           </div>
           <div
             className="post__content"
@@ -131,7 +131,7 @@ const Post = ({ match, blogPosts, fetchCurrentPost, postLike }) => {
             style={{ width: "100%", borderBottom: "1px #dadada solid" }}
           />
           <div className="small-margin-top">
-            <UserSocial uid={post.user_ID} horizontal />
+            <UserSocial uid={post.user_ID} horizontal socialRtl />
           </div>
           <div className="small-margin-top">
             <Comments postID={post.id} />

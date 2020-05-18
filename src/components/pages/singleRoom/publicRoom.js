@@ -63,7 +63,6 @@ const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
       <Media
         room={room}
         currentAudioChannel={currentAudioChannel}
-        // Calling this entity ID and not room ID, because here it might just be the room ID, but in  floor it's a mix of the floor ID with the room ID
         entityID={roomId}
         isOwner={isOwner}
       />

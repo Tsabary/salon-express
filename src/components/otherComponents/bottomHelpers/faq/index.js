@@ -80,7 +80,7 @@ const Faq = ({ newQuestion }) => {
             <div className="small-button small-button--disabled">New</div>
           ) : (
             <div className="small-button" onClick={handleSubmit}>
-              New
+              Ask
             </div>
           )}
         </div>

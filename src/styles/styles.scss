@@ -372,8 +372,6 @@ h3 {
   }
 }
 
-
-
 .tile-form {
   display: grid;
   gap: 2rem;
@@ -412,7 +410,6 @@ h3 {
 }
 
 .svg-icon {
-
   &--huge {
     height: 300px;
     width: 300px;
@@ -426,8 +423,6 @@ h3 {
     text-align: center;
     margin: auto;
   }
-
-
 
   &--small {
     height: 10px;
@@ -468,8 +463,12 @@ h3 {
 //   }
 // }
 
-.invisible{
+.invisible {
   display: none;
+}
+
+.rtl {
+  direction: rtl;
 }
 
 .popup {

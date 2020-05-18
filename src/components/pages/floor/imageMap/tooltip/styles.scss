@@ -1,0 +1,23 @@
+@import "../../../../../styles/imports";
+
+.map-tooltip {
+  min-width: 20rem;
+  position: absolute;
+  background: white;
+  border-radius: $borderRadius;
+  pointer-events: none;
+  z-index: 100000;
+  box-shadow: $containerBoxShadow;
+
+  &__name {
+    font-size: 1.6;
+    font-family: $fontBold;
+    color: $greyDarkest;
+  }
+
+  &__body {
+    padding: 10px;
+  }
+  &__top {
+  }
+}

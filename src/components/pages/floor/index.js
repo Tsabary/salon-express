@@ -112,16 +112,16 @@ const Floor = ({
 
           {/* {floorTempVideoChat && !globalFloorRoom ? <TempMedia /> : null} */}
 
-          <div className="floor__room">
-            {globalFloorRoom ? (
+          {globalFloorRoom ? (
+            <div className="floor__room">
               <FloorRoom
                 floor={globalFloor}
                 room={globalFloorRoom}
                 isOwner={isOwner}
                 entityID={globalFloor.id + "-" + globalFloorRoom.id}
               />
-            ) : null}
-          </div>
+            </div>
+          ) : null}
 
           <div className="floor__body">
             <div className="floor__body-content">
@@ -130,12 +130,14 @@ const Floor = ({
             </div>
           </div>
         </>
-      ) : (
+      ) :
+        (
         <div className="floor__body">
           {openDate ? <Coming openDate={openDate} /> : null}
         </div>
-      )}
-      <div className="floor__side-map"><div className="floor__side-map__title">Map</div></div>
+      )
+      }
+      {/* <div className="floor__side-map"><div className="floor__side-map__title">Map</div></div> */}
     </div>
   );
 };
