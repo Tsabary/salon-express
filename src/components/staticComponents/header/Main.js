@@ -9,20 +9,19 @@ import { AuthContext } from "../../../providers/Auth";
 import { PageContext } from "../../../providers/Page";
 import { SearchContext } from "../../../providers/Search";
 
-import { listenToProfile, stopListeningToProfile } from "../../../actions/users";
+import {
+  listenToProfile,
+  stopListeningToProfile,
+} from "../../../actions/users";
 
-import AuthOptions from "./authOptions";
-import UserOptions from "./userOptions";
 import FilterInput from "./filterInput";
 import MobileDrawer from "./mobileDrawer";
 import { connect } from "react-redux";
+import SalonLogo from "./salonLogo";
+import HeaderAuth from "./auth";
 
 const Header = ({ listenToProfile, stopListeningToProfile }) => {
-  const myHistory = useHistory(history);
-
   const { currentUser, setCurrentUserProfile } = useContext(AuthContext);
-  const { page, setPage } = useContext(PageContext);
-  const { setSearchTerm } = useContext(SearchContext);
 
   useEffect(() => {
     if (currentUser) {
@@ -31,109 +30,45 @@ const Header = ({ listenToProfile, stopListeningToProfile }) => {
       stopListeningToProfile();
       setCurrentUserProfile(null);
     }
+
+    return function cleanup() {
+      stopListeningToProfile();
+      setCurrentUserProfile(null);
+    };
   }, [currentUser]);
 
-  const handleChange = () => {
-    setSearchTerm(null);
-    setPage(1);
-    myHistory.push(`/`);
-  };
-
-  const renderAuth = () => {
-    switch (true) {
-      case !!currentUser:
-        return <UserOptions />;
-
-      case !currentUser:
-        return <AuthOptions />;
-      default:
-        return null;
-    }
-  };
-
-  const renderCenter = (p) => {
-    switch (p) {
-      case 1:
-        return <FilterInput />;
-
-      case 2:
-        return <FilterInput />;
-        return <div className="header__center">Favorites</div>;
-
-      case 3:
-        return <FilterInput />;
-        return <div className="header__center">My Rooms</div>;
-
-      case 5:
-        return <FilterInput />;
-
-      default:
-        return <div />;
-    }
+  const renderNewRoomButton = () => {
+    return (
+      <a
+        className="header__new-room boxed-button"
+        onClick={() => {
+          firebase.analytics().logEvent("room_open_button_click");
+        }}
+        href={
+          currentUser && currentUser.emailVerified ? "#add-room" : "#sign-up"
+        }
+      >
+        New Room
+      </a>
+    );
   };
 
   return (
     <div className="header">
       <MobileDrawer />
-      <div
-        className={
-          currentUser
-            ? "header-with-logo header-with-logo--logged-in"
-            : "header-with-logo header-with-logo--logged-out"
-        }
-      >
-        <div className="header__logo-container">
-          <div onClick={handleChange} className="header__title-full">
-            <div className="header__title-main ">Salon.</div>
-            <div className="header__title-sub">Humans Talking</div>
-          </div>
-          <div
-            className="header__title header__title-lean"
-            onClick={handleChange}
-          >
-            <div className="header__title-main ">S.</div>
-          </div>
-        </div>
-        {renderCenter(page)}
-        {currentUser ? (
-          <a
-            className="header__new-room boxed-button"
-            onClick={() => {
-              firebase.analytics().logEvent("room_open_button_click");
-            }}
-            href={
-              currentUser && currentUser.emailVerified
-                ? "#add-room"
-                : "#sign-up"
-            }
-          >
-            New Room
-          </a>
-        ) : null}
 
-        <div className="header__auth">{renderAuth()}</div>
+      <div className="header-with-logo">
+        <SalonLogo />
+        <FilterInput />
+        {renderNewRoomButton()}
+        <HeaderAuth />
       </div>
 
       <div className="header-without-logo">
-        <div />
-        {renderCenter(page)}
-        {currentUser ? (
-          <a
-            className="header__new-room boxed-button"
-            onClick={() => {
-              firebase.analytics().logEvent("room_open_button_click");
-            }}
-            href={
-              currentUser && currentUser.emailVerified
-                ? "#add-room"
-                : "#sign-up"
-            }
-          >
-            New Room
-          </a>
-        ) : null}
-
-        <div className="header__auth">{renderAuth()}</div>
+        <div/>
+        <FilterInput />
+        {renderNewRoomButton()}
+        <HeaderAuth />
       </div>
     </div>
   );

@@ -11,7 +11,13 @@ import {
 import "pure-react-carousel/dist/react-carousel.es.css";
 import { connect } from "react-redux";
 
-const FloorPlans = ({values, setValues,chosenPlan, setChosenPlan, floorPlans}) => {
+const FloorPlans = ({
+  values,
+  setValues,
+  chosenPlan,
+  setChosenPlan,
+  floorPlans,
+}) => {
   const renderSildes = (plans) => {
     return plans.map((plan, index) => {
       return (

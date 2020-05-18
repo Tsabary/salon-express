@@ -11,6 +11,8 @@ const Tags = ({
   errorMessages,
   formError,
   setFormError,
+  placeHolder,
+  className
 }) => {
   const [tagInput, setTagInput] = useState("");
   const [tagsSuggestions, setTagsSuggestions] = useState(null);
@@ -110,11 +112,11 @@ const Tags = ({
   };
 
   return (
-    <div className="tiny-margin-bottom">
+    <div className={className ? `tiny-margin-bottom ${className}` : "tiny-margin-bottom"}>
       <div className="tags__container">
         <InputField
           type="text"
-          placeHolder="Add 2-5 tags that are related to the room"
+          placeHolder={placeHolder}
           value={tagInput}
           onChange={handleTagInputChange}
           onKeyDown={handleKeyPress}

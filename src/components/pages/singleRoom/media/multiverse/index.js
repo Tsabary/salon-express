@@ -78,15 +78,15 @@ const Multiverse = ({
   };
 
   return (
-    <div
-      className={
-        !currentAudioChannel ||
-        (currentAudioChannel && !currentAudioChannel.source)
-          ? "media__multiverse--no-audio section__container"
-          : currentAudioChannel && currentAudioChannel.source === "mixlr"
-          ? "media__multiverse--with-mixlr section__container"
-          : "media__multiverse--with-video section__container"
-      }
+    <div className="multiverse section__container "
+      // className={
+      //   !currentAudioChannel ||
+      //   (currentAudioChannel && !currentAudioChannel.source)
+      //     ? "media__multiverse--no-audio section__container"
+      //     : currentAudioChannel && currentAudioChannel.source === "mixlr"
+      //     ? "media__multiverse--with-mixlr section__container"
+      //     : "media__multiverse--with-video section__container"
+      // }
     >
       {console.log(
         "check",

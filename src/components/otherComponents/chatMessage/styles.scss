@@ -26,18 +26,22 @@
   }
 
   &__user-name {
-    color: $mainColor;
+    cursor: pointer;
+    color: $greyDark !important;
+
+    &:hover {
+      color: $mainColor !important;
+    }
 
     // margin-top: 1rem;
-    cursor: pointer;
   }
 
   &__time {
     color: $grey;
   }
 
-  &__timestamp{
-      font-size: 1.2rem;
-      color: $grey;
+  &__timestamp {
+    font-size: 1.2rem;
+    color: $grey;
   }
 }

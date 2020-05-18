@@ -1,17 +1,34 @@
 @import "../../../styles/imports";
 
 .user {
-  &__avatar {
+  max-width: 100%;
+  width: 100%;
+
+
+
+    &__avatar {
     width: 3.5rem;
     height: 3.5rem;
     border: 2px white solid;
-    // box-shadow: 0 0.4rem 1.4rem rgb(170, 170, 170);
     border-radius: 10rem;
     outline: none;
-    cursor: pointer;
     &-container {
+      width: 3.7rem;
+      height: 3.7rem;
       border: $imageBorder;
       border-radius: 100%;
     }
+  }
+
+  &__name{
+    color: $greyDark !important;
+
+    &:hover{
+      color: $mainColor !important;
+    }
+    // max-width: 10rem;
+    // width: 100%;
+    // word-break: break-all;
+    // word-wrap: break-word;
   }
 }

@@ -141,7 +141,7 @@
   &__tag {
     display: inline-block;
     font-size: 1.2rem;
-    font-family: $font;
+    font-family: $font, $fontHebrew;
     padding: 0.6rem 0.8rem;
     line-height: 1rem;
     border-radius: $borderRadius;

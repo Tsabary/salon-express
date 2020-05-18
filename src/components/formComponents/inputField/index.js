@@ -7,6 +7,7 @@ const InputField = ({
   value,
   label,
   type,
+  className,
   isNumber,
   numbersAndLetters,
   required = false,
@@ -28,7 +29,7 @@ const InputField = ({
   };
 
   return (
-    <div className="input-field">
+    <div className={className ? `input-field ${className}` :"input-field"}>
       <input
         className={
           required

@@ -1,0 +1,22 @@
+@import "../../../../styles/imports";
+
+.floor-logo {
+  &__back {
+    border-radius: $borderRadius;
+    box-shadow: $containerBoxShadow;
+    background-color: white;
+    width: max-content;
+    padding: 1rem;
+    color: $grey;
+    cursor: pointer;
+    transition: all 0.1s;
+
+    &:hover {
+      color: $mainColor;
+    }
+  }
+
+  &__img {
+    height: 4rem;
+  }
+}

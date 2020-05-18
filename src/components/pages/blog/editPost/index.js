@@ -9,6 +9,7 @@ import RichTextEditor from "../../../formComponents/richTextEditor";
 import { savePost, fetchCurrentPost } from "../../../../actions/blog";
 import { useHistory } from "react-router-dom";
 import history from "../../../../history";
+import InputField from "../../../formComponents/inputField";
 
 const EditPost = ({ match, blogPosts, savePost, fetchCurrentPost }) => {
   const myHistory = useHistory(history);
@@ -18,7 +19,6 @@ const EditPost = ({ match, blogPosts, savePost, fetchCurrentPost }) => {
 
   const [imageAsFile, setImageAsFile] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
-
 
   useEffect(() => {
     const thisPost = blogPosts.filter((p) => p.id === match.params.id)[0];
@@ -98,6 +98,15 @@ const EditPost = ({ match, blogPosts, savePost, fetchCurrentPost }) => {
         value={values.body}
         placeholder="Your two cents go here"
       />
+
+      <InputField
+        type="text"
+        placeHolder="Youtube tutorial (video ID only)"
+        value={!!values && values.video}
+        onChange={(video) => setValues({ ...values, video })}
+        className="tiny-margin-top"
+      />
+
       <div className="fr-max small-margin-top">
         <div />
         <div

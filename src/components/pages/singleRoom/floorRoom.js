@@ -12,7 +12,7 @@ import Management from "./management";
 import Details from "./details";
 
 const FloorRoom = ({ floor, room, isOwner, entityID }) => {
-  const {setGlobalFloorRoomIndex} = useContext(FloorContext)
+  const { setGlobalFloorRoomIndex } = useContext(FloorContext);
   const [roomIndex, setRoomIndex] = useState(null);
 
   const [currentAudioChannel, setCurrentAudioChannel] = useState(null);
@@ -22,10 +22,11 @@ const FloorRoom = ({ floor, room, isOwner, entityID }) => {
 
     for (var i = 0; i < Object.values(floor.rooms).length; i++) {
       if (
+        Object.values(floor.rooms)[i].name &&
         titleToKey(Object.values(floor.rooms)[i].name) === titleToKey(room.name)
       ) {
         setRoomIndex(i);
-        setGlobalFloorRoomIndex(i)
+        setGlobalFloorRoomIndex(i);
         setCurrentAudioChannel(floor.rooms[i].active_channel);
       }
     }

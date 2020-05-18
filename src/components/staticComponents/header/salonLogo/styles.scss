@@ -1,0 +1,64 @@
+@import "../../../../styles/imports";
+
+.logo {
+  height: max-content;
+  width: max-content;
+  background: url("/imgs/logo.jpg") no-repeat;
+  background-size: cover;
+  cursor: pointer;
+
+  &__title {
+    text-align: center;
+    @include resize(700px) {
+      display: none;
+    }
+    &:hover {
+      color: $mainColor;
+    }
+    &--main {
+      font-family: $fontBold, $fontHebrew;
+      font-weight: 900;
+      font-size: 4rem;
+      text-align: center;
+      color: $mainColor;
+      margin-bottom: 0.6rem;
+      transition: all 0.2s;
+      &--floor {
+        color: $mainColor;
+
+        // color: rgba(220, 220, 220, 0.2) !important;
+      }
+    }
+
+    &--sub {
+      width: max-content;
+      color: $mainColor;
+      margin-top: -0.5rem;
+      margin-left: 0.3rem;
+      &--floor {
+        color: rgba(220, 220, 220, 0.2) !important;
+      }
+    }
+
+    &--full {
+      cursor: pointer;
+      @include resize(900px) {
+        display: none;
+      }
+    }
+
+    &--lean {
+      display: none;
+      margin-top: 0.5rem;
+      cursor: pointer;
+
+      @include resize(900px) {
+        display: block;
+      }
+
+      @include resize(750px) {
+        display: none;
+      }
+    }
+  }
+}

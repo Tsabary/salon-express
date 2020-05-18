@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import algoliasearch from "algoliasearch/lite";
 
 import InputField from "../../../formComponents/inputField";
-import User from "../../../otherComponents/user";
+import User from "../../../otherComponents/user/search";
 
 const searchClient = algoliasearch(
   process.env.REACT_APP_ALGOLIA_ID,
@@ -29,7 +29,7 @@ const Admins = ({ values, setValues }) => {
   }, [newAdmin]);
 
   const handleChoose = (user) => {
-    const admin = { ...user, user_ID: user.objectID };
+    const admin = { ...user, uid: user.objectID };
     delete admin.objectID;
     delete admin._highlightResult;
 
@@ -54,8 +54,7 @@ const Admins = ({ values, setValues }) => {
       return (
         <User
           className={className}
-          user={user}
-          userID={user.objectID || user.user_ID}
+          user={{ ...user, uid: user.objectID || user.user_ID }}
           onClick={() => {
             if (onClick) onClick(user);
           }}

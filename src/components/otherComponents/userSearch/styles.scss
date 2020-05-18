@@ -1,0 +1,18 @@
+@import '../../../styles/imports';
+
+.user-search{
+    &__suggestions {
+        width: 100%;
+        position: absolute;
+        top: 1.5rem;
+        z-index: 1000;
+        background-color: white;
+        padding: 2rem;
+        border-radius: $borderRadius;
+        border: $border;
+        &-container {
+          position: relative;
+          width: 100%;
+        }
+      }
+}

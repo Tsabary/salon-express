@@ -12,6 +12,8 @@ import {
   replaceFloorUids,
 } from "../../../actions/floors";
 
+import { detachCommentsListener } from "../../../actions/rooms";
+
 import FloorRoom from "../singleRoom/floorRoom";
 import Coming from "./coming";
 import CurrentlyPlaying from "./currentlyPlaying";
@@ -24,6 +26,7 @@ const Floor = ({
   fetchCurrentFloor,
   resetPublicAudioSettings,
   detachFloorListener,
+  detachCommentsListener,
   replaceFloorUids,
 }) => {
   const { currentUser, currentUserProfile } = useContext(AuthContext);
@@ -81,6 +84,7 @@ const Floor = ({
 
     const myCleanup = () => {
       detachFloorListener();
+      detachCommentsListener();
     };
 
     window.addEventListener("beforeunload", myCleanup);
@@ -131,6 +135,7 @@ const Floor = ({
           {openDate ? <Coming openDate={openDate} /> : null}
         </div>
       )}
+      <div className="floor__side-map"><div className="floor__side-map__title">Map</div></div>
     </div>
   );
 };
@@ -146,6 +151,7 @@ export default connect(null, {
   fetchFloorRooms,
   resetPublicAudioSettings,
   detachFloorListener,
+  detachCommentsListener,
   replaceFloorUids,
 })(Floor);
 

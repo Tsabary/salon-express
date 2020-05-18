@@ -29,9 +29,15 @@ const Backstage = ({
   const [message, setMessage] = useState("");
   const [inProcess, setInProcess] = useState(false);
 
-  // useEffect(() => {
-  //  console.log("backstage", backstage)
-  // },[backstage])
+  const keyPressHandler = (e) => {
+    if (e.key === "Enter") handleSubmit();
+  };
+  useEffect(() => {
+    window.addEventListener("keydown", keyPressHandler);
+    return () => {
+      window.removeEventListener("keydown", keyPressHandler);
+    };
+  });
 
   useEffect(() => {
     if (open) resetBackstageNotifications();

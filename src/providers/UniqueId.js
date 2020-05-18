@@ -6,15 +6,17 @@ export const UniqueIdContext = React.createContext();
 
 export const UniqueIdProvider = ({ children }) => {
   const [uniqueId, setUniqueId] = useState(uuidv4());
+  const [isFirstVisit, setIsFirstVisit] = useState(false);
 
   useEffect(() => {
-    const uid = Cookies.get("salonexpressrandomuid");
-    if (!uid) {
-      const newUid = uuidv4();
-      Cookies.set("salonexpressrandomuid", newUid);
-      setUniqueId(newUid);
+    const uuid = Cookies.get("salonexpressrandomuid");
+    if (!uuid) {
+      const newUuid = uuidv4();
+      Cookies.set("salonexpressrandomuid", newUuid);
+      setUniqueId(newUuid);
+      setIsFirstVisit(true);
     } else {
-      setUniqueId(uid);
+      setUniqueId(uuid);
     }
   });
 
@@ -23,6 +25,8 @@ export const UniqueIdProvider = ({ children }) => {
       value={{
         uniqueId,
         setUniqueId,
+        isFirstVisit,
+        setIsFirstVisit,
       }}
     >
       {children}

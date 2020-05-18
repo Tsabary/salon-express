@@ -2,50 +2,93 @@ import "./styles.scss";
 import React, { useContext, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
+import algoliasearch from "algoliasearch/lite";
 
 import { AuthContext } from "../../../../../providers/Auth";
 
 import history from "../../../../../history";
-import {
-  keepRoomListed,
-  associateWithRoom,
-} from "../../../../../actions/rooms";
+import { keepRoomListed, addAdmin } from "../../../../../actions/rooms";
 
 import { fetchStrangerProfile } from "../../../../../actions/profiles";
 
 import ToggleField from "../../../../formComponents/toggleField";
-import Social from "../../../../otherComponents/social";
-import User from "../../../../otherComponents/user";
+import User from "../../../../otherComponents/user/search";
+import InputField from "../../../../formComponents/inputField";
+import { RoomContext } from "../../../../../providers/Room";
 
-const Admin = ({
-  room,
-  isOwner,
-  keepRoomListed,
-  associateWithRoom,
-  fetchStrangerProfile,
-}) => {
+const searchClient = algoliasearch(
+  process.env.REACT_APP_ALGOLIA_ID,
+  process.env.REACT_APP_ALGOLIA_SEARCH_KEY
+);
+const index = searchClient.initIndex("users");
+
+const Admin = ({ room, isOwner, keepRoomListed, addAdmin }) => {
   const myHistory = useHistory(history);
-
+  const { setGlobalRoom } = useContext(RoomContext);
   const { currentUserProfile } = useContext(AuthContext);
+  const [newAdmin, setNewAdmin] = useState("");
+  const [userSuggestions, setUserSuggestions] = useState([]);
 
-  const [admin, setAdmin] = useState(null);
+  useEffect(() => {
+    if (!newAdmin.length) return;
 
-  // useEffect(() => {
-  //   if (room && room.associate) {
-  //     fetchStrangerProfile(room.user_username, (profile) => setAdmin(profile));
-  //   }
-  // }, [room]);
+    index.search(newAdmin).then(({ hits }) => {
+      setUserSuggestions(
+        hits.filter((hit) => !room.admins_ID.includes(hit.objectID)).slice(0, 7)
+      );
+    });
+  }, [newAdmin]);
+
+  const handleChoose = (user) => {
+    const admin = { ...user, uid: user.objectID };
+    delete admin.objectID;
+    delete admin._highlightResult;
+
+    addAdmin(room, admin, (ro) => {
+      setGlobalRoom(ro);
+      setNewAdmin("");
+    });
+
+    // setValues((flr) => {
+    //   return {
+    //     ...flr,
+    //     admins: flr.admins ? [...flr.admins, admin] : [admin],
+    //     admins_ID: flr.admins_ID
+    //       ? [...flr.admins_ID, admin.user_ID]
+    //       : [admin.user_ID],
+    //   };
+    // });
+  };
 
   const renderAdmins = (admins) => {
     return admins.map((admin) => {
       return (
+        <div key={admin.uid}>
+          <User
+            user={{
+              avatar: admin.avatar,
+              name: admin.name,
+              username: admin.username,
+              uid: admin.uid,
+            }}
+            className="extra-tiny-margin-top clickable"
+            onClick={() => myHistory.push(`/${admin.username}`)}
+          />
+        </div>
+      );
+    });
+  };
+
+  const renderUsers = (users, className, onClick) => {
+    return users.map((user) => {
+      return (
         <User
-          user={{
-            avatar: admin.avatar,
-            name: admin.name,
-            username: admin.username,
+          className={className}
+          user={user}
+          userID={user.objectID || user.user_ID}
+          onClick={() => {
+            if (onClick) onClick(user);
           }}
-          userID={admin.uid}
         />
       );
     });
@@ -72,56 +115,42 @@ const Admin = ({
         <>
           <ToggleField
             id="singleRoomListed"
-            text="Keep room public"
+            text="Make Room public"
             toggleOn={() => keepRoomListed(room, true)}
             toggleOff={() => keepRoomListed(room, false)}
             isChecked={room.listed}
           />
-          {/* <ToggleField
-            id="singleRoomAssociate"
-            text="Associate me with this Room"
-            toggleOn={() => associateWithRoom(room, true)}
-            toggleOff={() => associateWithRoom(room, false)}
-            isChecked={room.associate}
-          /> */}
         </>
       ) : null}
 
-      {room.admins ? renderAdmins(room.admins) : null}
+      <InputField
+        type="text"
+        placeHolder="Add an admin"
+        value={newAdmin}
+        onChange={setNewAdmin}
+      />
 
-      {/* {room && room.associate ? (
-        <>
-          <div
-            className="max-max"
-            onClick={() => myHistory.push(`/${room.user_username}`)}
-          >
-
-            <img
-              className="comment__avatar"
-              src={
-                room && room.user_avatar
-                  ? room.user_avatar
-                  : "../../../imgs/logo.jpeg"
-              }
-            />
-            <div className="comment__user-name">
-              {room.user_username === room.user_ID
-                ? room.user_name
-                : room.user_username}
-            </div>
+      {newAdmin && userSuggestions.length ? (
+        <div className="floor-admins__suggestions-container">
+          <div className="floor-admins__suggestions">
+            {renderUsers(
+              userSuggestions,
+              "extra-tiny-margin-top clickable",
+              (user) => handleChoose(user)
+            )}
           </div>
+        </div>
+      ) : null}
 
-          <div className="admin__social">
-            {admin ? <Social data={admin} /> : null}
-          </div>
-        </>
-      ) : null} */}
+      {room.admins ? (
+        <div className="tiny-margin-top">{renderAdmins(room.admins)} </div>
+      ) : null}
     </div>
   ) : null;
 };
 
 export default connect(null, {
   keepRoomListed,
-  associateWithRoom,
   fetchStrangerProfile,
+  addAdmin,
 })(Admin);

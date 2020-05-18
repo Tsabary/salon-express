@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import firebase from "firebase/app";
 
 import { detachChannelListener } from "../../../actions/rooms";
-import { detachFloorListener } from "../../../actions/floors";
+import { detachFloorListener, fixNYC } from "../../../actions/floors";
 
 import { PageContext } from "../../../providers/Page";
 import { AuthContext } from "../../../providers/Auth";
@@ -15,7 +15,7 @@ import Favorites from "./favorites";
 import MyRooms from "./myRooms";
 import Floors from "./floors";
 
-const Home = ({ detachChannelListener, detachFloorListener }) => {
+const Home = ({ detachChannelListener, detachFloorListener, fixNYC }) => {
   const { currentUser } = useContext(AuthContext);
   const { page, setPage } = useContext(PageContext);
 
@@ -45,7 +45,7 @@ const Home = ({ detachChannelListener, detachFloorListener }) => {
 
   return (
     <div className="home">
-      {!currentUser ? (
+      {/* {!currentUser ? (
         <div className="home__welcome small-margin-bottom">
           Welcome to <span className="bold-700">Salon Express</span>, where you
           can discover public group video chats. Join sessions, and connect to
@@ -58,9 +58,12 @@ const Home = ({ detachChannelListener, detachFloorListener }) => {
           </span>{" "}
           to join sessions - it's <span className="bold-700">FREE</span>.
         </div>
-      ) : null}
+      ) : null} */}
 
-      <div className="home__menu">
+      <div
+        className="home__menu"
+ 
+      >
         <ul>
           {page === 1 ? (
             <div className="default-active">Explore</div>
@@ -152,6 +155,18 @@ const Home = ({ detachChannelListener, detachFloorListener }) => {
             </li>
           )}
         </ul>
+        <a
+          className="home__guides small-button"
+          href="https://salon.express/blog"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => {
+            fixNYC();
+            console.log("fixxxing")
+          }}
+        >
+          Guides
+        </a>
       </div>
 
       {renderContent(page)}
@@ -159,4 +174,6 @@ const Home = ({ detachChannelListener, detachFloorListener }) => {
   );
 };
 
-export default connect(null, { detachChannelListener, detachFloorListener })(Home);
+export default connect(null, { detachChannelListener, detachFloorListener, fixNYC })(
+  Home
+);

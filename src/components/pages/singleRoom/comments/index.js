@@ -1,15 +1,13 @@
 import "./styles.scss";
 import React, { useContext, useState, useEffect } from "react";
+import { connect } from "react-redux";
 
 import { AuthContext } from "../../../../providers/Auth";
 
 import { fetchRoomComments, newComment } from "../../../../actions/rooms";
-import { connect } from "react-redux";
 
-import Comment from "./comment";
-
-import TextArea from "../../../formComponents/textArea";
-import { validateWordsLength } from "../../../../utils/strings";
+import CommentForm from '../../../forms/commentForm';
+import Comment from "../../../otherComponents/comment";
 
 const Comments = ({ entityID, room, fetchRoomComments, newComment }) => {
   const { currentUserProfile } = useContext(AuthContext);
@@ -22,7 +20,7 @@ const Comments = ({ entityID, room, fetchRoomComments, newComment }) => {
 
   // This happens when the room first loads. We take the id of the room and also the fake uid (return if it's not set yet) and we fetch the rooms data. There's also a callback for creating a new portal called home in case there aren't any portals in this room yet
   useEffect(() => {
-    fetchRoomComments(entityID, setComments);
+    fetchRoomComments(entityID, coms => setComments(coms));
   }, [entityID, fetchRoomComments]);
 
   // This sets the comment basic info, and the values of the different fields in our page to what they currently are (so that they'll be present in our edit components)
@@ -45,57 +43,25 @@ const Comments = ({ entityID, room, fetchRoomComments, newComment }) => {
     });
   };
 
+  const submitComment = (e) => {
+    e.preventDefault();
+    if (!currentUserProfile || !comment.body || !comment.body.length) return;
+    newComment(comment, (id) => {
+      setComments([
+        {
+          ...comment,
+          created_on: new Date(),
+          id,
+        },
+        ...comments,
+      ]);
+      setComment({ ...comment, body: "" });
+    });
+  };
+
   return (
     <div className="comments single-room__comments section__container">
-      <form
-        className="comments__form"
-        autoComplete="off"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (!currentUserProfile || !comment.body || !comment.body.length)
-            return;
-          newComment(comment, () => {
-            setComments([
-              {
-                ...comment,
-                created_on: new Date(),
-                id: Date.now(),
-              },
-              ...comments,
-            ]);
-            setComment({ ...comment, body: "" });
-          });
-        }}
-      >
-        <TextArea
-          type="text"
-          placeHolder="Leave a comment"
-          value={comment && comment.body ? comment.body : ""}
-          onChange={(body) => {
-            if (body.length < 500 && validateWordsLength(body, 50))
-              setComment({
-                ...comment,
-                body,
-              });
-          }}
-        />
-        {currentUserProfile ? (
-          <div className="comments__button">
-            <button type="submit" className="small-button">
-              Post
-            </button>
-          </div>
-        ) : (
-          <>
-            <div
-              className="small-button comments__button"
-              onClick={() => (window.location.hash = "sign-up")}
-            >
-              Post
-            </div>
-          </>
-        )}
-      </form>
+      <CommentForm comment={comment} setComment={setComment} submitComment={submitComment} />
       {comments ? renderComments(comments) : null}
     </div>
   );

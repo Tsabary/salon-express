@@ -44,13 +44,23 @@ const NewRoom = ({ newRoom }) => {
   // Reset the form
   const reset = (currentUserProfile) => {
     setValues({
+      admins: [
+        {
+          avatar: currentUserProfile.avatar,
+          email: currentUserProfile.email,
+          name: currentUserProfile.name,
+          uid: currentUserProfile.uid,
+          username: currentUserProfile.username,
+        },
+      ],
+      admins_ID: [currentUserProfile.uid],
       user_ID: currentUserProfile.uid,
       user_avatar: currentUserProfile.avatar,
       user_name: currentUserProfile.name,
       user_username: currentUserProfile.username,
       visitors_count: 0,
       favorites_count: 0,
-      listed: true,
+      // listed: true,
       associate: true,
     });
     setSubmitting(false);
@@ -135,7 +145,7 @@ const NewRoom = ({ newRoom }) => {
                   className="toggle-button__label clickable"
                   htmlFor="unlisted"
                 >
-                  Make room unlisted
+                  Make Room private
                 </label>
 
                 <div
@@ -156,7 +166,7 @@ const NewRoom = ({ newRoom }) => {
                 />
               </div>
 
-              <div className="max-fr-max tiny-margin-bottom">
+              {/* <div className="max-fr-max tiny-margin-bottom">
                 <label
                   className="toggle-button__label clickable"
                   htmlFor="associate"
@@ -180,7 +190,7 @@ const NewRoom = ({ newRoom }) => {
                   toggleOff={() => setValues({ ...values, associate: false })}
                   isChecked={true}
                 />
-              </div>
+              </div> */}
 
               <Tags
                 values={values}
@@ -188,6 +198,7 @@ const NewRoom = ({ newRoom }) => {
                 errorMessages={errorMessages}
                 formError={formError}
                 setFormError={setFormError}
+                placeHolder="Add 2-5 tags that are related to this Room"
               />
 
               {formError ? (

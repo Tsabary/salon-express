@@ -8,6 +8,7 @@
   font-family: $font;
 
   &__title {
+    color: $greyDark;
     cursor: pointer;
     width: max-content;
     &:hover {

@@ -16,6 +16,7 @@ import {
   setActiveChannelFloorRoom,
   deleteChannelFloorRoom,
 } from "../../../../../../actions/floors";
+import User from "../../../../../otherComponents/user/search";
 
 const SingleChannel = ({
   channel,
@@ -58,6 +59,7 @@ const SingleChannel = ({
           >
             {channel.link}
           </div>
+          {channel.user ? <User user={channel.user} className="extra-tiny-margin-top"/> :null}
         </div>
         <div className="max-max">
           <div

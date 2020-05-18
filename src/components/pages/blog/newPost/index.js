@@ -1,14 +1,16 @@
 import "./styles.scss";
 import React, { useState, useContext, useEffect } from "react";
 import { connect } from "react-redux";
-
-import { AuthContext } from "../../../../providers/Auth";
-
-import RichTextEditor from "../../../formComponents/richTextEditor";
-
-import { newPost } from "../../../../actions/blog";
 import { useHistory } from "react-router-dom";
 import history from "../../../../history";
+
+import { AuthContext } from "../../../../providers/Auth";
+import { errorMessages } from "../../../../utils/forms";
+
+import { newPost } from "../../../../actions/blog";
+import InputField from "../../../formComponents/inputField";
+import RichTextEditor from "../../../formComponents/richTextEditor";
+import Tags from "../../../formComponents/tags";
 
 const NewPost = ({ newPost }) => {
   const myHistory = useHistory(history);
@@ -27,6 +29,7 @@ const NewPost = ({ newPost }) => {
       user_name: currentUserProfile.name,
       user_username: currentUserProfile.username,
       user_avatar: currentUserProfile.avatar,
+      likes: [],
     });
   }, [currentUserProfile]);
 
@@ -95,7 +98,7 @@ const NewPost = ({ newPost }) => {
             onChange={(e) => setValues({ ...values, title: e.target.value })}
           />
           <textarea
-            className="input-field__input input-field__input--big tiny-margin-top"
+            className="input-field__input input-field__input--medium tiny-margin-top"
             type="text"
             placeholder="Give your post a subtitle"
             value={values.subtitle}
@@ -133,6 +136,25 @@ const NewPost = ({ newPost }) => {
         }}
         placeholder="Your two cents go here"
       />
+
+      <InputField
+        type="text"
+        placeHolder="Youtube tutorial (video ID only)"
+        value={!!values && values.video}
+        onChange={(video) => setValues({ ...values, video })}
+        className="tiny-margin-top"
+      />
+
+      <Tags
+        values={values}
+        setValues={setValues}
+        errorMessages={errorMessages}
+        formError={formError}
+        setFormError={setFormError}
+        className="tiny-margin-top"
+        placeHolder="Tag your article with 2-5 relevant tags"
+      />
+
       {formError ? (
         <div className="fr-max small-margin-top form-error">
           <div />

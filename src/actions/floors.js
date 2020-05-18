@@ -98,10 +98,10 @@ export const fetchFloorRooms = (floor_ID, setFloorRooms) => async (
   setFloorRooms(data.docs ? data.docs.map((doc) => doc.data()) : []);
 };
 
-export const fetchFloorPlans = () => async (dispatch) => {
+export const fetchFloorPlans = (uid) => async (dispatch) => {
   const data = await db
     .collection("floor_plans")
-    .where("public", "==", true)
+    .where("user_ID", "in", [uid, "KbhtqAE0B9RDAonhQqgZ1CWsg1o1"])
     .get()
     .catch((e) => console.error("promise Error fetch floor plans", e));
 
@@ -185,6 +185,45 @@ export const saveFloor = (floor, logoFile, tracks, cb, ecb) => async () => {
     .catch((e) => {
       ecb(e);
     });
+};
+
+export const addImageToFloorRoom = (
+  room,
+  roomIndex,
+  floor,
+  image,
+  reset
+) => async () => {
+  const batch = db.batch();
+  const docRef = db.collection("floors").doc(floor.id);
+  console.log("adding o floor room");
+  if (!image) return;
+
+  const ref = storage.ref(`/images/floor-rooms/${floor.id}/${roomIndex}`);
+
+  const upload = await ref.put(image);
+  if (!upload) return;
+
+  const downloadUrl = await ref.getDownloadURL();
+  if (!downloadUrl) return;
+
+  const newFoor = {
+    ...floor,
+    rooms: {
+      ...floor.rooms,
+      [roomIndex]: { ...floor.rooms[roomIndex], image: downloadUrl },
+    },
+  };
+
+  batch.set(docRef, newFoor, { merge: true });
+
+  batch
+    .commit()
+    .then(() => {
+      reset();
+      analytics.logEvent("floor_room_image_updated");
+    })
+    .catch((e) => console.error("promise Error update room image", e));
 };
 
 export const newBackstageMessage = (
@@ -282,7 +321,7 @@ export const newFloorRoom = (values, reset) => async () => {
     .catch((e) => console.error("promise Error new floor room", e));
 };
 
-export const addFloorPlan = (rooms, image, cb) => async () => {
+export const addFloorPlan = (values, image, cb) => async () => {
   const floorPlanDoc = await db.collection("floor_plans").doc();
 
   const uploadTask = storage
@@ -305,7 +344,11 @@ export const addFloorPlan = (rooms, image, cb) => async () => {
         .child(floorPlanDoc.id)
         .getDownloadURL()
         .then((fireBaseUrl) => {
-          const floorPlan = { id: floorPlanDoc.id, rooms, image: fireBaseUrl };
+          const floorPlan = {
+            ...values,
+            id: floorPlanDoc.id,
+            image: fireBaseUrl,
+          };
           floorPlanDoc.set(floorPlan).then(() => {
             cb();
           });
@@ -567,4 +610,29 @@ export const deleteEventFloor = (event, roomIndex, floor, cb) => async () => {
       analytics.logEvent("floor_room_event_deleted");
     })
     .catch((e) => console.error("promise Error update room", e));
+};
+
+export const fixNYC = () => async () => {
+  const nycDoc = await db.collection("floors").doc("Z0bWQjbeG3dd0PDfJHMe").get();
+
+  if (!nycDoc.data()) return;
+  const nyc = nycDoc.data();
+
+  const nycRoomKeys = Object.keys(nyc.rooms);
+  const nycRoomValues = Object.values(nyc.rooms);
+  const newRooms = {};
+  for (let i = 0; i < nycRoomKeys.length; i++) {
+    newRooms[i] = nycRoomValues[i];
+
+    // if (i < 17) {
+    //   newRooms[i] = nycRoomValues[i];
+    // } else {
+    //   newRooms[i - 1] = nycRoomValues[i];
+    // }
+  }
+
+  const newFloorDoc = db.collection("floors").doc();
+  const newFloor = { ...nyc, rooms: newRooms, id: newFloorDoc.id };
+
+  newFloorDoc.set(newFloor);
 };

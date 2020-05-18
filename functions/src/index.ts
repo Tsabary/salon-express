@@ -29,6 +29,17 @@ exports.userCreated = functions.auth.user().onCreate((user) => {
     );
   }
 
+  const userName =
+    user.providerData && user.providerData[0].displayName
+      ? user.providerData[0].displayName
+      : "";
+
+  const userAvatar =
+    user.providerData && user.providerData[0].photoURL
+      ? user.providerData[0].photoURL
+      : "";
+
+  // Create a profile
   const userProfileRef = db.doc("users/" + user.uid);
 
   batch.set(userProfileRef, {
@@ -36,16 +47,42 @@ exports.userCreated = functions.auth.user().onCreate((user) => {
     email: user.email,
     languages: [],
     username: user.uid,
-    name:
-      user.providerData && user.providerData[0].displayName
-        ? user.providerData[0].displayName
-        : "",
-    avatar:
-      user.providerData && user.providerData[0].photoURL
-        ? user.providerData[0].photoURL
-        : "",
+    name: userName,
+    avatar: userAvatar,
   });
 
+  const userRoomRef = db.collection("rooms").doc();
+  const newRoom = {
+    admins: [
+      {
+        uid: user.uid,
+        email: user.email,
+        username: user.uid,
+        name: userName,
+        avatar: userAvatar,
+      },
+    ],
+    admins_ID: [user.uid],
+    associate: true,
+    description: `Hi there${
+      userName ? ` ${userName}` : ""
+    }, Welcome to your first Room! Invite your friends, play music and watch videos together. Here for business? This could also be your virtual office. Welcome to Salon Express!`,
+    favorites_count: 0,
+    id: userRoomRef.id,
+    language: "lir",
+    last_visit: new Date(),
+    listed: false,
+    name: `${userName ? `${userName}'s` : "My"} first Room`,
+    tags: ["my-first-room"],
+    user_ID: user.uid,
+    user_avatar: userAvatar,
+    user_username: user.uid,
+    visitors_count: 0,
+  };
+
+  batch.set(userRoomRef, newRoom);
+
+  // Save user to Algolia
   promises.push(
     usersIndex.saveObject({
       objectID: user.uid,
@@ -87,26 +124,26 @@ exports.userUpdate = functions.firestore
     )
       return;
 
-    // If the user changed their username, change the user name in all of that user's posts- past or future
-    const roomsData = await db
-      .collection("rooms")
-      .where("user_ID", "==", profile.uid)
-      .get();
+    // // If the user changed their username, change the user name in all of that user's posts- past or future
+    // const roomsData = await db
+    //   .collection("rooms")
+    //   .where("user_ID", "==", profile.uid)
+    //   .get();
 
-    roomsData.docs.map((doc) => {
-      const room = doc.data();
-      const roomRef = db.collection("rooms").doc(room.id);
+    // roomsData.docs.map((doc) => {
+    //   const room = doc.data();
+    //   const roomRef = db.collection("rooms").doc(room.id);
 
-      batch.set(
-        roomRef,
-        {
-          user_username: profile.username,
-          user_name: profile.name,
-          user_avatar: profile.avatar,
-        },
-        { merge: true }
-      );
-    });
+    //   batch.set(
+    //     roomRef,
+    //     {
+    //       user_username: profile.username,
+    //       user_name: profile.name,
+    //       user_avatar: profile.avatar,
+    //     },
+    //     { merge: true }
+    //   );
+    // });
 
     const commentsData = await db
       .collection("comments")
@@ -122,6 +159,68 @@ exports.userUpdate = functions.firestore
           user_username: profile.username,
           user_name: profile.name,
           user_avatar: profile.avatar,
+        },
+        { merge: true }
+      );
+    });
+
+    const floorsData = await db
+      .collection("floors")
+      .where("admins_ID", "array-contains", profile.uid)
+      .get();
+
+    floorsData.docs.map((doc) => {
+      const floor = doc.data();
+
+      const newFloorAdmins = floor.admins.map((ad: any) =>
+        ad.uid !== profile.uid
+          ? ad
+          : {
+              name: profile.name,
+              username: profile.username,
+              email: profile.email,
+              uid: profile.uid,
+              avatar: profile.avatar,
+            }
+      );
+
+      const floorRef = db.collection("floors").doc(floor.id);
+      batch.set(
+        floorRef,
+        {
+          ...floor,
+          admins: newFloorAdmins,
+        },
+        { merge: true }
+      );
+    });
+
+    const roomsData = await db
+      .collection("rooms")
+      .where("admins_ID", "array-contains", profile.uid)
+      .get();
+
+    roomsData.docs.map((doc) => {
+      const room = doc.data();
+
+      const newRoomAdmins = room.admins.map((ad: any) =>
+        ad.uid !== profile.uid
+          ? ad
+          : {
+              name: profile.name,
+              username: profile.username,
+              email: profile.email,
+              uid: profile.uid,
+              avatar: profile.avatar,
+            }
+      );
+
+      const roomRef = db.collection("floors").doc(room.id);
+      batch.set(
+        roomRef,
+        {
+          ...room,
+          admins: newRoomAdmins,
         },
         { merge: true }
       );

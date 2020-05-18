@@ -15,8 +15,6 @@ import {
 import { titleToKey } from "../../../../utils/strings";
 
 import Chat from "./chat";
-import Youtube from "./youtube";
-import Twitch from "./twitch";
 import Multiverse from "./multiverse";
 import MobileMultiverse from "./mobileMultiverse";
 import Mixlr from "./mixlr";
@@ -24,6 +22,7 @@ import { connect } from "react-redux";
 import Notice from "./notice";
 import { FloorContext } from "../../../../providers/Floor";
 import IFrame from "./iframe";
+import UserSocial from "../../../otherComponents/userSocial";
 
 const Media = ({
   room,
@@ -52,9 +51,6 @@ const Media = ({
 
   // This is the same multiverse just as an array of objects rather as an object
   const [multiverseArray, setMultiverseArray] = useState(null);
-
-  // This holds the state of the media toggle - are we viewing the chat or the stream
-  const [mediaState, setMediaState] = useState(false);
 
   const [isChatVisible, setIsChatVisible] = useState(true);
   const [isVideoVisible, setIsVideoVisible] = useState(true);
@@ -90,7 +86,7 @@ const Media = ({
 
   // Whenever the room or the current portal change, we set a new portal url
   useEffect(() => {
-    if (!currentPortal || !room) return;
+    if (!currentPortal || !currentPortal.new || !room) return;
 
     const portalUrlKey = titleToKey(
       floor
@@ -118,7 +114,6 @@ const Media = ({
   ]);
 
   useEffect(() => {
-    console.log("audio channel media", currentAudioChannel);
     if (
       currentAudioChannel &&
       currentAudioChannel.source &&
@@ -222,22 +217,40 @@ const Media = ({
         />
       ) : null}
 
-      {/** This is the multiverse*/}
-      {!isMobile && room ? (
-        <Multiverse
-          room={room}
-          currentPortal={currentPortal}
-          setCurrentPortal={setCurrentPortal}
-          multiverse={multiverse}
-          multiverseArray={multiverseArray}
-          currentAudioChannel={currentAudioChannel}
-          microphonePermissionGranted={microphonePermissionGranted}
-          cameraPermissionGranted={cameraPermissionGranted}
-          entityID={entityID}
-          isFirstLoad={isFirstLoad}
-          setIsFirstLoad={setIsFirstLoad}
-        />
-      ) : null}
+      <div
+        className={
+          !currentAudioChannel ||
+          (currentAudioChannel && !currentAudioChannel.source)
+            ? "media__multiverse fr media__multiverse--no-audio"
+            : currentAudioChannel && currentAudioChannel.source === "mixlr"
+            ? "media__multiverse fr media__multiverse--with-mixlr"
+            : "media__multiverse fr media__multiverse--with-video"
+        }
+      >
+        {/** This is the multiverse*/}
+        {!isMobile && room && isChatVisible ? (
+          <Multiverse
+            room={room}
+            currentPortal={currentPortal}
+            setCurrentPortal={setCurrentPortal}
+            multiverse={multiverse}
+            multiverseArray={multiverseArray}
+            currentAudioChannel={currentAudioChannel}
+            microphonePermissionGranted={microphonePermissionGranted}
+            cameraPermissionGranted={cameraPermissionGranted}
+            entityID={entityID}
+            isFirstLoad={isFirstLoad}
+            setIsFirstLoad={setIsFirstLoad}
+          />
+        ) : null}
+
+        {currentAudioChannel && currentAudioChannel.user && isVideoVisible ? (
+          <div className="section__container" style={{height:"100%", minHeight:"450px"}}>
+            <div className="section__title">Currently Live</div>
+            <UserSocial uid={currentAudioChannel.user.uid} />
+          </div>
+        ) : null}
+      </div>
 
       {isMobile && room ? (
         <MobileMultiverse
@@ -264,7 +277,6 @@ const Media = ({
           checked={isChatVisible}
           readOnly
         />
-
         <input
           className="media__video-checkbox"
           type="checkbox"
@@ -272,9 +284,8 @@ const Media = ({
           checked={isVideoVisible}
           readOnly
         />
-
         {!isMobile ? (
-          <>
+          <div className="fr">
             {/* <div className="media__chat-stream-container"> */}
             {isChatVisible ? (
               <span className="media__chat">
@@ -306,10 +317,12 @@ const Media = ({
             ) : null}
 
             {currentAudioChannel &&
-            ["youtube", "twitch","website"].includes(currentAudioChannel.source)
+            ["youtube", "twitch", "website"].includes(
+              currentAudioChannel.source
+            )
               ? renderControllers()
               : null}
-          </>
+          </div>
         ) : null}
       </div>
     </div>

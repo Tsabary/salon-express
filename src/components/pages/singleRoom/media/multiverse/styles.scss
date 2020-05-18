@@ -1,8 +1,8 @@
 @import "../../../../../styles/imports";
 
 .multiverse {
-  display: grid;
-  grid-template-rows: repeat(3, max-content) 1fr;
+height: 100%;
+  min-height: 450px;
 
   &__channels {
     margin-top: 2rem;

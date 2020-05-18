@@ -99,17 +99,20 @@ const Portal = ({
     )
       return;
 
-    if (currentPortal.new.title === portal.title && !isCurrent) {
+    if (
+      currentPortal.new &&
+      currentPortal.new.title === portal.title &&
+      !isCurrent
+    ) {
       console.log("portal", currentPortal);
 
-      
       currentUser
-      ? replaceUids(entityID,currentPortal, uniqueId, currentUser.uid, () =>
-          console.log("Makena", 2)
-        )
-      : replaceUids(entityID,currentPortal, userID, uniqueId, () =>
-          console.log("Makena", 3)
-        );
+        ? replaceUids(entityID, currentPortal, uniqueId, currentUser.uid, () =>
+            console.log("Makena", 2)
+          )
+        : replaceUids(entityID, currentPortal, userID, uniqueId, () =>
+            console.log("Makena", 3)
+          );
 
       // enterPortal(
       //   entityID,
@@ -121,12 +124,12 @@ const Portal = ({
       // );
 
       setIsCurrent(true);
-    } else if (currentPortal.new.title !== portal.title && isCurrent) {
+    } else if (currentPortal.new && currentPortal.new.title !== portal.title && isCurrent) {
       setIsCurrent(false);
     }
 
     const myCleanup = () => {
-      if (currentPortal.new.title === portal.title) {
+      if (currentPortal.new & currentPortal.new.title === portal.title) {
         leavePortal(entityID, portal, userID ? [userID, uniqueId] : [uniqueId]);
       }
     };
@@ -193,11 +196,12 @@ const Portal = ({
   return (
     <div
       className="portal"
-      onClick={() =>
+      onClick={() => {
+        if (isCurrent) return;
         setCurrentPortal((val) => {
           return { new: portal, old: val.new };
-        })
-      }
+        });
+      }}
     >
       <div className="portal__title-container">
         {portal.totem ? (

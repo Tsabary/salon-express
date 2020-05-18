@@ -7,12 +7,11 @@ import ImageMapper from "react-image-mapper";
 import { Howl, Howler } from "howler";
 
 const ImageMap = () => {
+  const imgElement = React.useRef(null);
+
   const { globalFloor, setGlobalFloorRoom } = useContext(FloorContext);
 
-  useEffect(() => {
-    console.log("floor", globalFloor)
-  },[globalFloor])
-
+  const [imgWidth, setImgWidth] = useState(0);
   const [sound, setSound] = useState();
   const [values, setValues] = useState({
     hoveredArea: null,
@@ -25,10 +24,14 @@ const ImageMap = () => {
   });
   const [mapWidth, setMapWidth] = useState(0);
 
+  // useEffect(() => {
+  //   console.log("sizee", imgWidth);
+  // }, [imgWidth]);
+
   useEffect(() => {
     switch (true) {
       case windowDimensions.width > 1000:
-        setMapWidth(windowDimensions.width * 0.6);
+        setMapWidth(windowDimensions.width * 0.4);
         break;
 
       case windowDimensions.width < 1000:
@@ -64,7 +67,7 @@ const ImageMap = () => {
   }, [sound]);
 
   const playSound = (area) => {
-    pauseSound(sound)
+    pauseSound(sound);
     if (!area.track) return;
 
     setSound(
@@ -124,7 +127,7 @@ const ImageMap = () => {
                 : [],
           }}
           width={mapWidth}
-          imgWidth={1500}
+          imgWidth={imgWidth}
           onClick={(area) => clicked(area)}
           onMouseEnter={(area) => enterArea(area)}
           onMouseLeave={(area) => leaveArea(area)}
@@ -133,6 +136,15 @@ const ImageMap = () => {
           }}
         />
       ) : null}
+    {globalFloor ? (
+        <img
+          src={globalFloor.image}
+          ref={imgElement}
+          onLoad={() => setImgWidth(imgElement.current.naturalWidth)}
+          alt="Room"
+          className="invisible"
+        />
+      ) : null} 
 
       {values.hoveredArea && (
         <span
@@ -140,7 +152,6 @@ const ImageMap = () => {
           style={{ ...getTipPosition(values.hoveredArea) }}
         >
           <div className="image-map__tooltip--name">
-
             {values.hoveredArea && values.hoveredArea.name}
           </div>
           <div className="image-map__tooltip--description tiny-margin-top">

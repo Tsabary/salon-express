@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import algoliasearch from "algoliasearch/lite";
 
 import InputField from "../../../formComponents/inputField";
-import User from "../../../otherComponents/user";
+import User from "../../../otherComponents/user/search";
 
 const searchClient = algoliasearch(
   process.env.REACT_APP_ALGOLIA_ID,
@@ -21,9 +21,7 @@ const Crew = ({ values, setValues }) => {
 
     index.search(newCrewMember).then(({ hits }) => {
       setUserSuggestions(
-        hits
-          .filter((hit) => !values.crew_ID.includes(hit.objectID))
-          .slice(0, 7)
+        hits.filter((hit) => !values.crew_ID.includes(hit.objectID)).slice(0, 7)
       );
     });
   }, [newCrewMember]);
@@ -50,8 +48,7 @@ const Crew = ({ values, setValues }) => {
       return (
         <User
           className={className}
-          user={user}
-          userID={user.objectID || user.user_ID}
+          user={{ ...user, uid: user.objectID || user.user_ID }}
           onClick={() => {
             if (onClick) onClick(user);
           }}

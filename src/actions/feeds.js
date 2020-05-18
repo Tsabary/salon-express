@@ -213,6 +213,7 @@ export const fetchFirstFloors = (
     languages && languages.length
       ? await db
           .collection("floors")
+          .where("listed", "==", true)
           // .where("language", "in", [...languages, "lir"])
           .orderBy("last_visit", "desc")
           .limit(90)
@@ -220,6 +221,7 @@ export const fetchFirstFloors = (
           .catch((e) => console.error("promise Error fetch ex", e))
       : await db
           .collection("floors")
+          .where("listed", "==", true)
           .orderBy("last_visit", "desc")
           .limit(90)
           .get()
@@ -246,6 +248,7 @@ export const fetchMoreFloors = (
     languages && languages.length
       ? await db
           .collection("floors")
+          .where("listed", "==", true)
           // .where("language", "in", [...languages, "lir"])
           .orderBy("last_visit", "desc")
           .startAfter(lastVisible)
@@ -254,6 +257,7 @@ export const fetchMoreFloors = (
           .catch((e) => console.error("promise Error fetch more floors", e))
       : await db
           .collection("floors")
+          .where("listed", "==", true)
           .orderBy("last_visit", "desc")
           .startAfter(lastVisible)
           .limit(90)

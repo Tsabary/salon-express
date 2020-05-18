@@ -20,7 +20,7 @@ const BottomHelpers = () => {
       <div style={{ position: "relative" }}>
         <div className="bottom-helpers__chats">
           <Faq />
-          <Updates />
+          {!globalFloor ? <Updates /> : null}
           {currentUserProfile &&
           globalFloor &&
           globalFloor.admins_ID.includes(currentUserProfile.uid) ? (

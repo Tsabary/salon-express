@@ -19,12 +19,15 @@ const SingleFloor = ({ floor }) => {
 
   return (
     <div className="single-floor">
-      <div
+      <a
         className="single-floor__title"
-        onClick={() => handleChange(`/floor/${floor.url}`)}
+        // onClick={() => handleChange(`/floor/${floor.url}`)}
+        href={`https://salon.express/floor/${floor.url}`}
+        target="_blank"
+        rel="noopener noreferrer"
       >
         {floor.name}
-      </div>
+      </a>
       <div>{Object.keys(floor.rooms).length}</div>
       <div>{floor.tags.join(", ")}</div>
       <div>{getLanguageName(floor.language)}</div>

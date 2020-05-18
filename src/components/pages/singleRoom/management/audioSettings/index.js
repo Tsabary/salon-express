@@ -1,5 +1,5 @@
 import "./styles.scss";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import { ReactSVG } from "react-svg";
 import ReactTooltip from "react-tooltip";
@@ -12,6 +12,8 @@ import { connect } from "react-redux";
 
 import InputField from "../../../../formComponents/inputField";
 import SingleChannel from "./singleChannel";
+import User from "../../../../otherComponents/user/search";
+import UserSearch from "../../../../otherComponents/userSearch";
 
 const AudioSettings = ({
   room,
@@ -23,6 +25,7 @@ const AudioSettings = ({
   addChannelFloorRoom,
 }) => {
   const [newChannel, setNewChannel] = useState(null);
+
 
   const renderChannels = (channels) => {
     return channels.map((channel) => {
@@ -69,31 +72,30 @@ const AudioSettings = ({
           />
         );
 
-        case "Twitch":
-          return (
-            <InputField
-              type="text"
-              placeHolder="Channel ID"
-              value={newChannel && newChannel.link}
-              onChange={(link) => {
-                setNewChannel({ ...newChannel, link });
-              }}
-              // numbersAndLetters
-            />
+      case "Twitch":
+        return (
+          <InputField
+            type="text"
+            placeHolder="Channel ID"
+            value={newChannel && newChannel.link}
+            onChange={(link) => {
+              setNewChannel({ ...newChannel, link });
+            }}
+            // numbersAndLetters
+          />
         );
-      
-      
-        case "Website":
-          return (
-            <InputField
-              type="text"
-              placeHolder="Website URL"
-              value={newChannel && newChannel.link}
-              onChange={(link) => {
-                setNewChannel({ ...newChannel, link });
-              }}
-            />
-          );
+
+      case "Website":
+        return (
+          <InputField
+            type="text"
+            placeHolder="Website URL"
+            value={newChannel && newChannel.link}
+            onChange={(link) => {
+              setNewChannel({ ...newChannel, link });
+            }}
+          />
+        );
 
       default:
         return null;
@@ -158,7 +160,7 @@ const AudioSettings = ({
           <div>
             <InputField
               type="text"
-              placeHolder="Name"
+              placeHolder="Title"
               value={newChannel && newChannel.title}
               onChange={(title) => {
                 setNewChannel({
@@ -169,6 +171,56 @@ const AudioSettings = ({
                 });
               }}
             />
+
+            {newChannel && newChannel.user ? (
+              <div className="fr-max">
+                <User
+                  className="extra-tiny-margin-top"
+                  user={newChannel.user}
+                />
+
+                <div
+                  className="clickable"
+                  onClick={() => {
+                    const UpNeCh = { ...newChannel };
+                    delete UpNeCh.user;
+                    setNewChannel(UpNeCh);
+                  }}
+                >
+                  <ReactSVG
+                    src="../svgs/trash.svg"
+                    wrapper="div"
+                    data-tip={`deleteUserAudioSettings${newChannel.user.uid}`}
+                    data-for={`deleteUserAudioSettings${newChannel.user.uid}`}
+                    beforeInjection={(svg) => {
+                      svg.classList.add("svg-icon--normal");
+                    }}
+                  />
+                  <ReactTooltip
+                    id={`deleteUserAudioSettings${newChannel.user.uid}`}
+                  >
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: "Clicking would remove this event immediately.",
+                      }}
+                    />
+                  </ReactTooltip>
+                </div>
+              </div>
+            ) : (
+              <UserSearch
+                className="extra-tiny-margin-top"
+                placeholder="User (if any)"
+                existingUsers={[]}
+                handleChoose={(user) => {
+                  setNewChannel({
+                    ...newChannel,
+                    user,
+                  });
+                }}
+              />
+            )}
+
             <Form.Control
               as="select"
               bsPrefix="input-field__input form-drop extra-tiny-margin-top extra-tiny-margin-bottom"
@@ -198,7 +250,6 @@ const AudioSettings = ({
         </div>
       </form>
 
-      
       {audioChannels.length ||
       (floor && floor.rooms[roomIndex] && floor.rooms[roomIndex].audio_channels)
         ? renderChannels(

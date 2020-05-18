@@ -1,0 +1,39 @@
+@import "../../../styles/imports";
+
+.on-boarding {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 100000;
+
+  &__title{
+    font-family: $fontBold;
+    font-size: 2rem;
+    color: $greyDarkest;
+  }
+
+  &__title{
+    // font-family: $fontBold;
+    // font-size: 2rem;
+    color: $greyDark;
+  }
+
+  &__window {
+    width: max-content;
+    height: max-content;
+    margin: auto;
+    margin-top: 10vh;
+    border-radius: $borderRadius;
+    background-color: white;
+    padding: 4rem;
+    width: 40%;
+    min-width: 50rem;
+
+    &-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+  }
+}

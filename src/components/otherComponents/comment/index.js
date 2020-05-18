@@ -1,17 +1,29 @@
 import "./styles.scss";
 import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
+import { connect } from "react-redux";
 import Moment from "react-moment";
 
-import history from "../../../../../history";
+import history from "../../../history";
 
-import { AuthContext } from "../../../../../providers/Auth";
-import { validateWordsLength } from "../../../../../utils/strings";
-import { updateComment, deleteComment } from "../../../../../actions/rooms";
-import TextArea from "../../../../formComponents/textArea";
-import { connect } from "react-redux";
+import { AuthContext } from "../../../providers/Auth";
+import { validateWordsLength } from "../../../utils/strings";
+import { updateComment, deleteComment } from "../../../actions/rooms";
+import {
+  updateComment as updateCommentBlog,
+  deleteComment as deleteCommentBlog,
+} from "../../../actions/blog";
+import TextArea from "../../formComponents/textArea";
 
-const Comment = ({ comment, setComments, updateComment, deleteComment }) => {
+const Comment = ({
+  comment,
+  setComments,
+  blog,
+  updateComment,
+  deleteComment,
+  updateCommentBlog,
+  deleteCommentBlog,
+}) => {
   const myHistory = useHistory(history);
   const { currentUserProfile } = useContext(AuthContext);
 
@@ -44,7 +56,11 @@ const Comment = ({ comment, setComments, updateComment, deleteComment }) => {
         <div className="max-fr">
           <img
             className="comment__avatar"
-            src={comment.user_avatar? comment.user_avatar : "../../../imgs/avatar.png"}
+            src={
+              comment.user_avatar
+                ? comment.user_avatar
+                : "../../../imgs/avatar.png"
+            }
             alt="comment author"
           />
           <div className="comment__user-name">{comment.user_name}</div>
@@ -74,18 +90,31 @@ const Comment = ({ comment, setComments, updateComment, deleteComment }) => {
                 className="button-colored"
                 onClick={() => {
                   if (values) {
-                    updateComment(values, comment.id, () => {
-                      setIsEdited(false);
-                      setComments((vals) => {
-                        return vals.map((com) =>
-                          com.id !== comment.id
-                            ? com
-                            : { ...comment, body: values }
-                        );
-                      });
+                    blog
+                      ? updateCommentBlog(values, comment.id, () => {
+                          setIsEdited(false);
+                          setComments((vals) => {
+                            return vals.map((com) =>
+                              com.id !== comment.id
+                                ? com
+                                : { ...comment, body: values }
+                            );
+                          });
 
-                      setLastSavedValues(values);
-                    });
+                          setLastSavedValues(values);
+                        })
+                      : updateComment(values, comment.id, () => {
+                          setIsEdited(false);
+                          setComments((vals) => {
+                            return vals.map((com) =>
+                              com.id !== comment.id
+                                ? com
+                                : { ...comment, body: values }
+                            );
+                          });
+
+                          setLastSavedValues(values);
+                        });
                   }
                 }}
               >
@@ -122,12 +151,20 @@ const Comment = ({ comment, setComments, updateComment, deleteComment }) => {
               <div
                 className="button-colored"
                 onClick={() => {
+                  console.log("comment", comment);
+
                   if (values) {
-                    deleteComment(comment.id, () => {
-                      setComments((vals) => {
-                        return vals.filter((com) => com.id !== comment.id);
-                      });
-                    });
+                    blog
+                      ? deleteCommentBlog(comment.id, () => {
+                          setComments((vals) => {
+                            return vals.filter((com) => com.id !== comment.id);
+                          });
+                        })
+                      : deleteComment(comment.id, () => {
+                          setComments((vals) => {
+                            return vals.filter((com) => com.id !== comment.id);
+                          });
+                        });
                   }
                 }}
               >
@@ -141,4 +178,9 @@ const Comment = ({ comment, setComments, updateComment, deleteComment }) => {
   );
 };
 
-export default connect(null, { updateComment, deleteComment })(Comment);
+export default connect(null, {
+  updateComment,
+  deleteComment,
+  updateCommentBlog,
+  deleteCommentBlog,
+})(Comment);

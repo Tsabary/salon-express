@@ -19,12 +19,22 @@
     padding: 5rem 5rem 2rem 5rem;
   }
 
+  @include resize(750px) {
+    padding: 1rem 5rem;
+  }
+
+  @include resize(700px) {
+    padding: 1rem 3.5rem;
+  }
+
+  @include resize(600px) {
+    padding: 0rem 3rem;
+  }
+
   &__center {
     font-size: 5rem;
     font-family: $fontBold;
     color: $greyLight;
-    // background-color: $mainColor 1px solid;
-    // margin-bottom: 7rem;
     margin-top: 1rem;
 
     @include resize(1000px) {
@@ -52,52 +62,14 @@
     }
   }
 
-  @include resize(800px) {
-    padding: 1rem 5rem;
-  }
-
-  @include resize(700px) {
-    padding: 1rem 3.5rem;
-  }
-
-  @include resize(600px) {
-    padding: 0rem 3rem;
-  }
-
-  &__back {
-    border-radius: $borderRadius;
-    box-shadow: $containerBoxShadow;
-    background-color: white;
-    width: max-content;
-    padding: 1rem;
-    color: $grey;
-    cursor: pointer;
-    transition: all 0.1s;
-
-    &:hover {
-      color: $mainColor;
-    }
-  }
-
   &-with-logo {
-    // width: 100%;
     display: grid;
     align-items: start;
     gap: 4rem;
-    // @include resize(900px) {
-    //   grid-template-columns: 9rem 1fr max-content;
-    // }
+    grid-template-columns: max-content 1fr max-content max-content;
 
     @include resize(750px) {
       display: none;
-    }
-
-    &--logged-in {
-      grid-template-columns: max-content 1fr max-content max-content;
-    }
-
-    &--logged-out {
-      grid-template-columns: max-content 1fr max-content max-content;
     }
   }
 
@@ -120,93 +92,9 @@
     }
   }
 
-  &__logo {
-    height: 8rem;
-    width: 8rem;
-    background: url("/imgs/logo.jpg") no-repeat;
-    background-size: cover;
-    cursor: pointer;
-    &-container {
-      display: grid;
-      grid-template-columns: repeat(2, min-content);
-      // grid-gap: 1rem;
-      align-items: center;
-      @include resize(700px) {
-        display: none;
-      }
-    }
-
-    &-empty-holder {
-      display: none;
-      @include resize(700px) {
-        display: block;
-      }
-    }
-  }
-
   &__new-room {
     @include resize(750px) {
       display: none;
     }
-  }
-
-  &__title {
-    text-align: center;
-    @include resize(700px) {
-      display: none;
-    }
-    &:hover {
-      color: $mainColor;
-    }
-    &-main {
-      font-family: $fontBold, $fontHebrew;
-      font-weight: 900;
-      font-size: 4rem;
-      text-align: center;
-      color: $mainColor;
-      margin-bottom: 0.6rem;
-      transition: all 0.2s;
-      &--floor {
-        color: $mainColor;
-
-        // color: rgba(220, 220, 220, 0.2) !important;
-      }
-    }
-
-    &-sub {
-      color: $mainColor;
-      margin-top: -0.5rem;
-      margin-left: 0.3rem;
-      &--floor {
-        color: rgba(220, 220, 220, 0.2) !important;
-      }
-    }
-
-    &-full {
-      cursor: pointer;
-      @include resize(900px) {
-        display: none;
-      }
-    }
-
-    &-lean {
-      display: none;
-      margin-top: 0.5rem;
-      cursor: pointer;
-
-      @include resize(900px) {
-        display: block;
-      }
-
-      @include resize(750px) {
-        display: none;
-      }
-    }
-  }
-
-  &__auth {
-    display: grid;
-    justify-content: flex-end;
-    margin-top: 0.5rem;
   }
 }

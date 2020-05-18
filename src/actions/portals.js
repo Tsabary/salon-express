@@ -29,7 +29,6 @@ export const listenToMultiverse = (
     setMultiverseArray,
     cb
   ) => () => {
-    console.log("minnne", "attached listener");
   
     multiverseListener = db
       .collection("multiverses")

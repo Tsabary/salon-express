@@ -21,11 +21,16 @@ const ChatMessage = ({ message }) => {
         </div>
         <div className="chat-message__body">{message.body}</div>
 
-        <div className="chat-message__user-name">{`${message.user_name} ${
+        <a
+          className="chat-message__user-name"
+          href={"https://salon.express/" + message.user_username}
+          target="_blank"
+          rel="noopener noreferrer"
+        >{`${message.user_name} ${
           message.user_username === message.user_ID
             ? ""
             : `(${message.user_username})`
-        }`}</div>
+        }`}</a>
       </div>
     </div>
   );

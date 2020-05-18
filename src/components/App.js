@@ -50,6 +50,7 @@ import AudioChannels from "./popups/audioChannels";
 // import NewFloorRoom from "./popups/newFloorRoom";
 import BottomHelpers from "./otherComponents/bottomHelpers";
 import EditPost from "./pages/blog/editPost";
+import OnBoarding from "./otherComponents/onBoarding";
 
 const App = () => {
   const [isFloor, setIsFloor] = useState(
@@ -90,6 +91,7 @@ const App = () => {
                 <UniqueIdProvider>
                   <Router history={history}>
                     <div className="app">
+                      <OnBoarding />
                       <SignUp />
                       <UpdateProfile />
                       <NewRoom />
@@ -122,7 +124,11 @@ const App = () => {
                         <Route path="/blog" exact component={Blog} />
                         <Route path="/blog/new" exact component={NewPost} />
                         <Route path="/blog/:id" exact component={Post} />
-                        <Route path="/blog-edit/:id" exact component={EditPost} />
+                        <Route
+                          path="/blog-edit/:id"
+                          exact
+                          component={EditPost}
+                        />
                         <Route path="/careers" exact component={Careers} />
                         <Route path="/careers/:id" exact component={Apply} />
                         <Route

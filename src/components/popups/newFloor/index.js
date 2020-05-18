@@ -3,6 +3,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import React, { useContext, useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { useHistory } from "react-router-dom";
+
 import "react-datepicker/dist/react-datepicker.css";
 import Loader from "react-loader-spinner";
 import Form from "react-bootstrap/Form";
@@ -18,6 +20,7 @@ import {
 } from "pure-react-carousel";
 import "pure-react-carousel/dist/react-carousel.es.css";
 
+import history from "../../../history";
 import { AuthContext } from "../../../providers/Auth";
 
 import { newFloor, fetchFloorPlans } from "../../../actions/floors";
@@ -34,6 +37,7 @@ import InputField from "../../formComponents/inputField";
 import Tags from "../../formComponents/tags";
 
 const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
+  const myHistory = useHistory(history);
   const { currentUserProfile } = useContext(AuthContext);
   const { addToast } = useToasts();
 
@@ -45,8 +49,9 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
   const [chosenPlan, setChosenPlan] = useState(null);
 
   useEffect(() => {
-    if (!floorPlans.length) fetchFloorPlans();
-  });
+    if (!floorPlans.length && currentUserProfile)
+      fetchFloorPlans(currentUserProfile.uid);
+  }, [currentUserProfile, floorPlans]);
 
   useEffect(() => {
     if (currentUserProfile) {
@@ -56,29 +61,21 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
 
   // Reset the form
   const reset = (currentUserProfile) => {
+    const currentUserObject = {
+      uid: currentUserProfile.uid,
+      email: currentUserProfile.email,
+      name: currentUserProfile.name,
+      username: currentUserProfile.username,
+      avatar: currentUserProfile.avatar,
+    };
     setValues({
       user_ID: currentUserProfile.uid,
-      admins: [
-        {
-          uid: currentUserProfile.uid,
-          email: currentUserProfile.email,
-          name: currentUserProfile.name,
-          username: currentUserProfile.username,
-          avatar: currentUserProfile.avaar,
-        },
-      ],
+      admins: [currentUserObject],
       admins_ID: [currentUserProfile.uid],
-      crew: [
-        {
-          uid: currentUserProfile.uid,
-          email: currentUserProfile.email,
-          name: currentUserProfile.name,
-          username: currentUserProfile.username,
-          avatar: currentUserProfile.avaar,
-        },
-      ],
+      crew: [currentUserObject],
       crew_ID: [currentUserProfile.uid],
       open: new Date(),
+      listed: true,
       visitors: [],
     });
     setSubmitting(false);
@@ -225,6 +222,19 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
                   </div>
                 </CarouselProvider>
               </div>
+              <div className="centered">
+                <a
+                  className="small-button small-margin-bottom"
+                  onClick={() => {
+                    window.location.hash = "";
+                    myHistory.push(
+                      "/blog/how-do-i-live-stream-UL09Y8pSE8LaGpTq6lcx"
+                    );
+                  }}
+                >
+                  Upload a new Floor plan
+                </a>
+              </div>
 
               <Tags
                 values={values}
@@ -232,6 +242,7 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
                 errorMessages={errorMessages}
                 formError={formError}
                 setFormError={setFormError}
+                placeHolder="Add 2-5 tags that are related to this Floor"
               />
 
               {formError ? (

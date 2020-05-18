@@ -386,6 +386,7 @@ h3 {
 
 .section {
   &__container {
+    position: relative;
     border-radius: $borderRadius;
     box-shadow: $containerBoxShadow;
     background-color: white;
@@ -411,12 +412,22 @@ h3 {
 }
 
 .svg-icon {
+
+  &--huge {
+    height: 300px;
+    width: 300px;
+    text-align: center;
+    margin: auto;
+  }
+
   &--normal {
     height: 15px;
     width: 15px;
     text-align: center;
     margin: auto;
   }
+
+
 
   &--small {
     height: 10px;
@@ -526,7 +537,7 @@ h3 {
     cursor: pointer;
 
     &-text {
-      font-size: 1.4rem;
+      font-size: 1.2rem;
       color: $greyDarkest !important;
       text-decoration: none !important;
 
@@ -675,6 +686,11 @@ h3 {
 .max-fr {
   @include gridVariation;
   grid-template-columns: max-content 1fr;
+}
+
+.max-fr-fr {
+  @include gridVariation;
+  grid-template-columns: max-content repeat(2, 1fr);
 }
 
 .max-max {

@@ -18,6 +18,8 @@ import {
   addImageToRoom,
 } from "../../../../../actions/rooms";
 
+import { addImageToFloorRoom } from "../../../../../actions/floors";
+
 import { getLanguageName } from "../../../../../utils/languages";
 import {
   capitalizeSentances,
@@ -32,6 +34,7 @@ import { RoomContext } from "../../../../../providers/Room";
 
 const RoomInfo = ({
   room,
+  roomIndex,
   setRoom,
   isOwner,
   floor,
@@ -39,6 +42,7 @@ const RoomInfo = ({
   addImageToRoom,
   addToFavorites,
   removeFromFavorites,
+  addImageToFloorRoom,
 }) => {
   const { currentUserProfile } = useContext(AuthContext);
   const { setSearchTerm } = useContext(SearchContext);
@@ -110,6 +114,19 @@ const RoomInfo = ({
     }, 3000);
   };
 
+  const handleImageUpload = () => {
+    floor
+      ? addImageToFloorRoom(room, roomIndex, floor, imageAsFile, () => {
+          setImageAsFile(null);
+          setSelectedImage(null);
+        })
+      : addImageToRoom(room, imageAsFile, (updRoom) => {
+          setGlobalRoom(updRoom);
+          setImageAsFile(null);
+          setSelectedImage(null);
+        });
+  };
+
   return room ? (
     <div
       className={
@@ -129,7 +146,15 @@ const RoomInfo = ({
             >
               <img
                 className="room-info__image-preview clickable"
-                src={selectedImage || room.image || "../../imgs/placeholder.jpg"}
+                src={
+                  selectedImage ||
+                  (floor &&
+                    floor.rooms &&
+                    floor.rooms[roomIndex] &&
+                    floor.rooms[roomIndex].image)
+                    ? floor.rooms[roomIndex].image
+                    : room.image || "../../imgs/placeholder.jpg"
+                }
                 alt="Room"
               />
             </label>
@@ -147,13 +172,7 @@ const RoomInfo = ({
                   beforeInjection={(svg) => {
                     svg.classList.add("svg-icon--normal");
                   }}
-                  onClick={() => {
-                    addImageToRoom(room, imageAsFile, (updRoom) => {
-                      setGlobalRoom(updRoom);
-                      setImageAsFile(null);
-                      setSelectedImage(null);
-                    });
-                  }}
+                  onClick={handleImageUpload}
                 />
               </div>
             ) : null}
@@ -498,4 +517,5 @@ export default connect(null, {
   addToFavorites,
   removeFromFavorites,
   addImageToRoom,
+  addImageToFloorRoom,
 })(RoomInfo);

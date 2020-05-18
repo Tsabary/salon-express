@@ -1,0 +1,12 @@
+@import "../../../styles/imports";
+
+.comments-form {
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  gap: 1.5rem;
+
+  &__button {
+    align-self: flex-start;
+    margin-top: 0.4rem;
+  }
+}

@@ -50,7 +50,6 @@ $easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   background-color: $bgColor;
   width: 100%;
-  position: relative;
 
   @include resize(750px) {
     margin-top: 5rem;
@@ -78,11 +77,30 @@ $easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
   }
 
-  // &__bgimg {
-  //   position: fixed;
-  //   width: 100%;
-  //   object-fit: cover;
-  // }
+  &__side-map {
+    position: fixed;
+    left: 0;
+    bottom: 5rem;
+    background-color: white;
+    width: max-content;
+    height: max-content;
+    z-index: 200000;
+    border-top: $grey 1px solid;
+    border-right: $grey 1px solid;
+    border-bottom: $grey 1px solid;
+    border-left: none;
+    border-radius: 0 $borderRadius $borderRadius 0;
+
+    &__title {
+      font-weight: 900;
+      color: $mainColor;
+      padding: 1.7rem 1.2rem 1.7rem 1rem;
+      user-select: none;
+      margin-bottom: 0;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+    }
+  }
 
   &__checkbox {
     display: none;
@@ -182,11 +200,6 @@ $easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
       margin: auto;
       margin-top: 2rem;
       margin-bottom: 4rem;
-    }
-
-    &-logo {
-      opacity: 0.5;
-      height: 4rem;
     }
   }
 

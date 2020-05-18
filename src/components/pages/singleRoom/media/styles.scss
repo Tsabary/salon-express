@@ -6,28 +6,21 @@
   grid-template-rows: repeat(2, max-content);
   gap: 2rem;
 
-
-
-
-  &__chat-stream-container{
-
+  &__chat-stream-container {
   }
 
-  &__chat{
-
-  }
-  
-  &__stream{
-height: 50rem;
+  &__chat {
   }
 
-  &__chat-checkbox{
+  &__stream {
+    // height: 50rem;
+  }
+
+  &__chat-checkbox {
     display: none;
-  
   }
-  &__video-checkbox{
+  &__video-checkbox {
     display: none;
-  
   }
 
   &__toggle {
@@ -71,11 +64,11 @@ height: 50rem;
     }
   }
 
-
-
-
   &__multiverse {
+    height: 100%;
+
     &--with-mixlr {
+      
       grid-column: 1/4;
       grid-row: 1/4;
       @include resize(1100px) {

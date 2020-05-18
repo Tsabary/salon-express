@@ -43,8 +43,17 @@ const FloorManagement = ({ fetchMyFloors }) => {
 
   return (
     <div className="floor-management">
-      <div className="fr-max">
+      <div className="fr-max-max">
         <div className="floor-management__title">Your Floors</div>
+        <div
+          className="small-button clickable"
+          onClick={() => {
+            window.location.hash = "add-floor-plan";
+          }}
+        >
+          New Floor Plan
+        </div>
+
         <div
           className="small-button clickable"
           onClick={() => {

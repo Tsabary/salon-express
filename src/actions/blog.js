@@ -134,3 +134,70 @@ export const fetchCurrentPost = (id, cb) => async () => {
     cb(post.data());
   }
 };
+
+export const fetchBlogComments = (postID, cb) => async () => {
+  const data = await db
+    .collection("blog_comments")
+    .where("post_ID", "==", postID)
+    .orderBy("created_on", "desc")
+    // .startAfter(lastVisible)
+    // .limit(90)
+    .get();
+
+  cb(data.docs ? data.docs.map((doc) => doc.data()) : []);
+};
+
+export const newComment = (values, cb) => async () => {
+  const commentDoc = await db.collection("blog_comments").doc();
+  const comment = { ...values, created_on: new Date(), id: commentDoc.id };
+
+  commentDoc
+    .set(comment)
+    .then(() => {
+      analytics.logEvent("comment_new");
+      cb(commentDoc.id);
+    })
+    .catch((e) => console.error("promise Error new comment", e));
+};
+
+export const updateComment = (comment, commentID, cb) => async () => {
+  const commentDoc = await db.collection("blog_comments").doc(commentID);
+
+  commentDoc.set({ body: comment }, { merge: true }).then(() => {
+    analytics.logEvent("comment_update");
+
+    cb();
+  });
+};
+
+export const deleteComment = (commentID, cb) => async () => {
+  const commentDoc = await db.collection("blog_comments").doc(commentID);
+
+  commentDoc.delete().then(() => {
+    analytics.logEvent("comment_delete");
+
+    cb();
+  });
+};
+
+export const postLike = (post, userID, currentlyLikes, cb) => async () => {
+  const postDoc = db.collection("blog_posts").doc(post.id);
+
+  currentlyLikes
+    ? postDoc
+        .set(
+          { likes: firebase.firestore.FieldValue.arrayRemove(userID) },
+          { merge: true }
+        )
+        .then(() => {
+          cb({ ...post, likes: post.likes.filter((l) => l !== userID) });
+        })
+    : postDoc
+        .set(
+          { likes: firebase.firestore.FieldValue.arrayUnion(userID) },
+          { merge: true }
+        )
+        .then(() => {
+          cb({ ...post, likes: [...post.likes, userID] });
+        });
+};

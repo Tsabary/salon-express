@@ -67,7 +67,10 @@ const Room = ({
     <div className={isForFeed ? "room room-feed" : "room"}>
       {room && room.image ? (
         <div className="room__cover-img">
-          <img src={room.image} alt="Room" />
+          <img
+            src={room.image}
+            alt="Room"
+          />
         </div>
       ) : null}
       <div className="room__top">
@@ -81,7 +84,7 @@ const Room = ({
           <div
             className="room__title clickable"
             onClick={() => {
-              myHistory.push(`/room/${titleToUrl(room.title)}-${room.id}`);
+              myHistory.push(`/room/${titleToUrl(room.name)}-${room.id}`);
             }}
           >
             {capitalizeSentances(room.name)}

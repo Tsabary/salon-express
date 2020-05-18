@@ -220,15 +220,26 @@ export const addChannel = (channel, room, cb) => async (dispatch) => {
 
 // Setting the active audio channel
 export const setActiveChannel = (channel, roomID, cb) => () => {
-  db.collection("active_channels")
-    .doc(roomID)
-    .set({
-      link: channel ? channel.link : null,
-      source: channel ? channel.source : null,
-    })
-    .then(() => {
-      if (cb) cb();
-    });
+  channel
+    ? db
+        .collection("active_channels")
+        .doc(roomID)
+        .set(channel)
+        .then(() => {
+          if (cb) cb();
+        })
+    : db
+        .collection("active_channels")
+        .doc(roomID)
+        .delete()
+        .then(() => {
+          if (cb) cb();
+        });
+
+  // .set({
+  //   link: channel ? channel.link : null,
+  //   source: channel ? channel.source : null,
+  // })
 };
 
 export const deleteChannel = (channel, room, cb) => async (dispatch) => {
@@ -274,6 +285,20 @@ export const keepRoomListed = (room, listed) => async (dispatch) => {
         type: EDIT_ROOM,
         payload: newRoom,
       });
+    })
+    .catch((e) => console.error("promise Error keep listed", e));
+};
+
+export const addAdmin = (room, admin, cb) => () => {
+  const newRoom = {
+    admins: [...room.admins, admin],
+    admins_ID: [...room.admins_ID, admin.uid],
+  };
+  db.collection("rooms")
+    .doc(room.id)
+    .set(newRoom, { merge: true })
+    .then(() => {
+      cb(newRoom);
     })
     .catch((e) => console.error("promise Error keep listed", e));
 };
@@ -380,17 +405,23 @@ export const removeRoom = (room) => (dispatch) => {
 };
 
 // COMMENTS //
+let commentsListener;
 
-export const fetchRoomComments = (roomID, setComments) => async () => {
-  const data = await db
+export const fetchRoomComments = (roomID, cb) => async () => {
+  commentsListener = db
     .collection("comments")
-    .orderBy("created_on", "desc")
     .where("room_ID", "==", roomID)
-    .get()
-    .catch((e) => console.error("promise Error fetch room comme", e));
-  if (data.docs) {
-    setComments(data.docs.map((doc) => doc.data()));
-  }
+    .orderBy("created_on", "desc")
+    .onSnapshot((querySnapshot) => {
+      console.log("querySnapshot", querySnapshot);
+      if (!querySnapshot) return;
+      var comments = querySnapshot.docs.map((doc) => doc.data());
+      cb(comments);
+    });
+};
+
+export const detachCommentsListener = () => {
+ if(commentsListener) commentsListener();
 };
 
 export const newComment = (values, cb) => async () => {
@@ -401,7 +432,7 @@ export const newComment = (values, cb) => async () => {
     .set(comment)
     .then(() => {
       analytics.logEvent("comment_new");
-      cb();
+      cb(commentDoc.id);
     })
     .catch((e) => console.error("promise Error new comment", e));
 };
@@ -472,6 +503,17 @@ export const deleteEvent = (event) => async (dispatch) => {
       });
     })
     .catch((e) => console.error("promise Error delete event", e));
+};
+
+export const navigateToFirstRoom = (uid, cb) => async () => {
+  console.log("aaaa");
+  const data = await db.collection("rooms").where("user_ID", "==", uid).get();
+
+  if (!data || (data && !data.docs)) return;
+
+  const docs = data.docs.map((doc) => doc.data());
+
+  cb(docs[0]);
 };
 
 // export const uidToAdmin = () => async () => {

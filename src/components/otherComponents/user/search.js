@@ -1,12 +1,11 @@
 import "./styles.scss";
 import React from "react";
 
-const User = ({ user, userID, onClick, className }) => {
+const User = ({ user, onClick, className }) => {
   return (
     <div
-      className={className ? `user max-max ${className}` : "user max-max"}
+      className={className ? `user max-fr ${className}` : "user max-fr"}
       onClick={onClick}
-      key={userID}
     >
       <div className="user__avatar-container">
         <img
@@ -15,7 +14,9 @@ const User = ({ user, userID, onClick, className }) => {
           alt="user"
         />
       </div>
-      {`${user.name} ${user.username === userID ? "" : `(${user.username})`}`}
+      <div className="user__name">
+        {`${user.name} ${user.username === user.uid ? "" : `(${user.username})`}`}
+      </div>
     </div>
   );
 };

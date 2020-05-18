@@ -68,8 +68,9 @@ const FloorRoomHeader = ({ listenToProfile, stopListeningToProfile }) => {
             className="header__title header__title-lean"
             onClick={handleChange}
           >
-            <div className="header__title-main ">S.</div>
-          </div>
+            {/* <div className="header__title-main ">S.</div> */}
+            <div/>
+            </div>
         </div>
         <div />
         {/* <div /> */}

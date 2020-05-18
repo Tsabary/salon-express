@@ -39,8 +39,8 @@ const PostHeader = ({ post }) => {
           {readingTime(wordCount(post.body)).text}
         </div>
       </div>
-      <div className="post-header__title">{post.title}</div>
-      <div className="post-header__subtitle">{post.subtitle}</div>
+      <h1 className="post-header__title">{post.title}</h1>
+      <h2 className="post-header__subtitle">{post.subtitle}</h2>
     </div>
   );
 };
