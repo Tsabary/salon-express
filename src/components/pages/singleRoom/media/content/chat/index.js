@@ -21,6 +21,11 @@ const Chat = ({
 }) => {
   const { currentUserProfile } = useContext(AuthContext);
 
+  useEffect(() => {
+    console.log("entityID chat", currentPortalUrl)
+
+  },[currentPortalUrl])
+
   // Send the update to all followers that someone has entered the room. Only do it when isFirstLoad is false, becasue that's the indicatir they've actually entered the room
   useEffect(() => {
     if (!cameraPermissionGranted || !microphonePermissionGranted || isFirstLoad || floor)

@@ -9,10 +9,11 @@ import { AuthContext } from "../../../providers/Auth";
 import Updates from "./updates";
 import Faq from "./faq";
 import Backstage from "./backstage";
+import Teleport from "./teleport";
 
 const BottomHelpers = () => {
   const myHistory = useHistory(history);
-  const { globalFloor } = useContext(FloorContext);
+  const { globalFloor, globalFloorRoom } = useContext(FloorContext);
   const { currentUserProfile } = useContext(AuthContext);
 
   return (
@@ -26,6 +27,8 @@ const BottomHelpers = () => {
           globalFloor.admins_ID.includes(currentUserProfile.uid) ? (
             <Backstage />
           ) : null}
+
+          {globalFloorRoom ? <Teleport /> : null}
         </div>
       </div>
       <div>

@@ -1,5 +1,5 @@
 import "./styles.scss";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { isMobile } from "react-device-detect";
 
@@ -24,6 +24,10 @@ const MediaContent = ({
   setMicrophonePermissionGranted,
   currentPortalUrl,
 }) => {
+  useEffect(() => {
+    console.log("entityID content", currentPortalUrl);
+  }, [currentPortalUrl]);
+
   const getIframeUrl = (audioChannel) => {
     switch (audioChannel.source) {
       case "youtube":
@@ -32,8 +36,27 @@ const MediaContent = ({
       case "twitch":
         return `https://player.twitch.tv/?channel=${audioChannel.link}`;
 
+      case "mixcloud":
+        return `https://www.mixcloud.com/widget/iframe/?hide_cover=1&feed=%2F${audioChannel.link}`;
+
       default:
         return audioChannel.link;
+    }
+  };
+
+  const getIframeHeight = (audioChannel) => {
+    switch (audioChannel.source) {
+      case "youtube":
+        return 450;
+
+      case "twitch":
+        return 450;
+
+      case "mixcloud":
+        return 120;
+
+      default:
+        return 450;
     }
   };
 
@@ -93,7 +116,6 @@ const MediaContent = ({
       />
       {!isMobile ? (
         <div className="fr">
-          {/* <div className="media__chat-stream-container"> */}
           {isChatVisible ? (
             <Chat
               room={room}
@@ -107,21 +129,28 @@ const MediaContent = ({
             />
           ) : null}
 
-          {currentAudioChannel &&
+          {isVideoVisible &&
+          currentAudioChannel &&
           currentAudioChannel.source &&
           currentAudioChannel.source !== "mixlr" ? (
             <IFrame
-              url={getIframeUrl(currentAudioChannel)}
+                url={getIframeUrl(currentAudioChannel)}
+                height={getIframeHeight(currentAudioChannel)}
               source={currentAudioChannel.source}
-              isVideoVisible={isVideoVisible}
             />
           ) : null}
 
-          {isMobile ? (
-            <Notice text='To join the party on mobile, you will need to switch to desktop mode in your browser app. On Chrome, click the three dots at the top right of your screen and check "Desktop site".' />
+          {isVideoVisible &&
+          currentAudioChannel &&
+          currentAudioChannel.source === "mixlr" ? (
+            <Mixlr ID={currentAudioChannel.link} />
           ) : null}
 
-          {isVideoVisible && isChatVisible && !isMobile && currentAudioChannel && currentAudioChannel.source ? (
+          {isVideoVisible &&
+          isChatVisible &&
+          !isMobile &&
+          currentAudioChannel &&
+          currentAudioChannel.source ? (
             <Notice
               text="Please listen to the music using a headset, or disable your
             microphone in the chat to prevent noise for the other participants"
@@ -129,12 +158,7 @@ const MediaContent = ({
             />
           ) : null}
 
-          {currentAudioChannel && currentAudioChannel.source === "mixlr" ? (
-            <Mixlr ID={currentAudioChannel.link} />
-          ) : null}
-
-          {currentAudioChannel &&
-          ["youtube", "twitch", "website"].includes(currentAudioChannel.source)
+          {currentAudioChannel && currentAudioChannel.source
             ? renderControllers()
             : null}
         </div>

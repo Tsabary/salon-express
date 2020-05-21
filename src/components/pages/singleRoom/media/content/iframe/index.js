@@ -5,7 +5,7 @@ import Fullscreen from "react-full-screen";
 import { ReactSVG } from "react-svg";
 import ReactTooltip from "react-tooltip";
 
-const IFrame = ({ url, source, isVideoVisible }) => {
+const IFrame = ({ url, height, source }) => {
   const [isFull, setIsFull] = useState(false);
 
   return (
@@ -13,16 +13,12 @@ const IFrame = ({ url, source, isVideoVisible }) => {
       <Fullscreen enabled={isFull} onChange={(isFull) => setIsFull(isFull)}>
         <Iframe
           width="100%"
-          height={isFull ? "100%" : "450px"}
+          height={isFull ? "100%" : `${height}px`}
           src={url}
           frameborder="0"
           allow="fullscreen; accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
           styles={{ overflowX: "none" }}
-          className={
-            isVideoVisible
-              ? "my-iframe__content"
-              : "my-iframe__content my-iframe__content--invisible"
-          }
+          className="my-iframe__content"
         />
       </Fullscreen>
       {source === "website" ? (

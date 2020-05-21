@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import "emoji-mart/css/emoji-mart.css";
 import { Emoji, Picker } from "emoji-mart";
+import ReactTooltip from "react-tooltip";
 
 import { AuthContext } from "../../../../../../providers/Auth";
 
@@ -20,7 +21,6 @@ const Multiverse = ({
   multiverseArray,
   microphonePermissionGranted,
   cameraPermissionGranted,
-  currentAudioChannel,
   newPortal,
   isFirstLoad,
   setIsFirstLoad,
@@ -78,25 +78,26 @@ const Multiverse = ({
   };
 
   return (
-    <div className="multiverse section__container "
-      // className={
-      //   !currentAudioChannel ||
-      //   (currentAudioChannel && !currentAudioChannel.source)
-      //     ? "media__multiverse--no-audio section__container"
-      //     : currentAudioChannel && currentAudioChannel.source === "mixlr"
-      //     ? "media__multiverse--with-mixlr section__container"
-      //     : "media__multiverse--with-video section__container"
-      // }
-    >
-      {console.log(
-        "check",
-        !currentAudioChannel
-          ? "1"
-          : currentAudioChannel && currentAudioChannel.source === "mixlr"
-          ? "2"
-          : "3"
-      )}
-      <div className="section__title">The Multiverse</div>
+    <div className="multiverse section__container ">
+      <div className="max-max">
+        <div className="section__title">The Multiverse</div>
+
+        <>
+          <div
+            className="info"
+            data-tip="multiverseInfo"
+            data-for="multiverseInfo"
+          />
+          <ReactTooltip place="bottom" id="multiverseInfo">
+            <div
+              dangerouslySetInnerHTML={{
+                __html:
+                  '"The Multiverse" is where you can find all the portals for this room.',
+              }}
+            />
+          </ReactTooltip>
+        </>
+      </div>
 
       <form
         className="multiverse__form"
@@ -134,46 +135,81 @@ const Multiverse = ({
           );
         }}
       >
-        <InputField
-          type="text"
-          placeHolder="Open a portal"
-          value={newPortalValues.title}
-          onChange={(port) => {
-            if (port.length < 30)
-              setNewPortalValues({
-                ...newPortalValues,
-                title: port
-                  .replace(/^([^-]*-)|-/g, "$1")
-                  .replace(/[^\p{L}\s\d-]+/gu, ""),
-              });
-          }}
-        />
-        <div className="multiverse__emoji">
-          {newPortalValues && newPortalValues.totem ? (
-            <Emoji emoji={newPortalValues.totem} size={16} />
-          ) : (
-            <img
-              className="multiverse__emoji--current"
-              src="../../../imgs/emoji.png"
-            />
-          )}
+        <div className="multiverse__form-input-container max-fr" >
+          <div className="multiverse__emoji">
+            {newPortalValues && newPortalValues.totem ? (
+              <div className="extra-tiny-margin-top">
+                <Emoji emoji={newPortalValues.totem} size={16} />
+              </div>
+            ) : (
+              <img
+                className="multiverse__emoji--current"
+                src="../../../imgs/emoji.png"
+              />
+            )}
 
-          <div className="multiverse__emoji--picker">
-            <Picker
-              set="apple"
-              onSelect={addEmoji}
-              title="Pick your emoji…"
-              emoji="point_up"
-              i18n={{
-                search: "Search",
-                categories: {
-                  search: "Search Results",
-                  recent: "Recents",
-                },
+            <div className="multiverse__emoji--picker">
+              <Picker
+                set="apple"
+                onSelect={addEmoji}
+                title="Pick your emoji…"
+                emoji="point_up"
+                i18n={{
+                  search: "Search",
+                  categories: {
+                    search: "Search Results",
+                    recent: "Recents",
+                  },
+                }}
+              />
+            </div>
+          </div>
+
+          <input
+            className="multiverse__form-input"
+            id="Open a portal"
+            type="text"
+            placeholder="Open a portal"
+            value={newPortalValues.title}
+            onChange={(e) => {
+              if (e.target.value.length < 30)
+                setNewPortalValues({
+                  ...newPortalValues,
+                  title: e.target.value
+                    .replace(/^([^-]*-)|-/g, "$1")
+                    .replace(/[^\p{L}\s\d-]+/gu, ""),
+                });
+            }}
+          />
+
+          {/* <InputField
+            type="text"
+            placeHolder="Open a portal"
+            value={newPortalValues.title}
+            onChange={(port) => {
+              if (port.length < 30)
+                setNewPortalValues({
+                  ...newPortalValues,
+                  title: port
+                    .replace(/^([^-]*-)|-/g, "$1")
+                    .replace(/[^\p{L}\s\d-]+/gu, ""),
+                });
+            }}
+          /> */}
+        </div>
+        <div
+            className="info extra-tiny-margin-top"
+            data-tip="portalInfo"
+            data-for="portalInfo"
+          />
+        <ReactTooltip place="bottom" id="portalInfo">
+            <div
+              dangerouslySetInnerHTML={{
+                __html:
+                  'A "Portal" is a video chat. Every Portal you open is a seperate video chat to all the others.',
               }}
             />
-          </div>
-        </div>
+          </ReactTooltip>
 
         {currentUserProfile ? (
           <div>

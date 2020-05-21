@@ -1,24 +1,11 @@
-// FONTS //
 
-$font: GilroyLight;
-$fontBold: GilroyBold;
-$fontHebrew: Arimo;
-$fontHebrewBold: Assistant;
-$fontBlog: Playfair Display;
-$fontBlogBody: Merriweather;
 
 // COLORS //
 $bgColor: rgb(250, 250, 250);
-// $bgColor: rgb(88, 88, 88);
 
-$mainColorBlue: rgb(0, 153, 255);
-$mainColorBlueLightest: lighten($mainColorBlue, 30%);
-$mainColorBlueLight: lighten($mainColorBlue, 15%);
-$mainColorBlueDark: darken($mainColorBlue, 15%);
-$mainColorBlueDarkest: darken($mainColorBlue, 30%);
-$mainColorBlueTransparent: rgba(90, 50, 100, 0.05);
-$blueGradientColor: linear-gradient($mainColorBlue, $mainColorBlueDark);
 
+
+// MAIN COLOR
 //#6f00ff
 $mainColor: rgb(111, 0, 255);
 $mainColorLightest: lighten($mainColor, 30%);
@@ -32,11 +19,19 @@ $gradientColor: linear-gradient($mainColorLight, $mainColor);
 $mainColorSuperLight: #fbeaff;
 $mainColorBlack: #051b3d;
 
+
+// GREYS //
+
 $grey: #ababab;
 $greyLightest: lighten($grey, 25%);
 $greyLight: lighten($grey, 15%);
 $greyDark: darken($grey, 25%);
 $greyDarkest: darken($grey, 50%);
+
+
+
+
+// SOCIAL COLORS // 
 
 $facebookColor: #3b5998;
 $instagramColor: #f2003c;
@@ -47,6 +42,18 @@ $twitterColor: #00acee;
 $spotifyColor: #1db954;
 $soundcloudColor: #ff7700;
 $youtubeColor: #ff0000;
+
+
+// FONTS //
+
+$font: GilroyLight;
+$fontBold: GilroyBold;
+$fontHebrew: Arimo;
+$fontHebrewBold: Assistant;
+$fontBlog: Playfair Display;
+$fontBlogBody: Merriweather;
+
+
 
 // UNITS //
 

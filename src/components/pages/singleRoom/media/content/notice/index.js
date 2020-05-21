@@ -1,9 +1,9 @@
 import "./styles.scss";
 import React from "react";
 
-const Notice = ({ text, currentAudioChannel }) => {
+const Notice = ({ text, className, currentAudioChannel }) => {
   return (
-    <div className="notice section__container">
+    <div className={className ? `notice ${className}`: "notice"}>
       <div>{text}</div>
       {currentAudioChannel && currentAudioChannel.source === "mixlr" ? (
         <div className="notice__mixlr">

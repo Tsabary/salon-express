@@ -39,8 +39,8 @@ const OnBoarding = ({ navigateToFirstRoom }) => {
 
   return isFirstVisit ? (
     <div className="on-boarding">
-      <div className="on-boarding__window-container">
-        <div className="on-boarding__window">
+      <div className="modal-window">
+        <div className="modal-window__content">
           <div className="popup__close">
             <div />
             <div

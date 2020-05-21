@@ -62,7 +62,7 @@ const SingleEditRoom = ({
           }
         />
       </div>
-      <div className="extra-tiny-margin-top">
+      {/* <div className="extra-tiny-margin-top">
         <label
           htmlFor={`upload-track-${index}`}
           className="apply__upload-label"
@@ -77,7 +77,7 @@ const SingleEditRoom = ({
           accept=".mp3,.wav"
           onChange={(e) => handleFileUpload(e.target.files)}
         />
-      </div>
+      </div> */}
     </div>
   );
 };

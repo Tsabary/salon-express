@@ -50,8 +50,9 @@ const UserOptions = ({ logOut, resendVerification, isFloor }) => {
           <img
             className="user-options__image"
             src={
-              (currentUserProfile && currentUserProfile.avatar) ||
-              "../imgs/avatar.png"
+              currentUserProfile && currentUserProfile.avatar
+                ? currentUserProfile.avatar
+                : "../imgs/avatar.png"
             }
           />
         </div>

@@ -11,6 +11,7 @@ const Management = ({
   currentAudioChannel,
   isOwner,
 }) => {
+  console.log("isOwner managment", isOwner)
   return (
     <div className="management single-room__management">
       {/** This is the audio settings tile, in case the user is the page's admin*/}

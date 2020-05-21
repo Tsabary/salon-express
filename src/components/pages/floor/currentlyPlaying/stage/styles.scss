@@ -17,6 +17,9 @@
     font-size: 1.1rem;
     color: $greyDark;
     overflow-wrap: break-word;
+    &--active{
+      color: $mainColor !important;
+    }
   }
 
   &__active {

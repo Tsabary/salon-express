@@ -1,12 +1,19 @@
 import "./styles.scss";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Form from "react-bootstrap/Form";
 import { ReactSVG } from "react-svg";
 import ReactTooltip from "react-tooltip";
 import { isMobile } from "react-device-detect";
 
-import { updateRoom, addChannel } from "../../../../../actions/rooms";
-import { addChannelFloorRoom } from "../../../../../actions/floors";
+import {
+  updateRoom,
+  addChannel,
+  setActiveChannel,
+} from "../../../../../actions/rooms";
+import {
+  addChannelFloorRoom,
+  setActiveChannelFloorRoom,
+} from "../../../../../actions/floors";
 
 import { connect } from "react-redux";
 
@@ -14,6 +21,9 @@ import InputField from "../../../../formComponents/inputField";
 import SingleChannel from "./singleChannel";
 import User from "../../../../otherComponents/user/search";
 import UserSearch from "../../../../otherComponents/userSearch";
+import { trimURL } from "../../../../../utils/forms";
+import { extractUrlId } from "../../../../../utils/websiteTrims";
+import { RoomContext } from "../../../../../providers/Room";
 
 const AudioSettings = ({
   room,
@@ -23,9 +33,14 @@ const AudioSettings = ({
   audioChannels,
   addChannel,
   addChannelFloorRoom,
+  setActiveChannel,
+  setActiveChannelFloorRoom,
 }) => {
-  const [newChannel, setNewChannel] = useState(null);
+  const { setGlobalCurrentAudioChannel } = useContext(RoomContext);
 
+  const [newChannel, setNewChannel] = useState(null);
+  const [formError, setFormError] = useState(null);
+  const [isPlayHovered, setIsPlayHovered] = useState(false);
 
   const renderChannels = (channels) => {
     return channels.map((channel) => {
@@ -40,6 +55,32 @@ const AudioSettings = ({
         />
       );
     });
+  };
+
+  const trimYoutubeLink = (string) => {
+    switch (true) {
+      case string.includes("youtube.com/watch?v="):
+        const splt1 = string.split("watch?v=");
+        if (splt1.length > 1) {
+          setFormError(null);
+          return { valid: true, id: splt1[1].split("?")[0] };
+        } else {
+          return { valid: false };
+        }
+
+      case string.includes("youtu.be"):
+        const spltArr = string.split("/");
+        const splt2 = spltArr[spltArr.length - 1];
+
+        setFormError(null);
+        return { valid: true, id: splt2.split("?")[0] };
+
+      default:
+        setFormError(
+          "Something isn't right with this data, pleace copy it and try again"
+        );
+        return { valid: false };
+    }
   };
 
   const renderIdInput = (newChannel) => {
@@ -63,12 +104,22 @@ const AudioSettings = ({
         return (
           <InputField
             type="text"
-            placeHolder="Stream ID"
+            placeHolder="Youtube video URL"
             value={newChannel && newChannel.link}
             onChange={(link) => {
-              setNewChannel({ ...newChannel, link });
+              if (!link) {
+                setNewChannel({
+                  ...newChannel,
+                  link: "",
+                });
+              } else {
+                if (trimYoutubeLink(link).valid)
+                  setNewChannel({
+                    ...newChannel,
+                    link: trimYoutubeLink(link).id,
+                  });
+              }
             }}
-            // numbersAndLetters
           />
         );
 
@@ -146,18 +197,35 @@ const AudioSettings = ({
           if (
             newChannel &&
             newChannel.title &&
-            newChannel.source &&
+            // newChannel.source &&
             newChannel.link
-          )
+          ) {
+            const sourceObj = extractUrlId(newChannel.link);
+            const channelObj = {
+              ...newChannel,
+              link: sourceObj.link,
+              source: sourceObj.source,
+            };
+
             !floor
-              ? addChannel(newChannel, room, () => setNewChannel(null))
-              : addChannelFloorRoom(newChannel, roomIndex, floor, () =>
+              ? addChannel(channelObj, room, () => setNewChannel(null))
+              : addChannelFloorRoom(channelObj, roomIndex, floor, () =>
                   setNewChannel(null)
                 );
+          }
         }}
       >
         <div className="tile-form">
           <div>
+            <InputField
+              type="text"
+              placeHolder="URL"
+              value={newChannel && newChannel.link}
+              onChange={(link) => {
+                setNewChannel({ ...newChannel, link });
+              }}
+            />
+
             <InputField
               type="text"
               placeHolder="Title"
@@ -170,6 +238,7 @@ const AudioSettings = ({
                     .replace(/[^\p{L}\s\d-]+/gu, ""),
                 });
               }}
+              className="extra-tiny-margin-top"
             />
 
             {newChannel && newChannel.user ? (
@@ -220,34 +289,51 @@ const AudioSettings = ({
                 }}
               />
             )}
+          </div>
+          <div className="audio-settings__buttons">
+            <div
+              className="audio-settings__button"
+              onMouseEnter={() => setIsPlayHovered(true)}
+              onMouseLeave={() => setIsPlayHovered(false)}
+              onClick={() => {
+                if (newChannel.link) {
+                  const sourceObj = extractUrlId(newChannel.link);
 
-            <Form.Control
-              as="select"
-              bsPrefix="input-field__input form-drop extra-tiny-margin-top extra-tiny-margin-bottom"
-              value={
-                newChannel && newChannel.source ? newChannel.source : undefined
-              }
-              onChange={(choice) => {
-                console.log("mine", choice.target.value);
-                setNewChannel({
-                  ...newChannel,
-                  source: choice.target.value,
-                });
+                  !floor
+                    ? setActiveChannel(sourceObj, room.id, () => {
+                        setGlobalCurrentAudioChannel(sourceObj);
+                        setNewChannel(null);
+                      })
+                    : setActiveChannelFloorRoom(
+                        sourceObj,
+                        roomIndex,
+                        floor,
+                        () => {
+                          setGlobalCurrentAudioChannel(sourceObj);
+                          setNewChannel(null);
+                        }
+                      );
+                }
               }}
             >
-              <option className="form-drop__default">Pick a Source</option>
-              <option className="form-drop">Twitch</option>
-              <option className="form-drop">Youtube</option>
-              <option className="form-drop">Mixlr</option>
-              <option className="form-drop">Website</option>
-            </Form.Control>
-
-            {renderIdInput(newChannel)}
+              <ReactSVG
+                src={
+                  isPlayHovered ? "../svgs/play-white.svg" : "../svgs/play.svg"
+                }
+                wrapper="div"
+                beforeInjection={(svg) => {
+                  svg.classList.add("svg-icon--small");
+                }}
+              />
+            </div>
+            <button type="submit" className="audio-settings__button">
+              +
+            </button>
           </div>
-          <button type="submit" className="audio-settings__add">
-            +
-          </button>
         </div>
+        {formError ? (
+          <div className="form-error tiny-margin-top">{formError}</div>
+        ) : null}
       </form>
 
       {audioChannels.length ||
@@ -270,4 +356,6 @@ export default connect(mapStateToProps, {
   updateRoom,
   addChannel,
   addChannelFloorRoom,
+  setActiveChannel,
+  setActiveChannelFloorRoom,
 })(AudioSettings);

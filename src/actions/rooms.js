@@ -385,7 +385,7 @@ export const addImageToRoom = (room, image, reset) => async () => {
     .catch((e) => console.error("promise Error update room image", e));
 };
 
-export const removeRoom = (room) => (dispatch) => {
+export const deleteRoom = (room) => (dispatch) => {
   const batch = db.batch();
 
   const doc = db.collection("rooms").doc(room.id);
@@ -408,20 +408,24 @@ export const removeRoom = (room) => (dispatch) => {
 let commentsListener;
 
 export const fetchRoomComments = (roomID, cb) => async () => {
-  commentsListener = db
-    .collection("comments")
-    .where("room_ID", "==", roomID)
-    .orderBy("created_on", "desc")
-    .onSnapshot((querySnapshot) => {
-      console.log("querySnapshot", querySnapshot);
-      if (!querySnapshot) return;
-      var comments = querySnapshot.docs.map((doc) => doc.data());
-      cb(comments);
-    });
+  try {
+    commentsListener = db
+      .collection("comments")
+      .where("room_ID", "==", roomID)
+      .orderBy("created_on", "desc")
+      .onSnapshot((querySnapshot) => {
+        console.log("querySnapshot", querySnapshot);
+        if (!querySnapshot) return;
+        var comments = querySnapshot.docs.map((doc) => doc.data());
+        cb(comments);
+      });
+  } catch (e) {
+    console.error("querySnapshot for comments failleeeeeeee", e);
+  }
 };
 
-export const detachCommentsListener = () => ()=> {
- if(commentsListener) commentsListener();
+export const detachCommentsListener = () => () => {
+  if (commentsListener) commentsListener();
 };
 
 export const newComment = (values, cb) => async () => {
@@ -506,14 +510,11 @@ export const deleteEvent = (event) => async (dispatch) => {
 };
 
 export const navigateToFirstRoom = (uid, cb) => async () => {
-  console.log("aaaa");
   const data = await db.collection("rooms").where("user_ID", "==", uid).get();
-
   if (!data || (data && !data.docs)) return;
-
   const docs = data.docs.map((doc) => doc.data());
 
-  cb(docs[0]);
+  if (docs[0]) cb(docs[0]);
 };
 
 // export const uidToAdmin = () => async () => {

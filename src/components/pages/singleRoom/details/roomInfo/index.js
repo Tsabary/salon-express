@@ -64,6 +64,10 @@ const RoomInfo = ({
   const [imageAsFile, setImageAsFile] = useState(null);
   const [imageError, setImageError] = useState(null);
 
+  useEffect(() => {
+    console.log("chhhhhhhhhhhhhh");
+  }, [selectedImage]);
+
   const handleImageAsFile = (e) => {
     const image = e.target.files[0];
 
@@ -71,6 +75,7 @@ const RoomInfo = ({
       setImageError("Maximum image size is 500kb");
       return;
     }
+    console.log("chhhhhhhhhhhhhh222");
 
     setImageAsFile(() => image);
     setSelectedImage(URL.createObjectURL(image));
@@ -123,7 +128,7 @@ const RoomInfo = ({
       : addImageToRoom(room, imageAsFile, (updRoom) => {
           setGlobalRoom(updRoom);
           setImageAsFile(null);
-          setSelectedImage(null);
+          // setSelectedImage(null);
         });
   };
 
@@ -149,22 +154,24 @@ const RoomInfo = ({
                 src={
                   selectedImage ||
                   (floor &&
-                  floor.rooms &&
-                  floor.rooms[roomIndex] &&
-                  floor.rooms[roomIndex].image
-                    ? floor.rooms[roomIndex].image
-                    : room.image) ||
+                    floor.rooms &&
+                    floor.rooms[roomIndex] &&
+                    floor.rooms[roomIndex].image) ||
+                  room.image ||
                   "../../imgs/placeholder.jpg"
                 }
                 alt="Room"
               />
             </label>
-            <input
-              id={`room-info-image-${room.id}`}
-              className="invisible"
-              type="file"
-              onChange={handleImageAsFile}
-            />
+
+            {isOwner ? (
+              <input
+                id={`room-info-image-${room.id}`}
+                className="invisible"
+                type="file"
+                onChange={handleImageAsFile}
+              />
+            ) : null}
             {imageAsFile ? (
               <div className="room-info__image-btn room-info__image-approve">
                 <ReactSVG

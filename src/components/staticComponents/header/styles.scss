@@ -98,3 +98,20 @@
     }
   }
 }
+
+.minimal-header {
+  width: 100%;
+  min-height: 3.5rem;
+  display: grid;
+  grid-template-columns: max-content 1fr, max-content;
+  align-content: center;
+  background-color: $mainColorDarkest;
+
+  &__logo {
+    font-family: $fontBold;
+    font-weight: 900;
+    font-size: 2rem;
+    text-align: center;
+    color: white;
+  }
+}

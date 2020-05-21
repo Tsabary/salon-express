@@ -5,18 +5,23 @@ import { useHistory } from "react-router-dom";
 import history from "../../../../history";
 import { SearchContext } from "../../../../providers/Search";
 import { PageContext } from "../../../../providers/Page";
+import { FloorContext } from "../../../../providers/Floor";
 
-const SalonLogo = () => {
+const SalonLogo = ({ floor }) => {
   const myHistory = useHistory(history);
 
   const { setPage } = useContext(PageContext);
-
   const { setSearchTerm } = useContext(SearchContext);
+  const { setIsDetailsVisible } = useContext(FloorContext);
 
   const handleChange = () => {
-    setSearchTerm(null);
-    setPage(1);
-    myHistory.push(`/`);
+    if (floor) {
+      setIsDetailsVisible(true);
+    } else {
+      setSearchTerm(null);
+      setPage(1);
+      myHistory.push(`/`);
+    }
   };
 
   return (

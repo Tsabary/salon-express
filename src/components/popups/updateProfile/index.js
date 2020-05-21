@@ -8,6 +8,12 @@ import { AuthContext } from "../../../providers/Auth";
 
 import { updateProfile } from "../../../actions/users";
 import { validateWordsLength } from "../../../utils/strings";
+import {
+  mixCloudTrim,
+  instagramTrim,
+  spotifyTrim,
+  beatportTrim,
+} from "../../../utils/websiteTrims";
 import { errorMessages, trimURL } from "../../../utils/forms";
 import {
   renderLanguageOptions,
@@ -155,7 +161,10 @@ const UpdateProfile = ({ updateProfile }) => {
         <div>
           {/* <div className="popup__title">Update Profile</div> */}
           <form onSubmit={(e) => handleSubmit(e)}>
-            <div className="update-profile__top">
+            <div
+              className="update-profile__top"
+              onClick={() => console.log("profile", currentUserProfile)}
+            >
               <span>
                 <label
                   htmlFor="update-profile-image"
@@ -233,7 +242,7 @@ const UpdateProfile = ({ updateProfile }) => {
                 placeHolder="Your Instagram page"
                 value={values.instagram}
                 onChange={(instagram) => {
-                  setValues({ ...values, instagram });
+                  setValues({ ...values, instagram: instagramTrim(instagram) });
                 }}
               />
 
@@ -243,6 +252,36 @@ const UpdateProfile = ({ updateProfile }) => {
                 value={values.twitch}
                 onChange={(twitch) => {
                   setValues({ ...values, twitch });
+                }}
+              />
+
+              <InputField
+                type="text"
+                placeHolder="Your Mixcloud channel"
+                value={values.mixcloud}
+                onChange={(mixcloud) => {
+                  setValues({ ...values, mixcloud: mixCloudTrim(mixcloud) });
+                }}
+              />
+
+              <InputField
+                type="text"
+                placeHolder="Your Spotify"
+                value={values.spotify}
+                onChange={(spotify) => {
+                  setValues({ ...values, spotify: spotifyTrim(spotify) });
+                }}
+              />
+
+              <InputField
+                type="text"
+                placeHolder="Your Beatport"
+                value={values.beatport}
+                onChange={(beatport) => {
+                  setValues({
+                    ...values,
+                    beatport: beatportTrim(beatport),
+                  });
                 }}
               />
 

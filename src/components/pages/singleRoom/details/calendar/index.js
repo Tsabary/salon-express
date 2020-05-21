@@ -31,6 +31,7 @@ const Calendar = ({
   const [hours, setHours] = useState("");
   const [minutes, setMinutes] = useState("");
 
+
   useEffect(() => {
     if (!event || (event && !event.start)) return;
 
@@ -194,7 +195,7 @@ const Calendar = ({
                 </Form.Control>
               </div>
             </div>
-            <button type="submit" className="audio-settings__add">
+            <button type="submit" className="audio-settings__button">
               +
             </button>
           </div>

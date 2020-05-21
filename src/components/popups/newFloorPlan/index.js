@@ -8,17 +8,17 @@ import { AuthContext } from "../../../providers/Auth";
 
 import { addFloorPlan } from "../../../actions/floors";
 
-import InputField from "../../formComponents/inputField";
+import TextArea from "../../formComponents/textArea";
 
 const NewFloorPlan = ({ addFloorPlan }) => {
-  const { currentUserProfile, setCurrentUserProfile, currentUser } = useContext(
-    AuthContext
-  );
+  const { currentUserProfile } = useContext(AuthContext);
   const [rooms, setRooms] = useState([]);
-  const [newRoom, setNewRoom] = useState({ shape: "rect", coords: [] });
+  // const [newRoom, setNewRoom] = useState({ shape: "rect", coords: [] });
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState(null);
-  const [coordsFormError, setCoordsFormError] = useState(null);
+  // const [coordsFormError, setCoordsFormError] = useState(null);
+
+  const [test, setTest] = useState("");
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageAsFile, setImageAsFile] = useState("");
@@ -29,10 +29,21 @@ const NewFloorPlan = ({ addFloorPlan }) => {
     setSelectedImage(URL.createObjectURL(image));
   };
 
+  const parseMap = (string) => {
+    const domparser = new DOMParser();
+    const doc = domparser.parseFromString(string, "text/html");
+
+    const output = [...doc.querySelectorAll("area")].map((a) => ({
+      shape: a.shape,
+      coords: a.coords.split(/,\s*/).map((c) => parseInt(c, 10)),
+    }));
+    return output;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log(rooms);
+    parseMap(test);
 
     switch (true) {
       case !currentUserProfile:
@@ -68,7 +79,7 @@ const NewFloorPlan = ({ addFloorPlan }) => {
   const renderRooms = (ro) => {
     return ro.map((r, i) => {
       return (
-        <div className="section__container" key={i}>
+        <div className="section__container tiny-margin-top" key={i}>
           <div className="section__title">{`Room ${i + 1} (${
             r.shape === "rect"
               ? "Rectangle"
@@ -81,66 +92,6 @@ const NewFloorPlan = ({ addFloorPlan }) => {
         </div>
       );
     });
-  };
-
-  const getShape = (val) => {
-    switch (val) {
-      case "Rectangle":
-        return "rect";
-
-      case "Circle":
-        return "circle";
-
-      case "Polygon":
-        return "poly";
-    }
-  };
-
-  const getShapeName = (val) => {
-    switch (val) {
-      case "rect":
-        return "Rectangle";
-
-      case "circle":
-        return "Circle";
-
-      case "poly":
-        return "Polygon";
-    }
-  };
-
-  const validateShapeCoords = (coords, shape) => {
-    switch (shape) {
-      case "rect":
-        if (coords.length !== 4) {
-          setCoordsFormError(
-            `A rectangle requires exactly 4 coordinates, and you've entered ${coords.length}. Please check your input.`
-          );
-          return false;
-        }
-        setCoordsFormError(null);
-        return true;
-
-      case "circle":
-        if (coords.length !== 3) {
-          setCoordsFormError(
-            `A circle requires exactly 3 coordinates, and you've entered ${coords.length}. Please check your input.`
-          );
-          return false;
-        }
-        setCoordsFormError(null);
-        return true;
-
-      case "poly":
-        if (coords.length < 3) {
-          setCoordsFormError(
-            `A polygon requires at least 3 coordinates, and you've entered ${coords.length}. Please check your input.`
-          );
-          return false;
-        }
-        setCoordsFormError(null);
-        return true;
-    }
   };
 
   return (
@@ -181,74 +132,20 @@ const NewFloorPlan = ({ addFloorPlan }) => {
                   />
                 </span>
               </div>
+              <TextArea
+                type="text"
+                placeHolder="Enter the complete image map code here"
+                value={test}
+                onChange={(s) => {
+                  setTest(s);
+                  setRooms(parseMap(s));
+                }}
+              />
 
-              <div className="update-profile__fields">
-                <div className="max-fr-max">
-                  <Form.Control
-                    as="select"
-                    bsPrefix="input-field__input form-drop"
-                    value={getShapeName(newRoom.shape)}
-                    onChange={(choice) =>
-                      setNewRoom({
-                        ...newRoom,
-                        shape: getShape(choice.target.value),
-                      })
-                    }
-                  >
-                    <option className="form-drop" key="rect">
-                      Rectangle
-                    </option>
-                    <option className="form-drop" key="circle">
-                      Circle
-                    </option>
-                    <option className="form-drop" key="poly">
-                      Polygon
-                    </option>
-                  </Form.Control>
-
-                  <InputField
-                    type="text"
-                    placeHolder="Room coords"
-                    value={newRoom.coords}
-                    onChange={(coords) => {
-                      setNewRoom({ ...newRoom, coords: coords.trim() });
-                    }}
-                  />
-                  <div
-                    className="audio-settings__add"
-                    onClick={() => {
-                      const coords = newRoom.coords
-                        .split(",")
-                        .map((coord) => parseInt(coord, 10))
-                        .filter((el) => !!el);
-
-                      if (!validateShapeCoords(coords, newRoom.shape)) return;
-                      setRooms([
-                        ...rooms,
-                        {
-                          shape: newRoom.shape,
-                          coords,
-                        },
-                      ]);
-                      setNewRoom({...newRoom, coords: []});
-                    }}
-                  >
-                    +
-                  </div>
-                </div>
-
-                {coordsFormError ? (
-                  <div
-                    className="form-error tiny-margin-top"
-                    style={{ textAlign: "center" }}
-                  >
-                    {coordsFormError}
-                  </div>
-                ) : null}
-
-                {renderRooms(rooms)}
-                {/* Number of rooms {rooms.length} */}
+              <div className="tiny-margin-top tiny-margin-bottom">
+                Number of rooms {rooms.length}{" "}
               </div>
+              {renderRooms(rooms)}
 
               {formError ? (
                 <div
@@ -258,7 +155,6 @@ const NewFloorPlan = ({ addFloorPlan }) => {
                   {formError}
                 </div>
               ) : null}
-
               <div className="popup__button tiny-margin-top">
                 <button type="submit" className="boxed-button">
                   Add Floor Plan
@@ -277,3 +173,131 @@ const NewFloorPlan = ({ addFloorPlan }) => {
 };
 
 export default connect(null, { addFloorPlan })(NewFloorPlan);
+
+// const getShape = (val) => {
+//   switch (val) {
+//     case "Rectangle":
+//       return "rect";
+
+//     case "Circle":
+//       return "circle";
+
+//     case "Polygon":
+//       return "poly";
+//   }
+// };
+
+// const getShapeName = (val) => {
+//   switch (val) {
+//     case "rect":
+//       return "Rectangle";
+
+//     case "circle":
+//       return "Circle";
+
+//     case "poly":
+//       return "Polygon";
+//   }
+// };
+
+// const validateShapeCoords = (coords, shape) => {
+//   switch (shape) {
+//     case "rect":
+//       if (coords.length !== 4) {
+//         setCoordsFormError(
+//           `A rectangle requires exactly 4 coordinates, and you've entered ${coords.length}. Please check your input.`
+//         );
+//         return false;
+//       }
+//       setCoordsFormError(null);
+//       return true;
+
+//     case "circle":
+//       if (coords.length !== 3) {
+//         setCoordsFormError(
+//           `A circle requires exactly 3 coordinates, and you've entered ${coords.length}. Please check your input.`
+//         );
+//         return false;
+//       }
+//       setCoordsFormError(null);
+//       return true;
+
+//     case "poly":
+//       if (coords.length < 3) {
+//         setCoordsFormError(
+//           `A polygon requires at least 3 coordinates, and you've entered ${coords.length}. Please check your input.`
+//         );
+//         return false;
+//       }
+//       setCoordsFormError(null);
+//       return true;
+//   }
+// };
+
+//   <div className="update-profile__fields">
+//     <div className="max-fr-max">
+//       <Form.Control
+//         as="select"
+//         bsPrefix="input-field__input form-drop"
+//         value={getShapeName(newRoom.shape)}
+//         onChange={(choice) =>
+//           setNewRoom({
+//             ...newRoom,
+//             shape: getShape(choice.target.value),
+//           })
+//         }
+//       >
+//         <option className="form-drop" key="rect">
+//           Rectangle
+//         </option>
+//         <option className="form-drop" key="circle">
+//           Circle
+//         </option>
+//         <option className="form-drop" key="poly">
+//           Polygon
+//         </option>
+//       </Form.Control>
+
+//       <InputField
+//         type="text"
+//         placeHolder="Room coords"
+//         value={newRoom.coords}
+//         onChange={(coords) => {
+//           setNewRoom({ ...newRoom, coords: coords.trim() });
+//         }}
+//       />
+//       <div
+//         className="audio-settings__add"
+//         onClick={() => {
+//           const coords = newRoom.coords
+//             .split(",")
+//             .map((coord) => parseInt(coord, 10))
+//             .filter((el) => !!el);
+
+//           if (!validateShapeCoords(coords, newRoom.shape)) return;
+//           setRooms([
+//             ...rooms,
+//             {
+//               shape: newRoom.shape,
+//               coords,
+//             },
+//           ]);
+//           setNewRoom({ ...newRoom, coords: [] });
+//         }}
+//       >
+//         +
+//       </div>
+//     </div>
+
+//     {coordsFormError ? (
+//       <div
+//         className="form-error tiny-margin-top"
+//         style={{ textAlign: "center" }}
+//       >
+//         {coordsFormError}
+//       </div>
+//     ) : null}
+
+//     {renderRooms(rooms)}
+//      Number of rooms {rooms.length}
+//  </div>

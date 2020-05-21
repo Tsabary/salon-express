@@ -23,7 +23,7 @@ const FloorLogo = () => {
           <img src={globalFloor.logo} className="floor-logo__img" />
         </div>
       ) : (
-        <SalonLogo />
+        <SalonLogo floor />
       )}
     </div>
   );

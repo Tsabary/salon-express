@@ -8,7 +8,7 @@ import {
   stopListeningToProfile,
 } from "../../../actions/users";
 
-import MobileMenu from "./mobileMenu";
+import MobileMenu from "./mobileDrawer";
 import { connect } from "react-redux";
 import FloorLogo from "./floorLogo";
 import HeaderAuth from "./auth";

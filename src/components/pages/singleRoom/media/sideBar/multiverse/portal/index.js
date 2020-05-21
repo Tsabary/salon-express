@@ -129,7 +129,7 @@ const Portal = ({
     }
 
     const myCleanup = () => {
-      if (currentPortal.new & currentPortal.new.title === portal.title) {
+      if (currentPortal.new && currentPortal.new.title === portal.title) {
         leavePortal(entityID, portal, userID ? [userID, uniqueId] : [uniqueId]);
       }
     };

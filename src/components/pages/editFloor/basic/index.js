@@ -51,7 +51,7 @@ const Basic = ({
         image: floor.image,
         rooms: [...Object.values(floor.rooms)],
       });
-
+      setIsFloorOpen(floor.open.toDate() < new Date())
       // if (floor.open) {
       //   setValues({ ...values, open: floor.open.toDate() });
       //   setIsFloorOpen(floor.open.toDate() < new Date())
@@ -98,7 +98,7 @@ const Basic = ({
           value={values.description}
           onChange={(description) => {
             if (
-              description.length < 500 &&
+              description.length < 750 &&
               validateWordsLength(description, 25)
             )
               setValues({ ...values, description });
@@ -113,7 +113,14 @@ const Basic = ({
               placeholder=""
               value={tempUrl}
               onChange={(e) => {
-                setTempUrl(e.target.value.replace(/[^\p{L}\s]+/gu, ""));
+                setTempUrl(
+                  e.target.value
+                    .replace(/^-+|(-){2,}/g, "$1")
+                    .replace(/[^\p{L}\s-]+/gu, "")
+                    .toLowerCase()
+                    .split(" ")
+                    .join("-")
+                );
                 setUrlApproved(false);
                 setUrlButton("Check Availability");
               }}

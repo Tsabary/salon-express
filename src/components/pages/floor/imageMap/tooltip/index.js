@@ -48,12 +48,14 @@ const Tooltip = ({ location, room }) => {
           />
         );
 
-      default:
-        return room.image ? (
-          <div className="room__cover-img">
-            <img src={room.image} alt="Room" />
-          </div>
-        ) : null;
+      // default:
+      //   return room.image ? (
+      //     <div className="room__cover-img">
+      //       <img src={room.image} alt="Room" />
+      //     </div>
+      //   ) : (
+      //     <div>ggggggg</div>
+      //   );
     }
   };
 
@@ -61,6 +63,13 @@ const Tooltip = ({ location, room }) => {
     <div className="map-tooltip" style={location}>
       <div className="map-tooltip__top">
         {room.active_channel ? getPreview(room.active_channel) : null}
+        {(!room.active_channel ||
+          (room.active_channel && !room.active_channel.source)) &&
+        room.image ? (
+          <div className="room__cover-img">
+            <img src={room.image} alt="Room" />
+          </div>
+        ) : null}
       </div>
       <div className="map-tooltip__body">
         <div className="map-tooltip__name">{room.name}</div>

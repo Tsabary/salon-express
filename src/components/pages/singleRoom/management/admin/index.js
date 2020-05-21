@@ -7,7 +7,11 @@ import algoliasearch from "algoliasearch/lite";
 import { AuthContext } from "../../../../../providers/Auth";
 
 import history from "../../../../../history";
-import { keepRoomListed, addAdmin } from "../../../../../actions/rooms";
+import {
+  keepRoomListed,
+  addAdmin,
+  deleteRoom,
+} from "../../../../../actions/rooms";
 
 import { fetchStrangerProfile } from "../../../../../actions/profiles";
 
@@ -22,7 +26,7 @@ const searchClient = algoliasearch(
 );
 const index = searchClient.initIndex("users");
 
-const Admin = ({ room, isOwner, keepRoomListed, addAdmin }) => {
+const Admin = ({ room, isOwner, keepRoomListed, addAdmin, deleteRoom }) => {
   const myHistory = useHistory(history);
   const { setGlobalRoom } = useContext(RoomContext);
   const { currentUserProfile } = useContext(AuthContext);
@@ -84,8 +88,7 @@ const Admin = ({ room, isOwner, keepRoomListed, addAdmin }) => {
       return (
         <User
           className={className}
-          user={user}
-          userID={user.objectID || user.user_ID}
+          user={{ ...user, uid: user.objectID || user.user_ID }}
           onClick={() => {
             if (onClick) onClick(user);
           }}
@@ -145,6 +148,8 @@ const Admin = ({ room, isOwner, keepRoomListed, addAdmin }) => {
       {room.admins ? (
         <div className="tiny-margin-top">{renderAdmins(room.admins)} </div>
       ) : null}
+
+      {/* <div onClick={()=> deleteRoom(room)}>Delete Room</div> */}
     </div>
   ) : null;
 };
@@ -153,4 +158,5 @@ export default connect(null, {
   keepRoomListed,
   fetchStrangerProfile,
   addAdmin,
+  deleteRoom,
 })(Admin);

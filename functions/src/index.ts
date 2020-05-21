@@ -276,6 +276,14 @@ exports.roomCreated = functions.firestore
     });
     promises.push(batch.commit());
 
+    // const multiverseRef = db.collection("multiverses").doc(room.id);
+    // batch.set(multiverseRef, {
+    //   title: "Home",
+    //   members: [room.user_ID],
+    //   created_on: new Date(),
+    //   user_ID: room.user_ID,
+    // });
+
     if (room) {
       promises.push(
         roomsIndex.saveObject({

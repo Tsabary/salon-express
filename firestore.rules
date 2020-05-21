@@ -6,6 +6,7 @@ service cloud.firestore {
       allow read: if true;
       allow write, delete: if false;
     }
+    
 
     match /rooms/{room}{
       allow read: if true;
@@ -14,6 +15,7 @@ service cloud.firestore {
       allow delete: if request.auth.uid == resource.data.user_ID;
     }
     
+    
     match /floors/{floor}{
       allow read: if true;
       allow create: if true;// request.auth.uid == request.resource.data.user_ID;
@@ -21,13 +23,13 @@ service cloud.firestore {
       allow delete: if request.auth.uid == resource.data.user_ID;
     }
     
-        
-    match /floor_rooms/{room}{
-      allow read: if true;
-      allow create: if request.auth.uid == request.resource.data.user_ID;
-      allow update: if request.auth.uid == request.resource.data.user_ID; 
-      allow delete: if request.auth.uid == resource.data.user_ID;
+    
+    match /floor_plans/{room}{
+      allow read: if resource.data.user_ID in ["KbhtqAE0B9RDAonhQqgZ1CWsg1o1",request.auth.uid ];
+      allow write: if request.auth.uid == request.resource.data.user_ID;
+      allow delete: if true;
     }
+    
     
     match /visitors/{entity}{
       allow read: if true;
@@ -36,9 +38,6 @@ service cloud.firestore {
       allow delete: if request.auth.uid == resource.data.user_ID;
     }
     
-    match /floor_plans/{room}{
-      allow read, write, delete: if true;
-    }
 
     match /multiverses/{portal}{
       allow read: if true;
@@ -47,12 +46,14 @@ service cloud.firestore {
       allow delete: if false;
     }
     
+    
     match /active_channels/{room}{
       allow read: if true;
-      allow create: if get(/databases/$(database)/documents/rooms/$(room)).data.user_ID == request.auth.uid; // need to check that it's the admin
-      allow update: if get(/databases/$(database)/documents/rooms/$(room)).data.user_ID == request.auth.uid; // need to check that it's the admin
-      allow delete: if get(/databases/$(database)/documents/rooms/$(room)).data.user_ID == request.auth.uid; // need to check that it's the admin
+      allow create: if request.auth.uid in get(/databases/$(database)/documents/rooms/$(room)).data.admins_ID; // need to check that it's the admin
+      allow update: if request.auth.uid in get(/databases/$(database)/documents/rooms/$(room)).data.admins_ID;
+      allow delete: if request.auth.uid in get(/databases/$(database)/documents/rooms/$(room)).data.admins_ID; // need to check that it's the admin
     }
+    
 
     match /events/{event}{
       allow read: if true;
@@ -61,6 +62,7 @@ service cloud.firestore {
       allow delete: if get(/databases/$(database)/documents/rooms/$(resource.data.room_ID)).data.user_ID == request.auth.uid; // need to check that it's the admin
     }
     
+    
     match /questions/{question}{
       allow read: if true;
       allow create: if true;
@@ -68,24 +70,20 @@ service cloud.firestore {
       allow delete: if request.auth.uid == "KbhtqAE0B9RDAonhQqgZ1CWsg1o1";
     }
 
+
     match /comments/{room}{
       allow read: if true;
       allow create: if request.auth.uid == request.resource.data.user_ID;
       allow update: if request.auth.uid == resource.data.user_ID;
       allow delete: if request.auth.uid == resource.data.user_ID;
     }
-
-    match /blog_comments/{room}{
-      allow read: if true;
-      allow create: if request.auth.uid == request.resource.data.user_ID;
-      allow update: if request.auth.uid == resource.data.user_ID;
-      allow delete: if request.auth.uid == resource.data.user_ID;
-    }
+    
 
     match /tags/{tag}{
       allow read: if true;
       allow write, delete: if false;
     }
+  
   
     match /tags_count/{tag}{
       allow read: if true;
@@ -93,21 +91,24 @@ service cloud.firestore {
     }
 
     match /blog_posts/{post}{
-      allow read, delete: if request.auth.uid == resource.data.user_ID;
+      allow read: if true;
+      allow delete: if request.auth.uid == resource.data.user_ID;
       allow write: if request.auth.uid == request.resource.data.user_ID;
     }
+    
+    
+    match /blog_comments/{room}{
+      allow read: if true;
+      allow create: if request.auth.uid == request.resource.data.user_ID;
+      allow update: if request.auth.uid == resource.data.user_ID;
+      allow delete: if request.auth.uid == resource.data.user_ID;
+    }
+    
 
     match /users/{userID}{
       allow read: if true;
       allow write: if request.auth.uid == request.resource.data.uid ||request.auth.uid == "KbhtqAE0B9RDAonhQqgZ1CWsg1o1";
       allow delete: if false;
     }
-
-    match /questions/{uquestionID}{
-      allow read: if true;
-      allow write: if request.auth.uid == "PPryp7ws2lekKx1mePChgH0Sh3t1";
-      allow delete: if false;
-    }
-
   }
 }

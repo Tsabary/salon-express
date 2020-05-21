@@ -60,14 +60,11 @@ const Home = ({ detachChannelListener, detachFloorListener, fixNYC }) => {
         </div>
       ) : null} */}
 
-      <div
-        className="home__menu"
- 
-      >
+      <div className="home__menu">
         <ul>
           {page === 1 ? (
             <div className="default-active">Explore</div>
-          ) : currentUser ? (
+          ) : (
             <li
               onClick={() => {
                 setPage(1);
@@ -77,16 +74,6 @@ const Home = ({ detachChannelListener, detachFloorListener, fixNYC }) => {
               }}
             >
               <a href="#">Explore</a>
-            </li>
-          ) : (
-            <li
-              onClick={() => {
-                firebase.analytics().logEvent("home_navigation_unregistered", {
-                  feed: "Explore",
-                });
-              }}
-            >
-              <a href="#sign-up">Explore</a>
             </li>
           )}
 
@@ -160,10 +147,10 @@ const Home = ({ detachChannelListener, detachFloorListener, fixNYC }) => {
           href="https://salon.express/blog"
           target="_blank"
           rel="noopener noreferrer"
-          onClick={() => {
-            fixNYC();
-            console.log("fixxxing")
-          }}
+          // onClick={() => {
+          //   fixNYC();
+          //   console.log("fixxxing");
+          // }}
         >
           Guides
         </a>
@@ -174,6 +161,8 @@ const Home = ({ detachChannelListener, detachFloorListener, fixNYC }) => {
   );
 };
 
-export default connect(null, { detachChannelListener, detachFloorListener, fixNYC })(
-  Home
-);
+export default connect(null, {
+  detachChannelListener,
+  detachFloorListener,
+  fixNYC,
+})(Home);

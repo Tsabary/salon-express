@@ -5,6 +5,7 @@ import { isMobile } from "react-device-detect";
 import MobileMultiverse from "./mobileMultiverse";
 import Multiverse from "./multiverse";
 import UserSocial from "../../../../otherComponents/userSocial";
+import CallToAction from "./callToAction";
 
 const SideBar = ({
   room,
@@ -25,7 +26,11 @@ const SideBar = ({
     <div className="sidebar media__sidebar">
       {!isMobile && room && isChatVisible ? (
         <div
-          style={isVideoVisible ? { height: "450px" } : { minHeight: "100%" }}
+          style={
+            currentAudioChannel && currentAudioChannel.user && isVideoVisible
+              ? { height: "450px" }
+              : { height: "100%" }
+          }
         >
           <Multiverse
             room={room}
@@ -51,6 +56,10 @@ const SideBar = ({
           <div className="section__title">Currently Live</div>
           <UserSocial uid={currentAudioChannel.user.uid} />
         </div>
+      ) : isVideoVisible &&
+        currentAudioChannel &&
+        currentAudioChannel.source ? (
+        <CallToAction />
       ) : null}
 
       {isMobile && room ? (

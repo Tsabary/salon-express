@@ -11,82 +11,91 @@ import Media from "./media";
 import Management from "./management";
 import Details from "./details";
 
-const FloorRoom = ({ floor, room, isOwner, entityID }) => {
-  const { setGlobalFloorRoomIndex } = useContext(FloorContext);
+const FloorRoom = ({ isOwner, entityID }) => {
+  const { globalFloor, globalFloorRoom, setGlobalFloorRoomIndex } = useContext(
+    FloorContext
+  );
+  
   const [roomIndex, setRoomIndex] = useState(null);
-
   const [currentAudioChannel, setCurrentAudioChannel] = useState(null);
 
   useEffect(() => {
-    if (!floor || !room) return;
+    if (!globalFloor || !globalFloorRoom) return;
 
-    for (var i = 0; i < Object.values(floor.rooms).length; i++) {
+    for (var i = 0; i < Object.values(globalFloor.rooms).length; i++) {
       if (
-        Object.values(floor.rooms)[i].name &&
-        titleToKey(Object.values(floor.rooms)[i].name) === titleToKey(room.name)
+        Object.values(globalFloor.rooms)[i].name &&
+        titleToKey(Object.values(globalFloor.rooms)[i].name) ===
+          titleToKey(globalFloorRoom.name)
       ) {
         setRoomIndex(i);
         setGlobalFloorRoomIndex(i);
-        setCurrentAudioChannel(floor.rooms[i].active_channel);
+        setCurrentAudioChannel(globalFloor.rooms[i].active_channel);
       }
     }
-  }, [floor, room]);
-
-  // useEffect(() => {
-  // const thisFloor = myFloors.filter(
-  //   (floor) => floor.id === match.params.id
-  // )[0];
-
-  // if (!thisFloor) {
-  //   fetchFloor(match.params.id);
-  // } else {
-  // const thisRoom = Object.values(thisFloor.rooms).filter(
-  //   (el) => titleToKey(el.name) === match.params.room
-  // )[0];
-  // if (thisRoom) {
-  //   setFloor(thisFloor);
-  //   setRoom(thisRoom);
-  //   for (var i = 0; i < Object.values(thisFloor.rooms).length; i++) {
-  //     if (titleToKey(Object.values(thisFloor.rooms)[i].name) === match.params.room) {
-  //       setRoomIndex(roomIndex)
-  //     }
-  //   }
-  // }
-  // }
-  // }, [match.params, myFloors]);
+  }, [globalFloor, globalFloorRoom]);
 
   // Our main render
   return (
     <div className="single-room single-room--floor">
       {/** This is the video chat, the embedded streams, the Mixlr and the Multiverse*/}
       <Media
-        room={room}
+        room={globalFloorRoom}
         roomIndex={roomIndex}
-        floor={floor}
+        floor={globalFloor}
         currentAudioChannel={currentAudioChannel}
         entityID={entityID}
         isOwner={isOwner}
       />
 
       <Details
-        room={room}
+        room={globalFloorRoom}
         roomIndex={roomIndex}
-        floor={floor}
+        floor={globalFloor}
         isOwner={isOwner}
       />
 
       <Management
-        room={room}
+        room={globalFloorRoom}
         roomIndex={roomIndex}
-        floor={floor}
+        floor={globalFloor}
         currentAudioChannel={currentAudioChannel}
         isOwner={isOwner}
       />
 
       {/** This is the comments tile*/}
-      {room ? <Comments room={room} entityID={entityID} floor={floor} /> : null}
+      {globalFloorRoom ? (
+        <Comments
+          room={globalFloorRoom}
+          entityID={entityID}
+          floor={globalFloor}
+        />
+      ) : null}
     </div>
   );
 };
 
 export default connect(null)(FloorRoom);
+
+// useEffect(() => {
+// const thisFloor = myFloors.filter(
+//   (floor) => floor.id === match.params.id
+// )[0];
+
+// if (!thisFloor) {
+//   fetchFloor(match.params.id);
+// } else {
+// const thisRoom = Object.values(thisFloor.rooms).filter(
+//   (el) => titleToKey(el.name) === match.params.room
+// )[0];
+// if (thisRoom) {
+//   setFloor(thisFloor);
+//   setRoom(thisRoom);
+//   for (var i = 0; i < Object.values(thisFloor.rooms).length; i++) {
+//     if (titleToKey(Object.values(thisFloor.rooms)[i].name) === match.params.room) {
+//       setRoomIndex(roomIndex)
+//     }
+//   }
+// }
+// }
+// }, [match.params, myFloors]);

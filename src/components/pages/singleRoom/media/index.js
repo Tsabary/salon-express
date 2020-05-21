@@ -18,14 +18,13 @@ import { titleToKey } from "../../../../utils/strings";
 
 import SideBar from "./sideBar";
 import MediaContent from "./content";
+import Notice from "./content/notice";
 
 const Media = ({
   room,
-  roomIndex,
   floor,
   currentAudioChannel,
   entityID,
-  isOwner,
   listenToMultiverse,
   detachMultiverseListener,
   newPortal,
@@ -33,7 +32,6 @@ const Media = ({
   // This is a fake unique id based on current timestamp. We use it to identify users that aren't logged in, so we can manage the coun of users in each portal
   const { uniqueId } = useContext(UniqueIdContext);
   const { currentUserProfile } = useContext(AuthContext);
-  const { setFloorTempVideoChat } = useContext(FloorContext);
 
   // This holds the current portal were in (its title)
   const [currentPortal, setCurrentPortal] = useState(null);
@@ -60,16 +58,19 @@ const Media = ({
   ] = useState(false);
   const [cameraPermissionGranted, setCameraPermissionGranted] = useState(false);
 
-
   useEffect(() => {
+    console.log("entityID media", entityID);
+
+    if (!entityID) return;
+
+    // We generate a new portal if needed here, and not in a cloud function, beccaue this also applies to Rooms in Floors and we can't listen to those in cloud functions. At some point it's wort having a cloud function for public Rooms and have floors rooms multiverses generated when a floor is created.
     listenToMultiverse(entityID, setMultiverse, setMultiverseArray, () => {
+      if (!currentUserProfile) return;
       newPortal(
         { title: "Home" },
         null,
         entityID,
-        currentUserProfile && currentUserProfile.uid
-          ? currentUserProfile.uid
-          : uniqueId,
+        currentUserProfile.uid,
         (portalObj) => {
           setCurrentPortal(portalObj);
         }
@@ -78,7 +79,7 @@ const Media = ({
     return function cleanup() {
       detachMultiverseListener();
     };
-  }, [entityID, currentPortal, currentUserProfile, uniqueId]);
+  }, [entityID, currentUserProfile, uniqueId]);
 
   // Whenever the room or the current portal change, we set a new portal url
   useEffect(() => {
@@ -91,17 +92,6 @@ const Media = ({
     );
 
     setCurrentPortalUrl(portalUrlKey);
-    setFloorTempVideoChat(portalUrlKey);
-
-    // if (microphonePermissionGranted && cameraPermissionGranted)
-
-    // enterPortal(
-    //   entityID,
-    //   currentPortal,
-    //   currentUserProfile && currentUserProfile.uid
-    //     ? currentUserProfile.uid
-    //     : uniqueId
-    // );
   }, [
     currentPortal,
     room,
@@ -110,11 +100,7 @@ const Media = ({
   ]);
 
   useEffect(() => {
-    if (
-      currentAudioChannel &&
-      currentAudioChannel.source &&
-      ["youtube", "twitch"].includes(currentAudioChannel.source)
-    ) {
+    if (currentAudioChannel && currentAudioChannel.source) {
       setIsVideoVisible(true);
     }
   }, [currentAudioChannel]);
@@ -139,27 +125,34 @@ const Media = ({
         setIsVideoVisible={setIsVideoVisible}
       />
 
-      <MediaContent
-        room={room}
-        floor={floor}
-        currentAudioChannel={currentAudioChannel}
-        entityID={entityID}
-        currentPortal={currentPortal}
-        setCurrentPortal={setCurrentPortal}
-        multiverse={multiverse}
-        multiverseArray={multiverseArray}
-        microphonePermissionGranted={microphonePermissionGranted}
-        cameraPermissionGranted={cameraPermissionGranted}
-        isFirstLoad={isFirstLoad}
-        setIsFirstLoad={setIsFirstLoad}
-        isChatVisible={isChatVisible}
-        setIsChatVisible={setIsChatVisible}
-        isVideoVisible={isVideoVisible}
-        setIsVideoVisible={setIsVideoVisible}
-        setMicrophonePermissionGranted={setMicrophonePermissionGranted}
-        setCameraPermissionGranted={setCameraPermissionGranted}
-        currentPortalUrl={currentPortalUrl}
-      />
+      {!isMobile ? (
+        <MediaContent
+          room={room}
+          floor={floor}
+          currentAudioChannel={currentAudioChannel}
+          entityID={entityID}
+          currentPortal={currentPortal}
+          setCurrentPortal={setCurrentPortal}
+          multiverse={multiverse}
+          multiverseArray={multiverseArray}
+          microphonePermissionGranted={microphonePermissionGranted}
+          cameraPermissionGranted={cameraPermissionGranted}
+          isFirstLoad={isFirstLoad}
+          setIsFirstLoad={setIsFirstLoad}
+          isChatVisible={isChatVisible}
+          setIsChatVisible={setIsChatVisible}
+          isVideoVisible={isVideoVisible}
+          setIsVideoVisible={setIsVideoVisible}
+          setMicrophonePermissionGranted={setMicrophonePermissionGranted}
+          setCameraPermissionGranted={setCameraPermissionGranted}
+          currentPortalUrl={currentPortalUrl}
+        />
+      ) : (
+        <Notice
+          className="media__mobile small-margin-top"
+          text={`We recommend that you'd browse Salon on your computer. If you can only join the party on mobile, It will be best if you'll switch to desktop mode in your browser app. On Chrome, click the three dots at the top right of your screen and check "Desktop site".`}
+        />
+      )}
     </div>
   );
 };

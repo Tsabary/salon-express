@@ -96,8 +96,9 @@ const Drawer = ({ logOut }) => {
             <img
               className="navigation__profile-image"
               src={
-                (currentUserProfile && currentUserProfile.avatar) ||
-                "../../imgs/logo.jpeg"
+                currentUserProfile && currentUserProfile.avatar
+                  ? currentUserProfile.avatar
+                  : "../imgs/avatar.png"
               }
               alt="Profile"
             />
@@ -163,9 +164,9 @@ const Drawer = ({ logOut }) => {
             )}
           </ul>
 
-          <div className="navigation__event" onClick={()=>myHistory.push("/floor/inqlusiv")}>
+          {/* <div className="navigation__event" onClick={()=>myHistory.push("/floor/inqlusiv")}>
             INQLUSIV
-          </div>
+          </div> */}
         </nav>
       </label>
     </div>

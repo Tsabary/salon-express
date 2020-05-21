@@ -196,7 +196,7 @@ export const addImageToFloorRoom = (
 ) => async () => {
   const batch = db.batch();
   const docRef = db.collection("floors").doc(floor.id);
-  console.log("imguplp","sarting");
+  console.log("imguplp", "sarting");
   if (!image) return;
 
   const ref = storage.ref(`/images/floor-rooms/${floor.id}/${roomIndex}`);
@@ -207,8 +207,7 @@ export const addImageToFloorRoom = (
   const downloadUrl = await ref.getDownloadURL();
   if (!downloadUrl) return;
 
-  console.log("imguplp","uploaded");
-
+  console.log("imguplp", "uploaded");
 
   const newFoor = {
     ...floor,
@@ -386,7 +385,7 @@ export const replaceFloorUids = (floor, previousID, newID, cb) => () => {
   }
 
   batch.commit().then(() => {
-    cb();
+    if (cb) cb();
   });
 };
 
@@ -616,7 +615,10 @@ export const deleteEventFloor = (event, roomIndex, floor, cb) => async () => {
 };
 
 export const fixNYC = () => async () => {
-  const nycDoc = await db.collection("floors").doc("Z0bWQjbeG3dd0PDfJHMe").get();
+  const nycDoc = await db
+    .collection("floors")
+    .doc("xm8GG5djV4g71CDwEj6D")
+    .get();
 
   if (!nycDoc.data()) return;
   const nyc = nycDoc.data();
@@ -625,7 +627,7 @@ export const fixNYC = () => async () => {
   const nycRoomValues = Object.values(nyc.rooms);
   const newRooms = {};
   for (let i = 0; i < nycRoomKeys.length; i++) {
-    newRooms[i] = nycRoomValues[i];
+    newRooms[27 - i] = nycRoomValues[i];
 
     // if (i < 17) {
     //   newRooms[i] = nycRoomValues[i];

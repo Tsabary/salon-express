@@ -1,6 +1,6 @@
 @import "../../../styles/imports";
 
-.on-boarding {
+.floor-details {
   position: fixed;
   width: 100vw;
   height: 100vh;
@@ -8,8 +8,11 @@
   z-index: 100000;
 
   &__title {
+    font-size: 2.4rem;
     font-family: $fontBold;
-    font-size: 2rem;
-    color: $greyDarkest;
+    color: $mainColor;
+  }
+
+  &__description {
   }
 }

@@ -27,6 +27,21 @@
     // @include resize(1300px) {
     //   grid-template-columns: 1fr;
     // }
+
+    &-input {
+      outline: none;
+      border: none;
+      font-size: 1.2rem;
+      &::-webkit-input-placeholder {
+        color: $grey;
+      }
+      &-container {
+        background-color: white;
+        box-shadow: 0 0.2rem 2rem rgb(228, 228, 228);
+        border-radius: $borderRadius;
+        padding: 0.3rem 1.7rem;
+      }
+    }
   }
 
   &__emoji {
@@ -36,13 +51,13 @@
     }
 
     &--current {
-      width: 1.7rem;
-      height: 1.7rem;
+      width: 1.3rem;
+      height: 1.3rem;
     }
     &--picker {
       position: absolute;
       top: 0;
-      right: -8rem;
+      left: -8rem;
       z-index: 200000;
       display: none;
     }

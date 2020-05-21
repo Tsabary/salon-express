@@ -62,11 +62,11 @@ const Floor = ({
       </div>
       <div className="room__top">
         <div className="room__content">
-          {lastVisit ? (
+          {/* {lastVisit ? (
             <div className="room__last-visit">
               Last visitor joined <Moment fromNow>{lastVisit}</Moment>
             </div>
-          ) : null}
+          ) : null} */}
 
           <div
             className="room__title clickable"

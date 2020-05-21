@@ -20,7 +20,6 @@ import MainHeader from "./staticComponents/header/Main";
 import FloorHeader from "./staticComponents/header/Floor";
 import FloorRoomHeader from "./staticComponents/header/FloorRoom";
 import Footer from "./staticComponents/footer/main";
-import FooterFloor from "./staticComponents/footer/floor";
 
 import SignUp from "./popups/signUp";
 import UpdateProfile from "./popups/updateProfile";
@@ -51,6 +50,8 @@ import AudioChannels from "./popups/audioChannels";
 import BottomHelpers from "./otherComponents/bottomHelpers";
 import EditPost from "./pages/blog/editPost";
 import OnBoarding from "./otherComponents/onBoarding";
+import FloorDetails from "./otherComponents/floorDetails";
+import MinimalHeader from "./staticComponents/header/minimal";
 
 const App = () => {
   const [isFloor, setIsFloor] = useState(
@@ -91,7 +92,8 @@ const App = () => {
                 <UniqueIdProvider>
                   <Router history={history}>
                     <div className="app">
-                      <OnBoarding />
+                      {!isFloor ? <OnBoarding /> : null}
+                      <FloorDetails />
                       <SignUp />
                       <UpdateProfile />
                       <NewRoom />
@@ -100,13 +102,16 @@ const App = () => {
                       <NewFloorPlan />
                       <AudioChannels />
                       {/* <EditRoom /> */}
-                      {isFloor ? (
+
+                      <MinimalHeader/>
+
+                      {/* {isFloor ? (
                         <FloorHeader />
                       ) : isFloorRoom ? (
                         <FloorRoomHeader />
                       ) : (
                         <MainHeader />
-                      )}
+                      )} */}
 
                       {!isMobile ? <BottomHelpers /> : null}
 

@@ -6,7 +6,7 @@ export const FloorProvider = ({ children }) => {
   const [globalFloor, setGlobalFloor] = useState(null);
   const [globalFloorRoom, setGlobalFloorRoom] = useState(null);
   const [globalFloorRoomIndex, setGlobalFloorRoomIndex] = useState(null);
-  const [floorTempVideoChat, setFloorTempVideoChat] = useState(null);
+  const [isDetailsVisible, setIsDetailsVisible] = useState(null);
 
   return (
     <FloorContext.Provider
@@ -17,8 +17,8 @@ export const FloorProvider = ({ children }) => {
         setGlobalFloorRoom,
         globalFloorRoomIndex,
         setGlobalFloorRoomIndex,
-        floorTempVideoChat,
-        setFloorTempVideoChat,
+        isDetailsVisible,
+        setIsDetailsVisible,
       }}
     >
       {children}
