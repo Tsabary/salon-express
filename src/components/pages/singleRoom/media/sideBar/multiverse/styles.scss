@@ -1,12 +1,12 @@
 @import "../../../../../../styles/imports";
 
 .multiverse {
-  height: 100%;
-  min-height: 450px;
+  // height: 100%;
+  max-height: 450px;
 
   &__channels {
     margin-top: 2rem;
-    max-height: 32rem;
+    // max-height: 32rem;
     overflow-y: scroll;
 
     &::-webkit-scrollbar {
@@ -20,15 +20,15 @@
   }
 
   &__form {
+    max-width: 100%;
     display: grid;
     gap: 1rem;
     align-items: center;
-    grid-template-columns: 1fr max-content max-content;
-    // @include resize(1300px) {
-    //   grid-template-columns: 1fr;
-    // }
+    grid-template-columns: 1fr max-content;
+    // grid-template-columns: 1fr max-content max-content;
 
     &-input {
+      max-width: 9rem;
       outline: none;
       border: none;
       font-size: 1.2rem;
@@ -36,6 +36,11 @@
         color: $grey;
       }
       &-container {
+        width: max-content;
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 1rem;
+        align-items: center;
         background-color: white;
         box-shadow: 0 0.2rem 2rem rgb(228, 228, 228);
         border-radius: $borderRadius;
@@ -46,6 +51,8 @@
 
   &__emoji {
     position: relative;
+    z-index: 200000;
+
     &:hover .multiverse__emoji--picker {
       display: block;
     }
@@ -55,6 +62,7 @@
       height: 1.3rem;
     }
     &--picker {
+      max-width: 20rem;
       position: absolute;
       top: 0;
       left: -8rem;

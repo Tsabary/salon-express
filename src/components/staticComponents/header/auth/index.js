@@ -10,7 +10,7 @@ const HeaderAuth = () => {
   const loginButton = () => {
     return (
       <div
-        className="auth-options__box boxed-button"
+        className="small-button" style={{marginBottom:".7rem"}}
         onClick={() => (window.location.hash = "sign-up")}
       >
         Sign Up | Login
@@ -25,6 +25,7 @@ const HeaderAuth = () => {
 
       case !currentUser:
         return loginButton();
+
       default:
         return null;
     }

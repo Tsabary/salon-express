@@ -101,17 +101,19 @@
 
 .minimal-header {
   width: 100%;
-  min-height: 3.5rem;
-  display: grid;
-  grid-template-columns: max-content 1fr, max-content;
-  align-content: center;
+  height: 5rem;
+  padding: 0 5rem;
   background-color: $mainColorDarkest;
+  padding: 0.5rem 2rem;
+  z-index: 2000000;
 
   &__logo {
+    margin-top: 0.3rem;
     font-family: $fontBold;
     font-weight: 900;
     font-size: 2rem;
     text-align: center;
     color: white;
+    cursor: default;
   }
 }

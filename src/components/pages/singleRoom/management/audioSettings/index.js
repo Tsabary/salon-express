@@ -156,7 +156,7 @@ const AudioSettings = ({
   return (
     <div className="management__audio-settings section__container">
       <div className="max-fr-max">
-        <div className="section__title">Media Settings</div>
+        <div className="section__title">External Content</div>
 
         <>
           <div
@@ -296,7 +296,7 @@ const AudioSettings = ({
               onMouseEnter={() => setIsPlayHovered(true)}
               onMouseLeave={() => setIsPlayHovered(false)}
               onClick={() => {
-                if (newChannel.link) {
+                if (newChannel && newChannel.link) {
                   const sourceObj = extractUrlId(newChannel.link);
 
                   !floor

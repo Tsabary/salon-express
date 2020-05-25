@@ -1,0 +1,23 @@
+@import "../../../../styles/imports";
+
+.menu-room {
+  padding: 1rem .5rem;
+  border-bottom: $mainColorDark 1px solid;
+  cursor: pointer;
+  &:hover {
+    background-color: $mainColorDark;
+  }
+
+  &--active {
+    background-color: $mainColorDark;
+  }
+
+  &__image{
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 100%;
+    overflow: hidden;
+    background-color: $greyLightest;
+
+  }
+}

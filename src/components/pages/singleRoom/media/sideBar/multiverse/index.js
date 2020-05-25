@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import "emoji-mart/css/emoji-mart.css";
 import { Emoji, Picker } from "emoji-mart";
 import ReactTooltip from "react-tooltip";
+import AutosizeInput from "react-input-autosize";
 
 import { AuthContext } from "../../../../../../providers/Auth";
 
@@ -24,6 +25,8 @@ const Multiverse = ({
   newPortal,
   isFirstLoad,
   setIsFirstLoad,
+  isChatVisible,
+  isVideoVisible,
 }) => {
   const { currentUserProfile } = useContext(AuthContext);
 
@@ -78,8 +81,19 @@ const Multiverse = ({
   };
 
   return (
-    <div className="multiverse section__container ">
-      <div className="max-max">
+    <div
+    // className={
+    //   isChatVisible && isVideoVisible
+    //     ? " media-sidebar__multiverse section__container "
+    //     : " media-sidebar__multiverse--lean section__container "
+    // }
+    className={
+      isChatVisible && isVideoVisible
+        ? "multiverse media-sidebar__multiverse section__container "
+        : "multiverse media-sidebar__multiverse--lean section__container "
+    }
+    >
+     <div className="max-max">
         <div className="section__title">The Multiverse</div>
 
         <>
@@ -96,10 +110,10 @@ const Multiverse = ({
               }}
             />
           </ReactTooltip>
-        </>
+        </> 
       </div>
 
-      <form
+       <form
         className="multiverse__form"
         autoComplete="off"
         onSubmit={(e) => {
@@ -135,74 +149,61 @@ const Multiverse = ({
           );
         }}
       >
-        <div className="multiverse__form-input-container max-fr" >
-          <div className="multiverse__emoji">
-            {newPortalValues && newPortalValues.totem ? (
-              <div className="extra-tiny-margin-top">
-                <Emoji emoji={newPortalValues.totem} size={16} />
+        <div className="fr-max">
+          <div className="multiverse__form-input-container">
+            <div className="multiverse__emoji">
+              {newPortalValues && newPortalValues.totem ? (
+                <div className="extra-tiny-margin-top">
+                  <Emoji emoji={newPortalValues.totem} size={16} />
+                </div>
+              ) : (
+                <img
+                  className="multiverse__emoji--current"
+                  src="../../../imgs/emoji.png"
+                />
+              )}
+
+              <div className="multiverse__emoji--picker">
+                <Picker
+                  set="apple"
+                  onSelect={addEmoji}
+                  title="Pick your emoji…"
+                  emoji="point_up"
+                  i18n={{
+                    search: "Search",
+                    categories: {
+                      search: "Search Results",
+                      recent: "Recents",
+                    },
+                  }}
+                />
               </div>
-            ) : (
-              <img
-                className="multiverse__emoji--current"
-                src="../../../imgs/emoji.png"
-              />
-            )}
-
-            <div className="multiverse__emoji--picker">
-              <Picker
-                set="apple"
-                onSelect={addEmoji}
-                title="Pick your emoji…"
-                emoji="point_up"
-                i18n={{
-                  search: "Search",
-                  categories: {
-                    search: "Search Results",
-                    recent: "Recents",
-                  },
-                }}
-              />
             </div>
+
+            <input
+              className="multiverse__form-input"
+              style={{ border: "none", outline: "none" }}
+              id="Open a portal"
+              type="text"
+              placeholder="Open a portal"
+              value={newPortalValues.title}
+              onChange={(e) => {
+                if (e.target.value.length < 30)
+                  setNewPortalValues({
+                    ...newPortalValues,
+                    title: e.target.value
+                      .replace(/^([^-]*-)|-/g, "$1")
+                      .replace(/[^\p{L}\s\d-]+/gu, ""),
+                  });
+              }}
+            />
           </div>
-
-          <input
-            className="multiverse__form-input"
-            id="Open a portal"
-            type="text"
-            placeholder="Open a portal"
-            value={newPortalValues.title}
-            onChange={(e) => {
-              if (e.target.value.length < 30)
-                setNewPortalValues({
-                  ...newPortalValues,
-                  title: e.target.value
-                    .replace(/^([^-]*-)|-/g, "$1")
-                    .replace(/[^\p{L}\s\d-]+/gu, ""),
-                });
-            }}
-          />
-
-          {/* <InputField
-            type="text"
-            placeHolder="Open a portal"
-            value={newPortalValues.title}
-            onChange={(port) => {
-              if (port.length < 30)
-                setNewPortalValues({
-                  ...newPortalValues,
-                  title: port
-                    .replace(/^([^-]*-)|-/g, "$1")
-                    .replace(/[^\p{L}\s\d-]+/gu, ""),
-                });
-            }}
-          /> */}
-        </div>
-        <div
+          <div
             className="info extra-tiny-margin-top"
             data-tip="portalInfo"
             data-for="portalInfo"
           />
-        <ReactTooltip place="bottom" id="portalInfo">
+          <ReactTooltip place="bottom" id="portalInfo">
             <div
               dangerouslySetInnerHTML={{
                 __html:
@@ -210,19 +211,15 @@ const Multiverse = ({
               }}
             />
           </ReactTooltip>
+        </div>
 
         {currentUserProfile ? (
-          <div>
-            <button
-              type="submit"
-              className="small-button single-room__comment--boxed"
-            >
-              Open
-            </button>
-          </div>
+          <button type="submit" className="small-button">
+            Open
+          </button>
         ) : (
           <div
-            className="small-button single-room__comment--boxed"
+            className="small-button"
             onClick={() => (window.location.hash = "sign-up")}
           >
             Open

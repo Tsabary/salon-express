@@ -53,6 +53,7 @@
     "react-howler": "^3.7.4",
     "react-iframe": "^1.8.0",
     "react-image-mapper": "0.0.15",
+    "react-input-autosize": "^2.2.2",
     "react-instantsearch-dom": "^6.4.0",
     "react-loader-spinner": "^3.1.5",
     "react-masonry-css": "^1.0.14",

@@ -103,6 +103,14 @@ service cloud.firestore {
       allow update: if request.auth.uid == resource.data.user_ID;
       allow delete: if request.auth.uid == resource.data.user_ID;
     }
+
+    match /mailinglists/{list}{
+      allow read: if request.auth.uid == "KbhtqAE0B9RDAonhQqgZ1CWsg1o1";
+      allow create: if request.auth.uid == "KbhtqAE0B9RDAonhQqgZ1CWsg1o1";
+      allow update: if true;
+      allow delete: if false;
+    }
+    
     
 
     match /users/{userID}{

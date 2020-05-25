@@ -1,8 +1,59 @@
 @import "../../../../../styles/imports";
 
-.sidebar {
+.media-sidebar {
+  height: 100%;
+  max-width: 100%;
   display: grid;
   gap: 2rem;
   grid-template-columns: 1fr;
-  grid-template-rows: max-content;
+  justify-items: stretch;
+align-content: stretch;
+align-items: stretch;
+  // background-color: orchid;
+  // grid-template-rows: max-content max-content 1fr
+
+  &--both {
+    grid-template-rows: 450px 450px 1fr !important;
+  }
+
+  &--one {
+    grid-template-rows: 450px 1fr !important;
+  }
+
+  &--none {
+    grid-template-rows: 1fr !important;
+  }
+
+  &--chat {
+    grid-template-rows: 450px !important;
+  }
+
+  &--lean {
+    grid-template-rows: max-content 1fr !important;
+  }
+
+  &__multiverse {
+    max-height: 450px;
+    // background-color: orange;
+    &--lean {
+      max-height: 100%;
+    }
+  }
+
+  &__user {
+    // background-color: orangered;
+    min-height: 450px;
+    &--lean {
+      min-height: 100%;
+    }
+  }
+
+  &__cta {
+    // background-color: white;
+    // border-radius: $borderRadius;
+    // box-shadow: $containerBoxShadow;
+    // justify-self: stretch;
+    // min-height: 100%;
+    margin-top: 0;
+  }
 }

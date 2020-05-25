@@ -51,18 +51,19 @@ $easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   background-color: $bgColor;
   width: 100%;
 
-  @include resize(750px) {
-    margin-top: 5rem;
-  }
+  // @include resize(750px) {
+  //   margin-top: 5rem;
+  // }
 
   &__body {
-    @include padding;
+    padding: 2rem;
+    // @include padding;
     &-content {
       display: grid;
       grid-template-columns: 1fr 4fr;
       gap: 3rem;
 
-      margin-top: 4rem;
+      margin-bottom: 5rem;
       background-color: white;
       padding: 5rem;
       border-radius: 0 3rem 0 3rem;

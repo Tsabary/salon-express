@@ -6,6 +6,10 @@ const ToggleButton = ({ id, toggleOn, toggleOff, isChecked }) => {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   useEffect(() => {
+    setChecked(isChecked)
+  },[isChecked])
+
+  useEffect(() => {
     isFirstLoad ? setIsFirstLoad(false) : checked ? toggleOn() : toggleOff();
   }, [checked]);
 
@@ -14,7 +18,7 @@ const ToggleButton = ({ id, toggleOn, toggleOff, isChecked }) => {
       <input
         className="toggle-button__checkbox"
         type="checkbox"
-        defaultChecked={isChecked}
+        checked={isChecked}
         id={id}
         onChange={() => setChecked(!checked)}
         // readOnly

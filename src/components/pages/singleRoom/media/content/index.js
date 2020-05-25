@@ -5,9 +5,14 @@ import { isMobile } from "react-device-detect";
 
 import Notice from "./notice";
 
-import Mixlr from "./mixlr";
+import Mixlr from "../../unused/mixlr";
 import IFrame from "./iframe";
 import Chat from "./chat";
+import {
+  getIframeUrl,
+  getIframeHeight,
+  renderControllers,
+} from "./iframe/utils";
 
 const MediaContent = ({
   room,
@@ -24,80 +29,6 @@ const MediaContent = ({
   setMicrophonePermissionGranted,
   currentPortalUrl,
 }) => {
-  useEffect(() => {
-    console.log("entityID content", currentPortalUrl);
-  }, [currentPortalUrl]);
-
-  const getIframeUrl = (audioChannel) => {
-    switch (audioChannel.source) {
-      case "youtube":
-        return `https://www.youtube.com/embed/${audioChannel.link}?autoplay=true`;
-
-      case "twitch":
-        return `https://player.twitch.tv/?channel=${audioChannel.link}`;
-
-      case "mixcloud":
-        return `https://www.mixcloud.com/widget/iframe/?hide_cover=1&feed=%2F${audioChannel.link}`;
-
-      default:
-        return audioChannel.link;
-    }
-  };
-
-  const getIframeHeight = (audioChannel) => {
-    switch (audioChannel.source) {
-      case "youtube":
-        return 450;
-
-      case "twitch":
-        return 450;
-
-      case "mixcloud":
-        return 120;
-
-      default:
-        return 450;
-    }
-  };
-
-  const renderControllers = () => {
-    return (
-      <div className="content__buttons">
-        {isChatVisible ? (
-          <div
-            className="content__button content__button--active"
-            onClick={() => setIsChatVisible(false)}
-          >
-            Chat
-          </div>
-        ) : (
-          <div
-            className="content__button content__button--unactive"
-            onClick={() => setIsChatVisible(true)}
-          >
-            Chat
-          </div>
-        )}
-
-        {isVideoVisible ? (
-          <div
-            className="content__button content__button--active"
-            onClick={() => setIsVideoVisible(false)}
-          >
-            Stream
-          </div>
-        ) : (
-          <div
-            className="content__button content__button--unactive"
-            onClick={() => setIsVideoVisible(true)}
-          >
-            Stream
-          </div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <div className="content media__content">
       <input
@@ -131,19 +62,12 @@ const MediaContent = ({
 
           {isVideoVisible &&
           currentAudioChannel &&
-          currentAudioChannel.source &&
-          currentAudioChannel.source !== "mixlr" ? (
+          currentAudioChannel.source ? (
             <IFrame
-                url={getIframeUrl(currentAudioChannel)}
-                height={getIframeHeight(currentAudioChannel)}
+              url={getIframeUrl(currentAudioChannel)}
+              height={getIframeHeight(currentAudioChannel)}
               source={currentAudioChannel.source}
             />
-          ) : null}
-
-          {isVideoVisible &&
-          currentAudioChannel &&
-          currentAudioChannel.source === "mixlr" ? (
-            <Mixlr ID={currentAudioChannel.link} />
           ) : null}
 
           {isVideoVisible &&
@@ -159,7 +83,12 @@ const MediaContent = ({
           ) : null}
 
           {currentAudioChannel && currentAudioChannel.source
-            ? renderControllers()
+            ? renderControllers(
+                isChatVisible,
+                setIsChatVisible,
+                isVideoVisible,
+                setIsVideoVisible
+              )
             : null}
         </div>
       ) : null}

@@ -4,34 +4,37 @@ import { connect } from "react-redux";
 import { AuthContext } from "../../../../providers/Auth";
 import { renderSection } from "../../../../utils/feeds";
 
-import { fetchFirstFloors, fetchMoreFloors } from "../../../../actions/feeds";
+import {
+  fetchFirstExploreFloors,
+  fetchMoreExploreFloors,
+} from "../../../../actions/feeds";
 
-const Floors = ({ floors, fetchFirstFloors, fetchMoreFloors }) => {
+const Floors = ({
+  exploreFloors,
+  fetchFirstExploreFloors,
+  fetchMoreExploreFloors,
+}) => {
   const { currentUserProfile } = useContext(AuthContext);
 
   const [lastVisible, setLastVisible] = useState(null);
   const [reachedLast, setReachedLast] = useState(true);
 
   useEffect(() => {
-    console.log("my flooors", floors);
-  }, [floors]);
-
-  useEffect(() => {
-    fetchFirstFloors(
+    fetchFirstExploreFloors(
       setLastVisible,
       setReachedLast,
       currentUserProfile && currentUserProfile.languages
         ? currentUserProfile.languages
         : null
     );
-  }, [currentUserProfile, fetchFirstFloors]);
+  }, [currentUserProfile, fetchFirstExploreFloors]);
 
   return (
     <div className="feed">
       {renderSection(
-        floors,
+        exploreFloors,
         "Explore Floors",
-        fetchMoreFloors,
+        fetchMoreExploreFloors,
         lastVisible,
         setLastVisible,
         reachedLast,
@@ -46,11 +49,11 @@ const Floors = ({ floors, fetchFirstFloors, fetchMoreFloors }) => {
 
 const mapStateToProps = (state) => {
   return {
-    floors: state.floors,
+    exploreFloors: state.exploreFloors,
   };
 };
 
 export default connect(mapStateToProps, {
-  fetchFirstFloors,
-  fetchMoreFloors,
+  fetchFirstExploreFloors,
+  fetchMoreExploreFloors,
 })(Floors);

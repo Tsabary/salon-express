@@ -22,45 +22,69 @@ const SideBar = ({
   isChatVisible,
   isVideoVisible,
 }) => {
+  const getClassName = (isChatVisible, isVideoVisible, user) => {
+    switch (true) {
+      case isChatVisible && isVideoVisible && user:
+        return "media-sidebar media-sidebar--both media__sidebar";
+
+      case isChatVisible && isVideoVisible && !user:
+        return "media-sidebar media-sidebar--one media__sidebar";
+
+      case (isChatVisible && !isVideoVisible) ||
+        (!isChatVisible && isVideoVisible && user):
+        return "media-sidebar media-sidebar--one media__sidebar";
+
+      case !isChatVisible && isVideoVisible && user:
+        return "media-sidebar media-sidebar--one media__sidebar";
+
+      case !isChatVisible && isVideoVisible && !user:
+        return "media-sidebar media-sidebar--none media__sidebar";
+
+      case !isChatVisible && !isVideoVisible && user:
+        return "media-sidebar media-sidebar--none media__sidebar";
+    }
+  };
+
   return (
-    <div className="sidebar media__sidebar">
+    <div
+      className={getClassName(
+        isChatVisible,
+        isVideoVisible,
+        currentAudioChannel && currentAudioChannel.user ? true : false
+      )}
+    >
       {!isMobile && room && isChatVisible ? (
-        <div
-          style={
-            currentAudioChannel && currentAudioChannel.user && isVideoVisible
-              ? { height: "450px" }
-              : { height: "100%" }
-          }
-        >
-          <Multiverse
-            room={room}
-            currentPortal={currentPortal}
-            setCurrentPortal={setCurrentPortal}
-            multiverse={multiverse}
-            multiverseArray={multiverseArray}
-            currentAudioChannel={currentAudioChannel}
-            microphonePermissionGranted={microphonePermissionGranted}
-            cameraPermissionGranted={cameraPermissionGranted}
-            entityID={entityID}
-            isFirstLoad={isFirstLoad}
-            setIsFirstLoad={setIsFirstLoad}
-          />
-        </div>
+        <Multiverse
+          room={room}
+          currentPortal={currentPortal}
+          setCurrentPortal={setCurrentPortal}
+          multiverse={multiverse}
+          multiverseArray={multiverseArray}
+          currentAudioChannel={currentAudioChannel}
+          microphonePermissionGranted={microphonePermissionGranted}
+          cameraPermissionGranted={cameraPermissionGranted}
+          entityID={entityID}
+          isFirstLoad={isFirstLoad}
+          setIsFirstLoad={setIsFirstLoad}
+          isChatVisible={isChatVisible}
+          isVideoVisible={isVideoVisible}
+        />
       ) : null}
 
-      {currentAudioChannel && currentAudioChannel.user && isVideoVisible ? (
+      {!isVideoVisible ||
+      !currentAudioChannel ? null : currentAudioChannel.user ? (
         <div
-          className="section__container"
-          style={{ height: "100%", minHeight: "450px" }}
+          className={
+            isChatVisible
+              ? "media-sidebar__user section__container"
+              : "media-sidebar__user--lean section__container"
+          }
         >
           <div className="section__title">Currently Live</div>
           <UserSocial uid={currentAudioChannel.user.uid} />
         </div>
-      ) : isVideoVisible &&
-        currentAudioChannel &&
-        currentAudioChannel.source ? (
-        <CallToAction />
       ) : null}
+      <CallToAction />
 
       {isMobile && room ? (
         <MobileMultiverse

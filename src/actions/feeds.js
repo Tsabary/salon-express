@@ -24,6 +24,12 @@ import {
   FETCH_MORE_SEARCHED,
   FETCH_NEW_FLOORS,
   FETCH_MORE_FLOORS,
+  FETCH_MORE_PRIVATE,
+  FETCH_NEW_PUBLIC,
+  FETCH_MORE_PUBLIC,
+  FETCH_NEW_PRIVATE,
+  FETCH_NEW_EXPLORE_FLOORS,
+  FETCH_MORE_EXPLORE_FLOORS,
 } from "./types";
 
 const db = firebase.firestore();
@@ -204,65 +210,49 @@ export const fetchMoreMyRooms = (
 
 // FLOORS //
 
-export const fetchFirstFloors = (
+export const fetchFirstExploreFloors = (
   setLastVisible,
   setReachedLast,
-  languages
+  userID
 ) => async (dispatch) => {
-  const data =
-    languages && languages.length
-      ? await db
-          .collection("floors")
-          .where("listed", "==", true)
-          // .where("language", "in", [...languages, "lir"])
-          .orderBy("last_visit", "desc")
-          .limit(90)
-          .get()
-          .catch((e) => console.error("promise Error fetch ex", e))
-      : await db
-          .collection("floors")
-          .where("listed", "==", true)
-          .orderBy("last_visit", "desc")
-          .limit(90)
-          .get()
-          .catch((e) => console.error("promise Error fetch floors", e));
+  const data = await db
+    .collection("floors")
+    .where("listed", "==", true)
+    .orderBy("last_visit", "desc")
+    .limit(90)
+    .get()
+    .catch((e) => console.error("promise Error fetch floors", e));
+
+  if (!data || !data.docs) return;
 
   if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length === 90) setReachedLast(false);
 
   dispatch({
-    type: FETCH_NEW_FLOORS,
+    type: FETCH_NEW_EXPLORE_FLOORS,
     payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
-export const fetchMoreFloors = (
+export const fetchMoreExploreFloors = (
   lastVisible,
   setLastVisible,
   setReachedLast,
   currentUserProfile,
   tag,
-  languages
+  languages,
+  userID
 ) => async (dispatch) => {
-  const data =
-    languages && languages.length
-      ? await db
-          .collection("floors")
-          .where("listed", "==", true)
-          // .where("language", "in", [...languages, "lir"])
-          .orderBy("last_visit", "desc")
-          .startAfter(lastVisible)
-          .limit(90)
-          .get()
-          .catch((e) => console.error("promise Error fetch more floors", e))
-      : await db
-          .collection("floors")
-          .where("listed", "==", true)
-          .orderBy("last_visit", "desc")
-          .startAfter(lastVisible)
-          .limit(90)
-          .get()
-          .catch((e) => console.error("promise Error fetch more floors", e));
+  const data = db
+    .collection("floors")
+    .where("listed", "==", true)
+    .orderBy("last_visit", "desc")
+    .startAfter(lastVisible)
+    .limit(90)
+    .get()
+    .catch((e) => console.error("promise Error fetch more floors", e));
+
+  if (!data || !data.docs) return;
 
   if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length < 90) setReachedLast(true);
@@ -270,7 +260,7 @@ export const fetchMoreFloors = (
   analytics.logEvent("fetch_more_floors");
 
   dispatch({
-    type: FETCH_MORE_FLOORS,
+    type: FETCH_MORE_EXPLORE_FLOORS,
     payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
@@ -351,6 +341,190 @@ export const fetchMoreSearched = (
 
   dispatch({
     type: FETCH_MORE_SEARCHED,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+/// NEW FEEDS ///
+
+
+export const fetchFirstPrivate = (
+  setLastVisible,
+  setReachedLast,
+  userID
+) => async (dispatch) => {
+  const data = await db
+    .collection("rooms")
+    .where("members", "array-contains", userID)
+    .where("listed", "==", false)
+    .orderBy("last_visit", "desc")
+    .limit(90)
+    .get()
+    .catch((e) => console.error("promise Error fetch fav", e));
+
+    console.log("daaaaaaa private", data);
+
+  if (!data || !data.docs) return;
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length === 90) setReachedLast(false);
+
+  dispatch({
+    type: FETCH_NEW_PRIVATE,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+export const fetchMorePrivate = (
+  lastVisible,
+  setLastVisible,
+  setReachedLast,
+  userID
+) => async (dispatch) => {
+  const data = await db
+    .collection("rooms")
+    .where("members", "array-contains", userID)
+    .where("listed", "==", false)
+    .orderBy("last_visit", "desc")
+    .startAfter(lastVisible)
+    .limit(90)
+    .get()
+    .catch((e) => console.error("promise Error fetch mo fav", e));
+
+  if (!data || !data.docs) return;
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length < 90) setReachedLast(true);
+
+  analytics.logEvent("fetch_more_private");
+
+  dispatch({
+    type: FETCH_MORE_PRIVATE,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+export const fetchFirstPublic = (
+  setLastVisible,
+  setReachedLast,
+  userID
+) => async (dispatch) => {
+  const data = await db
+    .collection("rooms")
+    .where("members", "array-contains", userID)
+    .where("listed", "==", true)
+    .orderBy("last_visit", "desc")
+    .limit(90)
+    .get()
+    .catch((e) => console.error("promise Error fetch fav", e));
+
+  console.log("daaaaaaa public", data);
+
+  if (!data || !data.docs) return;
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length === 90) setReachedLast(false);
+
+  dispatch({
+    type: FETCH_NEW_PUBLIC,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+export const fetchMorePublic = (
+  lastVisible,
+  setLastVisible,
+  setReachedLast,
+  userID
+) => async (dispatch) => {
+  const data = await db
+    .collection("rooms")
+    .where("members", "array-contains", userID)
+    .where("listed", "==", true)
+    .orderBy("last_visit", "desc")
+    .startAfter(lastVisible)
+    .limit(90)
+    .get()
+    .catch((e) => console.error("promise Error fetch mo fav", e));
+
+  if (!data || !data.docs) return;
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length < 90) setReachedLast(true);
+
+  analytics.logEvent("fetch_more_public");
+
+  dispatch({
+    type: FETCH_MORE_PUBLIC,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+
+export const fetchFirstFloors = (
+  setLastVisible,
+  setReachedLast,
+  userID
+) => async (dispatch) => {
+  const data = await db
+    .collection("floors")
+    .where("listed", "==", true)
+    .where("members", "array-contains", userID)
+    .orderBy("last_visit", "desc")
+    .limit(90)
+    .get()
+    .catch((e) => console.error("promise Error fetch floors", e));
+
+  if (!data || !data.docs) return;
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length === 90) setReachedLast(false);
+
+  dispatch({
+    type: FETCH_NEW_FLOORS,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+export const fetchMoreFloors = (
+  lastVisible,
+  setLastVisible,
+  setReachedLast,
+  currentUserProfile,
+  tag,
+  languages,
+  userID
+) => async (dispatch) => {
+  const data = db
+    .collection("floors")
+    .where("listed", "==", true)
+    .where("members", "array-contains", userID)
+    .orderBy("last_visit", "desc")
+    .startAfter(lastVisible)
+    .limit(90)
+    .get()
+    .catch((e) => console.error("promise Error fetch more floors", e));
+
+  if (!data || !data.docs) return;
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length < 90) setReachedLast(true);
+
+  analytics.logEvent("fetch_more_saved_floors");
+
+  dispatch({
+    type: FETCH_MORE_FLOORS,
     payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };

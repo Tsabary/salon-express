@@ -23,6 +23,9 @@ import CurrentFloorReducer from "./floors/CurrentFloorReducer";
 import FloorsReducer from "./floors/FloorsReducer";
 import BackstageReducer from "./user/BackstageReducer";
 import BlogReducer from "./blog/BlogReducer";
+import PrivateReducer from "./private/PrivateReducer";
+import PublicReducer from "./public/PublicReducer";
+import ExploreFloorsReducer from "./floors/ExploreFloorsReducer";
 
 export default combineReducers({
   // GLOBAL //
@@ -37,9 +40,20 @@ export default combineReducers({
   // MY FAVORITES //
   favorites: FavoritesReducer,
 
+  // PRIVATE //
+  privateRooms: PrivateReducer,
+
+  // PUBLIC //
+  publicRooms: PublicReducer,
+
+  // MY ROOMS //
   myRooms: MyRoomsReducer,
 
+  // ALL FLOORS //
   floors: FloorsReducer,
+
+  // ALL FLOORS //
+  exploreFloors: ExploreFloorsReducer,
 
   // SEARCH //
   searched: SearchReducer,

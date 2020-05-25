@@ -54,14 +54,14 @@ const FloorManagement = ({ fetchMyFloors }) => {
           New Floor Plan
         </div>
 
-        <div
+        {/* <div
           className="small-button clickable"
           onClick={() => {
             window.location.hash = "add-floor";
           }}
         >
           New Floor
-        </div>
+        </div> */}
       </div>
       <div className="floor-management__table">
         <div className="floor-management__col-titles">{renderTitles()}</div>

@@ -114,7 +114,7 @@ const Admin = ({ room, isOwner, keepRoomListed, addAdmin, deleteRoom }) => {
         Admin
       </div>
 
-      {isOwner ? (
+      {/* {isOwner ? (
         <>
           <ToggleField
             id="singleRoomListed"
@@ -124,7 +124,7 @@ const Admin = ({ room, isOwner, keepRoomListed, addAdmin, deleteRoom }) => {
             isChecked={room.listed}
           />
         </>
-      ) : null}
+      ) : null} */}
 
       <InputField
         type="text"

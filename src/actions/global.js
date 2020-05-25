@@ -68,3 +68,15 @@ export const fetchTags = () => async (dispatch) => {
     payload: allTags,
   });
 };
+
+export const signupToNewletter = (values, cb) => async () => {
+  db.collection("mailinglists")
+    .doc("premium-plans")
+    .set(
+      { list: firebase.firestore.FieldValue.arrayUnion(values) },
+      { merge: true }
+    )
+    .then(() => {
+      cb();
+    });
+};

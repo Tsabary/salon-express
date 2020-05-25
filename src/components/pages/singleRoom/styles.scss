@@ -10,11 +10,8 @@
   gap: 2rem;
   justify-items: stretch;
   align-items: stretch;
-  @include padding;
+  padding: 2rem;
 
-  // &--floor{
-  //   padding: 0 !important;
-  // }
 
   &__media {
     grid-column: 1/13;

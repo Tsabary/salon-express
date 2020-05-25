@@ -206,12 +206,20 @@
     }
 
     &-line {
-      border: 1px solid $mainColor;
-      color: $mainColor;
       text-decoration: none;
       &:hover {
         background: $mainColorTransparent;
         text-decoration: none;
+      }
+
+      &--unactive {
+        border: 1px solid $mainColor;
+        color: $mainColor;
+      }
+
+      &--active {
+        border: 1px solid $grey;
+        color: $grey;
       }
     }
 

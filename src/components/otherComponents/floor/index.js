@@ -14,15 +14,25 @@ import { PageContext } from "../../../providers/Page";
 
 import { getLanguageName } from "../../../utils/languages";
 import { capitalizeSentances } from "../../../utils/strings";
+import { AuthContext } from "../../../providers/Auth";
+
+import {
+  addToFloorMembers,
+  removeFromFloorMembers,
+} from "../../../actions/floors";
+import { connect } from "react-redux";
 
 const Floor = ({
   floor,
-  isForFeed
+  isForFeed,
+  addToFloorMembers,
+  removeFromFloorMembers,
 }) => {
   const myHistory = useHistory(history);
 
   const { setSearchTerm } = useContext(SearchContext);
   const { setPage } = useContext(PageContext);
+  const { currentUserProfile } = useContext(AuthContext);
 
   const [shareButton, setShareButton] = useState(null);
 
@@ -105,97 +115,64 @@ const Floor = ({
         </div>
       </div>
       <div className="room__actions--all">
-        {/* <div className="room__actions--pair"> */}
-        <CopyToClipboard
-          text={`https://salon.express/floor/${floor.url}`}
-          data-tip
-          data-for={`share${floor.id}`}
-          onCopy={() => {
-            shareButtonTimer();
-            setShareButton("Share URL copied!");
-            firebase.analytics().logEvent("floor_share_link_copied");
-          }}
-        >
-          <div className="room__button room__button-line clickable">
-            {shareButton ? (
-              shareButton
-            ) : (
-              <ReactSVG
-                src={isForFeed ? "./svgs/share.svg" : "../svgs/share.svg"}
-                wrapper="div"
-                beforeInjection={(svg) => {
-                  svg.classList.add("svg-icon--normal");
-                }}
-              />
-            )}
-          </div>
-        </CopyToClipboard>
+        <div className="room__actions--pair">
+          <CopyToClipboard
+            text={`https://salon.express/floor/${floor.url}`}
+            data-tip
+            data-for={`share${floor.id}`}
+            onCopy={() => {
+              shareButtonTimer();
+              setShareButton("Share URL copied!");
+              firebase.analytics().logEvent("floor_share_link_copied");
+            }}
+          >
+            <div className="room__button room__button-line room__button-line--unactive clickable">
+              {shareButton ? (
+                shareButton
+              ) : (
+                <ReactSVG
+                  src={isForFeed ? "./svgs/share.svg" : "../svgs/share.svg"}
+                  wrapper="div"
+                  beforeInjection={(svg) => {
+                    svg.classList.add("svg-icon--normal");
+                  }}
+                />
+              )}
+            </div>
+          </CopyToClipboard>
 
-        {/* {!currentUserProfile.uid ? (
+          {!currentUserProfile || !currentUserProfile.uid ? (
             <a
               onClick={() => {
                 firebase.analytics().logEvent("favorites_clicked_not_user");
               }}
-              className="room__button room__button-line clickable"
+              className="room__button room__button-line room__button-line--unactive clickable"
               href={"#sign-up"}
             >
-              <div className="fr-max-fr">
-                <div />
-                <ReactSVG
-                  src={isForFeed ? "./svgs/heart.svg" : "../svgs/heart.svg"}
-                  wrapper="div"
-                  beforeInjection={(svg) => {
-                    svg.classList.add("svg-icon--normal");
-                  }}
-                />
-                <div />
-              </div>
+              <div className="centered-text">Join</div>
             </a>
-          ) : room.favorites &&
-            room.favorites.includes(currentUserProfile.uid) ? (
+          ) : floor.members &&
+            floor.members.includes(currentUserProfile.uid) ? (
             <div
-              className="room__button room__button-line clickable"
-              onClick={() => removeFromFavorites(currentUserProfile, room)}
+              className="room__button room__button-line room__button-line--active clickable"
+              onClick={() => removeFromFloorMembers(currentUserProfile,floor)}
             >
-              <div className="fr-max-fr">
-                <div />
-                <ReactSVG
-                  src={
-                    isForFeed
-                      ? "./svgs/heart_full.svg"
-                      : "../svgs/heart_full.svg"
-                  }
-                  wrapper="div"
-                  beforeInjection={(svg) => {
-                    svg.classList.add("svg-icon--normal");
-                  }}
-                />
-                <div />
-              </div>
+              <div className="centered-text">Leave</div>
             </div>
           ) : (
             <div
-              className="room__button room__button-line clickable"
-              onClick={() => addToFavorites(currentUserProfile, room)}
+              className="room__button room__button-line room__button-line--unactive clickable"
+              onClick={() => addToFloorMembers(currentUserProfile,floor)}
             >
-              <div className="fr-max-fr">
-                <div />
-                <ReactSVG
-                  src={isForFeed ? "./svgs/heart.svg" : "../svgs/heart.svg"}
-                  wrapper="div"
-                  beforeInjection={(svg) => {
-                    svg.classList.add("svg-icon--normal");
-                  }}
-                />
-                <div />
-              </div>
+              <div className="centered-text">Join</div>
             </div>
-              )} */}
-
-        {/* </div> */}
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default Floor
+export default connect(null, { addToFloorMembers, removeFromFloorMembers })(
+  Floor
+);

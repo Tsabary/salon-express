@@ -76,6 +76,7 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
       crew_ID: [currentUserProfile.uid],
       open: new Date(),
       listed: true,
+      language: "lir",
       visitors: [],
     });
     setSubmitting(false);
@@ -164,7 +165,7 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
                   }}
                 />
               </div>
-
+{/* 
               <Form.Control
                 as="select"
                 bsPrefix="input-field__input form-drop tiny-margin-bottom"
@@ -180,7 +181,7 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
                 }}
               >
                 {renderLanguageOptions("Choose a language")}
-              </Form.Control>
+              </Form.Control> */}
               <div className="new-floor-plan__image-container">
                 <img
                   className="new-floor-plan__image-preview"

@@ -1,4 +1,3 @@
-import "./styles.scss";
 import React from "react";
 
 const BoxedButton = ({ text, action }) => {

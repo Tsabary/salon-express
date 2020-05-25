@@ -1,0 +1,190 @@
+@import "../../../styles/imports";
+
+.side-menu {
+  position: relative;
+  height: 100%;
+  color: rgba(white, 0.7) !important;
+
+  @include scroll;
+
+  &__show-more {
+    width: 100%;
+    text-align: center;
+    font-size: 1.4rem;
+    color: $mainColorLightest;
+    cursor: pointer;
+  }
+
+  &__button {
+    cursor: pointer;
+    &:hover {
+      color: $mainColorLightest;
+    }
+  }
+
+  &__actions {
+    position: absolute;
+    top: 3rem;
+    right: 3rem;
+  }
+
+  &__action {
+    color: white;
+    font-size: 2.3rem;
+    cursor: pointer;
+
+    &:hover {
+      color: $mainColorLightest !important;
+    }
+
+    &--text {
+      font-size: 1.2rem !important;
+    }
+  }
+
+  &__footer {
+    max-width: 100%;
+    // position: fixed;
+    // bottom: 0;
+    padding: 2rem;
+
+    &-links {
+      width: 30rem;
+      position: relative;
+      a {
+        font-size: 1.1rem;
+        display: inline-block;
+        color: rgba(white, 0.7) !important;
+        &:hover {
+          color: $mainColorLightest !important;
+        }
+      }
+    }
+  }
+
+  &__search {
+    width: 100%;
+    border-radius: $borderRadius;
+    background-color: white;
+    font-size: 1.2rem;
+    padding: 0.3rem 1.7rem;
+    border: none;
+    outline: none;
+
+    &::-webkit-input-placeholder {
+      color: $grey;
+    }
+  }
+
+  &__nav {
+    position: relative;
+    width: 5rem;
+    height: 100%;
+    background-color: $mainColorDarkest;
+    transition: all 0.1s;
+
+    @include resize(600px){
+      width: 0;
+    }
+
+    &-content {
+      height: calc(100vh - 5rem);
+      position: absolute;
+      right: 100%;
+      display: none;
+      display: grid;
+      gap: 2rem;
+      grid-template-rows: 1fr max-content;
+
+      overflow-y: scroll;
+      overflow-x: hidden;
+
+      @include scroll;
+    }
+  }
+
+  &__section {
+    position: relative;
+    width: 100%;
+    padding: 3rem;
+    border-bottom: $mainColorDark solid 1px;
+  }
+
+  &__separator {
+    width: 100%;
+    border-bottom: $mainColorDark solid 1px;
+  }
+
+  &__checkbox {
+    display: none;
+    visibility: hidden;
+    opacity: 0;
+
+    &:checked ~ .side-menu__nav {
+      width: 30rem;
+    }
+
+    &:checked ~ .side-menu__nav .side-menu__nav-content {
+      width: 30rem;
+      display: block;
+      right: 0;
+    }
+
+    &:checked + .side-menu__button .navigation__icon {
+      background-color: transparent;
+    }
+
+    &:checked + .side-menu__button .side-menu__icon::before {
+      top: 0;
+      transform: rotate(135deg);
+    }
+
+    &:checked + .side-menu__button .side-menu__icon::after {
+      top: 0;
+      transform: rotate(-135deg);
+    }
+  }
+
+  &__icon {
+    width: max-content;
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      transition: all 0.2s;
+    }
+    &::before {
+      top: -0.6rem;
+    }
+    &::after {
+      top: 0.6rem;
+    }
+  }
+
+  &__icon,
+  &__icon::before,
+  &__icon::after {
+    width: 2rem;
+    height: 1px;
+    background-color: white;
+    display: inline-block;
+
+    @include resize(800px) {
+      width: 2rem;
+      height: 1px;
+    }
+
+    @include resize(700px) {
+      width: 2rem;
+      height: 1px;
+    }
+
+    @include resize(600px) {
+      width: 1.5rem;
+    }
+  }
+}

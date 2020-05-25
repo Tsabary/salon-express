@@ -553,3 +553,37 @@ export const navigateToFirstRoom = (uid, cb) => async () => {
 //       );
 //   });
 // };
+
+export const favoritesToMembers = () => async () => {
+  const query = await db.collection("rooms").get();
+
+  if (!query.docs) return;
+
+  const rooms = query.docs.map((doc) => doc.data());
+
+  rooms.forEach(async (doc) => {
+    const favorites = doc.favorites;
+    const newRoom = { ...doc, members: favorites };
+    delete newRoom.memebers;
+
+    await db.collection("rooms").doc(doc.id).set(newRoom);
+  });
+};
+
+export const adminsIdToMembers = () => async () => {
+  const query = await db.collection("rooms").get();
+  console.log(query.docs);
+  if (!query.docs) return;
+
+  const rooms = query.docs.map((doc) => doc.data());
+
+  rooms.forEach(async (doc) => {
+    const newMembers = doc.members ? [...doc.members] : [];
+    doc.admins_ID.forEach((admin) => {
+      if (!newMembers.includes(admin)) newMembers.push(admin);
+    });
+    const newRoom = { ...doc, members: newMembers };
+
+    await db.collection("rooms").doc(doc.id).set(newRoom);
+  });
+};

@@ -15,6 +15,7 @@ import {
   RESET_BACKSTAGE_NOTIFICATIONS,
   ADD_BACKSTAGE_NOTIFICATION,
   FETCH_BACKSTAGE,
+  EDIT_FLOOR,
 } from "./types";
 
 const db = firebase.firestore();
@@ -640,4 +641,69 @@ export const fixNYC = () => async () => {
   const newFloor = { ...nyc, rooms: newRooms, id: newFloorDoc.id };
 
   newFloorDoc.set(newFloor);
+};
+
+
+
+// MEMBERS LIST //
+export const addToFloorMembers = (currentUserProfile, floor, cb) => async (
+  dispatch
+) => {
+
+  db.collection("floors")
+    .doc(floor.id)
+    .set(
+      {
+        members: firebase.firestore.FieldValue.arrayUnion(
+          currentUserProfile.uid
+        ),
+        members_count: firebase.firestore.FieldValue.increment(1),
+      },
+      { merge: true }
+    )
+    .then(() => {
+      analytics.logEvent("floor_member_added");
+      if (cb) cb();
+      dispatch({
+        type: EDIT_FLOOR,
+        payload: {
+          ...floor,
+          members: floor.members
+            ? [...floor.members, currentUserProfile.uid]
+            : [currentUserProfile.uid],
+        },
+      });
+    })
+    .catch((e) => console.error("promise Error add to fav", e));
+};
+
+export const removeFromFloorMembers = (currentUserProfile, floor, cb) => async (
+  dispatch
+) => {
+  db.collection("floors")
+    .doc(floor.id)
+    .set(
+      {
+        members: firebase.firestore.FieldValue.arrayRemove(
+          currentUserProfile.uid
+        ),
+        members_count: firebase.firestore.FieldValue.increment(-1),
+      },
+      { merge: true }
+    )
+    .then(() => {
+      analytics.logEvent("favorites_removed");
+      if (cb) cb();
+
+      dispatch({
+        type: EDIT_FLOOR,
+        payload: {
+          ...floor,
+          members: floor.members.filter(
+            (f) => f.id !== currentUserProfile.id
+          ),
+        },
+      });
+    })
+    .catch((e) => console.error("promise Error remove form fav", e));
 };

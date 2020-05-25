@@ -4,9 +4,7 @@
   max-width: 100%;
   width: 100%;
 
-
-
-    &__avatar {
+  &__avatar {
     width: 3.5rem;
     height: 3.5rem;
     border: 2px white solid;
@@ -20,10 +18,10 @@
     }
   }
 
-  &__name{
+  &__name {
     color: $greyDark !important;
 
-    &:hover{
+    &:hover {
       color: $mainColor !important;
     }
     // max-width: 10rem;

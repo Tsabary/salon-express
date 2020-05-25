@@ -51,10 +51,15 @@ export const signUp = (
 };
 
 export const logOut = () => async (dispatch) => {
+
+  console.log("loging outtt")
+
   firebase
     .auth()
     .signOut()
     .then(() => {
+      console.log("loging outtt work")
+
       analytics.logEvent("logout");
       dispatch({
         type: RESET_NOTIFICATIONS,
@@ -85,7 +90,8 @@ export const providerSignIn = (provider, cb) => () => {
       firebase
         .auth()
         .signInWithPopup(googleProvider)
-        .then(() => {
+        .then(res => {
+          console.log("user12", res)
           analytics.logEvent("signup_google");
           cb();
         })
@@ -119,10 +125,14 @@ export const passwordReset = (email, setSubmitting) => () => {
 // USER //
 let profileListener;
 export const listenToProfile = (user, setProfile) => () => {
+  console.log("user16", "about to listen")
+
   profileListener = db
     .collection("users")
     .doc(user.uid)
     .onSnapshot((docProfile) => {
+      console.log("user14", docProfile)
+
       setProfile(docProfile.data() ? docProfile.data() : null);
     });
 };

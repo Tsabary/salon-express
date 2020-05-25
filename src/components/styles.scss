@@ -4,10 +4,26 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  max-width: 100vw;
+  width: 100vw;
   height: 100vh;
   margin: auto;
   background-color: $bgColor;
+  overflow: hidden;
+
+  &__body {
+    max-height: calc(100vh - 5rem);
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    align-items: stretch;
+    flex-grow: 1;
+  }
+
+  &__content {
+    max-height: calc(100vh - 5rem);
+    overflow-y: scroll;
+
+    @include scroll;
+  }
 
   &__footer {
     margin-top: -10rem;

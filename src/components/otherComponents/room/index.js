@@ -67,10 +67,7 @@ const Room = ({
     <div className={isForFeed ? "room room-feed" : "room"}>
       {room && room.image ? (
         <div className="room__cover-img">
-          <img
-            src={room.image}
-            alt="Room"
-          />
+          <img src={room.image} alt="Room" />
         </div>
       ) : null}
       <div className="room__top">
@@ -125,7 +122,7 @@ const Room = ({
               firebase.analytics().logEvent("room_share_link_copied");
             }}
           >
-            <div className="room__button room__button-line clickable">
+            <div className="room__button room__button-line room__button-line--unactive clickable">
               {shareButton ? (
                 shareButton
               ) : (
@@ -146,59 +143,25 @@ const Room = ({
                 togglePopup(true);
                 firebase.analytics().logEvent("favorites_clicked_not_user");
               }}
-              className="room__button room__button-line clickable"
+              className="room__button room__button-line room__button-line--unactive clickable"
               href={"#sign-up"}
             >
-              <div className="fr-max-fr">
-                <div />
-                <ReactSVG
-                  src={isForFeed ? "./svgs/heart.svg" : "../svgs/heart.svg"}
-                  wrapper="div"
-                  beforeInjection={(svg) => {
-                    svg.classList.add("svg-icon--normal");
-                  }}
-                />
-                <div />
-              </div>
+              <div className="centered-text">Join</div>
             </a>
-          ) : room.favorites &&
-            room.favorites.includes(currentUserProfile.uid) ? (
+          ) : room.members &&
+            room.members.includes(currentUserProfile.uid) ? (
             <div
-              className="room__button room__button-line clickable"
+              className="room__button  room__button-line room__button-line--active clickable"
               onClick={() => removeFromFavorites(currentUserProfile, room)}
             >
-              <div className="fr-max-fr">
-                <div />
-                <ReactSVG
-                  src={
-                    isForFeed
-                      ? "./svgs/heart_full.svg"
-                      : "../svgs/heart_full.svg"
-                  }
-                  wrapper="div"
-                  beforeInjection={(svg) => {
-                    svg.classList.add("svg-icon--normal");
-                  }}
-                />
-                <div />
-              </div>
+              <div className="centered-text">Leave</div>
             </div>
           ) : (
             <div
-              className="room__button room__button-line clickable"
+              className="room__button room__button-line room__button-line--unactive clickable"
               onClick={() => addToFavorites(currentUserProfile, room)}
             >
-              <div className="fr-max-fr">
-                <div />
-                <ReactSVG
-                  src={isForFeed ? "./svgs/heart.svg" : "../svgs/heart.svg"}
-                  wrapper="div"
-                  beforeInjection={(svg) => {
-                    svg.classList.add("svg-icon--normal");
-                  }}
-                />
-                <div />
-              </div>
+              <div className="centered-text">Join</div>
             </div>
           )}
         </div>

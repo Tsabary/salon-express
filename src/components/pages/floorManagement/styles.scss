@@ -3,12 +3,12 @@
 .floor-management {
   width: 100%;
   max-width: 160rem;
-
-  margin: 3rem auto;
-  @include padding;
+  padding: 2rem;
+  // margin: 3rem auto;
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  // @include padding;
 
   &__table {
     margin-top: 3rem;
@@ -36,6 +36,5 @@
     font-size: 2rem;
     font-family: $fontBold;
     color: $mainColor;
-
   }
 }

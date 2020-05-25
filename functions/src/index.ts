@@ -11,6 +11,7 @@ const ALGOLIA_ADMIN_KEY = functions.config().algoliasalon.key;
 const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
 
 const roomsIndex = client.initIndex("rooms");
+const floorsIndex = client.initIndex("floors");
 const questionsIndex = client.initIndex("questions");
 const usersIndex = client.initIndex("users");
 const blogPostsIndex = client.initIndex("blog_posts");
@@ -215,7 +216,7 @@ exports.userUpdate = functions.firestore
             }
       );
 
-      const roomRef = db.collection("floors").doc(room.id);
+      const roomRef = db.collection("rooms").doc(room.id);
       batch.set(
         roomRef,
         {
@@ -290,7 +291,7 @@ exports.roomCreated = functions.firestore
           objectID: room.id,
           language: room.language,
           tags: room.tags,
-          title: room.title,
+          name: room.name,
           user_ID: room.user_ID,
           visitors_count: room.visitors_count,
           last_visit: room.last_visit,
@@ -388,7 +389,7 @@ exports.roomUpdated = functions.firestore
           objectID: newRoom.id,
           language: newRoom.language,
           tags: newRoom.tags,
-          title: newRoom.title,
+          name: newRoom.name,
           user_ID: newRoom.user_ID,
           visitors_count: newRoom.visitors_count,
           last_visit: newRoom.last_visit,
@@ -438,6 +439,80 @@ exports.roomDeleted = functions.firestore
     promises.push(batch.commit());
 
     promises.push(roomsIndex.deleteObject(room.id));
+
+    return Promise.all(promises);
+  });
+
+// FLOOR CREATED //
+
+exports.floorCreated = functions.firestore
+  .document("floors/{floorID}")
+  .onCreate((snap, context) => {
+    const floor = snap.data();
+    const batch = db.batch();
+    const promises: any = [];
+
+    if (!floor) return;
+
+    promises.push(batch.commit());
+
+    promises.push(
+      floorsIndex.saveObject({
+        objectID: floor.id,
+        name: floor.name,
+        description: floor.description,
+        image: floor.image,
+        listed: floor.listed,
+        tags: floor.tags,
+      })
+    );
+
+    return Promise.all(promises);
+  });
+
+// FLOOR UPDATE //
+
+exports.floorUpdated = functions.firestore
+  .document("floors/{floorID}")
+  .onUpdate((change, context) => {
+    const floor = change.after.data();
+    const oldFloor = change.before.data();
+
+    const batch = db.batch();
+    const promises: any = [];
+
+    if (!floor || !oldFloor || floor === oldFloor) return;
+
+    promises.push(batch.commit());
+
+    promises.push(
+      floorsIndex.saveObject({
+        objectID: floor.id,
+        name: floor.name,
+        description: floor.description,
+        image: floor.image,
+        listed: floor.listed,
+        tags: floor.tags,
+      })
+    );
+
+    return Promise.all(promises);
+  });
+
+// floor DELETED //
+
+exports.floorDeleted = functions.firestore
+  .document("floor/{floorID}")
+  .onDelete((snap, context) => {
+    const floor = snap.data();
+    const batch = db.batch();
+    const promises: any = [];
+
+    if (!floor) return;
+
+    promises.push(batch.commit());
+
+    promises.push(floorsIndex.deleteObject(floor.id));
 
     return Promise.all(promises);
   });

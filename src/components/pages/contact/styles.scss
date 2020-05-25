@@ -1,28 +1,30 @@
 @import "../../../styles/imports";
 
 .contact {
-  max-width: 160rem;
+  width: 100%;
+  // max-width: 160rem;
   margin-right: auto;
   margin-left: auto;
-  @include padding;
+  padding: 2rem;
+  // @include padding;
 
-  @include resize(1000px) {
-    width: 65%;
-  }
+  // @include resize(1000px) {
+  //   width: 65%;
+  // }
 
-  @include resize(900px) {
-    width: 75%;
-  }
+  // @include resize(900px) {
+  //   width: 75%;
+  // }
 
-  @include resize(800px) {
-    width: 85%;
-  }
+  // @include resize(800px) {
+  //   width: 85%;
+  // }
 
-  @include resize(700px) {
-    width: 95%;
-  }
+  // @include resize(700px) {
+  //   width: 95%;
+  // }
 
-  @include resize(600px) {
-    width: 100%;
-  }
+  // @include resize(600px) {
+  //   width: 100%;
+  // }
 }

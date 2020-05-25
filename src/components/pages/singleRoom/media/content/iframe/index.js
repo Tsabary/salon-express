@@ -4,12 +4,19 @@ import Iframe from "react-iframe";
 import Fullscreen from "react-full-screen";
 import { ReactSVG } from "react-svg";
 import ReactTooltip from "react-tooltip";
+import { isMobile } from "react-device-detect";
 
 const IFrame = ({ url, height, source }) => {
   const [isFull, setIsFull] = useState(false);
 
   return (
-    <div className="my-iframe">
+    <div
+      className={
+        source !== "mixlr"
+          ? "my-iframe"
+          : "my-iframe--border"
+      }
+    >
       <Fullscreen enabled={isFull} onChange={(isFull) => setIsFull(isFull)}>
         <Iframe
           width="100%"

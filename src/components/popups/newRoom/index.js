@@ -25,15 +25,21 @@ import {
 import InputField from "../../formComponents/inputField";
 import ToggleButton from "../../formComponents/toggleButton";
 import Tags from "../../formComponents/tags";
+import { GlobalContext } from "../../../providers/Global";
 
 const NewRoom = ({ newRoom }) => {
   const { currentUserProfile } = useContext(AuthContext);
+  const { isNewRoomPublic, setIsNewRoomPublic } = useContext(GlobalContext);
   const { addToast } = useToasts();
 
   const [values, setValues] = useState({});
 
   const [formError, setFormError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    setValues({ ...values, listed: isNewRoomPublic });
+  }, [isNewRoomPublic]);
 
   useEffect(() => {
     if (currentUserProfile) {
@@ -58,9 +64,10 @@ const NewRoom = ({ newRoom }) => {
       user_avatar: currentUserProfile.avatar,
       user_name: currentUserProfile.name,
       user_username: currentUserProfile.username,
+      language: "lir",
       visitors_count: 0,
       favorites_count: 0,
-      // listed: true,
+      tags: [],
       associate: true,
     });
     setSubmitting(false);
@@ -69,9 +76,11 @@ const NewRoom = ({ newRoom }) => {
   // Handle the submit form
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!checkValidity(values, setFormError)) {
-      return;
-    }
+    // if (!checkValidity(values, setFormError)) {
+    //   return;
+    // }
+
+    if(values.name)
 
     setFormError(null);
     setSubmitting(true);
@@ -103,7 +112,9 @@ const NewRoom = ({ newRoom }) => {
       <div>
         {!submitting ? (
           <div>
-            <div className="popup__title">Open a Room</div>
+            <div className="popup__title">
+              {isNewRoomPublic ? "Open a public Room" : " Open a private Room"}
+            </div>
             <form
               onSubmit={(e) => {
                 console.log("nothing");
@@ -123,7 +134,7 @@ const NewRoom = ({ newRoom }) => {
                 />
               </div>
 
-              <Form.Control
+              {/* <Form.Control
                 as="select"
                 bsPrefix="input-field__input form-drop tiny-margin-bottom"
                 value={
@@ -138,9 +149,9 @@ const NewRoom = ({ newRoom }) => {
                 }}
               >
                 {renderLanguageOptions("Choose a language")}
-              </Form.Control>
+              </Form.Control> */}
 
-              <div className="max-fr-max tiny-margin-bottom">
+              {/* <div className="max-fr-max tiny-margin-bottom">
                 <label
                   className="toggle-button__label clickable"
                   htmlFor="unlisted"
@@ -161,10 +172,17 @@ const NewRoom = ({ newRoom }) => {
 
                 <ToggleButton
                   id="unlisted"
-                  toggleOn={() => setValues({ ...values, listed: false })}
-                  toggleOff={() => setValues({ ...values, listed: true })}
+                  toggleOn={() => {
+                    setValues({ ...values, listed: false });
+                    setIsNewRoomPublic(false);
+                  }}
+                  toggleOff={() => {
+                    setValues({ ...values, listed: true });
+                    setIsNewRoomPublic(true);
+                  }}
+                  isChecked={!isNewRoomPublic}
                 />
-              </div>
+              </div> */}
 
               {/* <div className="max-fr-max tiny-margin-bottom">
                 <label
@@ -191,7 +209,7 @@ const NewRoom = ({ newRoom }) => {
                   isChecked={true}
                 />
               </div> */}
-
+{/* 
               <Tags
                 values={values}
                 setValues={setValues}
@@ -199,7 +217,7 @@ const NewRoom = ({ newRoom }) => {
                 formError={formError}
                 setFormError={setFormError}
                 placeHolder="Add 2-5 tags that are related to this Room"
-              />
+              /> */}
 
               {formError ? (
                 <div className="form-error small-margin-top">{formError}</div>

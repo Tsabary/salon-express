@@ -1,0 +1,10 @@
+@import "../../../styles/imports";
+
+.premium-plan{
+  &__sub{
+    margin: 3rem;
+    color: $mainColor;
+    font-family: $fontBold;
+    font-size: 2rem;
+  }
+}

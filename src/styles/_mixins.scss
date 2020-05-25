@@ -42,6 +42,10 @@
   }
 }
 
+@mixin pagePadding {
+  padding: 2rem 2rem 7rem 2rem;
+}
+
 @mixin image {
   object-fit: contain;
   width: 100%;

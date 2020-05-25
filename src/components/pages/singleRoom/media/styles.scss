@@ -3,23 +3,18 @@
 .media {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: repeat(2, max-content);
   gap: 2rem;
-
   &__content {
     height: 100%;
     grid-column: 4/13;
-    grid-row: 1/4;
   }
 
   &__sidebar {
     height: 100%;
     grid-column: 1/4;
-    grid-row: 1/4;
   }
 
   &__mobile {
     grid-column: 1/13;
-    grid-row: 1/2;
   }
 }
