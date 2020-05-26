@@ -25,7 +25,7 @@ const Management = ({
       ) : null}
 
       {/** This is the admin info/settings tile*/}
-      {!floor ? <Admin room={room} isOwner={isOwner} /> : null}
+      {/* {!floor ? <Admin room={room} isOwner={isOwner} /> : null} */}
     </div>
   );
 };

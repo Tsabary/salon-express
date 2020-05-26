@@ -1,0 +1,41 @@
+@import "../../../../styles/imports";
+
+.suggestion {
+  border-radius: $borderRadius;
+  box-shadow: $containerBoxShadow !important;
+  background-color: white;
+
+  &__cover-img {
+    position: relative;
+    &::after {
+      display: block;
+      content: "";
+      /* 16:9 aspect ratio */
+      padding-bottom: 56.25%;
+    }
+    img {
+      /* Image should match parent box size */
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  &__image {
+    object-fit: contain;
+    width: 12rem;
+    height: 12rem;
+  }
+
+  &__title {
+    font-family: $fontBold;
+    font-size: 2.2rem;
+    color: $mainColorDarkest;
+  }
+
+  &__description {
+    color: $mainColor;
+  }
+}

@@ -337,9 +337,7 @@ export const newRoom = (values, reset) => async (dispatch) => {
     .catch((e) => console.error("promise Error new room", e));
 };
 
-export const updateRoom = (updatedRoom, parameter, reset) => async (
-  dispatch
-) => {
+export const updateRoom = (updatedRoom, cb) => async (dispatch) => {
   const batch = db.batch();
   const docRef = db.collection("rooms").doc(updatedRoom.id);
 
@@ -348,9 +346,9 @@ export const updateRoom = (updatedRoom, parameter, reset) => async (
   batch
     .commit()
     .then(() => {
-      reset();
+      if (cb) cb(updatedRoom);
       window.location.hash = "";
-      analytics.logEvent("room_updated", { parameter });
+      analytics.logEvent("room_updated");
 
       dispatch({
         type: EDIT_ROOM,

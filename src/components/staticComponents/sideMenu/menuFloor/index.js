@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import history from "../../../../history";
 import { FloorContext } from "../../../../providers/Floor";
 
-const MenuFloor = ({ floor }) => {
+const MenuFloor = ({ floor, setIsMenuOpen }) => {
   const myHistory = useHistory(history);
   const { globalFloor, setGlobalFloorRoom } = useContext(FloorContext);
 
@@ -19,6 +19,8 @@ const MenuFloor = ({ floor }) => {
       onClick={() => {
         myHistory.push(`/floor/${floor.url}`);
         setGlobalFloorRoom(null);
+        setIsMenuOpen(false);
+
       }}
     >
       <div className="max-fr">

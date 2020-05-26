@@ -16,7 +16,7 @@ import {
   setActiveChannelFloorRoom,
   deleteChannelFloorRoom,
 } from "../../../../../../actions/floors";
-import User from "../../../../../otherComponents/user/search";
+import User from "../../../../../otherComponents/user/static";
 
 const SingleChannel = ({
   channel,

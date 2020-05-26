@@ -101,8 +101,8 @@ const Admin = ({ room, isOwner, keepRoomListed, addAdmin, deleteRoom }) => {
     <div
       className={
         isOwner
-          ? "management__admin--owner section__container"
-          : "management__admin--visitor section__container"
+          ? "management__admin--owner"
+          : "management__admin--visitor"
       }
     >
       <div
@@ -111,7 +111,7 @@ const Admin = ({ room, isOwner, keepRoomListed, addAdmin, deleteRoom }) => {
           console.log("switchhh");
         }}
       >
-        Admin
+        Admins
       </div>
 
       {/* {isOwner ? (
@@ -125,23 +125,26 @@ const Admin = ({ room, isOwner, keepRoomListed, addAdmin, deleteRoom }) => {
           />
         </>
       ) : null} */}
+      {isOwner ? (
+        <div>
+          <InputField
+            type="text"
+            placeHolder="Add an admin"
+            value={newAdmin}
+            onChange={setNewAdmin}
+          />
 
-      <InputField
-        type="text"
-        placeHolder="Add an admin"
-        value={newAdmin}
-        onChange={setNewAdmin}
-      />
-
-      {newAdmin && userSuggestions.length ? (
-        <div className="floor-admins__suggestions-container">
-          <div className="floor-admins__suggestions">
-            {renderUsers(
-              userSuggestions,
-              "extra-tiny-margin-top clickable",
-              (user) => handleChoose(user)
-            )}
-          </div>
+          {newAdmin && userSuggestions.length ? (
+            <div className="floor-admins__suggestions-container">
+              <div className="floor-admins__suggestions">
+                {renderUsers(
+                  userSuggestions,
+                  "extra-tiny-margin-top clickable",
+                  (user) => handleChoose(user)
+                )}
+              </div>
+            </div>
+          ) : null}
         </div>
       ) : null}
 

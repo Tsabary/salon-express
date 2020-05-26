@@ -5,17 +5,21 @@ import { useHistory } from "react-router-dom";
 import history from "../../../../history";
 import { RoomContext } from "../../../../providers/Room";
 
-const MenuRoom = ({ room }) => {
-    const myHistory = useHistory(history);
-    
-    const { globalRoom } = useContext(RoomContext);
+const MenuRoom = ({ room, setIsMenuOpen }) => {
+  const myHistory = useHistory(history);
 
+  const { globalRoom } = useContext(RoomContext);
 
-    return (
-        <div
-            className={globalRoom && globalRoom.id ===room.id?"menu-room menu-room--active" : "menu-room"}
+  return (
+    <div
+      className={
+        globalRoom && globalRoom.id === room.id
+          ? "menu-room menu-room--active"
+          : "menu-room"
+      }
       onClick={() => {
         myHistory.push(`/room/${titleToUrl(room.name)}-${room.id}`);
+        setIsMenuOpen(false);
       }}
     >
       <div className="max-fr">

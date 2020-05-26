@@ -33,10 +33,12 @@ const NewFloorPlan = ({ addFloorPlan }) => {
     const domparser = new DOMParser();
     const doc = domparser.parseFromString(string, "text/html");
 
-    const output = [...doc.querySelectorAll("area")].map((a) => ({
-      shape: a.shape,
-      coords: a.coords.split(/,\s*/).map((c) => parseInt(c, 10)),
-    }));
+    const output = [...doc.querySelectorAll("area")]
+      .map((a) => ({
+        shape: a.shape,
+        coords: a.coords.split(/,\s*/).map((c) => parseInt(c, 10)),
+      }))
+      .reverse();
     return output;
   };
 

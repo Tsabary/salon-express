@@ -11,9 +11,11 @@ import {
   FETCH_UPDATES,
   ADD_UPDATES_NOTIFICATION,
   RESET_UPDATES_NOTIFICATIONS,
+  FETCH_SUGGESTIONS,
 } from "./types";
 
 const db = firebase.firestore();
+const storage = firebase.storage();
 
 export const listenToUpdates = (currentUserProfile, notification) => async (
   dispatch
@@ -79,4 +81,34 @@ export const signupToNewletter = (values, cb) => async () => {
     .then(() => {
       cb();
     });
+};
+
+export const addSuggestion = (values, image, cb) => async () => {
+  if (!image) return;
+
+  const docRef = db.collection("suggestions").doc();
+
+  const storageRef = storage.ref(`/images/content_suggestions/${docRef.id}/`);
+
+  const upload = await storageRef.put(image);
+  if (!upload) return;
+
+  const downloadUrl = await storageRef.getDownloadURL();
+  if (!downloadUrl) return;
+
+  docRef.set({ ...values, id: docRef.id, image: downloadUrl }).then(() => {
+    cb();
+  });
+};
+
+export const fetchSuggestions = () => async (dispatch) => {
+  const data = await db
+    .collection("suggestions")
+    .get()
+    .catch((e) => console.error("promise Error fetch fav", e));
+
+  dispatch({
+    type: FETCH_SUGGESTIONS,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
 };

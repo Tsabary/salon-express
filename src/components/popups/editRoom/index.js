@@ -125,7 +125,6 @@ const EditRoom = ({
           appearance: "success",
           autoDismiss: true,
         });
-        togglePopup(false);
         reset();
       }
     );

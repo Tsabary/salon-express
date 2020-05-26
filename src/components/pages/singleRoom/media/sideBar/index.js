@@ -84,7 +84,9 @@ const SideBar = ({
           <UserSocial uid={currentAudioChannel.user.uid} />
         </div>
       ) : null}
-      <CallToAction />
+      {currentAudioChannel && currentAudioChannel.source ? (
+        <CallToAction />
+      ) : null}
 
       {isMobile && room ? (
         <MobileMultiverse

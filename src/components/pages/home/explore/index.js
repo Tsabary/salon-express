@@ -26,7 +26,7 @@ const Explore = ({ explore, fetchFirstExplore, fetchMoreExplore }) => {
     <div className="feed">
       {renderSection(
         explore,
-        "Explore Rooms",
+        "Public Rooms",
         fetchMoreExplore,
         lastVisible,
         setLastVisible,

@@ -1,0 +1,12 @@
+@import "../../../styles/imports";
+
+.suggestions {
+  display: grid;
+  gap: 2rem;
+
+  &__instructions {
+    color: $mainColor;
+    font-family: $fontBold;
+    font-size: 2rem;
+  }
+}

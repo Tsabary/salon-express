@@ -26,6 +26,7 @@ import BlogReducer from "./blog/BlogReducer";
 import PrivateReducer from "./private/PrivateReducer";
 import PublicReducer from "./public/PublicReducer";
 import ExploreFloorsReducer from "./floors/ExploreFloorsReducer";
+import ContentSuggestionsReducer from "./global/ContentSuggestionsReducer";
 
 export default combineReducers({
   // GLOBAL //
@@ -77,4 +78,6 @@ export default combineReducers({
   positions: PositionsReducer,
 
   blogPosts: BlogReducer,
+
+  contentSuggestions: ContentSuggestionsReducer,
 });

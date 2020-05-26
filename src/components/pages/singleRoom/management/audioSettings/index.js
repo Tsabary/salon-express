@@ -168,13 +168,17 @@ const AudioSettings = ({
             <div
               dangerouslySetInnerHTML={{
                 __html:
-                  "Paste here your Mixlr ID only.<br />Click for more details.",
+                  "Paste here links to any website that you'd like to show the other guests in the Room",
               }}
             />
           </ReactTooltip>
         </>
+
         {!isMobile ? (
-          <div onClick={() => (window.location.hash = "audio-channels")}>
+          <div
+            onClick={() => (window.location.hash = "audio-channels")}
+            className="extra-tiny-margin-bottom"
+          >
             <ReactSVG
               src="../svgs/expand.svg"
               wrapper="div"
@@ -184,6 +188,13 @@ const AudioSettings = ({
                 svg.classList.add("svg-icon--small");
               }}
             />
+            <ReactTooltip id={`expandAudioSettings${room.id}`}>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: "Expand external content channels.",
+                }}
+              />
+            </ReactTooltip>
           </div>
         ) : (
           <div />
@@ -293,6 +304,8 @@ const AudioSettings = ({
           <div className="audio-settings__buttons">
             <div
               className="audio-settings__button"
+              data-tip={`externalContentPlay${room.id}`}
+              data-for={`externalContentPlay${room.id}`}
               onMouseEnter={() => setIsPlayHovered(true)}
               onMouseLeave={() => setIsPlayHovered(false)}
               onClick={() => {
@@ -325,16 +338,37 @@ const AudioSettings = ({
                   svg.classList.add("svg-icon--small");
                 }}
               />
+              <ReactTooltip id={`externalContentPlay${room.id}`}>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: "Play without saving",
+                  }}
+                />
+              </ReactTooltip>
             </div>
-            <button type="submit" className="audio-settings__button">
+            <button
+              type="submit"
+              className="audio-settings__button"
+              data-tip={`externalContentSave${room.id}`}
+              data-for={`externalContentSave${room.id}`}
+            >
               +
             </button>
+            <ReactTooltip id={`externalContentSave${room.id}`}>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: "Save channel",
+                  }}
+                />
+              </ReactTooltip>
           </div>
         </div>
         {formError ? (
           <div className="form-error tiny-margin-top">{formError}</div>
         ) : null}
       </form>
+
+      <div className="small-button tiny-margin-top" onClick={()=> window.location.hash="content-suggestions"}>Explore Suggestions</div>
 
       {audioChannels.length ||
       (floor && floor.rooms[roomIndex] && floor.rooms[roomIndex].audio_channels)

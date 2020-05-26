@@ -345,19 +345,7 @@ export const fetchMoreSearched = (
   });
 };
 
-
-
-
-
-
-
-
-
-
-
-
 /// NEW FEEDS ///
-
 
 export const fetchFirstPrivate = (
   setLastVisible,
@@ -373,7 +361,7 @@ export const fetchFirstPrivate = (
     .get()
     .catch((e) => console.error("promise Error fetch fav", e));
 
-    console.log("daaaaaaa private", data);
+  console.log("daaaaaaa private", data);
 
   if (!data || !data.docs) return;
 
@@ -471,7 +459,6 @@ export const fetchMorePublic = (
   });
 };
 
-
 export const fetchFirstFloors = (
   setLastVisible,
   setReachedLast,
@@ -526,5 +513,22 @@ export const fetchMoreFloors = (
   dispatch({
     type: FETCH_MORE_FLOORS,
     payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+export const clearFeeds = () => (dispatch) => {
+  dispatch({
+    type: FETCH_NEW_PRIVATE,
+    payload: [],
+  });
+
+  dispatch({
+    type: FETCH_NEW_PUBLIC,
+    payload: [],
+  });
+
+  dispatch({
+    type: FETCH_NEW_FLOORS,
+    payload: [],
   });
 };

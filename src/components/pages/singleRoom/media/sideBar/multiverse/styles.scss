@@ -51,7 +51,7 @@
 
   &__emoji {
     position: relative;
-    z-index: 200000;
+    z-index: $z90;
 
     &:hover .multiverse__emoji--picker {
       display: block;
@@ -64,8 +64,8 @@
     &--picker {
       max-width: 20rem;
       position: absolute;
-      top: 0;
-      left: -8rem;
+      top: 3rem;
+      left: 0rem;
       z-index: 200000;
       display: none;
     }

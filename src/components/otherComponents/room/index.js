@@ -64,7 +64,12 @@ const Room = ({
   };
 
   return (
-    <div className={isForFeed ? "room room-feed" : "room"}>
+    <div
+      className={isForFeed ? "room room-feed clickable" : "room clickable"}
+      onClick={() => {
+        myHistory.push(`/room/${titleToUrl(room.name)}-${room.id}`);
+      }}
+    >
       {room && room.image ? (
         <div className="room__cover-img">
           <img src={room.image} alt="Room" />
@@ -78,12 +83,7 @@ const Room = ({
             </div>
           ) : null} */}
 
-          <div
-            className="room__title clickable"
-            onClick={() => {
-              myHistory.push(`/room/${titleToUrl(room.name)}-${room.id}`);
-            }}
-          >
+          <div className="room__title">
             {capitalizeSentances(room.name)}
           </div>
 
@@ -148,8 +148,7 @@ const Room = ({
             >
               <div className="centered-text">Join</div>
             </a>
-          ) : room.members &&
-            room.members.includes(currentUserProfile.uid) ? (
+          ) : room.members && room.members.includes(currentUserProfile.uid) ? (
             <div
               className="room__button  room__button-line room__button-line--active clickable"
               onClick={() => removeFromFavorites(currentUserProfile, room)}

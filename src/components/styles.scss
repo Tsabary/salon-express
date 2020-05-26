@@ -20,9 +20,9 @@
 
   &__content {
     max-height: calc(100vh - 5rem);
-    overflow-y: scroll;
+    // overflow-y: scroll;
 
-    @include scroll;
+    // @include scroll;
   }
 
   &__footer {

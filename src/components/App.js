@@ -58,6 +58,8 @@ import MinimalHeader from "./staticComponents/header/minimal";
 import SideMenu from "./staticComponents/sideMenu";
 import Pricing from "./pages/pricing";
 import PremiumPlan from "./popups/premiumPlan";
+import ContentSuggestions from "./popups/contentSuggestions";
+import addSuggestion from "./pages/addSuggestion";
 
 const App = () => {
   const [isFloor, setIsFloor] = useState(
@@ -109,6 +111,7 @@ const App = () => {
                         <NewFloorPlan />
                         <AudioChannels />
                         <PremiumPlan />
+                        <ContentSuggestions />
                         {!isMobile ? <BottomHelpers /> : null}
 
                         <MinimalHeader />
@@ -140,11 +143,6 @@ const App = () => {
                                 path="/contact"
                                 exact
                                 component={Contact}
-                              />
-                              <Route
-                                path="/answer-questions"
-                                exact
-                                component={AnswerQuestions}
                               />
 
                               <Route path="/blog" exact component={Blog} />
@@ -202,6 +200,19 @@ const App = () => {
                                 exact
                                 component={TermsAndConditions}
                               />
+
+                              <Route
+                                path="/answer-questions"
+                                exact
+                                component={AnswerQuestions}
+                              />
+
+                              <Route
+                                path="/add-suggestion"
+                                exact
+                                component={addSuggestion}
+                              />
+
                               <Route path="/:id" exact component={Stranger} />
                             </Switch>
                           </div>

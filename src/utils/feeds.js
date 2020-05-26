@@ -48,7 +48,7 @@ export const renderSection = (
 ) => {
   return collection.length ? (
     <>
-      {/* <div className="feed__header">{title}</div> */}
+      <div className="feed__header">{title}</div>
       <Masonry
         breakpointCols={breakpointColumnsObj}
         className="my-masonry-grid"

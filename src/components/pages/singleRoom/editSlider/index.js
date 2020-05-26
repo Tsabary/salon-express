@@ -1,0 +1,203 @@
+import "./styles.scss";
+import React, { useEffect, useState, useContext } from "react";
+import { ReactSVG } from "react-svg";
+import { connect } from "react-redux";
+
+import { RoomContext } from "../../../../providers/Room";
+
+import { updateRoom, addImageToRoom } from "../../../../actions/rooms";
+import { addImageToFloorRoom } from "../../../../actions/floors";
+import { errorMessages } from "../../../../utils/forms";
+
+import InputField from "../../../formComponents/inputField";
+import TextArea from "../../../formComponents/textArea";
+import Tags from "../../../formComponents/tags";
+import { validateWordsLength } from "../../../../utils/strings";
+
+const EditSlider = ({
+  room,
+  roomIndex,
+  floor,
+  isRoomEdited,
+  setIsRoomEdited,
+  addImageToRoom,
+  addImageToFloorRoom,
+  updateRoom,
+}) => {
+  const { globalRoom, setGlobalRoom } = useContext(RoomContext);
+
+  const [values, setValues] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageAsFile, setImageAsFile] = useState(null);
+
+  const [imageError, setImageError] = useState(null);
+  const [tagsFormError, setTagsFormError] = useState("");
+
+  useEffect(() => {
+    if (!globalRoom) {
+      setImageAsFile(null);
+      setSelectedImage(null);
+    }
+  }, [globalRoom]);
+
+  useEffect(() => {
+    if (!globalRoom) return;
+    setValues(globalRoom);
+  }, [globalRoom]);
+
+  const handleImageAsFile = (e) => {
+    const image = e.target.files[0];
+
+    if (image && image.size > 500000) {
+      setImageError("Maximum image size is 500kb");
+      return;
+    }
+
+    setImageAsFile(() => image);
+    setSelectedImage(URL.createObjectURL(image));
+  };
+
+  const handleImageUpload = () => {
+    floor
+      ? addImageToFloorRoom(globalRoom, roomIndex, floor, imageAsFile, () => {
+          setImageAsFile(null);
+          setSelectedImage(null);
+        })
+      : addImageToRoom(globalRoom, imageAsFile, (updRoom) => {
+          setGlobalRoom(updRoom);
+          setImageAsFile(null);
+          // setSelectedImage(null);
+        });
+  };
+
+  return globalRoom ? (
+    <div className="edit-slider">
+      <input
+        type="checkbox"
+        className="edit-slider__checkbox"
+        id="edit-slider-toggle"
+        checked={isRoomEdited}
+        readOnly
+      />
+      <div className="edit-slider__content">
+        <div
+          className="fr-max small-margin-bottom"
+          style={{ fontSize: "2rem", color: "#ababab" }}
+        >
+          <div>Edit Room</div>
+          <div className="clickable" onClick={() => setIsRoomEdited(false)}>
+            ✖
+          </div>
+        </div>
+
+        <div className="edit-slider__image">
+          <label
+            htmlFor={`edit-slider-image-${room.id}`}
+            className="edit-slider__image-container"
+          >
+            <img
+              className="edit-slider__image-preview clickable"
+              src={
+                selectedImage ||
+                (floor &&
+                  floor.rooms &&
+                  floor.rooms[roomIndex] &&
+                  floor.rooms[roomIndex].image) ||
+                room.image ||
+                "../../imgs/placeholder.jpg"
+              }
+              alt="Room"
+            />
+          </label>
+
+          <input
+            id={`edit-slider-image-${room.id}`}
+            className="invisible"
+            type="file"
+            onChange={handleImageAsFile}
+          />
+
+          {imageAsFile ? (
+            <div className="edit-slider__image-btn edit-slider__image-approve">
+              <ReactSVG
+                src="../../svgs/check.svg"
+                wrapper="div"
+                beforeInjection={(svg) => {
+                  svg.classList.add("svg-icon--normal");
+                }}
+                onClick={handleImageUpload}
+              />
+            </div>
+          ) : null}
+
+          {imageAsFile ? (
+            <div className="edit-slider__image-btn edit-slider__image-cancel">
+              <ReactSVG
+                src="../../svgs/x.svg"
+                wrapper="div"
+                beforeInjection={(svg) => {
+                  svg.classList.add("svg-icon--normal");
+                }}
+                onClick={() => {
+                  setImageAsFile(null);
+                  setSelectedImage(null);
+                }}
+              />
+            </div>
+          ) : null}
+
+          {imageError ? <div className="form-error">{imageError}</div> : null}
+        </div>
+
+        <InputField
+          type="text"
+          placeHolder="Room name"
+          value={values && values.name}
+          onChange={(name) => {
+            if (name.length < 80 && validateWordsLength(name, 25))
+              setValues({ ...values, name });
+          }}
+          className="tiny-margin-top"
+        />
+
+        <TextArea
+          type="text"
+          placeHolder="Describe what this Room is about"
+          value={values && values.description}
+          onChange={(val) => {
+            if (val.length < 600) setValues({ ...values, description: val });
+          }}
+          className="tiny-margin-top"
+        />
+
+        <Tags
+          values={values}
+          setValues={setValues}
+          errorMessages={errorMessages}
+          formError={tagsFormError}
+          setFormError={setTagsFormError}
+          placeHolder="Add 2-5 tags that are related to this Room"
+          className="tiny-margin-top"
+        />
+
+        <div
+          className="small-button"
+          onClick={() =>
+            updateRoom(values, (ro) => {
+              setIsRoomEdited(false);
+              setGlobalRoom(ro)
+            })
+          }
+        >
+          Save changes
+        </div>
+      </div>
+    </div>
+  ) : null;
+};
+
+export default connect(null, {
+  addImageToRoom,
+  addImageToFloorRoom,
+  updateRoom,
+})(EditSlider);

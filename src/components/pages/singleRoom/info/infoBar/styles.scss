@@ -1,0 +1,53 @@
+@import "../../../../../styles/imports";
+
+.floating-info {
+  //   position: absolute;
+  width: calc(100%);
+  height: 10rem;
+  //   top: 0;
+  //   right: 0;
+  //   left: 0;
+  //   z-index: $z100;
+  //   margin: 2rem;
+
+  &__image {
+    width: 6rem;
+    height: 6rem;
+    object-fit: cover;
+    border: 3px solid white;
+    border-radius: 100%;
+  }
+
+  &__name {
+    font-size: 2.2rem;
+    font-family: $fontBold;
+  }
+
+  &__details {
+    color: $grey;
+    margin-top: 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    gap: 1rem;
+  }
+
+  &__action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.1rem;
+    border-radius: $borderRadius;
+    padding: 0.2rem 0.8rem;
+    border: none;
+    outline: none;
+    background-color: $greyLightest;
+    color: $greyDark;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &--active {
+      background-color: $mainColor;
+      color: white;
+    }
+  }
+}

@@ -64,10 +64,6 @@ const RoomInfo = ({
   const [imageAsFile, setImageAsFile] = useState(null);
   const [imageError, setImageError] = useState(null);
 
-  useEffect(() => {
-    console.log("chhhhhhhhhhhhhh");
-  }, [selectedImage]);
-
   const handleImageAsFile = (e) => {
     const image = e.target.files[0];
 

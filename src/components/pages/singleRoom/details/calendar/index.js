@@ -20,7 +20,6 @@ const Calendar = ({
   room,
   roomIndex,
   floor,
-  donations,
   isOwner,
   fetchEvents,
   addEvent,
@@ -30,7 +29,6 @@ const Calendar = ({
 
   const [hours, setHours] = useState("");
   const [minutes, setMinutes] = useState("");
-
 
   useEffect(() => {
     if (!event || (event && !event.start)) return;
@@ -85,14 +83,19 @@ const Calendar = ({
     });
   };
 
+ const onWheel = (e) => {
+    e.preventDefault()
+    var container = document.getElementById('eventsScroll')
+    var containerScrollPosition = document.getElementById('eventsScroll').scrollLeft
+    container.scrollTo({
+        top: 0,
+        left: containerScrollPosition + e.deltaY,
+        behaviour: 'smooth' //if you want smooth scrolling
+    })
+}
+
   return (
-    <div
-      className={
-        donations || isOwner
-          ? "details__calendar--with-donations section__container"
-          : "details__calendar--without-donations section__container"
-      }
-    >
+    <div className=" section__container">
       <div className="max-max">
         <div className="section__title">Calendar</div>
 
@@ -113,110 +116,113 @@ const Calendar = ({
         </>
       </div>
 
-      {isOwner ? (
-        <form
-          autoComplete="off"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (event && event.title && event.start)
-              !floor
-                ? addEvent(event, room, () => setEvent({}))
-                : addEventFloor(
-                    { ...event, id: uuidv4() },
-                    roomIndex,
-                    floor,
-                    () => setEvent({})
-                  );
-          }}
-        >
-          <div className="tile-form">
-            <div>
-              <InputField
-                type="text"
-                placeHolder="Title"
-                value={event && event.title}
-                onChange={(title) => {
-                  setEvent({
-                    ...event,
-                    title: title
-                      .replace(/^([^-]*-)|-/g, "$1")
-                      .replace(/[^\p{L}\s\d-]+/gu, ""),
-                  });
-                }}
-              />
-              <div className="calendar__date">
-                <DatePicker
-                  selected={event.start}
-                  onChange={(start) => {
-                    if (
-                      Object.prototype.toString.call(start) === "[object Date]"
-                    ) {
-                      setEvent({
-                        ...event,
-                        start,
-                      });
-                    } else {
-                      delete event.start;
-                    }
+      <div className="max-fr">
+        {isOwner ? (
+          <form
+            autoComplete="off"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (event && event.title && event.start)
+                !floor
+                  ? addEvent(event, room, () => setEvent({}))
+                  : addEventFloor(
+                      { ...event, id: uuidv4() },
+                      roomIndex,
+                      floor,
+                      () => setEvent({})
+                    );
+            }}
+          >
+            <div className="tile-form">
+              <div>
+                <InputField
+                  type="text"
+                  placeHolder="Title"
+                  value={event && event.title}
+                  onChange={(title) => {
+                    setEvent({
+                      ...event,
+                      title: title
+                        .replace(/^([^-]*-)|-/g, "$1")
+                        .replace(/[^\p{L}\s\d-]+/gu, ""),
+                    });
                   }}
-                  showTimeSelect
-                  timeFormat="HH:mm"
-                  timeIntervals={15}
-                  timeCaption="time"
-                  dateFormat="MMMM d, yyyy h:mm aa"
-                  className="input-field__input clickable"
-                  placeholderText="Start (your time)"
-                  minDate={new Date()}
-                  excludeOutOfBoundsTimes
                 />
+                <div className="calendar__date">
+                  <DatePicker
+                    selected={event.start}
+                    onChange={(start) => {
+                      if (
+                        Object.prototype.toString.call(start) ===
+                        "[object Date]"
+                      ) {
+                        setEvent({
+                          ...event,
+                          start,
+                        });
+                      } else {
+                        delete event.start;
+                      }
+                    }}
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={15}
+                    timeCaption="time"
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                    className="input-field__input clickable"
+                    placeholderText="Start (your time)"
+                    minDate={new Date()}
+                    excludeOutOfBoundsTimes
+                  />
+                </div>
+                <div className="fr-fr">
+                  <Form.Control
+                    as="select"
+                    bsPrefix="input-field__input form-drop extra-tiny-margin-top extra-tiny-margin-bottom"
+                    value={hours}
+                    onChange={(choice) => {
+                      setHours(choice.target.value);
+                    }}
+                  >
+                    <option className="form-drop__default">Hr</option>
+                    {renderHours()}
+                  </Form.Control>
+                  <Form.Control
+                    as="select"
+                    bsPrefix="input-field__input form-drop extra-tiny-margin-top extra-tiny-margin-bottom"
+                    value={minutes}
+                    onChange={(choice) => {
+                      setMinutes(choice.target.value);
+                    }}
+                  >
+                    <option className="form-drop__default">Min</option>
+                    {renderMinutes()}
+                  </Form.Control>
+                </div>
               </div>
-              <div className="fr-fr">
-                <Form.Control
-                  as="select"
-                  bsPrefix="input-field__input form-drop extra-tiny-margin-top extra-tiny-margin-bottom"
-                  value={hours}
-                  onChange={(choice) => {
-                    setHours(choice.target.value);
-                  }}
-                >
-                  <option className="form-drop__default">Hr</option>
-                  {renderHours()}
-                </Form.Control>
-                <Form.Control
-                  as="select"
-                  bsPrefix="input-field__input form-drop extra-tiny-margin-top extra-tiny-margin-bottom"
-                  value={minutes}
-                  onChange={(choice) => {
-                    setMinutes(choice.target.value);
-                  }}
-                >
-                  <option className="form-drop__default">Min</option>
-                  {renderMinutes()}
-                </Form.Control>
-              </div>
+              <button type="submit" className="audio-settings__button">
+                +
+              </button>
             </div>
-            <button type="submit" className="audio-settings__button">
-              +
-            </button>
-          </div>
-        </form>
-      ) : null}
+          </form>
+        ) : null}
 
-      {(!floor && events.length) ||
-      (floor &&
-        floor.rooms[roomIndex] &&
-        floor.rooms[roomIndex].events &&
-        filterFloorEvents(floor.rooms[roomIndex].events)) ? (
-        <div className="calendar__events tiny-margin-top">
-          {renderEvents(
-            floor ? filterFloorEvents(floor.rooms[roomIndex].events) : events
-          )}
-        </div>
-      ) : (
-        <div className="calendar__empty">
-          This Room has no future events planned at the moment
-        </div>
-      )}
+        {(!floor && events.length) ||
+        (floor &&
+          floor.rooms[roomIndex] &&
+          floor.rooms[roomIndex].events &&
+          filterFloorEvents(floor.rooms[roomIndex].events)) ? (
+          <div className="calendar__events tiny-margin-top" id="eventsScroll" onWheel={onWheel}>
+            {renderEvents(
+              floor ? filterFloorEvents(floor.rooms[roomIndex].events) : events
+            )}
+          </div>
+        ) : (
+          <div className="calendar__empty">
+            This Room has no future events planned at the moment
+          </div>
+        )}
+      </div>
     </div>
   );
 };

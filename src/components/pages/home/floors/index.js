@@ -33,7 +33,7 @@ const Floors = ({
     <div className="feed">
       {renderSection(
         exploreFloors,
-        "Explore Floors",
+        "Public Floors",
         fetchMoreExploreFloors,
         lastVisible,
         setLastVisible,

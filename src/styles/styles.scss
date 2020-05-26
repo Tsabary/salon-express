@@ -42,6 +42,12 @@ h3 {
   padding: 2rem;
   position: relative;
   display: grid;
+
+  max-height: calc(100vh - 5rem);
+  overflow-y: scroll;
+
+  @include scroll;
+
   &__load-more {
     border-radius: $borderRadius;
     border: 1px solid $mainColor;
@@ -237,7 +243,6 @@ h3 {
   &--disabled {
     background-color: $greyLightest !important;
     color: $greyDark !important;
-    cursor: default;
   }
 
   &:focus {
@@ -403,7 +408,7 @@ h3 {
     transition: all 0.15s;
 
     &:hover {
-      transform: translateY(-0.2rem);
+      // transform: translateY(-0.2rem);
       box-shadow: $containerBoxShadow;
     }
   }
@@ -523,7 +528,7 @@ h3 {
   position: fixed;
   overflow-y: scroll;
   flex-direction: column;
-  z-index: 10000;
+  z-index: $z100;
   padding: 5rem 8rem;
   border-radius: $borderRadius;
   border: 1px $mainColor solid;
@@ -738,6 +743,16 @@ h3 {
 .max-max {
   @include gridVariation;
   grid-template-columns: repeat(2, max-content);
+}
+
+.max-max-max {
+  @include gridVariation;
+  grid-template-columns: repeat(3, max-content);
+}
+
+.max-max-max-max {
+  @include gridVariation;
+  grid-template-columns: repeat(4, max-content);
 }
 
 .fr-max-max-fr {

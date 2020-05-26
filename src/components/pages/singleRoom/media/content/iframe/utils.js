@@ -15,7 +15,7 @@ export const getIframeUrl = (audioChannel) => {
       return `https://mixlr.com/users/${audioChannel.link}/embed?autoplay=true`;
 
     default:
-      return audioChannel.link;
+      return `https://${audioChannel.link}`;
   }
 };
 

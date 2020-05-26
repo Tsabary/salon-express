@@ -3,25 +3,34 @@
 .single-room {
   position: relative;
   width: 100%;
-  max-width: 160rem;
+  // max-width: 160rem;
   margin: auto;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 2rem;
   justify-items: stretch;
   align-items: stretch;
+  // padding:  14rem 2rem 2rem 2rem;
   padding: 2rem;
+  max-height: calc(100vh - 5rem);
+  overflow-y: scroll;
 
+  @include scroll;
 
-  &__media {
+  &__info{
     grid-column: 1/13;
     grid-row: 1/2;
   }
 
-  &__details {
+  &__media {
     grid-column: 1/13;
     grid-row: 2/3;
   }
+
+  // &__details {
+  //   grid-column: 1/13;
+  //   grid-row: 2/3;
+  // }
 
   &__management {
     grid-column: 1/4;

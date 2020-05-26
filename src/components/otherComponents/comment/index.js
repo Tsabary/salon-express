@@ -14,6 +14,8 @@ import {
   deleteComment as deleteCommentBlog,
 } from "../../../actions/blog";
 import TextArea from "../../formComponents/textArea";
+import User from "../user/static";
+import ReactTooltip from "react-tooltip";
 
 const Comment = ({
   comment,
@@ -53,18 +55,15 @@ const Comment = ({
         className="fr-max"
         onClick={() => myHistory.push(`/${comment.user_username}`)}
       >
-        <div className="max-fr">
-          <img
-            className="comment__avatar"
-            src={
-              comment.user_avatar
-                ? comment.user_avatar
-                : "../../../imgs/avatar.png"
-            }
-            alt="comment author"
-          />
-          <div className="comment__user-name">{comment.user_name}</div>
-        </div>
+        <User
+          user={{
+            name: comment.user_name,
+            username: comment.user_username,
+            avatar: comment.user_avatar,
+            uid: comment.user_ID,
+          }}
+        />
+      
         <div className="comment__time">
           <Moment fromNow>{createdOn}</Moment>
         </div>
@@ -135,12 +134,12 @@ const Comment = ({
         </>
       ) : (
         <>
-          <div className="room__description tiny-margin-top">
+          <div className="room__description extra-tiny-margin-top">
             <div className="comment__body">{values}</div>
           </div>
 
           {isOwner ? (
-            <div className="max-max tiny-margin-top">
+            <div className="max-max extra-tiny-margin-top">
               <div
                 className="button-colored "
                 onClick={() => setIsEdited(true)}
@@ -149,7 +148,9 @@ const Comment = ({
               </div>
 
               <div
-                className="button-colored"
+                  className="button-colored"
+                  data-tip={`deleteComment${comment.id}`}
+                  data-for={`deleteComment${comment.id}`}
                 onClick={() => {
                   console.log("comment", comment);
 
@@ -168,8 +169,17 @@ const Comment = ({
                   }
                 }}
               >
-                Delete
+                  Delete
               </div>
+                
+              <ReactTooltip id={`deleteComment${comment.id}`}>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        "Clicking would delete this comment immediately",
+                    }}
+                  />
+                </ReactTooltip>
             </div>
           ) : null}
         </>

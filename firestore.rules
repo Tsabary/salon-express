@@ -70,6 +70,12 @@ service cloud.firestore {
       allow delete: if request.auth.uid == "KbhtqAE0B9RDAonhQqgZ1CWsg1o1";
     }
 
+    match /suggestions/{suggestion}{
+      allow read: if true;
+      allow create: if request.auth.uid == "KbhtqAE0B9RDAonhQqgZ1CWsg1o1";
+      allow update: if request.auth.uid == "KbhtqAE0B9RDAonhQqgZ1CWsg1o1";
+      allow delete: if request.auth.uid == "KbhtqAE0B9RDAonhQqgZ1CWsg1o1";
+    }
 
     match /comments/{room}{
       allow read: if true;

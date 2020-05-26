@@ -1,6 +1,7 @@
 import "./styles.scss";
 import React, { useContext, useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { StickyContainer, Sticky } from "react-sticky";
 
 import { AuthContext } from "../../../providers/Auth";
 import { UniqueIdContext } from "../../../providers/UniqueId";
@@ -9,24 +10,23 @@ import { RoomContext } from "../../../providers/Room";
 import { fetchSingleRoom, detachChannelListener } from "../../../actions/rooms";
 
 import Comments from "./comments";
-
 import Media from "./media";
 import Details from "./details";
 import Management from "./management";
+import EditSlider from "./editSlider";
+import RoomInfo from "./info";
 
 const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
   const { currentUserProfile } = useContext(AuthContext);
   const { setGlobalCurrentAudioChannel } = useContext(RoomContext);
   const { setGlobalRoom } = useContext(RoomContext);
-  const [roomId, setRoomId] = useState(null)
-
-  // This is a fake unique id based on current timestamp. We use it to identify users that aren't logged in, so we can manage the coun of users in each portal
   const { uniqueId } = useContext(UniqueIdContext);
 
-  // This is our room
   const [room, setRoom] = useState(null);
+  const [roomId, setRoomId] = useState(null);
   const [currentAudioChannel, setCurrentAudioChannel] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
+  const [isRoomEdited, setIsRoomEdited] = useState(false);
 
   useEffect(() => {
     setIsOwner(
@@ -41,7 +41,7 @@ const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
     if (!uniqueId) return;
 
     const id = match.params.id.split("-");
-    setRoomId(id[id.length - 1])
+    setRoomId(id[id.length - 1]);
 
     fetchSingleRoom(
       id[id.length - 1],
@@ -57,28 +57,35 @@ const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
   }, [match.params.id, uniqueId]);
 
   // Our main render
-  return roomId ?(
-    <div className="single-room">
-      {/** This is the video chat, the embedded streams, the Mixlr and the Multiverse*/}
-      <Media
-        room={room}
-        currentAudioChannel={currentAudioChannel}
-        entityID={roomId}
-        isOwner={isOwner}
-      />
+  return roomId ? (
+    <div style={{ position: "relative" }}>
+      {/* <FloatingInfo room={room} isOwner={isOwner} /> */}
+      <div className="single-room">
+        <RoomInfo room={room} isOwner={isOwner} setIsRoomEdited={setIsRoomEdited}/>
 
-      {/** This is the room info the calendar and the donations*/}
-      <Details room={room} setRoom={setRoom} isOwner={isOwner} />
+        <EditSlider room={room} isRoomEdited={isRoomEdited} setIsRoomEdited={setIsRoomEdited}/>
 
-      {/** This is the audio settings and the admin*/}
-      <Management
-        room={room}
-        currentAudioChannel={currentAudioChannel}
-        isOwner={isOwner}
-      />
+        {/** This is the video chat, the embedded streams, the Mixlr and the Multiverse*/}
+        <Media
+          room={room}
+          currentAudioChannel={currentAudioChannel}
+          entityID={roomId}
+          isOwner={isOwner}
+        />
 
-      {/** This is the comments*/}
-      {room ? <Comments room={room} entityID={roomId} /> : null}
+        {/* * This is the room info the calendar and the donations */}
+        {/* <Details room={room} setRoom={setRoom} isOwner={isOwner} /> */}
+
+        {/** This is the audio settings and the admin*/}
+        <Management
+          room={room}
+          currentAudioChannel={currentAudioChannel}
+          isOwner={isOwner}
+        />
+
+        {/** This is the comments*/}
+        {room ? <Comments room={room} entityID={roomId} /> : null}
+      </div>
     </div>
   ) : null;
 };
