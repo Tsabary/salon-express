@@ -1,17 +1,31 @@
 import "./styles.scss";
 import React, { useContext, useState } from "react";
+import { connect } from "react-redux";
+
 import { ReactSVG } from "react-svg";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+
+import firebase from '../../../../../firebase';
+
 import { RoomContext } from "../../../../../providers/Room";
+import { AuthContext } from "../../../../../providers/Auth";
+
+import { joinAsMember, leaveAsMember } from "../../../../../actions/rooms";
+import { titleToUrl } from "../../../../../utils/strings";
 
 const InfoBar = ({
   room,
+  setRoom,
   roomIndex,
   floor,
   isOwner,
   setIsRoomEdited,
   setIsInfoVisible,
-  setIsCalendarVisible
+  setIsCalendarVisible,
+  joinAsMember,
+  leaveAsMember,
 }) => {
+  const { currentUserProfile } = useContext(AuthContext);
   const { globalRoom } = useContext(RoomContext);
 
   const [isCalendarHover, setIsCalendarHover] = useState(false);
@@ -19,6 +33,14 @@ const InfoBar = ({
   const [isInfoHover, setIsInfoHover] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [isEditHover, setIsEditHover] = useState(false);
+
+  const [shareButton, setShareButton] = useState("Invite friends +");
+
+  const shareButtonTimer = () => {
+    setTimeout(() => {
+      setShareButton("Invite friends +");
+    }, 3000);
+  };
 
   return globalRoom ? (
     <div className="floating-info fr-max section__container">
@@ -48,8 +70,51 @@ const InfoBar = ({
           </div>
         </div>
       </div>
-      <div className="floating-info__actions max-max-max-max">
-        <div className="small-button">Invite friends +</div>
+      <div className="floating-info__actions">
+        <CopyToClipboard
+          text={`https://salon.express/room/${titleToUrl(room.name)}-${room.id}`}
+          onCopy={() => {
+            shareButtonTimer();
+            setShareButton("Share URL copied!");
+            firebase.analytics().logEvent("room_share_link_copied");
+          }}
+        >
+          <div className="small-button">{shareButton}</div>
+        </CopyToClipboard>
+
+        {currentUserProfile && room.members.includes(currentUserProfile.uid) ? (
+          <div
+            className="small-button small-button--disabled"
+            onClick={() =>
+              leaveAsMember(currentUserProfile, room, () => {
+                setRoom({
+                  ...room,
+                  members: room.members.filter(
+                    (fav) => fav !== currentUserProfile.uid
+                  ),
+                });
+              })
+            }
+          >
+            leave Room
+          </div>
+        ) : (
+          <div
+            className="small-button"
+            onClick={() =>
+              joinAsMember(currentUserProfile, room, () => {
+                setRoom({
+                  ...room,
+                  members: room.members
+                    ? [...room.members, currentUserProfile.uid]
+                    : [currentUserProfile.uid],
+                });
+              })
+            }
+          >
+            join Room +
+          </div>
+        )}
 
         <div
           className={
@@ -131,4 +196,4 @@ const InfoBar = ({
   ) : null;
 };
 
-export default InfoBar;
+export default connect(null, { joinAsMember, leaveAsMember })(InfoBar);

@@ -4,13 +4,14 @@ import InfoBar from "./infoBar";
 import Calendar from "../details/calendar";
 import ExtraInfo from "./extraInfo";
 
-const RoomInfo = ({ room, roomIndex, floor, isOwner, setIsRoomEdited }) => {
+const RoomInfo = ({ room,setRoom, roomIndex, floor, isOwner, setIsRoomEdited }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   return (
     <div className="room-info single-room__info fr">
       <InfoBar
         room={room}
+        setRoom={setRoom}
         isOwner={isOwner}
         setIsRoomEdited={setIsRoomEdited}
         setIsCalendarVisible={setIsCalendarVisible}

@@ -19,7 +19,7 @@ import RoomInfo from "./info";
 const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
   const { currentUserProfile } = useContext(AuthContext);
   const { setGlobalCurrentAudioChannel } = useContext(RoomContext);
-  const { setGlobalRoom } = useContext(RoomContext);
+  const {globalRoom, setGlobalRoom } = useContext(RoomContext);
   const { uniqueId } = useContext(UniqueIdContext);
 
   const [room, setRoom] = useState(null);
@@ -31,10 +31,10 @@ const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
   useEffect(() => {
     setIsOwner(
       currentUserProfile &&
-        room &&
-        room.admins_ID.includes(currentUserProfile.uid)
+      globalRoom &&
+      globalRoom.admins_ID.includes(currentUserProfile.uid)
     );
-  }, [currentUserProfile, room]);
+  }, [currentUserProfile, globalRoom]);
 
   // This happens when the room first loads. We take the id of the room and also the fake uid (return if it's not set yet) and we fetch the rooms data. There's also a callback for creating a new portal called home in case there aren't any portals in this room yet
   useEffect(() => {
@@ -45,7 +45,7 @@ const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
 
     fetchSingleRoom(
       id[id.length - 1],
-      setRoom,
+      // setRoom,
       setGlobalRoom,
       setCurrentAudioChannel,
       setGlobalCurrentAudioChannel
@@ -61,13 +61,13 @@ const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
     <div style={{ position: "relative" }}>
       {/* <FloatingInfo room={room} isOwner={isOwner} /> */}
       <div className="single-room">
-        <RoomInfo room={room} isOwner={isOwner} setIsRoomEdited={setIsRoomEdited}/>
+        <RoomInfo room={globalRoom} setRoom={setGlobalRoom} isOwner={isOwner} setIsRoomEdited={setIsRoomEdited}/>
 
-        <EditSlider room={room} isRoomEdited={isRoomEdited} setIsRoomEdited={setIsRoomEdited}/>
+        <EditSlider room={globalRoom} isRoomEdited={isRoomEdited} setIsRoomEdited={setIsRoomEdited}/>
 
         {/** This is the video chat, the embedded streams, the Mixlr and the Multiverse*/}
         <Media
-          room={room}
+          room={globalRoom}
           currentAudioChannel={currentAudioChannel}
           entityID={roomId}
           isOwner={isOwner}
@@ -78,13 +78,13 @@ const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
 
         {/** This is the audio settings and the admin*/}
         <Management
-          room={room}
+          room={globalRoom}
           currentAudioChannel={currentAudioChannel}
           isOwner={isOwner}
         />
 
         {/** This is the comments*/}
-        {room ? <Comments room={room} entityID={roomId} /> : null}
+        {globalRoom ? <Comments room={globalRoom} entityID={roomId} /> : null}
       </div>
     </div>
   ) : null;

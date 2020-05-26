@@ -14,15 +14,15 @@ import firebase from "firebase/app";
 import { SearchContext } from "../../../providers/Search";
 import { PageContext } from "../../../providers/Page";
 
-import { addToFavorites, removeFromFavorites } from "../../../actions/rooms";
+import { joinAsMember, leaveAsMember } from "../../../actions/rooms";
 
 import { getLanguageName } from "../../../utils/languages";
 import { capitalizeSentances, titleToUrl } from "../../../utils/strings";
 
 const Room = ({
   room,
-  addToFavorites,
-  removeFromFavorites,
+  joinAsMember,
+  leaveAsMember,
   currentUserProfile,
   togglePopup,
   isForFeed,
@@ -83,9 +83,7 @@ const Room = ({
             </div>
           ) : null} */}
 
-          <div className="room__title">
-            {capitalizeSentances(room.name)}
-          </div>
+          <div className="room__title">{capitalizeSentances(room.name)}</div>
 
           {room.language !== "lir" ? (
             <div className="room__languages--base extra-tiny-margin-top">
@@ -151,14 +149,14 @@ const Room = ({
           ) : room.members && room.members.includes(currentUserProfile.uid) ? (
             <div
               className="room__button  room__button-line room__button-line--active clickable"
-              onClick={() => removeFromFavorites(currentUserProfile, room)}
+              onClick={() => leaveAsMember(currentUserProfile, room)}
             >
               <div className="centered-text">Leave</div>
             </div>
           ) : (
             <div
               className="room__button room__button-line room__button-line--unactive clickable"
-              onClick={() => addToFavorites(currentUserProfile, room)}
+              onClick={() => joinAsMember(currentUserProfile, room)}
             >
               <div className="centered-text">Join</div>
             </div>
@@ -170,6 +168,6 @@ const Room = ({
 };
 
 export default connect(null, {
-  addToFavorites,
-  removeFromFavorites,
+  joinAsMember,
+  leaveAsMember,
 })(Room);

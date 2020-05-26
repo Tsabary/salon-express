@@ -30,7 +30,6 @@ let channelListener;
 
 export const fetchSingleRoom = (
   room_ID,
-  setRoom,
   setGlobalRoom,
   setCurrentAudioChannel,
   setGlobalCurrentAudioChannel
@@ -42,7 +41,6 @@ export const fetchSingleRoom = (
     .catch((e) => console.error("promise Error fetch sing room", e));
   analytics.logEvent("room_direct_navigation");
   if (docRoom.data()) {
-    setRoom(docRoom.data());
     setGlobalRoom(docRoom.data());
 
     dispatch({
@@ -130,7 +128,7 @@ export const logGuestEntry = (room, currentUserProfile) => () => {
 };
 
 // FAVORITES LIST //
-export const addToFavorites = (currentUserProfile, room, cb) => async (
+export const joinAsMember = (currentUserProfile, room, cb) => async (
   dispatch
 ) => {
   console.error("mine", "Addind to favorites");
@@ -161,7 +159,7 @@ export const addToFavorites = (currentUserProfile, room, cb) => async (
     .catch((e) => console.error("promise Error add to fav", e));
 };
 
-export const removeFromFavorites = (currentUserProfile, room, cb) => async (
+export const leaveAsMember = (currentUserProfile, room, cb) => async (
   dispatch
 ) => {
   db.collection("rooms")

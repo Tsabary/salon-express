@@ -31,6 +31,12 @@
     gap: 1rem;
   }
 
+  &__actions{
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(5, max-content);
+  }
+
   &__action {
     display: flex;
     flex-direction: column;

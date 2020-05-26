@@ -12,8 +12,8 @@ import { SearchContext } from "../../../../../providers/Search";
 import { PageContext } from "../../../../../providers/Page";
 
 import {
-  addToFavorites,
-  removeFromFavorites,
+  joinAsMember,
+  leaveAsMember,
   updateRoom,
   addImageToRoom,
 } from "../../../../../actions/rooms";
@@ -40,8 +40,8 @@ const RoomInfo = ({
   floor,
   updateRoom,
   addImageToRoom,
-  addToFavorites,
-  removeFromFavorites,
+  joinAsMember,
+  leaveAsMember,
   addImageToFloorRoom,
 }) => {
   const { currentUserProfile } = useContext(AuthContext);
@@ -446,15 +446,15 @@ const RoomInfo = ({
             >
               <div className="centered-text">Join</div>
             </a>
-          ) : room.favorites &&
-            room.favorites.includes(currentUserProfile.uid) ? (
+          ) : room.members &&
+            room.members.includes(currentUserProfile.uid) ? (
             <div
               className="room__button room__button-line room__button-line--active clickable"
               onClick={() =>
-                removeFromFavorites(currentUserProfile, room, () => {
+                leaveAsMember(currentUserProfile, room, () => {
                   setRoom({
                     ...room,
-                    favorites: room.favorites.filter(
+                    members: room.members.filter(
                       (fav) => fav !== currentUserProfile.uid
                     ),
                   });
@@ -467,11 +467,11 @@ const RoomInfo = ({
             <div
               className="room__button room__button-line room__button-line--unactive clickable"
               onClick={() =>
-                addToFavorites(currentUserProfile, room, () => {
+                joinAsMember(currentUserProfile, room, () => {
                   setRoom({
                     ...room,
-                    favorites: room.favorites
-                      ? [...room.favorites, currentUserProfile.uid]
+                    members: room.members
+                      ? [...room.members, currentUserProfile.uid]
                       : [currentUserProfile.uid],
                   });
                 })
@@ -488,8 +488,8 @@ const RoomInfo = ({
 
 export default connect(null, {
   updateRoom,
-  addToFavorites,
-  removeFromFavorites,
+  joinAsMember,
+  leaveAsMember,
   addImageToRoom,
   addImageToFloorRoom,
 })(RoomInfo);
