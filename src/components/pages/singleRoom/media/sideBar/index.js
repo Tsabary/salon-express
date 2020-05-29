@@ -8,7 +8,6 @@ import UserSocial from "../../../../otherComponents/userSocial";
 import CallToAction from "./callToAction";
 
 const SideBar = ({
-  room,
   currentAudioChannel,
   entityID,
   currentPortal,
@@ -53,9 +52,8 @@ const SideBar = ({
         currentAudioChannel && currentAudioChannel.user ? true : false
       )}
     >
-      {!isMobile && room && isChatVisible ? (
+      {!isMobile && entityID && isChatVisible ? (
         <Multiverse
-          room={room}
           currentPortal={currentPortal}
           setCurrentPortal={setCurrentPortal}
           multiverse={multiverse}
@@ -88,12 +86,6 @@ const SideBar = ({
         <CallToAction />
       ) : null}
 
-      {isMobile && room ? (
-        <MobileMultiverse
-          entityID={entityID}
-          multiverseArray={multiverseArray}
-        />
-      ) : null}
     </div>
   );
 };

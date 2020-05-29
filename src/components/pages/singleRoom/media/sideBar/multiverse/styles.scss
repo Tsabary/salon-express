@@ -9,23 +9,18 @@
     // max-height: 32rem;
     overflow-y: scroll;
 
-    &::-webkit-scrollbar {
-      width: 0.5em;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: $mainColor;
-      outline: 1px solid slategrey;
-    }
+    @include scroll;
   }
-
   &__form {
     max-width: 100%;
     display: grid;
     gap: 1rem;
     align-items: center;
     grid-template-columns: 1fr max-content;
-    // grid-template-columns: 1fr max-content max-content;
+
+    @include resize(1200px) {
+      grid-template-columns: 1fr;
+    }
 
     &-input {
       max-width: 9rem;
@@ -36,7 +31,7 @@
         color: $grey;
       }
       &-container {
-        width: max-content;
+        width: 100%;
         display: grid;
         grid-template-columns: max-content 1fr;
         gap: 1rem;
@@ -64,7 +59,7 @@
     &--picker {
       max-width: 20rem;
       position: absolute;
-      top: 3rem;
+      top: 0rem;
       left: 0rem;
       z-index: 200000;
       display: none;

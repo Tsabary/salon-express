@@ -10,7 +10,9 @@ import { GlobalContext } from "../../../providers/Global";
 import { AuthContext } from "../../../providers/Auth";
 
 import { clearFeeds } from "../../../actions/feeds";
-import { favoritesToMembers, adminsIdToMembers } from "../../../actions/rooms";
+import {
+  detachCommentsListener,
+} from "../../../actions/rooms";
 import { detachFloorListener } from "../../../actions/floors";
 import { detachChannelListener } from "../../../actions/rooms";
 
@@ -20,21 +22,23 @@ import { FloorContext } from "../../../providers/Floor";
 import { RoomContext } from "../../../providers/Room";
 import PrivateRooms from "./privateRooms";
 import PublicRooms from "./publicRooms";
+import PrivateFloors from "./privateFloors";
 import PublicFloors from "./publicFloors";
+import { detachMultiverseListener } from "../../../actions/portals";
 
 const SideMenu = ({
-  favoritesToMembers,
-  adminsIdToMembers,
   detachFloorListener,
   detachChannelListener,
+  detachCommentsListener,
+  detachMultiverseListener,
   clearFeeds,
 }) => {
-  const myHistory = useHistory(history);
-
   const { isMenuOpen } = useContext(GlobalContext);
   const { currentUserProfile } = useContext(AuthContext);
-  const { globalFloor } = useContext(FloorContext);
+  const { globalFloor, globalFloorRoom } = useContext(FloorContext);
   const { globalRoom } = useContext(RoomContext);
+
+  const [current, setCurrent] = useState(1)
 
   useEffect(() => {
     if (!globalFloor) detachFloorListener();
@@ -43,6 +47,13 @@ const SideMenu = ({
   useEffect(() => {
     if (!globalRoom) detachChannelListener();
   }, [globalRoom]);
+
+  useEffect(() => {
+    if (!globalRoom && !globalFloorRoom) {
+      detachCommentsListener();
+      detachMultiverseListener();
+    }
+  }, [globalRoom, globalFloorRoom]);
 
   useEffect(() => {
     if (!currentUserProfile) clearFeeds();
@@ -64,9 +75,10 @@ const SideMenu = ({
             <div className="side-menu__section">
               <SidebarAuth />
             </div>
-            <PrivateRooms />
-            <PublicRooms />
-            <PublicFloors />
+            <PrivateRooms current={current} setCurrent={setCurrent}  />
+            <PublicRooms  current={current} setCurrent={setCurrent} />
+            <PrivateFloors current={current} setCurrent={setCurrent}  />
+            <PublicFloors  current={current} setCurrent={setCurrent} />
           </div>
           <SidebarFooter />
         </div>
@@ -76,9 +88,9 @@ const SideMenu = ({
 };
 
 export default connect(null, {
-  favoritesToMembers,
-  adminsIdToMembers,
   detachFloorListener,
   detachChannelListener,
+  detachCommentsListener,
+  detachMultiverseListener,
   clearFeeds,
 })(SideMenu);

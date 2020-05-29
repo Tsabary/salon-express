@@ -13,6 +13,7 @@ import InputField from "../../../formComponents/inputField";
 import TextArea from "../../../formComponents/textArea";
 import Tags from "../../../formComponents/tags";
 import { validateWordsLength } from "../../../../utils/strings";
+import { FloorContext } from "../../../../providers/Floor";
 
 const EditSlider = ({
   room,
@@ -24,7 +25,8 @@ const EditSlider = ({
   addImageToFloorRoom,
   updateRoom,
 }) => {
-  const { globalRoom, setGlobalRoom } = useContext(RoomContext);
+  const { setGlobalRoom } = useContext(RoomContext);
+  const { setGlobalFloorRoom } = useContext(FloorContext);
 
   const [values, setValues] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -34,16 +36,16 @@ const EditSlider = ({
   const [tagsFormError, setTagsFormError] = useState("");
 
   useEffect(() => {
-    if (!globalRoom) {
+    if (!room) {
       setImageAsFile(null);
       setSelectedImage(null);
     }
-  }, [globalRoom]);
+  }, [room]);
 
   useEffect(() => {
-    if (!globalRoom) return;
-    setValues(globalRoom);
-  }, [globalRoom]);
+    if (!room) return;
+    setValues(room);
+  }, [room]);
 
   const handleImageAsFile = (e) => {
     const image = e.target.files[0];
@@ -59,18 +61,19 @@ const EditSlider = ({
 
   const handleImageUpload = () => {
     floor
-      ? addImageToFloorRoom(globalRoom, roomIndex, floor, imageAsFile, () => {
+      ? addImageToFloorRoom(room, roomIndex, floor, imageAsFile, (updRoom) => {
+          setGlobalFloorRoom(updRoom);
           setImageAsFile(null);
           setSelectedImage(null);
         })
-      : addImageToRoom(globalRoom, imageAsFile, (updRoom) => {
+      : addImageToRoom(room, imageAsFile, (updRoom) => {
           setGlobalRoom(updRoom);
           setImageAsFile(null);
           // setSelectedImage(null);
         });
   };
 
-  return globalRoom ? (
+  return room ? (
     <div className="edit-slider">
       <input
         type="checkbox"
@@ -170,22 +173,24 @@ const EditSlider = ({
           className="tiny-margin-top"
         />
 
-        <Tags
-          values={values}
-          setValues={setValues}
-          errorMessages={errorMessages}
-          formError={tagsFormError}
-          setFormError={setTagsFormError}
-          placeHolder="Add 2-5 tags that are related to this Room"
-          className="tiny-margin-top"
-        />
+        {!floor ? (
+          <Tags
+            values={values}
+            setValues={setValues}
+            errorMessages={errorMessages}
+            formError={tagsFormError}
+            setFormError={setTagsFormError}
+            placeHolder="Add 2-5 tags that are related to this Room"
+            className="tiny-margin-top"
+          />
+        ) : null}
 
         <div
-          className="small-button"
+          className="small-button tiny-margin-top"
           onClick={() =>
             updateRoom(values, (ro) => {
               setIsRoomEdited(false);
-              setGlobalRoom(ro)
+              setGlobalRoom(ro);
             })
           }
         >

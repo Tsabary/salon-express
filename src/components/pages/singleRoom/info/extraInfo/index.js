@@ -2,7 +2,7 @@ import "./styles.scss";
 import React from "react";
 import Admin from "../../management/admin";
 
-const ExtraInfo = ({ room, isOwner }) => {
+const ExtraInfo = ({ room, isOwner, floor }) => {
   return (
     <div className="extra-info section__container">
       <div>
@@ -10,9 +10,7 @@ const ExtraInfo = ({ room, isOwner }) => {
         <div>{room.description}</div>
       </div>
 
-      <div>
-        <Admin room={room} isOwner={isOwner} />
-      </div>
+      {!floor ? <Admin room={room} isOwner={isOwner} /> : null}
     </div>
   );
 };

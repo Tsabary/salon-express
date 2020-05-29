@@ -64,7 +64,7 @@ const Admins = ({ values, setValues }) => {
   };
 
   return (
-    <div className="floor-admins edit-floor__section">
+    <div className="floor-admins edit-floor__section  tiny-margin-top">
       <div
         className="edit-floor__section-title"
         onClick={() => console.log("vaaaaaa", values.admins)}

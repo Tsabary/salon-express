@@ -30,7 +30,7 @@ const Multiverse = ({
 }) => {
   const { currentUserProfile } = useContext(AuthContext);
 
-  const [newPortalValues, setNewPortalValues] = useState("");
+  const [newPortalValues, setNewPortalValues] = useState({});
 
   // This holdes the portal error if any (currently only one is "a portal with a similar name exists")
   const [portalError, setPortalError] = useState(null);
@@ -186,7 +186,7 @@ const Multiverse = ({
               id="Open a portal"
               type="text"
               placeholder="Open a portal"
-              value={newPortalValues.title}
+              value={newPortalValues.title || ""}
               onChange={(e) => {
                 if (e.target.value.length < 30)
                   setNewPortalValues({

@@ -20,13 +20,14 @@ import EventsReducer from "./room/EventsReducer";
 import MyFloorsReducer from "./floors/MyFloorsReducer";
 import FloorPlansReducer from "./floors/FloorPlansReducer";
 import CurrentFloorReducer from "./floors/CurrentFloorReducer";
-import FloorsReducer from "./floors/FloorsReducer";
+import PublicFloorsReducer from "./floors/PublicFloorsReducer";
 import BackstageReducer from "./user/BackstageReducer";
 import BlogReducer from "./blog/BlogReducer";
 import PrivateReducer from "./private/PrivateReducer";
 import PublicReducer from "./public/PublicReducer";
 import ExploreFloorsReducer from "./floors/ExploreFloorsReducer";
 import ContentSuggestionsReducer from "./global/ContentSuggestionsReducer";
+import PrivateFloorsReducer from "./floors/PrivateFloorsReducer";
 
 export default combineReducers({
   // GLOBAL //
@@ -50,8 +51,11 @@ export default combineReducers({
   // MY ROOMS //
   myRooms: MyRoomsReducer,
 
-  // ALL FLOORS //
-  floors: FloorsReducer,
+  // MY PUBLIC FLOORS //
+  publicFloors: PublicFloorsReducer,
+
+  // MY PRIVATE FLOORS // 
+  privateFloors: PrivateFloorsReducer,
 
   // ALL FLOORS //
   exploreFloors: ExploreFloorsReducer,

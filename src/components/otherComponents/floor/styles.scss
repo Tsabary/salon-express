@@ -1,0 +1,8 @@
+@import '../../../styles/imports';
+
+.floor-tile{
+    &__rooms-count{
+        font-family: $fontBold;
+        color: $mainColor;
+    }
+}

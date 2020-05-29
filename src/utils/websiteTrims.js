@@ -69,7 +69,7 @@ export const extractUrlId = (s) => {
       splt1 = s.split("watch?v=");
       if (splt1.length > 1) {
         // setFormError(null);
-        return { source: "youtube", link: splt1[1].split("?")[0] };
+        return { source: "youtube", link: splt1[1].split("?")[0], title: "" };
       }
 
     // stripping Youtube
@@ -78,7 +78,7 @@ export const extractUrlId = (s) => {
       splt1 = spltArr[spltArr.length - 1];
 
       // setFormError(null);
-      return { source: "youtube", link: splt1.split("?")[0] };
+      return { source: "youtube", link: splt1.split("?")[0], title: "" };
 
     // stripping Twitch
     case s.includes("twitch.tv"):
@@ -86,7 +86,7 @@ export const extractUrlId = (s) => {
       splt1 = spltArr[spltArr.length - 1];
 
       // setFormError(null);
-      return { source: "twitch", link: splt1.split("?")[0] };
+      return { source: "twitch", link: splt1.split("?")[0], title: "" };
 
     // stripping Mixlr
     case s.includes("mixlr.com"):
@@ -95,7 +95,7 @@ export const extractUrlId = (s) => {
       splt2 = splt1.split("/embed")[0];
 
       // setFormError(null);
-      return { source: "mixlr", link: splt2 };
+      return { source: "mixlr", link: splt2, title: "" };
 
     // stripping MixCloud widget
     case s.includes("mixcloud.com/widget"):
@@ -104,7 +104,7 @@ export const extractUrlId = (s) => {
       splt2 = spltArr[2];
 
       // setFormError(null);
-      return { source: "mixcloud", link: `${splt1}%2F${splt2}%2F` };
+      return { source: "mixcloud", link: `${splt1}%2F${splt2}%2F`, title: "" };
 
     // stripping MixCloud url
     case s.includes("mixcloud.com"):
@@ -120,12 +120,12 @@ export const extractUrlId = (s) => {
       }
 
       // setFormError(null);
-      return { source: "mixcloud", link: `${splt1}%2F${splt2}%2F` };
+      return { source: "mixcloud", link: `${splt1}%2F${splt2}%2F`, title: "" };
 
     default:
       // setFormError(
       //   "Something isn't right with this data, please copy it and try again"
       // );
-      return { source: "website", link: trimURL(s) };
+      return { source: "website", link: trimURL(s), title: "" };
   }
 };

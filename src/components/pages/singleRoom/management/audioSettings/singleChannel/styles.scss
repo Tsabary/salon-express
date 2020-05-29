@@ -32,4 +32,16 @@
       color: $mainColor;
     }
   }
+
+  &__divide {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr max-content;
+    align-items: center;
+
+    @include resize(1350px) {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
 }

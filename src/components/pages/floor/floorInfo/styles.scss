@@ -1,0 +1,36 @@
+@import "../../../../styles/imports";
+
+.floor-info {
+  &__details {
+    display: grid;
+    grid-template-columns: repeat(5, max-content);
+    gap: 1rem;
+    color: $grey;
+
+    @include resize(450px) {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+
+  &__seperator {
+    @include resize(450px) {
+      display: none;
+    }
+    &:before {
+      content: "·";
+      display: block;
+    }
+  }
+
+  &__actions {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(2, max-content);
+
+    @include resize(600px) {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+}

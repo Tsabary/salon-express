@@ -26,7 +26,7 @@ const Chat = ({
   useEffect(() => {
     if (!cameraPermissionGranted || !microphonePermissionGranted || isFirstLoad || floor)
       return;
-    logGuestEntry(room, currentUserProfile);
+    // logGuestEntry(room, currentUserProfile);
   }, [cameraPermissionGranted, microphonePermissionGranted, isFirstLoad]);
 
   useEffect(() => {
@@ -49,8 +49,6 @@ const Chat = ({
     navigator.permissions
       .query({ name: "camera" })
       .then((permissionStatus) => {
-        console.log("mineperms status cam", permissionStatus);
-
         setCameraPermissionGranted(permissionStatus.state === "granted");
 
         permissionStatus.onchange = function () {
@@ -89,7 +87,7 @@ const Chat = ({
   return currentPortalUrl && !isMobile ? (
     cameraPermissionGranted && microphonePermissionGranted ? (
       <Iframe
-        url={room ? "https://meet.jit.si/salexp" + currentPortalUrl : ""}
+        url={currentPortalUrl ? "https://meet.jit.si/salexp" + currentPortalUrl : ""}
         width="100%"
         height="450px"
         id="myId"

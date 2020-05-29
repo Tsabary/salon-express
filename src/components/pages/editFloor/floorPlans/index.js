@@ -42,7 +42,7 @@ const FloorPlans = ({
   };
 
   return (
-    <div className="edit-floor__section">
+    <div className="edit-floor__section  tiny-margin-top">
       <div className="edit-floor__section-title">Choose your floor plan</div>
       <div className="edit-floor__plans">
         <CarouselProvider

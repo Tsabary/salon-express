@@ -1,7 +1,13 @@
 @import "../../../styles/imports";
 
 .edit-floor {
-  @include padding;
+  padding: 2rem 2rem 8rem 2rem;
+  width: 100%;
+  min-width: calc(100vw - 5rem);
+  max-height: calc(100vh - 5rem);
+  overflow-x: hidden;
+  overflow-y: scroll;
+  @include scroll;
 
   &__basic {
     &-url {
@@ -32,7 +38,7 @@
   }
 
   &__section {
-    margin-top: 4rem;
+    // margin-top: 4rem;
     background-color: white;
     padding: 2rem;
     border-radius: 0 3rem 0 3rem;

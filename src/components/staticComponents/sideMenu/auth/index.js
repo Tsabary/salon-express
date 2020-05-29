@@ -4,15 +4,26 @@ import firebase from "../../../../firebase";
 
 import { AuthContext } from "../../../../providers/Auth";
 import { logOut } from "../../../../actions/users";
+import {
+  createUpdateInRooms,
+  removeUpdateInRooms,
+} from "../../../../actions/dangorous";
 import { connect } from "react-redux";
+import { useHistory } from "react-router-dom";
+import history from "../../../../history";
 
-const SidebarAuth = ({ logOut }) => {
+const SidebarAuth = ({ logOut, createUpdateInRooms, removeUpdateInRooms }) => {
+  const myHistory = useHistory(history);
+
   const { currentUserProfile } = useContext(AuthContext);
 
   const userProfile = () => {
     return (
       <div className="max-fr">
-        <div className="user-options__image-container ">
+        <div
+          className="user-options__image-container clickable"
+          onClick={() => myHistory.push(`/${currentUserProfile.username}`)}
+        >
           <img
             className="user-options__image"
             src={
@@ -23,7 +34,10 @@ const SidebarAuth = ({ logOut }) => {
           />
         </div>
         <div>
-          <div className="sidebar-auth__name">
+          <div
+            className="sidebar-auth__name clickable"
+            onClick={() => myHistory.push(`/${currentUserProfile.username}`)}
+          >
             {currentUserProfile.name
               ? currentUserProfile.name
               : currentUserProfile.email}
@@ -61,4 +75,8 @@ const SidebarAuth = ({ logOut }) => {
   return <div>{currentUserProfile ? userProfile() : loginButton()}</div>;
 };
 
-export default connect(null, { logOut })(SidebarAuth);
+export default connect(null, {
+  logOut,
+  createUpdateInRooms,
+  removeUpdateInRooms,
+})(SidebarAuth);

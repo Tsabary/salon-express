@@ -6,7 +6,6 @@ import { isMobile } from "react-device-detect";
 
 import { UniqueIdContext } from "../../../../providers/UniqueId";
 import { AuthContext } from "../../../../providers/Auth";
-import { FloorContext } from "../../../../providers/Floor";
 
 import {
   listenToMultiverse,
@@ -19,9 +18,11 @@ import { titleToKey } from "../../../../utils/strings";
 import SideBar from "./sideBar";
 import MediaContent from "./content";
 import Notice from "./content/notice";
+import MobileMultiverse from "./sideBar/mobileMultiverse";
+import { FloorContext } from "../../../../providers/Floor";
+import { RoomContext } from "../../../../providers/Room";
 
 const Media = ({
-  room,
   floor,
   currentAudioChannel,
   entityID,
@@ -32,6 +33,8 @@ const Media = ({
   // This is a fake unique id based on current timestamp. We use it to identify users that aren't logged in, so we can manage the coun of users in each portal
   const { uniqueId } = useContext(UniqueIdContext);
   const { currentUserProfile } = useContext(AuthContext);
+  const { globalRoom } = useContext(RoomContext);
+  const { globalFloorRoom } = useContext(FloorContext);
 
   // This holds the current portal were in (its title)
   const [currentPortal, setCurrentPortal] = useState(null);
@@ -59,8 +62,16 @@ const Media = ({
   const [cameraPermissionGranted, setCameraPermissionGranted] = useState(false);
 
   useEffect(() => {
-    console.log("entityID media", entityID);
+    if (!globalRoom && !globalFloorRoom) {
+      setCurrentPortal(null);
+    }
+  }, [globalRoom, globalFloorRoom]);
 
+  useEffect(() => {
+    setIsFirstLoad(true);
+  }, [entityID]);
+
+  useEffect(() => {
     if (!entityID) return;
 
     // We generate a new portal if needed here, and not in a cloud function, beccaue this also applies to Rooms in Floors and we can't listen to those in cloud functions. At some point it's wort having a cloud function for public Rooms and have floors rooms multiverses generated when a floor is created.
@@ -83,18 +94,20 @@ const Media = ({
 
   // Whenever the room or the current portal change, we set a new portal url
   useEffect(() => {
-    if (!currentPortal || !currentPortal.new || !room) return;
+    if (!currentPortal || !currentPortal.new || !entityID) return;
 
     const portalUrlKey = titleToKey(
-      floor
-        ? currentPortal.new.title + floor.id + room.id
-        : currentPortal.new.title + room.id
+      currentPortal.new.title + entityID
+
+      // floor
+      //   ? currentPortal.new.title + floor.id + room.id
+      //   : currentPortal.new.title + room.id
     );
 
     setCurrentPortalUrl(portalUrlKey);
   }, [
     currentPortal,
-    room,
+    entityID,
     microphonePermissionGranted,
     cameraPermissionGranted,
   ]);
@@ -108,7 +121,6 @@ const Media = ({
   return (
     <div className="media single-room__media">
       <SideBar
-        room={room}
         currentAudioChannel={currentAudioChannel}
         entityID={entityID}
         currentPortal={currentPortal}
@@ -127,7 +139,7 @@ const Media = ({
 
       {!isMobile ? (
         <MediaContent
-          room={room}
+          // room={room}
           floor={floor}
           currentAudioChannel={currentAudioChannel}
           entityID={entityID}
@@ -149,10 +161,12 @@ const Media = ({
         />
       ) : (
         <Notice
-          className="media__mobile small-margin-top"
-          text={`We recommend that you'd browse Salon on your computer. If you can only join the party on mobile, It will be best if you'll switch to desktop mode in your browser app. On Chrome, click the three dots at the top right of your screen and check "Desktop site".`}
+          className="media__mobile"
+          text={`We recommend that you'd browse Salon on your computer. If you can only join the party on mobile, and have an Android phone, it will be best if you'll switch to desktop mode in your browser app. On Chrome, click the three dots at the top right of your screen and check "Desktop site".`}
         />
       )}
+
+      <MobileMultiverse entityID={entityID} multiverseArray={multiverseArray} />
     </div>
   );
 };

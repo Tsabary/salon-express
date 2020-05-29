@@ -5,19 +5,19 @@ import Admin from "./admin";
 import AudioSettings from "./audioSettings";
 
 const Management = ({
-  room,
+  entityID,
   roomIndex,
   floor,
   currentAudioChannel,
   isOwner,
 }) => {
-  console.log("isOwner managment", isOwner)
+
   return (
     <div className="management single-room__management">
       {/** This is the audio settings tile, in case the user is the page's admin*/}
       {isOwner ? (
         <AudioSettings
-          room={room}
+        entityID={entityID}
           roomIndex={roomIndex}
           floor={floor}
           currentAudioChannel={currentAudioChannel}

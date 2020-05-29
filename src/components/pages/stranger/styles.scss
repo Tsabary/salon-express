@@ -2,12 +2,12 @@
 
 .stranger {
   width: max-content;
-  margin: auto;
-  @include padding;
+  // margin: auto;
+  // @include padding;
 
-  @include resize(750px) {
-    margin-top: 5rem;
-  }
+  // @include resize(750px) {
+  //   margin-top: 5rem;
+  // }
 
   &__header {
     // width: 100%;

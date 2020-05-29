@@ -35,10 +35,13 @@ import {
 
 import InputField from "../../formComponents/inputField";
 import Tags from "../../formComponents/tags";
+import { GlobalContext } from "../../../providers/Global";
 
 const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
   const myHistory = useHistory(history);
   const { currentUserProfile } = useContext(AuthContext);
+  const { isNewFloorPublic } = useContext(GlobalContext);
+
   const { addToast } = useToasts();
 
   const [values, setValues] = useState({});
@@ -58,6 +61,10 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
       reset(currentUserProfile);
     }
   }, [currentUserProfile]);
+
+  useEffect(() => {
+    setValues({ ...values, listed: isNewFloorPublic });
+  }, [isNewFloorPublic]);
 
   // Reset the form
   const reset = (currentUserProfile) => {
@@ -85,7 +92,20 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
   // Handle the submit form
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!checkValidity(values, setFormError)) {
+
+    if (!isNewFloorPublic) {
+      window.location.hash = "";
+      myHistory.push("/pricing");
+
+      return;
+    }
+
+    // if (!checkValidity(values, setFormError)) {
+    //   return;
+    // }
+
+    if (!values.name) {
+      setFormError("Please give your new Floor a name");
       return;
     }
 
@@ -143,7 +163,9 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
         {!submitting ? (
           <div>
             <div className="popup__title" onClick={() => console.log(values)}>
-              Open a Floor
+              {isNewFloorPublic
+                ? "Open a public Floor"
+                : " Open a private Floor"}
             </div>
             <form
               onSubmit={(e) => {
@@ -165,7 +187,7 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
                   }}
                 />
               </div>
-{/* 
+              {/* 
               <Form.Control
                 as="select"
                 bsPrefix="input-field__input form-drop tiny-margin-bottom"
@@ -182,7 +204,7 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
               >
                 {renderLanguageOptions("Choose a language")}
               </Form.Control> */}
-              <div className="new-floor-plan__image-container">
+              {/* <div className="new-floor-plan__image-container">
                 <img
                   className="new-floor-plan__image-preview"
                   src={
@@ -222,8 +244,8 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
                     <ButtonNext className="small-button">Next</ButtonNext>
                   </div>
                 </CarouselProvider>
-              </div>
-              <div className="centered">
+              </div> */}
+              {/* <div className="centered">
                 <a
                   className="small-button small-margin-bottom"
                   onClick={() => {
@@ -244,7 +266,7 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
                 formError={formError}
                 setFormError={setFormError}
                 placeHolder="Add 2-5 tags that are related to this Floor"
-              />
+              /> */}
 
               {formError ? (
                 <div className="form-error small-margin-top">{formError}</div>

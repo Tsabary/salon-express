@@ -9,7 +9,7 @@ import { fetchRoomComments, newComment } from "../../../../actions/rooms";
 import CommentForm from "../../../forms/commentForm";
 import Comment from "../../../otherComponents/comment";
 
-const Comments = ({ entityID, room, fetchRoomComments, newComment }) => {
+const Comments = ({ entityID, fetchRoomComments, newComment }) => {
   const { currentUserProfile } = useContext(AuthContext);
 
   // This is the array of all the comments
@@ -26,7 +26,7 @@ const Comments = ({ entityID, room, fetchRoomComments, newComment }) => {
 
   // This sets the comment basic info, and the values of the different fields in our page to what they currently are (so that they'll be present in our edit components)
   useEffect(() => {
-    if (!room || !currentUserProfile || !currentUserProfile.uid) return;
+    if (!currentUserProfile || !currentUserProfile.uid) return;
 
     setComment({
       user_ID: currentUserProfile.uid,
@@ -35,7 +35,7 @@ const Comments = ({ entityID, room, fetchRoomComments, newComment }) => {
       user_avatar: currentUserProfile.avatar,
       room_ID: entityID,
     });
-  }, [currentUserProfile, room]);
+  }, [currentUserProfile]);
 
   // Render the comments to the page
   const renderComments = (comments) => {
@@ -61,7 +61,7 @@ const Comments = ({ entityID, room, fetchRoomComments, newComment }) => {
   };
 
   return (
-    <div className="comments single-room__comments section__container medium-margin-bottom">
+    <div className="comments single-room__comments section__container">
       <CommentForm
         comment={comment}
         setComment={setComment}

@@ -9,15 +9,20 @@ import { titleToKey } from "../../../utils/strings";
 import Comments from "./comments";
 import Media from "./media";
 import Management from "./management";
-import Details from "./details";
+import RoomInfo from "./info";
+import EditSlider from "./editSlider";
 
 const FloorRoom = ({ isOwner, entityID }) => {
-  const { globalFloor, globalFloorRoom, setGlobalFloorRoomIndex } = useContext(
-    FloorContext
-  );
-  
+  const {
+    globalFloor,
+    globalFloorRoom,
+    setGlobalFloorRoom,
+    setGlobalFloorRoomIndex,
+  } = useContext(FloorContext);
+
   const [roomIndex, setRoomIndex] = useState(null);
   const [currentAudioChannel, setCurrentAudioChannel] = useState(null);
+  const [isRoomEdited, setIsRoomEdited] = useState(false);
 
   useEffect(() => {
     if (!globalFloor || !globalFloorRoom) return;
@@ -38,20 +43,27 @@ const FloorRoom = ({ isOwner, entityID }) => {
   // Our main render
   return (
     <div className="single-room single-room--floor">
-      {/** This is the video chat, the embedded streams, the Mixlr and the Multiverse*/}
-      <Media
+      <RoomInfo
         room={globalFloorRoom}
+        roomIndex={roomIndex}
+        setRoom={setGlobalFloorRoom}
+        floor={globalFloor}
+        isOwner={isOwner}
+        setIsRoomEdited={setIsRoomEdited}
+      />
+
+      <EditSlider
+        room={globalFloorRoom}
+        isRoomEdited={isRoomEdited}
+        setIsRoomEdited={setIsRoomEdited}
+        floor
+      />
+
+      <Media
         roomIndex={roomIndex}
         floor={globalFloor}
         currentAudioChannel={currentAudioChannel}
         entityID={entityID}
-        isOwner={isOwner}
-      />
-
-      <Details
-        room={globalFloorRoom}
-        roomIndex={roomIndex}
-        floor={globalFloor}
         isOwner={isOwner}
       />
 
@@ -64,13 +76,7 @@ const FloorRoom = ({ isOwner, entityID }) => {
       />
 
       {/** This is the comments tile*/}
-      {globalFloorRoom ? (
-        <Comments
-          room={globalFloorRoom}
-          entityID={entityID}
-          floor={globalFloor}
-        />
-      ) : null}
+      {globalFloorRoom ? <Comments entityID={entityID} /> : null}
     </div>
   );
 };

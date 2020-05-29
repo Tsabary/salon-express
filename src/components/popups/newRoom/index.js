@@ -29,7 +29,7 @@ import { GlobalContext } from "../../../providers/Global";
 
 const NewRoom = ({ newRoom }) => {
   const { currentUserProfile } = useContext(AuthContext);
-  const { isNewRoomPublic, setIsNewRoomPublic } = useContext(GlobalContext);
+  const { isNewRoomPublic } = useContext(GlobalContext);
   const { addToast } = useToasts();
 
   const [values, setValues] = useState({});
@@ -80,7 +80,10 @@ const NewRoom = ({ newRoom }) => {
     //   return;
     // }
 
-    if(values.name)
+    if (!values.name) {
+      setFormError("Please give your new Room a name");
+      return;
+    }
 
     setFormError(null);
     setSubmitting(true);
@@ -209,7 +212,7 @@ const NewRoom = ({ newRoom }) => {
                   isChecked={true}
                 />
               </div> */}
-{/* 
+              {/* 
               <Tags
                 values={values}
                 setValues={setValues}

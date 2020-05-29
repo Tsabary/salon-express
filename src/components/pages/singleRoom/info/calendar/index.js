@@ -17,7 +17,7 @@ import { renderHours, renderMinutes } from "../../../../../utils/forms";
 
 const Calendar = ({
   events,
-  room,
+  entityID,
   roomIndex,
   floor,
   isOwner,
@@ -46,8 +46,8 @@ const Calendar = ({
   }, [event.start, hours, minutes]);
 
   useEffect(() => {
-    if (room && !floor) fetchEvents(room);
-  }, [room]);
+    if (entityID && !floor) fetchEvents(entityID);
+  }, [entityID]);
 
   const dateCompare = (a, b) => {
     return a.start.toDate() > b.start.toDate()
@@ -61,38 +61,36 @@ const Calendar = ({
 
   const renderEvents = (events) => {
     return events.map((event) => {
-      return <Event event={event} isOwner={isOwner} key={event.id} />;
+      return (
+        <Event
+          event={event}
+          roomIndex={roomIndex}
+          floor={floor}
+          isOwner={isOwner}
+          key={event.id}
+        />
+      );
     });
   };
 
   const filterFloorEvents = (events) => {
-    console.log("eventtt", "Called");
-
-    console.log(
-      "eventtt",
-      events.filter((ev) => ev.start.toDate() > new Date()).sort(dateCompare)
-    );
     return events
       .filter((ev) => ev.start.toDate() > new Date())
       .sort(dateCompare);
   };
 
-  const renderFloorEvents = (events) => {
-    return events.map((event) => {
-      return <Event event={event} isOwner={isOwner} key={event.id} />;
+
+  const onWheel = (e) => {
+    e.preventDefault();
+    var container = document.getElementById("eventsScroll");
+    var containerScrollPosition = document.getElementById("eventsScroll")
+      .scrollLeft;
+    container.scrollTo({
+      top: 0,
+      left: containerScrollPosition + e.deltaY,
+      behaviour: "smooth", //if you want smooth scrolling
     });
   };
-
- const onWheel = (e) => {
-    e.preventDefault()
-    var container = document.getElementById('eventsScroll')
-    var containerScrollPosition = document.getElementById('eventsScroll').scrollLeft
-    container.scrollTo({
-        top: 0,
-        left: containerScrollPosition + e.deltaY,
-        behaviour: 'smooth' //if you want smooth scrolling
-    })
-}
 
   return (
     <div className=" section__container">
@@ -116,7 +114,7 @@ const Calendar = ({
         </>
       </div>
 
-      <div className="max-fr">
+      <div className="calendar__divide">
         {isOwner ? (
           <form
             autoComplete="off"
@@ -124,7 +122,7 @@ const Calendar = ({
               e.preventDefault();
               if (event && event.title && event.start)
                 !floor
-                  ? addEvent(event, room, () => setEvent({}))
+                  ? addEvent(event, entityID, () => setEvent({}))
                   : addEventFloor(
                       { ...event, id: uuidv4() },
                       roomIndex,
@@ -212,7 +210,11 @@ const Calendar = ({
           floor.rooms[roomIndex] &&
           floor.rooms[roomIndex].events &&
           filterFloorEvents(floor.rooms[roomIndex].events)) ? (
-          <div className="calendar__events tiny-margin-top" id="eventsScroll" onWheel={onWheel}>
+          <div
+            className="calendar__events tiny-margin-top"
+            id="eventsScroll"
+            onWheel={onWheel}
+          >
             {renderEvents(
               floor ? filterFloorEvents(floor.rooms[roomIndex].events) : events
             )}

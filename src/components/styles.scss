@@ -16,13 +16,11 @@
     grid-template-columns: max-content 1fr;
     align-items: stretch;
     flex-grow: 1;
+
   }
 
   &__content {
     max-height: calc(100vh - 5rem);
-    // overflow-y: scroll;
-
-    // @include scroll;
   }
 
   &__footer {

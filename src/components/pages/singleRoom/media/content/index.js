@@ -49,7 +49,7 @@ const MediaContent = ({
         <div className="fr">
           {isChatVisible ? (
             <Chat
-              room={room}
+              // room={room}
               floor={floor}
               currentPortalUrl={currentPortalUrl}
               cameraPermissionGranted={cameraPermissionGranted}

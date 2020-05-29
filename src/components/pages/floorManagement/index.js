@@ -13,7 +13,7 @@ const FloorManagement = ({ fetchMyFloors }) => {
 
   useEffect(() => {
     if (currentUserProfile && !floors)
-    fetchMyFloors(currentUserProfile, (data) => setFloors(data));
+      fetchMyFloors(currentUserProfile, (data) => setFloors(data));
   }, [currentUserProfile]);
 
   const renderTitles = () => {
@@ -43,18 +43,19 @@ const FloorManagement = ({ fetchMyFloors }) => {
 
   return (
     <div className="floor-management">
-      <div className="fr-max-max">
-        <div className="floor-management__title">Your Floors</div>
-        <div
-          className="small-button clickable"
-          onClick={() => {
-            window.location.hash = "add-floor-plan";
-          }}
-        >
-          New Floor Plan
-        </div>
+      <div className="section__container">
+        <div className="fr-max-max">
+          <div className="floor-management__title">Your Floors</div>
+          <div
+            className="small-button clickable"
+            onClick={() => {
+              window.location.hash = "add-floor-plan";
+            }}
+          >
+            New Floor Plan
+          </div>
 
-        {/* <div
+          {/* <div
           className="small-button clickable"
           onClick={() => {
             window.location.hash = "add-floor";
@@ -62,12 +63,15 @@ const FloorManagement = ({ fetchMyFloors }) => {
         >
           New Floor
         </div> */}
-      </div>
-      <div className="floor-management__table">
-        <div className="floor-management__col-titles">{renderTitles()}</div>
-        {floors ? (
-          <div className="floor-management__floors">{renderFloors(floors)}</div>
-        ) : null}
+        </div>
+        <div className="floor-management__table">
+          <div className="floor-management__col-titles">{renderTitles()}</div>
+          {floors ? (
+            <div className="floor-management__floors">
+              {renderFloors(floors)}
+            </div>
+          ) : null}
+        </div>
       </div>
     </div>
   );

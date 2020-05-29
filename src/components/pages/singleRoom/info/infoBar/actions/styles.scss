@@ -1,0 +1,33 @@
+@import "../../../../../../styles/imports";
+
+.info-bar-actions {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(2, max-content);
+  align-items: center;
+  justify-items: center;
+
+  @include resize(500px) {
+    grid-template-columns: 1fr;
+  }
+
+  &__action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.1rem;
+    border-radius: $borderRadius;
+    padding: 0.2rem 0.8rem;
+    border: none;
+    outline: none;
+    background-color: $greyLightest;
+    color: $greyDark;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &--active {
+      background-color: $mainColor;
+      color: white;
+    }
+  }
+}

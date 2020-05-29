@@ -36,7 +36,7 @@ const SinglePost = ({ post }) => {
         <div className="single-post__subtitle clickable" onClick={gotToArticle}>
           {post.subtitle}
         </div>
-        <div className="fr-max" style={{ width: "100%" }}>
+        <div className="single-post__user-time">
           <User
             user={{
               name: post.user_name,

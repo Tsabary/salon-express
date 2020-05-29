@@ -4,10 +4,12 @@ import { titleToUrl } from "../../../../utils/strings";
 import { useHistory } from "react-router-dom";
 import history from "../../../../history";
 import { FloorContext } from "../../../../providers/Floor";
+import { RoomContext } from "../../../../providers/Room";
 
 const MenuFloor = ({ floor, setIsMenuOpen }) => {
   const myHistory = useHistory(history);
   const { globalFloor, setGlobalFloorRoom } = useContext(FloorContext);
+  const {setGlobalRoom} = useContext(RoomContext)
 
   return (
     <div
@@ -19,8 +21,8 @@ const MenuFloor = ({ floor, setIsMenuOpen }) => {
       onClick={() => {
         myHistory.push(`/floor/${floor.url}`);
         setGlobalFloorRoom(null);
+        setGlobalRoom(null)
         setIsMenuOpen(false);
-
       }}
     >
       <div className="max-fr">

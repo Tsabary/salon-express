@@ -1,3 +1,4 @@
+import './styles.scss';
 import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 
@@ -66,7 +67,12 @@ const Floor = ({
   };
 
   return (
-    <div className={isForFeed ? "room room-feed" : "room"}>
+    <div
+      className={isForFeed ? "room room-feed clickable" : "room clickable"}
+      onClick={() => {
+        myHistory.push(`/floor/${floor.url}`);
+      }}
+    >
       <div className="cover-image__container">
         <img className="cover-image__preview" src={floor.image} />
       </div>
@@ -78,18 +84,11 @@ const Floor = ({
             </div>
           ) : null} */}
 
-          <div
-            className="room__title clickable"
-            onClick={() => {
-              myHistory.push(`/floor/${floor.url}`);
-            }}
-          >
+          <div className="room__title clickable">
             {capitalizeSentances(floor.name)}
           </div>
 
-          <div style={{ fontFamily: "Gilroybold", color: "#6f00ff" }}>{`${
-            Object.keys(floor.rooms).length
-          } Rooms`}</div>
+          <div className="floor-tile__rooms-count">{`${Object.keys(floor.rooms).length} Rooms`}</div>
 
           {floor.language !== "lir" ? (
             <div className="room__languages--base extra-tiny-margin-top">
@@ -115,33 +114,33 @@ const Floor = ({
         </div>
       </div>
       <div className="room__actions--all">
-        <div className="room__actions--pair">
-          <CopyToClipboard
-            text={`https://salon.express/floor/${floor.url}`}
-            data-tip
-            data-for={`share${floor.id}`}
-            onCopy={() => {
-              shareButtonTimer();
-              setShareButton("Share URL copied!");
-              firebase.analytics().logEvent("floor_share_link_copied");
-            }}
-          >
-            <div className="room__button room__button-line room__button-line--unactive clickable">
-              {shareButton ? (
-                shareButton
-              ) : (
-                <ReactSVG
-                  src={isForFeed ? "./svgs/share.svg" : "../svgs/share.svg"}
-                  wrapper="div"
-                  beforeInjection={(svg) => {
-                    svg.classList.add("svg-icon--normal");
-                  }}
-                />
-              )}
-            </div>
-          </CopyToClipboard>
+        {/* <div className="room__actions--pair"> */}
+        <CopyToClipboard
+          text={`https://salon.express/floor/${floor.url}`}
+          data-tip
+          data-for={`share${floor.id}`}
+          onCopy={() => {
+            shareButtonTimer();
+            setShareButton("Share URL copied!");
+            firebase.analytics().logEvent("floor_share_link_copied");
+          }}
+        >
+          <div className="room__button room__button-line room__button-line--unactive clickable">
+            {shareButton ? (
+              shareButton
+            ) : (
+              <ReactSVG
+                src={isForFeed ? "./svgs/share.svg" : "../svgs/share.svg"}
+                wrapper="div"
+                beforeInjection={(svg) => {
+                  svg.classList.add("svg-icon--normal");
+                }}
+              />
+            )}
+          </div>
+        </CopyToClipboard>
 
-          {!currentUserProfile || !currentUserProfile.uid ? (
+        {/* {!currentUserProfile || !currentUserProfile.uid ? (
             <a
               onClick={() => {
                 firebase.analytics().logEvent("favorites_clicked_not_user");
@@ -155,19 +154,19 @@ const Floor = ({
             floor.members.includes(currentUserProfile.uid) ? (
             <div
               className="room__button room__button-line room__button-line--active clickable"
-              onClick={() => removeFromFloorMembers(currentUserProfile,floor)}
+              onClick={() => removeFromFloorMembers(currentUserProfile, floor)}
             >
               <div className="centered-text">Leave</div>
             </div>
           ) : (
             <div
               className="room__button room__button-line room__button-line--unactive clickable"
-              onClick={() => addToFloorMembers(currentUserProfile,floor)}
+              onClick={() => addToFloorMembers(currentUserProfile, floor)}
             >
               <div className="centered-text">Join</div>
             </div>
-          )}
-        </div>
+          )} */}
+        {/* </div> */}
       </div>
     </div>
   );

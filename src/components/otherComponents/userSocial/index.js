@@ -11,8 +11,6 @@ const UserSocial = ({ uid, fetchProfileByUid, horizontal, socialRtl }) => {
   const { currentUserProfile } = useContext(AuthContext);
   const [user, setAuthor] = useState(null);
 
-  console.log("stttttt user social", socialRtl);
-
   useEffect(() => {
     if (user) return;
     fetchProfileByUid(uid, (profile) => setAuthor(profile));

@@ -1,6 +1,7 @@
 @import "../../../../../../styles/imports";
 
 .mobile-multiverse {
+  display: none;
   position: fixed;
   width: 100%;
   z-index: 1000;
@@ -8,6 +9,10 @@
   left: 0;
   background-color: white;
   box-shadow: 0 0.2rem 1rem rgb(170, 170, 170);
+
+  @include resize(1000px){
+    display: block;
+  }
 
   &__top {
     height: 5rem;

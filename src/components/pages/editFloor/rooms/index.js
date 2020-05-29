@@ -20,7 +20,7 @@ const Rooms = ({rooms, setRooms, setTracks, chosenPlan}) => {
   };
 
   return (
-    <div className="edit-floor__section">
+    <div className="edit-floor__section tiny-margin-top">
       <div className="edit-floor__section-title">Set Rooms</div>
       {rooms && chosenPlan ? (
         <div className="edit-floor__rooms">

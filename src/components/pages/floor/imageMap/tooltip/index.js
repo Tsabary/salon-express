@@ -64,10 +64,10 @@ const Tooltip = ({ location, room }) => {
   return (
     <div className="map-tooltip" style={location}>
       <div className="map-tooltip__top">
-        {room.active_channel ? (
+        {room.active_channel && room.active_channel.source ? (
           <IFrame
             url={getIframeUrl(room.active_channel)}
-            height={getIframeHeight(room.active_channel)}
+            height={150}
             source={room.active_channel.source}
           />
         ) : null}

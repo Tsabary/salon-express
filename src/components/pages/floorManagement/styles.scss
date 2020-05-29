@@ -2,13 +2,17 @@
 
 .floor-management {
   width: 100%;
-  max-width: 160rem;
+  min-width: calc(100vw - 5rem);
+  max-height: calc(100vh - 5rem);
+
   padding: 2rem;
-  // margin: 3rem auto;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  // @include padding;
+
+  overflow-x: hidden;
+  overflow-y: scroll;
+  @include scroll;
 
   &__table {
     margin-top: 3rem;

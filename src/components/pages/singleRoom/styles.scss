@@ -2,22 +2,28 @@
 
 .single-room {
   position: relative;
-  width: 100%;
-  // max-width: 160rem;
-  margin: auto;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 2rem;
   justify-items: stretch;
   align-items: stretch;
-  // padding:  14rem 2rem 2rem 2rem;
-  padding: 2rem;
-  max-height: calc(100vh - 5rem);
-  overflow-y: scroll;
 
+  width: 100%;
+  min-width: calc(100vw - 5rem);
+  max-height: calc(100vh - 5rem);
+
+  margin: auto;
+  padding: 2rem 2rem 8rem 2rem;
+
+  overflow-x: hidden;
+  overflow-y: scroll;
   @include scroll;
 
-  &__info{
+  @include resize(1000px) {
+    max-height: calc(100vh - 11rem);
+  }
+
+  &__info {
     grid-column: 1/13;
     grid-row: 1/2;
   }
@@ -27,16 +33,9 @@
     grid-row: 2/3;
   }
 
-  // &__details {
-  //   grid-column: 1/13;
-  //   grid-row: 2/3;
-  // }
-
   &__management {
     grid-column: 1/4;
     grid-row: 3/4;
-
-
     @include resize(900px) {
       grid-column: 1/13;
       grid-row: 4/5;
@@ -45,8 +44,10 @@
 
   &__comments {
     grid-column: 4/13;
-    grid-row: 3/9;
+    grid-row: 3/5;
+    margin-bottom: 8rem;
     @include resize(900px) {
+      margin-bottom: 0;
       grid-column: 1/13;
       grid-row: 3/4;
     }

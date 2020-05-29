@@ -19,6 +19,7 @@ import Coming from "./coming";
 import CurrentlyPlaying from "./currentlyPlaying";
 import ImageMap from "./imageMap";
 import { UniqueIdContext } from "../../../providers/UniqueId";
+import FloorInfo from "./floorInfo";
 
 const Floor = ({
   match,
@@ -125,16 +126,18 @@ const Floor = ({
 
           <div className="floor__body">
             <div className="floor__body-content">
-              <CurrentlyPlaying />
-
-              {/* <div style={{ margin: "auto" }}> */}
+              <FloorInfo floor={globalFloor} />
+              <div className="floor__body-content--inner">
+                <CurrentlyPlaying />
                 <ImageMap />
-              {/* </div> */}
+              </div>
             </div>
           </div>
         </>
       ) : (
         <div className="floor__body">
+          <FloorInfo floor={globalFloor} />
+
           {openDate ? <Coming openDate={openDate} /> : null}
         </div>
       )}

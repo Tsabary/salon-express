@@ -1,16 +1,21 @@
 @import "../../../../../styles/imports";
 
 .media-sidebar {
+  // display: block;
   height: 100%;
   max-width: 100%;
   display: grid;
   gap: 2rem;
   grid-template-columns: 1fr;
   justify-items: stretch;
-align-content: stretch;
-align-items: stretch;
+  align-content: stretch;
+  align-items: stretch;
   // background-color: orchid;
   // grid-template-rows: max-content max-content 1fr
+
+  @include resize(1000px) {
+    display: none;
+  }
 
   &--both {
     grid-template-rows: 450px 450px 1fr !important;

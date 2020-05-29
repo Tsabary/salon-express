@@ -9,13 +9,15 @@ import { v1 as uuidv1 } from "uuid";
 
 import {
   SET_FLOORS,
-  ADD_FLOOR,
+  ADD_PRIVATE_FLOOR,
+  ADD_PUBLIC_FLOOR,
   SET_FLOOR_PLANS,
   SET_CHANNELS,
   RESET_BACKSTAGE_NOTIFICATIONS,
   ADD_BACKSTAGE_NOTIFICATION,
   FETCH_BACKSTAGE,
   EDIT_FLOOR,
+  DELETE_FLOOR,
 } from "./types";
 
 const db = firebase.firestore();
@@ -50,12 +52,12 @@ export const fetchFloor = (floor_ID) => async (dispatch) => {
 
   analytics.logEvent("floor_direct_navigation");
 
-  if (docFloor.data()) {
-    dispatch({
-      type: ADD_FLOOR,
-      payload: docFloor.data(),
-    });
-  }
+  // if (docFloor.data()) {
+  //   dispatch({
+  //     type: ADD_FLOOR,
+  //     payload: docFloor.data(),
+  //   });
+  // }
 };
 
 export const fetchCurrentFloor = (floor_ID, cb) => async (dispatch) => {
@@ -81,7 +83,6 @@ export const fetchCurrentFloor = (floor_ID, cb) => async (dispatch) => {
 export const detachFloorListener = () => async (dispatch) => {
   if (floorListener) {
     floorListener();
-    console.log("flooor", "deteching");
   }
 };
 
@@ -137,10 +138,17 @@ export const newFloor = (values, reset) => async (dispatch) => {
 
       reset();
 
-      dispatch({
-        type: ADD_FLOOR,
-        payload: floor,
-      });
+      if (values.listed) {
+        dispatch({
+          type: ADD_PUBLIC_FLOOR,
+          payload: floor,
+        });
+      } else {
+        dispatch({
+          type: ADD_PRIVATE_FLOOR,
+          payload: floor,
+        });
+      }
     })
     .catch((e) => console.error("promise Error new floor", e));
 };
@@ -446,13 +454,15 @@ export const setActiveChannelFloorRoom = (
       [roomIndex]: {
         ...floor.rooms[roomIndex],
         active_channel: {
-          link: channel ? channel.link : null,
-          source: channel ? channel.source : null,
-          title: channel ? channel.title : null,
+          link: channel ? channel.link : "",
+          source: channel ? channel.source : "",
+          title: channel ? channel.title : "",
         },
       },
     },
   };
+
+  console.log("floorObjecttt", updatedFloor);
 
   batch.set(docRef, updatedFloor, { merge: true });
 
@@ -562,6 +572,8 @@ export const updateFloorRoom = (
 };
 
 export const addEventFloor = (event, roomIndex, floor, cb) => async () => {
+  console.log("claendarfoor", roomIndex);
+  console.log("claendarfoor", floor);
   const batch = db.batch();
   const docRef = db.collection("floors").doc(floor.id);
   const updatedFloor = {
@@ -643,13 +655,10 @@ export const fixNYC = () => async () => {
   newFloorDoc.set(newFloor);
 };
 
-
-
 // MEMBERS LIST //
 export const addToFloorMembers = (currentUserProfile, floor, cb) => async (
   dispatch
 ) => {
-
   db.collection("floors")
     .doc(floor.id)
     .set(
@@ -673,6 +682,28 @@ export const addToFloorMembers = (currentUserProfile, floor, cb) => async (
             : [currentUserProfile.uid],
         },
       });
+
+      if (floor.listed) {
+        dispatch({
+          type: ADD_PUBLIC_FLOOR,
+          payload: {
+            ...floor,
+            members: floor.members
+              ? [...floor.members, currentUserProfile.uid]
+              : [currentUserProfile.uid],
+          },
+        });
+      } else {
+        dispatch({
+          type: ADD_PRIVATE_FLOOR,
+          payload: {
+            ...floor,
+            members: floor.members
+              ? [...floor.members, currentUserProfile.uid]
+              : [currentUserProfile.uid],
+          },
+        });
+      }
     })
     .catch((e) => console.error("promise Error add to fav", e));
 };
@@ -699,10 +730,13 @@ export const removeFromFloorMembers = (currentUserProfile, floor, cb) => async (
         type: EDIT_FLOOR,
         payload: {
           ...floor,
-          members: floor.members.filter(
-            (f) => f.id !== currentUserProfile.id
-          ),
+          members: floor.members.filter((f) => f.id !== currentUserProfile.id),
         },
+      });
+
+      dispatch({
+        type: DELETE_FLOOR,
+        payload: floor.id,
       });
     })
     .catch((e) => console.error("promise Error remove form fav", e));

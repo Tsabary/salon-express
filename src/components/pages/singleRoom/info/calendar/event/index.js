@@ -14,8 +14,17 @@ import { deleteEventFloor } from "../../../../../../actions/floors";
 import { renderGoogleLink } from "../../../../../../utils/others";
 import { FloorContext } from "../../../../../../providers/Floor";
 
-const Event = ({ event, deleteEvent, deleteEventFloor, isOwner }) => {
-  const { globalFloor } = useContext(FloorContext);
+const Event = ({
+  event,
+  roomIndex,
+  floor,
+  deleteEvent,
+  deleteEventFloor,
+  isOwner,
+}) => {
+  const { globalFloor, setGlobalFloor, setGlobalFloorRoom } = useContext(
+    FloorContext
+  );
 
   const startDate =
     Object.prototype.toString.call(event.start) === "[object Date]"
@@ -45,7 +54,17 @@ const Event = ({ event, deleteEvent, deleteEventFloor, isOwner }) => {
           <div
             className="clickable"
             onClick={() => {
-              globalFloor ? deleteEventFloor(event) : deleteEvent(event);
+              globalFloor
+                ? deleteEventFloor(
+                    event,
+                    roomIndex,
+                    globalFloor,
+                    (newFloor) => {
+                      setGlobalFloor(newFloor);
+                      setGlobalFloorRoom(newFloor.rooms[roomIndex]);
+                    }
+                  )
+                : deleteEvent(event);
             }}
           >
             <ReactSVG

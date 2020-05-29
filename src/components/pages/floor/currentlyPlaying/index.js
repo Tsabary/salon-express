@@ -16,7 +16,7 @@ const CurrentlyPlaying = () => {
   return (
     <div className="currently-playing">
       {globalFloor ? (
-        <div className="currently-playing__title">Currently Live</div>
+        <div className="currently-playing__title">Rooms</div>
       ) : null}
       <div className="currently-playing__stages">
         {globalFloor ? renderLineup(Object.values(globalFloor.rooms)) : null}

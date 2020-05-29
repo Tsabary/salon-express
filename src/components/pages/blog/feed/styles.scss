@@ -1,13 +1,19 @@
 @import "../../../../styles/imports";
 
 .blog {
-  // background-color: white !important;
-  @include padding;
+  padding: 2rem;
+  width: 100%;
+  min-width: calc(100vw - 5rem);
 
   &__posts {
-    width: max-content;
     display: grid;
     gap: 3rem;
     margin: auto;
+    margin-bottom: 5rem;
+
+    max-height: calc(100vh - 5rem);
+    overflow-x: hidden;
+    overflow-y: scroll;
+    @include scroll;
   }
 }

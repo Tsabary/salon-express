@@ -112,3 +112,13 @@ export const fetchSuggestions = () => async (dispatch) => {
     payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
+
+
+export const addUserSuggestion = (values, cb) => async () => {
+  const docRef = db.collection("user_suggestions").doc();
+
+
+  docRef.set({ ...values, id: docRef.id }).then(() => {
+    cb();
+  });
+};

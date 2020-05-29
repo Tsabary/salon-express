@@ -26,7 +26,7 @@ import { extractUrlId } from "../../../../../utils/websiteTrims";
 import { RoomContext } from "../../../../../providers/Room";
 
 const AudioSettings = ({
-  room,
+  entityID,
   roomIndex,
   floor,
   currentAudioChannel,
@@ -47,7 +47,7 @@ const AudioSettings = ({
       return (
         <SingleChannel
           channel={channel}
-          room={room}
+          entityID={entityID}
           roomIndex={roomIndex}
           floor={floor}
           currentAudioChannel={currentAudioChannel}
@@ -182,13 +182,13 @@ const AudioSettings = ({
             <ReactSVG
               src="../svgs/expand.svg"
               wrapper="div"
-              data-tip={`expandAudioSettings${room.id}`}
-              data-for={`expandAudioSettings${room.id}`}
+              data-tip={`expandAudioSettings${entityID}`}
+              data-for={`expandAudioSettings${entityID}`}
               beforeInjection={(svg) => {
                 svg.classList.add("svg-icon--small");
               }}
             />
-            <ReactTooltip id={`expandAudioSettings${room.id}`}>
+            <ReactTooltip id={`expandAudioSettings${entityID}`}>
               <div
                 dangerouslySetInnerHTML={{
                   __html: "Expand external content channels.",
@@ -219,7 +219,7 @@ const AudioSettings = ({
             };
 
             !floor
-              ? addChannel(channelObj, room, () => setNewChannel(null))
+              ? addChannel(channelObj, entityID, () => setNewChannel(null))
               : addChannelFloorRoom(channelObj, roomIndex, floor, () =>
                   setNewChannel(null)
                 );
@@ -304,8 +304,8 @@ const AudioSettings = ({
           <div className="audio-settings__buttons">
             <div
               className="audio-settings__button"
-              data-tip={`externalContentPlay${room.id}`}
-              data-for={`externalContentPlay${room.id}`}
+              data-tip={`externalContentPlay${entityID}`}
+              data-for={`externalContentPlay${entityID}`}
               onMouseEnter={() => setIsPlayHovered(true)}
               onMouseLeave={() => setIsPlayHovered(false)}
               onClick={() => {
@@ -313,7 +313,7 @@ const AudioSettings = ({
                   const sourceObj = extractUrlId(newChannel.link);
 
                   !floor
-                    ? setActiveChannel(sourceObj, room.id, () => {
+                    ? setActiveChannel(sourceObj, entityID, () => {
                         setGlobalCurrentAudioChannel(sourceObj);
                         setNewChannel(null);
                       })
@@ -338,7 +338,7 @@ const AudioSettings = ({
                   svg.classList.add("svg-icon--small");
                 }}
               />
-              <ReactTooltip id={`externalContentPlay${room.id}`}>
+              <ReactTooltip id={`externalContentPlay${entityID}`}>
                 <div
                   dangerouslySetInnerHTML={{
                     __html: "Play without saving",
@@ -349,18 +349,18 @@ const AudioSettings = ({
             <button
               type="submit"
               className="audio-settings__button"
-              data-tip={`externalContentSave${room.id}`}
-              data-for={`externalContentSave${room.id}`}
+              data-tip={`externalContentSave${entityID}`}
+              data-for={`externalContentSave${entityID}`}
             >
               +
             </button>
-            <ReactTooltip id={`externalContentSave${room.id}`}>
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: "Save channel",
-                  }}
-                />
-              </ReactTooltip>
+            <ReactTooltip id={`externalContentSave${entityID}`}>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: "Save channel",
+                }}
+              />
+            </ReactTooltip>
           </div>
         </div>
         {formError ? (
@@ -368,7 +368,12 @@ const AudioSettings = ({
         ) : null}
       </form>
 
-      <div className="small-button tiny-margin-top" onClick={()=> window.location.hash="content-suggestions"}>Explore Suggestions</div>
+      <div
+        className="small-button tiny-margin-top"
+        onClick={() => (window.location.hash = "content-suggestions")}
+      >
+        Explore Suggestions
+      </div>
 
       {audioChannels.length ||
       (floor && floor.rooms[roomIndex] && floor.rooms[roomIndex].audio_channels)

@@ -19,10 +19,9 @@ import RoomInfo from "./info";
 const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
   const { currentUserProfile } = useContext(AuthContext);
   const { setGlobalCurrentAudioChannel } = useContext(RoomContext);
-  const {globalRoom, setGlobalRoom } = useContext(RoomContext);
+  const { globalRoom, setGlobalRoom } = useContext(RoomContext);
   const { uniqueId } = useContext(UniqueIdContext);
 
-  const [room, setRoom] = useState(null);
   const [roomId, setRoomId] = useState(null);
   const [currentAudioChannel, setCurrentAudioChannel] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
@@ -31,8 +30,8 @@ const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
   useEffect(() => {
     setIsOwner(
       currentUserProfile &&
-      globalRoom &&
-      globalRoom.admins_ID.includes(currentUserProfile.uid)
+        globalRoom &&
+        globalRoom.admins_ID.includes(currentUserProfile.uid)
     );
   }, [currentUserProfile, globalRoom]);
 
@@ -58,34 +57,33 @@ const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
 
   // Our main render
   return roomId ? (
-    <div style={{ position: "relative" }}>
-      {/* <FloatingInfo room={room} isOwner={isOwner} /> */}
-      <div className="single-room">
-        <RoomInfo room={globalRoom} setRoom={setGlobalRoom} isOwner={isOwner} setIsRoomEdited={setIsRoomEdited}/>
+    <div className="single-room">
+      <RoomInfo
+        room={globalRoom}
+        setRoom={setGlobalRoom}
+        isOwner={isOwner}
+        setIsRoomEdited={setIsRoomEdited}
+      />
 
-        <EditSlider room={globalRoom} isRoomEdited={isRoomEdited} setIsRoomEdited={setIsRoomEdited}/>
+      <EditSlider
+        room={globalRoom}
+        isRoomEdited={isRoomEdited}
+        setIsRoomEdited={setIsRoomEdited}
+      />
 
-        {/** This is the video chat, the embedded streams, the Mixlr and the Multiverse*/}
-        <Media
-          room={globalRoom}
-          currentAudioChannel={currentAudioChannel}
-          entityID={roomId}
-          isOwner={isOwner}
-        />
+      <Media
+        currentAudioChannel={currentAudioChannel}
+        entityID={roomId}
+        isOwner={isOwner}
+      />
 
-        {/* * This is the room info the calendar and the donations */}
-        {/* <Details room={room} setRoom={setRoom} isOwner={isOwner} /> */}
+      <Management
+        entityID={roomId}
+        currentAudioChannel={currentAudioChannel}
+        isOwner={isOwner}
+      />
 
-        {/** This is the audio settings and the admin*/}
-        <Management
-          room={globalRoom}
-          currentAudioChannel={currentAudioChannel}
-          isOwner={isOwner}
-        />
-
-        {/** This is the comments*/}
-        {globalRoom ? <Comments room={globalRoom} entityID={roomId} /> : null}
-      </div>
+      {globalRoom ? <Comments entityID={roomId} /> : null}
     </div>
   ) : null;
 };

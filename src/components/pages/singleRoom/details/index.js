@@ -1,14 +1,14 @@
 import "./styles.scss";
 import React from "react";
 
-import Calendar from "./calendar";
+// import Calendar from "./calendar";
 import Donations from "./donations";
 import RoomInfo from "./roomInfo";
 
 const Details = ({ room, roomIndex, setRoom, floor, isOwner }) => {
   return (
     <div className="details single-room__details">
-      {room ? (
+      {/* {room ? (
         <Calendar
           room={room}
           roomIndex={roomIndex}
@@ -19,17 +19,17 @@ const Details = ({ room, roomIndex, setRoom, floor, isOwner }) => {
       ) : null}
 
       {/** This is the donations tile*/}
-      {(room && (room.accepting_donations || room.selling_merch)) || isOwner ? (
+      {/* {(room && (room.accepting_donations || room.selling_merch)) || isOwner ? (
         <Donations
           room={room}
           roomIndex={roomIndex}
           floor={floor}
           isOwner={isOwner}
         />
-      ) : null}
+      ) : null} */}
 
       {/** This is the room info tile*/}
-      {room ? (
+      {/* {room ? (
         <RoomInfo
           room={room}
           roomIndex={roomIndex}
@@ -37,7 +37,7 @@ const Details = ({ room, roomIndex, setRoom, floor, isOwner }) => {
           setRoom={setRoom}
           isOwner={isOwner}
         />
-      ) : null}
+      ) : null}  */}
     </div>
   );
 };

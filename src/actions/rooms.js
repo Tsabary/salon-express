@@ -39,8 +39,10 @@ export const fetchSingleRoom = (
     .doc(room_ID)
     .get()
     .catch((e) => console.error("promise Error fetch sing room", e));
+
   analytics.logEvent("room_direct_navigation");
-  if (docRoom.data()) {
+
+  if (docRoom && docRoom.data()) {
     setGlobalRoom(docRoom.data());
 
     dispatch({
@@ -178,27 +180,22 @@ export const leaveAsMember = (currentUserProfile, room, cb) => async (
       if (cb) cb();
 
       dispatch({
-        type: REMOVE_FROM_FAVORITES,
-        payload: {
-          ...room,
-          favorites: room.favorites.filter(
-            (r) => r.id !== currentUserProfile.id
-          ),
-        },
+        type: DELETE_ROOM,
+        payload: room.id,
       });
     })
     .catch((e) => console.error("promise Error remove form fav", e));
 };
 
-export const addChannel = (channel, room, cb) => async (dispatch) => {
+export const addChannel = (channel, entityID, cb) => async (dispatch) => {
   const channelObj = {
     ...channel,
     source: channel.source.toLowerCase(),
     id: uuidv1(),
   };
 
-  db.collection("rooms")
-    .doc(room.id)
+  db.collection(entityID.startsWith("user-") ? "users" : "rooms")
+    .doc(entityID.startsWith("user-") ? entityID.replace("user-", "") : entityID)
     .set(
       {
         audio_channels: firebase.firestore.FieldValue.arrayUnion(channelObj),
@@ -217,18 +214,20 @@ export const addChannel = (channel, room, cb) => async (dispatch) => {
 };
 
 // Setting the active audio channel
-export const setActiveChannel = (channel, roomID, cb) => () => {
+export const setActiveChannel = (channel, entityID, cb) => () => {
+  console.log("entityIDddd", channel)
+  console.log("entityIDddd", entityID)
   channel
     ? db
         .collection("active_channels")
-        .doc(roomID)
+        .doc(entityID)
         .set(channel)
         .then(() => {
           if (cb) cb();
         })
     : db
         .collection("active_channels")
-        .doc(roomID)
+        .doc(entityID)
         .delete()
         .then(() => {
           if (cb) cb();
@@ -240,9 +239,9 @@ export const setActiveChannel = (channel, roomID, cb) => () => {
   // })
 };
 
-export const deleteChannel = (channel, room, cb) => async (dispatch) => {
-  db.collection("rooms")
-    .doc(room.id)
+export const deleteChannel = (channel, entityID, cb) => async (dispatch) => {
+  db.collection(entityID.startsWith("user-") ? "users" : "rooms")
+    .doc(entityID.startsWith("user-") ? entityID.replace("user-", "") : entityID)
     .set(
       { audio_channels: firebase.firestore.FieldValue.arrayRemove(channel) },
       { merge: true }
@@ -459,10 +458,10 @@ export const deleteComment = (commentID, cb) => async () => {
 
 // EVENTS //
 
-export const fetchEvents = (room) => async (dispatch) => {
+export const fetchEvents = (entityID) => async (dispatch) => {
   const data = await db
     .collection("events")
-    .where("room_ID", "==", room.id)
+    .where("entity_ID", "==", entityID)
     .where("start", ">", new Date())
     .orderBy("start", "desc")
     .limit(10)
@@ -474,9 +473,9 @@ export const fetchEvents = (room) => async (dispatch) => {
   });
 };
 
-export const addEvent = (event, room, cb) => async (dispatch) => {
+export const addEvent = (event, entityID, cb) => async (dispatch) => {
   const eventDoc = db.collection("events").doc();
-  const eventObj = { ...event, room_ID: room.id, id: eventDoc.id };
+  const eventObj = { ...event, entity_ID: entityID, id: eventDoc.id };
 
   eventDoc
     .set(eventObj)

@@ -109,7 +109,7 @@ const Room = ({
         </div>
       </div>
       <div className="room__actions--all">
-        <div className="room__actions--pair">
+        {/* <div className="room__actions--pair"> */}
           <CopyToClipboard
             text={`https://salon.express/room/${room.id}`}
             data-tip
@@ -135,7 +135,7 @@ const Room = ({
             </div>
           </CopyToClipboard>
 
-          {!currentUserProfile.uid ? (
+          {/* {!currentUserProfile.uid ? (
             <a
               onClick={() => {
                 togglePopup(true);
@@ -160,8 +160,8 @@ const Room = ({
             >
               <div className="centered-text">Join</div>
             </div>
-          )}
-        </div>
+          )} */}
+        {/* </div> */}
       </div>
     </div>
   );

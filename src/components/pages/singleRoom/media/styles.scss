@@ -4,9 +4,14 @@
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 2rem;
+
   &__content {
     height: 100%;
     grid-column: 4/13;
+
+    @include resize(1000px) {
+      grid-column: 1/13;
+    }
   }
 
   &__sidebar {

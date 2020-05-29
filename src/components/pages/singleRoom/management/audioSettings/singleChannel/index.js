@@ -20,7 +20,7 @@ import User from "../../../../../otherComponents/user/static";
 
 const SingleChannel = ({
   channel,
-  room,
+  entityID,
   roomIndex,
   floor,
   currentAudioChannel,
@@ -39,7 +39,7 @@ const SingleChannel = ({
           : "single-channel single-channel"
       }
     >
-      <div className="fr-max">
+      <div className="single-channel__divide">
         <div>
           <div
             className={
@@ -59,19 +59,21 @@ const SingleChannel = ({
           >
             {channel.link}
           </div>
-          {channel.user ? <User user={channel.user} className="extra-tiny-margin-top"/> :null}
+          {channel.user ? (
+            <User user={channel.user} className="extra-tiny-margin-top" />
+          ) : null}
         </div>
-        <div className="max-max">
+        <div className="max-max centered">
           <div
             className="clickable"
             onClick={() =>
               !floor
-                ? deleteChannel(channel, room, () => {
+                ? deleteChannel(channel, entityID, () => {
                     if (
                       currentAudioChannel &&
                       currentAudioChannel.link === channel.link
                     )
-                      setActiveChannel(null, room.id, () =>
+                      setActiveChannel({ source: "", link: "" }, entityID, () =>
                         setGlobalCurrentAudioChannel(null)
                       );
                   })
@@ -109,8 +111,10 @@ const SingleChannel = ({
               className="clickable"
               onClick={() => {
                 !floor
-                  ? setActiveChannel(null, room.id, () =>
-                      setGlobalCurrentAudioChannel(null)
+                  ? setActiveChannel(
+                      { source: "", link: "" },
+                      entityID,
+                      () => setGlobalCurrentAudioChannel(null)
                     )
                   : setActiveChannelFloorRoom(null, roomIndex, floor, () =>
                       setGlobalCurrentAudioChannel(null)
@@ -130,7 +134,7 @@ const SingleChannel = ({
               className="clickable"
               onClick={() => {
                 !floor
-                  ? setActiveChannel(channel, room.id, () =>
+                  ? setActiveChannel(channel, entityID, () =>
                       setGlobalCurrentAudioChannel(channel)
                     )
                   : setActiveChannelFloorRoom(channel, roomIndex, floor, () =>

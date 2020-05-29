@@ -29,4 +29,14 @@
       outline: 1px solid slategrey;
     }
   }
+
+  &__divide{
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: max-content 1fr;
+  
+    @include resize(700px){
+      grid-template-columns: 1fr
+    }
+  }
 }

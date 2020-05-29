@@ -44,9 +44,12 @@
 
   &__footer {
     max-width: 100%;
-    // position: fixed;
-    // bottom: 0;
     padding: 2rem;
+
+    @include resize(1000px){
+      padding: 2rem 2rem 8rem 2rem;
+
+    }
 
     &-links {
       width: 30rem;

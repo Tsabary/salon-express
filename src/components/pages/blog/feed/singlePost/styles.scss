@@ -1,7 +1,7 @@
 @import "../../../../../styles/imports";
 
 .single-post {
-  width: 80rem;
+  width: 100%;
   padding-right: 4rem;
   transition: all 0.2s;
 
@@ -12,21 +12,62 @@
 
   &__title {
     font-size: 2.5rem;
+    line-height: 2.7rem;
     font-family: $fontBlog;
     color: $greyDarkest;
-    line-height: 2.7rem;
+
+    @include resize(1000px) {
+      font-size: 2.2rem;
+      line-height: 2rem;
+    }
+
+    @include resize(800px) {
+      font-size: 1.8rem;
+      line-height: 2rem;
+    }
   }
 
   &__subtitle {
     font-size: 1.6rem;
     color: $grey;
     line-height: 2.4rem;
+
+    @include resize(1000px) {
+      font-size: 1.4rem;
+      line-height: 1.8rem;
+    }
+
+    @include resize(700px) {
+      font-size: 1.2rem;
+      line-height: 1.6rem;
+    }
+  }
+
+  &__user-time {
+    width: 100%;
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr max-content;
+
+    @include resize(1000px) {
+      display: none;
+    }
   }
 
   &__image {
     object-fit: cover;
     width: 14rem;
     height: 14rem;
+
+    @include resize(1000px) {
+      width: 10rem;
+      height: 10rem;
+    }
+
+    @include resize(800px) {
+      width: 8rem;
+      height: 8rem;
+    }
   }
 
   &__body {

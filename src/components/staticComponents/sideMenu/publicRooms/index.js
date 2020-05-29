@@ -12,9 +12,14 @@ import { AuthContext } from "../../../../providers/Auth";
 import { GlobalContext } from "../../../../providers/Global";
 import { renderRooms } from "../utils";
 
-
-const PublicRooms = ({ publicRooms, fetchFirstPublic, fetchMorePublic }) => {
-    const myHistory = useHistory(history);
+const PublicRooms = ({
+  publicRooms,
+  current,
+  setCurrent,
+  fetchFirstPublic,
+  fetchMorePublic,
+}) => {
+  const myHistory = useHistory(history);
 
   const { currentUser, currentUserProfile } = useContext(AuthContext);
   const { setIsNewRoomPublic, setIsMenuOpen } = useContext(GlobalContext);
@@ -24,6 +29,8 @@ const PublicRooms = ({ publicRooms, fetchFirstPublic, fetchMorePublic }) => {
   const [publicVisible, setPublicVisible] = useState(10);
   const [lastVisiblePublic, setLastVisiblePublic] = useState(null);
   const [reachedLastPublic, setReachedLastPublic] = useState(true);
+
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (!currentUserProfile) return;
@@ -69,7 +76,18 @@ const PublicRooms = ({ publicRooms, fetchFirstPublic, fetchMorePublic }) => {
         </ReactTooltip>
       </div>
 
-      <details>
+      <details
+        // open={current === 2}
+        // onClick={() => {
+        //   if (isOpen) {
+        //     setIsOpen(false);
+        //     setCurrent(0);
+        //   } else {
+        //     setIsOpen(true);
+        //     setCurrent(2);
+        //   }
+        // }}
+      >
         <summary>Public Rooms</summary>
         <div className="fr-max">
           <input
@@ -87,7 +105,7 @@ const PublicRooms = ({ publicRooms, fetchFirstPublic, fetchMorePublic }) => {
           </div>
         </div>
         {filteredPublic.length ? (
-          renderRooms(filteredPublic.slice(0, publicVisible))
+          renderRooms(filteredPublic.slice(0, publicVisible), setIsMenuOpen)
         ) : currentUserProfile ? (
           <div className="centered-text">
             Click "Explore" and to join some great public Rooms
@@ -118,4 +136,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {fetchFirstPublic, fetchMorePublic})(PublicRooms);
+export default connect(mapStateToProps, { fetchFirstPublic, fetchMorePublic })(
+  PublicRooms
+);

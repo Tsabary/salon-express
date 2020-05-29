@@ -5,7 +5,11 @@
   width: max-content;
   margin-right: auto;
   margin-left: auto;
-  z-index: 2000;
+  z-index: $z50;
   padding: 4rem;
   transition: all 0.3s;
+
+  @include resize(1000px){
+    display: none;
+  }
 }

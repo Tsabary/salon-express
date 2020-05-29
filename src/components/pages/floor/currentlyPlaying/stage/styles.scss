@@ -6,7 +6,7 @@
   margin-top: 1.5rem;
   padding-left: 0.5rem;
   cursor: pointer;
-  transition: all .1s;
+  transition: all 0.1s;
 
   &:hover {
     padding-left: 1rem;
@@ -17,7 +17,12 @@
     font-size: 1.1rem;
     color: $greyDark;
     overflow-wrap: break-word;
-    &--active{
+    transition: all .1s;
+    &:hover {
+      color: $mainColor;
+    }
+
+    &--active {
       color: $mainColor !important;
     }
   }

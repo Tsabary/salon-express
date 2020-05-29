@@ -99,8 +99,8 @@ const Pricing = () => {
         <h1>Premium Plans</h1>
         <h2>
           Salon Express gives you access to ulimited amount of private & public
-          Rooms and Floors for FREE. Upgrade to one of our premium plans to
-          bring the hype to your organization.
+          Rooms and public Floors for FREE. Upgrade to one of our premium plans to
+          bring the hype to your organization and open a private Floor just for you.
         </h2>
       </div>
 

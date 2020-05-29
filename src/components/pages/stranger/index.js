@@ -1,28 +1,38 @@
 import "./styles.scss";
 import React, { useContext, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { ReactSVG } from "react-svg";
+// import { ReactSVG } from "react-svg";
 
-import { AuthContext } from "../../../providers/Auth";
+// import { AuthContext } from "../../../providers/Auth";
 
 import { fetchStrangerProfile } from "../../../actions/profiles";
 
-import FollowBtn from "../../otherComponents/followBtn";
-import { getLanguageName } from "../../../utils/languages";
-import Social from "../../otherComponents/social";
+// import FollowBtn from "../../otherComponents/followBtn";
+// import { getLanguageName } from "../../../utils/languages";
+// import Social from "../../otherComponents/social";
+
+import ProfileRoom from "../../pages/singleRoom/profileRoom";
 
 const Stranger = ({ match, strangerProfile, fetchStrangerProfile }) => {
-  const { currentUserProfile } = useContext(AuthContext);
-  const [stranger, setStranger] = useState(null);
-
-  useEffect(() => {
-    if (match.params.id)
-      fetchStrangerProfile(match.params.id, (profile) => setStranger(profile));
-  }, [match.params.id]);
-
-  return !stranger ? null : (
+  return (
     <div className="stranger">
-      <div className="stranger__header">
+      <ProfileRoom match={match} />
+    </div>
+  );
+};
+
+const mapStateToProps = (state) => {
+  return {
+    strangerProfile: state.strangerProfile,
+  };
+};
+
+export default connect(mapStateToProps, {
+  fetchStrangerProfile,
+})(Stranger);
+
+{
+  /* <div className="stranger__header">
         <div>
           <img
             className="stranger__header-img"
@@ -43,17 +53,5 @@ const Stranger = ({ match, strangerProfile, fetchStrangerProfile }) => {
           </div>
         </div>
         {stranger ? <Social data={stranger} /> : null}
-      </div>
-    </div>
-  );
-};
-
-const mapStateToProps = (state) => {
-  return {
-    strangerProfile: state.strangerProfile,
-  };
-};
-
-export default connect(mapStateToProps, {
-  fetchStrangerProfile,
-})(Stranger);
+      </div> */
+}

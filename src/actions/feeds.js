@@ -22,8 +22,10 @@ import {
   // SEARCHED LIVE //
   FETCH_NEW_SEARCHED,
   FETCH_MORE_SEARCHED,
-  FETCH_NEW_FLOORS,
-  FETCH_MORE_FLOORS,
+  FETCH_NEW_PUBLIC_FLOORS,
+  FETCH_MORE_PUBLIC_FLOORS,
+  FETCH_NEW_PRIVATE_FLOORS,
+  FETCH_MORE_PRIVATE_FLOORS,
   FETCH_MORE_PRIVATE,
   FETCH_NEW_PUBLIC,
   FETCH_MORE_PUBLIC,
@@ -459,7 +461,9 @@ export const fetchMorePublic = (
   });
 };
 
-export const fetchFirstFloors = (
+// MY PUBLIC FLOORS //
+
+export const fetchFirstPublicFloors = (
   setLastVisible,
   setReachedLast,
   userID
@@ -479,12 +483,12 @@ export const fetchFirstFloors = (
   if (data.docs.length === 90) setReachedLast(false);
 
   dispatch({
-    type: FETCH_NEW_FLOORS,
+    type: FETCH_NEW_PUBLIC_FLOORS,
     payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
 
-export const fetchMoreFloors = (
+export const fetchMorePublicFloors = (
   lastVisible,
   setLastVisible,
   setReachedLast,
@@ -508,13 +512,74 @@ export const fetchMoreFloors = (
   if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
   if (data.docs.length < 90) setReachedLast(true);
 
-  analytics.logEvent("fetch_more_saved_floors");
+  analytics.logEvent("fetch_more_public_floors");
 
   dispatch({
-    type: FETCH_MORE_FLOORS,
+    type: FETCH_MORE_PUBLIC_FLOORS,
     payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
   });
 };
+
+// MY PRIVATE FLOORS //
+
+export const fetchFirstPrivateFloors = (
+  setLastVisible,
+  setReachedLast,
+  userID
+) => async (dispatch) => {
+  const data = await db
+    .collection("floors")
+    .where("listed", "==", false)
+    .where("members", "array-contains", userID)
+    .orderBy("last_visit", "desc")
+    .limit(90)
+    .get()
+    .catch((e) => console.error("promise Error fetch floors", e));
+
+  if (!data || !data.docs) return;
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length === 90) setReachedLast(false);
+
+  dispatch({
+    type: FETCH_NEW_PRIVATE_FLOORS,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+export const fetchMorePrivateFloors = (
+  lastVisible,
+  setLastVisible,
+  setReachedLast,
+  currentUserProfile,
+  tag,
+  languages,
+  userID
+) => async (dispatch) => {
+  const data = db
+    .collection("floors")
+    .where("listed", "==", false)
+    .where("members", "array-contains", userID)
+    .orderBy("last_visit", "desc")
+    .startAfter(lastVisible)
+    .limit(90)
+    .get()
+    .catch((e) => console.error("promise Error fetch more floors", e));
+
+  if (!data || !data.docs) return;
+
+  if (data.docs.length) setLastVisible(data.docs[data.docs.length - 1]);
+  if (data.docs.length < 90) setReachedLast(true);
+
+  analytics.logEvent("fetch_more_private_floors");
+
+  dispatch({
+    type: FETCH_MORE_PRIVATE_FLOORS,
+    payload: data.docs ? data.docs.map((doc) => doc.data()) : [],
+  });
+};
+
+// CLEAR FEEDS ON LOGOUT //
 
 export const clearFeeds = () => (dispatch) => {
   dispatch({
@@ -528,7 +593,12 @@ export const clearFeeds = () => (dispatch) => {
   });
 
   dispatch({
-    type: FETCH_NEW_FLOORS,
+    type: FETCH_NEW_PRIVATE_FLOORS,
+    payload: [],
+  });
+
+  dispatch({
+    type: FETCH_NEW_PUBLIC_FLOORS,
     payload: [],
   });
 };

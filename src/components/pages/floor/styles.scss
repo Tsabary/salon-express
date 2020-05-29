@@ -51,17 +51,16 @@ $easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   background-color: $bgColor;
   width: 100%;
 
-  // @include resize(750px) {
-  //   margin-top: 5rem;
-  // }
+  max-height: calc(100vh - 5rem);
 
   &__body {
     padding: 2rem;
-    // @include padding;
+    max-height: calc(100vh - 5rem);
+    overflow-y: scroll;
+    @include scroll;
+
     &-content {
-      display: grid;
-      grid-template-columns: 1fr 4fr;
-      gap: 3rem;
+      height: 100%;
 
       margin-bottom: 5rem;
       background-color: white;
@@ -76,6 +75,16 @@ $easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
       @include resize(750px) {
         margin-top: 0rem;
         padding: 2rem;
+      }
+
+      &--inner {
+        display: grid;
+        grid-template-columns: 1fr 4fr;
+        gap: 3rem;
+
+        @include resize(1000px) {
+          grid-template-columns: 1fr;
+        }
       }
     }
   }

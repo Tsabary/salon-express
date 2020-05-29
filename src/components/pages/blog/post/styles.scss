@@ -2,12 +2,17 @@
 
 .post {
   position: relative;
-  @include padding;
+  width: 100%;
+  min-width: calc(100vw - 5rem);
+  max-height: calc(100vh - 5rem);
+  overflow-x: hidden;
+  overflow-y: scroll;
+  @include scroll;
 
   &__body {
-    width: 100%;
-    max-width: 70rem !important;
-    margin: 4rem auto;
+    max-width: 100%;
+    margin: auto;
+
   }
 
   &__content {
@@ -17,6 +22,7 @@
     font-weight: 100;
     line-height: 3rem;
     color: $greyDarkest;
+    padding: 2rem;
 
     strong {
       font-family: $fontBlogBody;

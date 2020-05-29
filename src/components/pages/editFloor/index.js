@@ -85,7 +85,7 @@ const EditFloor = ({
 
   return (
     <div className="edit-floor">
-      <div className="edit-floor__basic">
+      <div className="edit-floor__basic tiny-margin-top">
         <Basic
           floor={floor}
           values={values}

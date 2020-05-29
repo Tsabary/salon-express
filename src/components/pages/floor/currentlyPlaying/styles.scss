@@ -3,7 +3,7 @@
 .currently-playing {
   width: 100%;
   height: 100%;
-  padding: 3rem;
+  padding-top: 3rem;
   align-self: start;
 
   &__title {
@@ -23,9 +23,8 @@
 
     @include scroll;
 
-
     @include resize(1000px) {
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(auto-fill, 10rem);
       gap: 3rem;
       margin-top: 3rem;
     }
