@@ -8,6 +8,7 @@ const InputField = ({
   label,
   type,
   className,
+  style,
   isNumber,
   numbersAndLetters,
   required = false,
@@ -29,13 +30,14 @@ const InputField = ({
   };
 
   return (
-    <div className={className ? `input-field ${className}` :"input-field"}>
+    <div className={className ? `input-field ${className}` : "input-field"}>
       <input
         className={
           required
             ? "input-field__input input-field__input--required"
             : "input-field__input"
         }
+        style={style}
         id={placeHolder}
         type={type}
         placeholder={placeHolder}

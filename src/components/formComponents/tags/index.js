@@ -1,6 +1,6 @@
 import "./styles.scss";
 import React, { useState } from "react";
-import { connect } from "react-redux";
+// import { connect } from "react-redux";
 
 import InputField from "../inputField";
 
@@ -8,6 +8,7 @@ const Tags = ({
   tags,
   values,
   setValues,
+  field,
   errorMessages,
   formError,
   setFormError,
@@ -79,21 +80,21 @@ const Tags = ({
   };
 
   const addTag = (newTag) => {
-    if (!(values && values.tags)) values.tags = [];
-    if (values.tags.includes(newTag) || !newTag.length) return;
-    if (values.tags.length === 5) {
+    if (!(values && values[field])) values[field] = [];
+    if (values[field].includes(newTag) || !newTag.length) return;
+    if (values[field].length === 5) {
       setFormError(errorMessages.tagsMax);
       return;
     }
     setValues({
       ...values,
-      tags: [...values.tags, newTag],
+      [field]: [...values[field], newTag],
     });
     setTagInput("");
   };
 
   const removeTag = (tag) => {
-    setValues({ ...values, tags: values.tags.filter((el) => el !== tag) });
+    setValues({ ...values, [field]: values[field].filter((el) => el !== tag) });
     if (formError === errorMessages.tagsMax) setFormError("");
   };
 
@@ -135,19 +136,16 @@ const Tags = ({
       {tagsSuggestions
         ? renderSuggestionsContainer(
             tagsSuggestions,
-            values.tags ? values.tags : []
+            values[field] ? values[field] : []
           )
         : null}
 
-      <div className="tags">
-        {values && values.tags ? renderTags(values.tags) : null}
+      <div className="tags tiny-margin-top">
+        {values && values[field] ? renderTags(values[field]) : null}
       </div>
     </div>
   );
 };
 
-const mapStateToProps = (state) => {
-  return { tags: state.tags };
-};
 
-export default connect(mapStateToProps)(Tags);
+export default Tags;

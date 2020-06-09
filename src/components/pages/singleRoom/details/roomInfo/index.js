@@ -19,6 +19,7 @@ import {
 } from "../../../../../actions/rooms";
 
 import { addImageToFloorRoom } from "../../../../../actions/floors";
+import { fetchTags } from "../../../../../actions/global";
 
 import { getLanguageName } from "../../../../../utils/languages";
 import {
@@ -38,11 +39,13 @@ const RoomInfo = ({
   setRoom,
   isOwner,
   floor,
+  tags,
   updateRoom,
   addImageToRoom,
   joinAsMember,
   leaveAsMember,
   addImageToFloorRoom,
+  fetchTags,
 }) => {
   const { currentUserProfile } = useContext(AuthContext);
   const { setSearchTerm } = useContext(SearchContext);
@@ -76,6 +79,10 @@ const RoomInfo = ({
     setImageAsFile(() => image);
     setSelectedImage(URL.createObjectURL(image));
   };
+
+  useEffect(() => {
+    if (!tags.length) fetchTags();
+  }, [tags]);
 
   // This sets the value of the description field (so that it'll be present in our edit component)
   useEffect(() => {
@@ -342,8 +349,10 @@ const RoomInfo = ({
           <>
             <div className="tiny-margin-bottom tiny-margin-top">
               <Tags
+                tags={tags}
                 values={values}
                 setValues={setValues}
+                field="tags"
                 errorMessages={errorMessages}
                 formError={tagsFormError}
                 setFormError={setTagsFormError}
@@ -446,8 +455,7 @@ const RoomInfo = ({
             >
               <div className="centered-text">Join</div>
             </a>
-          ) : room.members &&
-            room.members.includes(currentUserProfile.uid) ? (
+          ) : room.members && room.members.includes(currentUserProfile.uid) ? (
             <div
               className="room__button room__button-line room__button-line--active clickable"
               onClick={() =>
@@ -486,10 +494,17 @@ const RoomInfo = ({
   ) : null;
 };
 
-export default connect(null, {
+const mapStateToProps = (state) => {
+  return {
+    tags: state.tags,
+  };
+};
+
+export default connect(mapStateToProps, {
   updateRoom,
   joinAsMember,
   leaveAsMember,
   addImageToRoom,
   addImageToFloorRoom,
+  fetchTags,
 })(RoomInfo);

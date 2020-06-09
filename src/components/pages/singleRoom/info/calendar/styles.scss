@@ -8,7 +8,7 @@
     margin-top: 1rem;
   }
 
-  &__empty{
+  &__empty {
     color: $grey;
     text-align: center;
     margin: auto;
@@ -30,13 +30,29 @@
     }
   }
 
-  &__divide{
+  &__user {
+    display: inline-block;
+    background-color: $mainColor;
+    color: white;
+    padding: 0rem 0.5rem;
+    font-size: 1.1rem;
+    border-radius: $borderRadius;
+    margin-right: 1rem;
+
+    &:after {
+      content: " ⨯";
+      display: inline;
+      cursor: pointer;
+    }
+  }
+
+  &__divide {
     display: grid;
     gap: 2rem;
     grid-template-columns: max-content 1fr;
-  
-    @include resize(700px){
-      grid-template-columns: 1fr
+
+    @include resize(700px) {
+      grid-template-columns: 1fr;
     }
   }
 }

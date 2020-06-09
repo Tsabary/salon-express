@@ -100,7 +100,7 @@ export const fetchMoreExplore = (
     languages && languages.length
       ? await db
           .collection("rooms")
-          .where("listed", "==", true)
+          .where("private", "==", false)
           .orderBy("last_visit", "desc")
           // .where("language", "in", [...languages, "lir"])
           .startAfter(lastVisible)
@@ -109,7 +109,7 @@ export const fetchMoreExplore = (
           .catch((e) => console.error("promise Error fetch mo ex", e))
       : await db
           .collection("rooms")
-          .where("listed", "==", true)
+          .where("private", "==", false)
           .orderBy("last_visit", "desc")
           .startAfter(lastVisible)
           .limit(90)

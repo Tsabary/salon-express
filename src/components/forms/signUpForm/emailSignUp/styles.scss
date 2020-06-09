@@ -1,0 +1,62 @@
+@import "../../../../styles/imports";
+
+.email-sign-up {
+  &__toggle {
+    position: relative;
+    overflow: hidden;
+    height: 0;
+    transition: all 0.2s;
+    @include toggleConainer;
+
+    &--visible {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    &--hidden {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  &-forgot-checkbox {
+    display: none;
+    &:checked ~ .email-sign-up__toggle--visible {
+      transform: translateX(-110%);
+    }
+
+    &:checked ~ .email-sign-up__toggle--hidden {
+      left: 0;
+    }
+  }
+
+
+  &__email {
+    &-fields {
+      display: grid;
+      gap: 1rem;
+      padding: 0 2rem;
+      @include resize(650px) {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+  }
+
+  
+  &__forgot-password {
+    min-width: 100%;
+    color: $grey;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

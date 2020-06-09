@@ -7,6 +7,7 @@ import "firebase/database";
 import {
   // GLOBAL //
   FETCH_TAGS,
+  FETCH_SKILLS,
   SET_EDITED_ROOM,
   FETCH_UPDATES,
   ADD_UPDATES_NOTIFICATION,
@@ -71,6 +72,28 @@ export const fetchTags = () => async (dispatch) => {
   });
 };
 
+export const fetchSkills = () => async (dispatch) => {
+  const data = await db
+    .collection("skills_count")
+    .get()
+    .catch((e) => console.error("promise Error", e));
+
+  if (!data.docs) return;
+
+  const allSkills = [];
+
+  data.docs.map((doc) => {
+    for (let [key, value] of Object.entries(doc.data())) {
+      allSkills.push({ [key]: value });
+    }
+  });
+
+  dispatch({
+    type: FETCH_SKILLS,
+    payload: allSkills,
+  });
+};
+
 export const signupToNewletter = (values, cb) => async () => {
   db.collection("mailinglists")
     .doc("premium-plans")
@@ -113,10 +136,8 @@ export const fetchSuggestions = () => async (dispatch) => {
   });
 };
 
-
 export const addUserSuggestion = (values, cb) => async () => {
   const docRef = db.collection("user_suggestions").doc();
-
 
   docRef.set({ ...values, id: docRef.id }).then(() => {
     cb();

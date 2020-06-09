@@ -1,7 +1,9 @@
 @import "../../../styles/imports";
 
 .side-menu {
-  position: relative;
+  position: fixed;
+  left: 0;
+  z-index: $z100;
   height: 100%;
   color: rgba(white, 0.7) !important;
 
@@ -17,6 +19,8 @@
 
   &__button {
     cursor: pointer;
+    color: rgba(white, 0.5);
+
     &:hover {
       color: $mainColorLightest;
     }
@@ -46,9 +50,8 @@
     max-width: 100%;
     padding: 2rem;
 
-    @include resize(1000px){
+    @include resize(1000px) {
       padding: 2rem 2rem 8rem 2rem;
-
     }
 
     &-links {
@@ -86,7 +89,7 @@
     background-color: $mainColorDarkest;
     transition: all 0.1s;
 
-    @include resize(600px){
+    @include resize(600px) {
       width: 0;
     }
 
@@ -94,7 +97,6 @@
       height: calc(100vh - 5rem);
       position: absolute;
       right: 100%;
-      display: none;
       display: grid;
       gap: 2rem;
       grid-template-rows: 1fr max-content;
@@ -103,6 +105,13 @@
       overflow-x: hidden;
 
       @include scroll;
+    }
+
+    &-content--minimized {
+      display: grid;
+      gap: 2rem;
+      width: 100%;
+      justify-items: center;
     }
   }
 
@@ -131,6 +140,10 @@
       width: 30rem;
       display: block;
       right: 0;
+    }
+
+    &:checked ~ .side-menu__nav .side-menu__nav-content--minimized {
+      display: none;
     }
 
     &:checked + .side-menu__button .navigation__icon {

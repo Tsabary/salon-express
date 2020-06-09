@@ -1,0 +1,84 @@
+@import "../../../../styles/imports";
+
+.profile-edit-settings-slider {
+  position: fixed;
+  right: 0;
+  margin-top: -2rem;
+  height: 100%;
+
+  z-index: $z100;
+  background-color: white;
+  border-left: 1px solid $grey;
+
+  &__checkbox {
+    display: none;
+
+    &:checked ~ .profile-edit-settings-slider__content {
+      padding: 2rem;
+      width: 40rem;
+      display: grid;
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  &__title{
+    font-size: 2.2rem;
+    font-family: $fontBold;
+  }
+
+  &__subtitle{
+    color: $grey;
+    margin-top: -1rem;
+  }
+
+  &__suggestion {
+    width: max-content;
+    display: inline-block;
+    background-color: $mainColor;
+    color: white;
+    padding: 0 0.5rem;
+    font-size: 1.1rem;
+    border-radius: $borderRadius;
+    cursor: pointer;
+  }
+
+  &__content {
+    padding: 0;
+    width: 0;
+    max-height: calc(100vh - 5rem);
+    transition: all 0.2s;
+    visibility: hidden;
+    opacity: 0;
+    overflow-y: scroll;
+    @include scroll;
+  }
+
+
+
+  // &__fields{
+  //   display: grid;
+  //   gap: 1.5rem;
+  // }
+
+  // &__top {
+  //   display: grid;
+  //   grid-template-columns: 15rem 1fr;
+  //   gap: 2rem;
+  //   align-items: center;
+  //   justify-items: center;
+  //   align-content: center;
+  //   justify-content: center;
+  //   margin-bottom: 3rem;
+  //   @include resize(1100px) {
+  //     grid-template-columns: 1fr;
+  //     text-align: center;
+  //   }
+  // }
+
+  // &__upload {
+  //   visibility: hidden;
+  //   display: none;
+  //   opacity: 0;
+  // }
+}

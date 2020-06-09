@@ -42,9 +42,7 @@
   }
 }
 
-@mixin pagePadding {
-  padding: 2rem 2rem 7rem 2rem;
-}
+
 
 @mixin image {
   object-fit: contain;
@@ -79,6 +77,7 @@
 }
 
 @mixin gridVariation {
+  max-width: 100%;
   display: grid;
   gap: 2rem;
   align-items: center;
@@ -115,4 +114,18 @@
     background-color: $mainColor;
     outline: 1px solid slategrey;
   }
+}
+
+
+@mixin pagePadding {
+  width: calc(100vw - 5rem);
+  // max-width: calc(100vw - 5rem);
+  max-height: calc(100vh - 5rem);
+
+  margin-left: 5rem;
+  padding: 2rem 2rem 8rem 2rem;
+
+  overflow-x: hidden;
+  overflow-y: scroll;
+  @include scroll;
 }

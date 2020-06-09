@@ -3,16 +3,21 @@ import React, { useContext } from "react";
 import HeaderAuth from "./auth";
 import { ReactSVG } from "react-svg";
 import { GlobalContext } from "../../../providers/Global";
+import { useHistory } from "react-router-dom";
+import history from "../../../history";
 
 const MinimalHeader = () => {
+  const myHistory = useHistory(history);
   const { isMenuOpen, setIsMenuOpen } = useContext(GlobalContext);
 
   return (
-    <div className="minimal-header max-max-fr">
-      <div
+    <div className="minimal-header fr-max">
+      {/* <div
         className="clickable"
         onClick={() => {
-          setIsMenuOpen(!isMenuOpen);
+          setIsMenuOpen((val) => {
+            return !val;
+          });
         }}
       >
         <ReactSVG
@@ -22,9 +27,23 @@ const MinimalHeader = () => {
             svg.classList.add("svg-icon--normal");
           }}
         />
+      </div> */}
+      <div
+        className="minimal-header__logo clickable"
+        onClick={() => myHistory.push("/")}
+      >
+        S.
       </div>
-      <div className="minimal-header__logo">S.</div>
-      <div />
+      <div className="max-max">
+      <div className="max-max">
+        <h2>MARKETPLACE</h2>
+        <h2>EVENTS</h2>
+      </div>
+      <div className="max-max-max tiny-margin-right">
+        <h2 onClick={()=> myHistory.push("/blog")}>GUIDES</h2>
+        <h2 onClick={()=> myHistory.push("/pricing")}>PRICING</h2>
+        <h2 onClick={()=> myHistory.push("/contact")}>CONTACT</h2>
+      </div></div>
     </div>
   );
 };

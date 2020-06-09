@@ -60,7 +60,7 @@ const PrivateRooms = ({
   useEffect(() => {
     if (!privateRoomsSearch.length) return;
 
-    index.search(privateRoomsSearch, { listed: false }).then(({ hits }) => {
+    index.search(privateRoomsSearch, { private: true }).then(({ hits }) => {
       setFilteredPrivate(hits.slice(0, 7));
     });
   }, [privateRoomsSearch]);

@@ -3,11 +3,6 @@
 .pricing {
   @include pagePadding;
 
-  max-height: calc(100vh - 5rem);
-
-  overflow-y: scroll;
-  @include scroll;
-
   h1 {
     font-size: 6rem;
     font-family: $fontBold;

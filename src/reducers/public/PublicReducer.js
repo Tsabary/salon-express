@@ -16,7 +16,7 @@ export default (state = [], action) => {
       return [...state, ...action.payload];
 
     case ADD_TO_FAVORITES:
-      if (action.payload.listed) {
+      if (!action.payload.private) {
         return [...state, action.payload];
       } else {
         return state;

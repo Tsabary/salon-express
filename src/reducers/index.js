@@ -2,6 +2,7 @@ import { combineReducers } from "redux";
 
 import PopupReducer from "./global/PopupReducer";
 import TagsReducer from "./global/TagsReducer";
+import SkillsReducer from "./global/SkillsReducer";
 import EditedRoomReducer from "./global/EditedRoomReducer";
 
 import ExploreReducer from "./explore/ExploreReducer";
@@ -33,6 +34,7 @@ export default combineReducers({
   // GLOBAL //
   popupShown: PopupReducer,
   tags: TagsReducer,
+  skills: SkillsReducer,
   questions: QuestionsReducer,
   editedRoom: EditedRoomReducer,
 
@@ -54,7 +56,7 @@ export default combineReducers({
   // MY PUBLIC FLOORS //
   publicFloors: PublicFloorsReducer,
 
-  // MY PRIVATE FLOORS // 
+  // MY PRIVATE FLOORS //
   privateFloors: PrivateFloorsReducer,
 
   // ALL FLOORS //

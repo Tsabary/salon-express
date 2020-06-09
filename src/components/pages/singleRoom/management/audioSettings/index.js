@@ -1,46 +1,52 @@
 import "./styles.scss";
-import React, { useState, useEffect, useContext } from "react";
-import Form from "react-bootstrap/Form";
+import React, { useState, useContext, useEffect } from "react";
+import { connect } from "react-redux";
+
 import { ReactSVG } from "react-svg";
 import ReactTooltip from "react-tooltip";
 import { isMobile } from "react-device-detect";
+
+import { RoomContext } from "../../../../../providers/Room";
 
 import {
   updateRoom,
   addChannel,
   setActiveChannel,
+  addChannelListener,
+  detachChannelListener,
 } from "../../../../../actions/rooms";
 import {
   addChannelFloorRoom,
   setActiveChannelFloorRoom,
 } from "../../../../../actions/floors";
+import { extractUrlId } from "../../../../../utils/externalContent";
 
-import { connect } from "react-redux";
-
-import InputField from "../../../../formComponents/inputField";
 import SingleChannel from "./singleChannel";
+import InputField from "../../../../formComponents/inputField";
 import User from "../../../../otherComponents/user/search";
 import UserSearch from "../../../../otherComponents/userSearch";
-import { trimURL } from "../../../../../utils/forms";
-import { extractUrlId } from "../../../../../utils/websiteTrims";
-import { RoomContext } from "../../../../../providers/Room";
 
 const AudioSettings = ({
   entityID,
   roomIndex,
   floor,
-  currentAudioChannel,
   audioChannels,
   addChannel,
   addChannelFloorRoom,
   setActiveChannel,
   setActiveChannelFloorRoom,
+  addChannelListener,
+  detachChannelListener,
 }) => {
-  const { setGlobalCurrentAudioChannel } = useContext(RoomContext);
+  const {
+    globalCurrentAudioChannel,
+    setGlobalCurrentAudioChannel,
+  } = useContext(RoomContext);
 
   const [newChannel, setNewChannel] = useState(null);
   const [formError, setFormError] = useState(null);
   const [isPlayHovered, setIsPlayHovered] = useState(false);
+  const [isRemoveHovered, setIsRemoveHovered] = useState(false);
 
   const renderChannels = (channels) => {
     return channels.map((channel) => {
@@ -50,7 +56,7 @@ const AudioSettings = ({
           entityID={entityID}
           roomIndex={roomIndex}
           floor={floor}
-          currentAudioChannel={currentAudioChannel}
+          currentAudioChannel={globalCurrentAudioChannel}
           key={channel.id}
         />
       );
@@ -302,6 +308,58 @@ const AudioSettings = ({
             )}
           </div>
           <div className="audio-settings__buttons">
+            {/* Pause button for current */}
+            {globalCurrentAudioChannel && globalCurrentAudioChannel.source ? (
+              <div
+                className="audio-settings__button"
+                data-tip={`externalContentRemove${entityID}`}
+                data-for={`externalContentRemovey${entityID}`}
+                onMouseEnter={() => setIsRemoveHovered(true)}
+                onMouseLeave={() => setIsRemoveHovered(false)}
+                onClick={() => {
+                  !floor
+                    ? setActiveChannel(
+                        { source: "", link: "" },
+                        entityID,
+                        () => {
+                          setGlobalCurrentAudioChannel({
+                            source: "",
+                            link: "",
+                          });
+                        }
+                      )
+                    : setActiveChannelFloorRoom(
+                        { source: "", link: "" },
+                        roomIndex,
+                        floor,
+                        () => {
+                          setGlobalCurrentAudioChannel({
+                            source: "",
+                            link: "",
+                          });
+                        }
+                      );
+                }}
+              >
+                <ReactSVG
+                  src={
+                    isPlayHovered ? "../svgs/pause.svg" : "../svgs/pause.svg"
+                  }
+                  wrapper="div"
+                  beforeInjection={(svg) => {
+                    svg.classList.add("svg-icon--small");
+                  }}
+                />
+                <ReactTooltip id={`externalContentRemove${entityID}`}>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: "Remove current content",
+                    }}
+                  />
+                </ReactTooltip>
+              </div>
+            ) : null}
+
             <div
               className="audio-settings__button"
               data-tip={`externalContentPlay${entityID}`}
@@ -329,6 +387,7 @@ const AudioSettings = ({
                 }
               }}
             >
+              {/* Play button without saving */}
               <ReactSVG
                 src={
                   isPlayHovered ? "../svgs/play-white.svg" : "../svgs/play.svg"
@@ -346,6 +405,8 @@ const AudioSettings = ({
                 />
               </ReactTooltip>
             </div>
+
+            {/* Save button */}
             <button
               type="submit"
               className="audio-settings__button"
@@ -397,4 +458,6 @@ export default connect(mapStateToProps, {
   addChannelFloorRoom,
   setActiveChannel,
   setActiveChannelFloorRoom,
+  addChannelListener,
+  detachChannelListener,
 })(AudioSettings);

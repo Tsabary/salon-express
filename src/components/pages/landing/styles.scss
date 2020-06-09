@@ -1,0 +1,57 @@
+@import "../../../styles/imports";
+
+.landing {
+  @include pagePadding;
+  display: flex;
+
+  &__body {
+    display: grid;
+    gap: 2rem;
+
+    &--top{
+      height: calc(100vh - 9rem);
+      padding: 0 15rem;
+    }
+  }
+  
+  h1 {
+    color: $mainColor;
+    font-size: 3.5rem;
+    line-height: 4.2rem;
+  }
+  h2 {
+    font-family: $font;
+    color: $greyDark;
+    font-size: 1.6rem;
+    line-height: 1.6;
+  }
+
+  img {
+    width: 60rem;
+  }
+
+  &__title {
+    color: $mainColor;
+    font-size: 3.5rem;
+    line-height: 4.2rem;
+  }
+  &__subtitle {
+    font-family: $font;
+    color: $greyDark;
+    line-height: 1.6;
+  }
+
+  &__features{
+    &-title{
+      color: $mainColor;
+      font-family: $fontBold;
+      font-size: 2.2rem;
+    }
+    &-subtitle{
+      margin-top: 1rem;
+      color: $grey;
+      font-family: $font;
+      font-size: 1.6rem;
+    }
+  }
+}

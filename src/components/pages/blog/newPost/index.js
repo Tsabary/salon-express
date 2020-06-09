@@ -8,11 +8,13 @@ import { AuthContext } from "../../../../providers/Auth";
 import { errorMessages } from "../../../../utils/forms";
 
 import { newPost } from "../../../../actions/blog";
+import { fetchTags } from "../../../../actions/global";
+
 import InputField from "../../../formComponents/inputField";
 import RichTextEditor from "../../../formComponents/richTextEditor";
 import Tags from "../../../formComponents/tags";
 
-const NewPost = ({ newPost }) => {
+const NewPost = ({ tags, newPost, fetchTags }) => {
   const myHistory = useHistory(history);
   const { currentUserProfile } = useContext(AuthContext);
   const [values, setValues] = useState({});
@@ -20,6 +22,10 @@ const NewPost = ({ newPost }) => {
 
   const [imageAsFile, setImageAsFile] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
+
+  useEffect(() => {
+    if (!tags.length) fetchTags();
+  }, [tags]);
 
   useEffect(() => {
     if (!currentUserProfile || !currentUserProfile.uid) return;
@@ -146,8 +152,10 @@ const NewPost = ({ newPost }) => {
       />
 
       <Tags
+        tags={tags}
         values={values}
         setValues={setValues}
+        field="tags"
         errorMessages={errorMessages}
         formError={formError}
         setFormError={setFormError}
@@ -171,4 +179,10 @@ const NewPost = ({ newPost }) => {
   );
 };
 
-export default connect(null, { newPost })(NewPost);
+const mapStateToProps = (state) => {
+  return {
+    tags: state.tags,
+  };
+};
+
+export default connect(mapStateToProps, { newPost, fetchTags })(NewPost);

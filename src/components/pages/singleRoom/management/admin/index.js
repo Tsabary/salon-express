@@ -7,15 +7,10 @@ import algoliasearch from "algoliasearch/lite";
 import { AuthContext } from "../../../../../providers/Auth";
 
 import history from "../../../../../history";
-import {
-  keepRoomListed,
-  addAdmin,
-  deleteRoom,
-} from "../../../../../actions/rooms";
+import { addAdmin, deleteRoom } from "../../../../../actions/rooms";
 
 import { fetchStrangerProfile } from "../../../../../actions/profiles";
 
-import ToggleField from "../../../../formComponents/toggleField";
 import User from "../../../../otherComponents/user/search";
 import InputField from "../../../../formComponents/inputField";
 import { RoomContext } from "../../../../../providers/Room";
@@ -26,7 +21,7 @@ const searchClient = algoliasearch(
 );
 const index = searchClient.initIndex("users");
 
-const Admin = ({ room, isOwner, keepRoomListed, addAdmin, deleteRoom }) => {
+const Admin = ({ room, isOwner, addAdmin, deleteRoom }) => {
   const myHistory = useHistory(history);
   const { setGlobalRoom } = useContext(RoomContext);
   const { currentUserProfile } = useContext(AuthContext);
@@ -100,9 +95,7 @@ const Admin = ({ room, isOwner, keepRoomListed, addAdmin, deleteRoom }) => {
   return (room && room.associate) || isOwner ? (
     <div
       className={
-        isOwner
-          ? "management__admin--owner"
-          : "management__admin--visitor"
+        isOwner ? "management__admin--owner" : "management__admin--visitor"
       }
     >
       <div
@@ -114,17 +107,7 @@ const Admin = ({ room, isOwner, keepRoomListed, addAdmin, deleteRoom }) => {
         Admins
       </div>
 
-      {/* {isOwner ? (
-        <>
-          <ToggleField
-            id="singleRoomListed"
-            text="Make Room public"
-            toggleOn={() => keepRoomListed(room, true)}
-            toggleOff={() => keepRoomListed(room, false)}
-            isChecked={room.listed}
-          />
-        </>
-      ) : null} */}
+
       {isOwner ? (
         <div>
           <InputField
@@ -152,13 +135,11 @@ const Admin = ({ room, isOwner, keepRoomListed, addAdmin, deleteRoom }) => {
         <div className="tiny-margin-top">{renderAdmins(room.admins)} </div>
       ) : null}
 
-      {/* <div onClick={()=> deleteRoom(room)}>Delete Room</div> */}
     </div>
   ) : null;
 };
 
 export default connect(null, {
-  keepRoomListed,
   fetchStrangerProfile,
   addAdmin,
   deleteRoom,

@@ -6,6 +6,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { checkUrlAvailability } from "../../../../actions/floors";
+import { fetchTags } from "../../../../actions/global";
 
 import { validateWordsLength } from "../../../../utils/strings";
 import {
@@ -26,7 +27,9 @@ const Basic = ({
   setValues,
   setRooms,
   setChosenPlan,
+  tags,
   checkUrlAvailability,
+  fetchTags,
 }) => {
   const [formError, setFormError] = useState(null);
   const [urlError, setUrlError] = useState(null);
@@ -37,6 +40,10 @@ const Basic = ({
   );
   const [floorOpen, setFloorOpen] = useState(true);
   const [tempUrl, setTempUrl] = useState("");
+
+  useEffect(() => {
+    if (!tags.length) fetchTags();
+  }, [tags]);
 
   useEffect(() => {
     if (floor) {
@@ -51,7 +58,7 @@ const Basic = ({
         image: floor.image,
         rooms: [...Object.values(floor.rooms)],
       });
-      setIsFloorOpen(floor.open.toDate() < new Date())
+      setIsFloorOpen(floor.open.toDate() < new Date());
       // if (floor.open) {
       //   setValues({ ...values, open: floor.open.toDate() });
       //   setIsFloorOpen(floor.open.toDate() < new Date())
@@ -206,8 +213,10 @@ const Basic = ({
         </div>
 
         <Tags
+          tags={tags}
           values={values}
           setValues={setValues}
+          field="tags"
           errorMessages={errorMessages}
           formError={formError}
           setFormError={setFormError}
@@ -217,4 +226,12 @@ const Basic = ({
   );
 };
 
-export default connect(null, { checkUrlAvailability })(Basic);
+const mapStateToProps = (state) => {
+  return {
+    tags: state.tags,
+  };
+};
+
+export default connect(mapStateToProps, { checkUrlAvailability, fetchTags })(
+  Basic
+);

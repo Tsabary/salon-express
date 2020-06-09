@@ -1,1 +1,23 @@
-@import '../../../styles/imports';
+@import "../../../styles/imports";
+
+.sign-up {
+  // background-color: white;
+  // box-shadow: $containerBoxShadow;
+  // border-radius: $borderRadius;
+  // padding: 4rem;
+  // max-width: 30rem;
+
+
+
+
+
+  &-email-checkbox {
+    display: none;
+    &:checked ~ .email-sign-up__toggle {
+      height: max-content;
+    }
+  }
+
+
+
+}

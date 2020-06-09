@@ -38,7 +38,7 @@ const NewRoom = ({ newRoom }) => {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    setValues({ ...values, listed: isNewRoomPublic });
+    setValues({ ...values, private: !isNewRoomPublic });
   }, [isNewRoomPublic]);
 
   useEffect(() => {

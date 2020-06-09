@@ -52,8 +52,6 @@ export const signUp = (
 
 export const logOut = () => async (dispatch) => {
 
-  console.log("loging outtt")
-
   firebase
     .auth()
     .signOut()
@@ -125,13 +123,12 @@ export const passwordReset = (email, setSubmitting) => () => {
 // USER //
 let profileListener;
 export const listenToProfile = (user, setProfile) => () => {
-  console.log("user16", "about to listen")
 
   profileListener = db
     .collection("users")
     .doc(user.uid)
     .onSnapshot((docProfile) => {
-      console.log("user14", docProfile)
+      console.log("user14", docProfile.data())
 
       setProfile(docProfile.data() ? docProfile.data() : null);
     });

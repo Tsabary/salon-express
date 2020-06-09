@@ -200,7 +200,7 @@ const Apply = ({ match, positions, fetchSinglePosition }) => {
               />
 
               <InputField
-                type="text"
+                type="email"
                 placeHolder="Email"
                 value={!!values && values.email}
                 onChange={email => setValues({ ...values, email })}

@@ -3,6 +3,9 @@ import React, { useState, useEffect } from "react";
 import InfoBar from "./infoBar";
 import Calendar from "./calendar";
 import ExtraInfo from "./extraInfo";
+import { connect } from "react-redux";
+
+// import { changeListedKeyToPrivate } from '../../../../actions/dangorous';
 
 const RoomInfo = ({
   room,
@@ -11,6 +14,7 @@ const RoomInfo = ({
   floor,
   isOwner,
   setIsRoomEdited,
+  changeListedKeyToPrivate,
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
@@ -43,14 +47,16 @@ const RoomInfo = ({
 
       {isCalendarVisible ? (
         <Calendar
+          room={room}
           entityID={room.id}
           roomIndex={roomIndex}
           floor={floor}
           isOwner={isOwner}
+          isPrivate={floor ? floor.private : room.private}
         />
       ) : null}
     </div>
   );
 };
 
-export default RoomInfo;
+export default connect(null, {})(RoomInfo);

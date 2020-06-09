@@ -1,11 +1,5 @@
 @import "../../../styles/imports";
 .privacy {
-  width: 100%;
-  min-width: calc(100vw - 5rem);
-  max-height: calc(100vh - 5rem);
-  padding: 2rem 2rem 8rem 2rem;
+  @include pagePadding;
 
-  overflow-x: hidden;
-  overflow-y: scroll;
-  @include scroll;
 }

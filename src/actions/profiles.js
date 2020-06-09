@@ -10,11 +10,11 @@ import { FETCH_STRANGER_PROFILE, SET_CHANNELS } from "./types";
 const db = firebase.firestore();
 const analytics = firebase.analytics();
 
-let channelListener;
+// let channelListener;
 
 export const fetchStrangerProfile = (
   strangerUsername,
-  setCurrentAudioChannel,
+  // setCurrentAudioChannel,
   cb
 ) => async (dispatch) => {
   const data = await db
@@ -39,17 +39,17 @@ export const fetchStrangerProfile = (
     payload: profile.audio_channels ? profile.audio_channels : [],
   });
 
-  channelListener = db
-    .collection("active_channels")
-    .doc(`user-${profile.uid}`)
-    .onSnapshot((docChannel) => {
-      console.log("audio channel action 2", docChannel.data());
+  // channelListener = db
+  //   .collection("active_channels")
+  //   .doc(`user-${profile.uid}`)
+  //   .onSnapshot((docChannel) => {
+  //     console.log("audio channel action 2", docChannel.data());
 
-      setCurrentAudioChannel(docChannel.data() ? docChannel.data() : null);
-      // setGlobalCurrentAudioChannel(
-      //   docChannel.data() ? docChannel.data() : null
-      // );
-    });
+  //     setCurrentAudioChannel(docChannel.data() ? docChannel.data() : null);
+  //     // setGlobalCurrentAudioChannel(
+  //     //   docChannel.data() ? docChannel.data() : null
+  //     // );
+  //   });
 };
 
 export const fetchProfileByUid = (uid, cb) => async () => {
@@ -105,6 +105,6 @@ export const unfollow = (userProfile, hostID, cb) => async () => {
     .catch((e) => console.error("promise Error", e));
 };
 
-// export const createProfileRoom = (uid) => {
-//   db.collection=("profiles")
-// }
+export const changeProfilePrivacy = (uid, isPrivate) => () => {
+  db.collection("users").doc(uid).set({ private: isPrivate }, { merge: true });
+};

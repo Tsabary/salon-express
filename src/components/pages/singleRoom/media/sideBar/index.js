@@ -9,6 +9,7 @@ import CallToAction from "./callToAction";
 
 const SideBar = ({
   currentAudioChannel,
+  profile,
   entityID,
   currentPortal,
   setCurrentPortal,
@@ -44,6 +45,21 @@ const SideBar = ({
     }
   };
 
+  const renderLinks = (links) => {
+    return links.map((link) => {
+      return (
+        <a
+          className="small-button"
+          href={`https://${link.url}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {link.title}
+        </a>
+      );
+    });
+  };
+
   return (
     <div
       className={getClassName(
@@ -69,7 +85,29 @@ const SideBar = ({
         />
       ) : null}
 
-      {!isVideoVisible ||
+      {isVideoVisible && currentAudioChannel ? (
+        <div
+          className={
+            isChatVisible
+              ? "media-sidebar__user section__container"
+              : "media-sidebar__user--lean section__container"
+          }
+        >
+          {profile && profile.links ? (
+            <div>
+              <div className="section__title">Redirects</div>
+              <div className="fr">{renderLinks(profile.links)}</div>
+            </div>
+          ) : currentAudioChannel.user ? (
+            <div>
+              <div className="section__title">Currently Live</div>
+              <UserSocial uid={currentAudioChannel.user.uid} />
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      {/* {!isVideoVisible ||
       !currentAudioChannel ? null : currentAudioChannel.user ? (
         <div
           className={
@@ -84,8 +122,7 @@ const SideBar = ({
       ) : null}
       {currentAudioChannel && currentAudioChannel.source ? (
         <CallToAction />
-      ) : null}
-
+      ) : null} */}
     </div>
   );
 };

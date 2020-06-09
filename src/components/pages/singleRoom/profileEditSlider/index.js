@@ -8,21 +8,23 @@ import { updateProfile } from "../../../../actions/users";
 import InputField from "../../../formComponents/inputField";
 import { validateWordsLength } from "../../../../utils/strings";
 import {
-  instagramTrim,
-  mixCloudTrim,
-  spotifyTrim,
-  beatportTrim,
-} from "../../../../utils/websiteTrims";
+  getPlatformPlaceHolder,
+  allPlatforms,
+  getPlatformCode,
+} from "../../../../utils/externalContent";
 
 const ProfileEditSlider = ({
   profile,
   isProfileEdited,
   setIsProfileEdited,
+  updateProfile,
 }) => {
   const { currentUserProfile, setCurrentUserProfile, currentUser } = useContext(
     AuthContext
   );
   const [values, setValues] = useState({});
+  const [plug, setPlug] = useState("");
+  const [redirect, setRedirect] = useState({});
   const [formError, setFormError] = useState(null);
 
   const [selectedImage, setSelectedImage] = useState(null);
@@ -42,7 +44,7 @@ const ProfileEditSlider = ({
 
   const validateForm = () => {
     switch (true) {
-      case values.instagram && !validator.isURL(values.instagram):
+      case values.instagram:
         setFormError(errorMessages.ig);
         return false;
 
@@ -50,7 +52,7 @@ const ProfileEditSlider = ({
         setFormError(errorMessages.fb);
         return false;
 
-      case values.twitter && !validator.isURL(values.twitter):
+      case values.twitter:
         setFormError(errorMessages.twitter);
         return false;
 
@@ -86,11 +88,6 @@ const ProfileEditSlider = ({
       const newProfile = {};
 
       Object.keys(values).forEach((el) => {
-        console.log(values[el]);
-        console.log(typeof values[el] === "string");
-        console.log(
-          typeof values[el] === "string" && validator.isURL(values[el])
-        );
         newProfile[el] =
           typeof values[el] === "string" &&
           validator.isURL(values[el]) &&
@@ -109,9 +106,79 @@ const ProfileEditSlider = ({
             ...values,
             avatar: selectedImage || currentUserProfile.avatar,
           });
+          setIsProfileEdited(false);
         }
       );
     }
+  };
+
+  const renderSocialInputs = (social) => {
+    return social.map((platform) => {
+      return (
+        <InputField
+          type="text"
+          placeHolder={getPlatformPlaceHolder(platform)}
+          value={values.social[platform]}
+          onChange={(val) => {
+            setValues({
+              ...values,
+              social: { ...values.social, [platform]: val },
+            });
+          }}
+          label={getPlatformPlaceHolder(platform)}
+        />
+      );
+    });
+  };
+
+  const renderSuggestions = (p) => {
+    return allPlatforms
+      .filter((plat) => plat.toLowerCase().startsWith(p.toLowerCase()))
+      .slice(0, 5)
+      .map((plat) => {
+        return (
+          <div
+            className="profile-edit-slider__suggestion"
+            onClick={() => {
+              setValues({
+                ...values,
+                social: { [getPlatformCode(plat)]: "", ...values.social },
+              });
+            }}
+          >
+            {plat}
+          </div>
+        );
+      });
+  };
+
+  const renderLinks = (links) => {
+    return links.map((link) => {
+      return (
+        <div className="fr-max" key={link.url}>
+          <a
+            className="small-button"
+            href={`https://${link.url}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {link.title}
+          </a>
+          <div
+            className="audio-settings__button"
+            onClick={() => {
+              setValues({
+                ...values,
+                links: values.links.filter((l) => l.url !== link.url),
+              });
+              setRedirect({});
+            }}
+          >
+            -
+          </div>
+        </div>
+      );
+    });
   };
 
   return profile ? (
@@ -127,11 +194,9 @@ const ProfileEditSlider = ({
       <form
         className="profile-edit-slider__content"
         onSubmit={(e) => handleSubmit(e)}
+        autoComplete="off"
       >
-        <div
-          className="fr-max small-margin-bottom"
-          style={{ fontSize: "2rem", color: "#ababab" }}
-        >
+        <div className="profile-edit-slider__title fr-max small-margin-bottom">
           <div>Edit Profile</div>
           <div className="clickable" onClick={() => setIsProfileEdited(false)}>
             ✖
@@ -139,34 +204,34 @@ const ProfileEditSlider = ({
         </div>
 
         <div
-          className="update-profile__top"
+          className="profile-edit-slider__top"
           onClick={() => console.log("profile", currentUserProfile)}
         >
-          <span>
-            <label
-              htmlFor="update-profile-image"
-              className="update-profile__image-container"
-            >
-              <img
-                className="update-profile__image-preview clickable"
-                src={
-                  selectedImage ||
-                  (currentUserProfile && currentUserProfile.avatar) ||
-                  "../../imgs/logo.jpeg"
-                }
-                alt="Profile"
-              />
-            </label>
-            <input
-              id="update-profile-image"
-              className="update-profile__upload"
-              type="file"
-              onChange={handleImageAsFile}
+          {/* <span> */}
+          <label
+            htmlFor="profile-edit-slider-image"
+            className="profile-edit-slider__image-container"
+          >
+            <img
+              className="profile-edit-slider__image-preview clickable"
+              src={
+                selectedImage ||
+                (currentUserProfile && currentUserProfile.avatar) ||
+                "../../imgs/logo.jpeg"
+              }
+              alt="Profile"
             />
-          </span>
+          </label>
+          <input
+            id="profile-edit-slider-image"
+            className="profile-edit-slider__upload"
+            type="file"
+            onChange={handleImageAsFile}
+          />
+          {/* </span> */}
         </div>
 
-        <div className="update-profile__fields" className="fr">
+        <div className="profile-edit-slider__fields" className="fr">
           <InputField
             type="text"
             placeHolder="Name"
@@ -208,9 +273,78 @@ const ProfileEditSlider = ({
             required={true}
           />
 
+          <div className="profile-edit-slider__title tiny-margin-top">
+            Redirect Buttons
+          </div>
+          <div className="profile-edit-slider__subtitle">
+            Add buttons with links. When you embed external content, they will
+            appear by the side of the frame.
+          </div>
+
+          {!values.links || values.links.length < 5 ? (
+            <div className="fr-max">
+              <div>
+                <InputField
+                  type="text"
+                  placeHolder="Button text"
+                  value={redirect.title}
+                  onChange={(title) => {
+                    setRedirect({ ...redirect, title });
+                  }}
+                  style={{ border: "1px solid #6f00ff" }}
+                />
+                <InputField
+                  type="text"
+                  placeHolder="Redirect link"
+                  value={redirect.url}
+                  onChange={(url) => {
+                    setRedirect({ ...redirect, url: trimURL(url) });
+                  }}
+                  className="extra-tiny-margin-top"
+                  style={{ border: "1px solid #6f00ff" }}
+                />
+              </div>
+              <div
+                className="audio-settings__button"
+                onClick={() => {
+                  setValues({
+                    ...values,
+                    links: values.links
+                      ? [...values.links, redirect]
+                      : [redirect],
+                  });
+                  setRedirect({});
+                }}
+              >
+                +
+              </div>
+            </div>
+          ) : null}
+
+          {values.links ? renderLinks(values.links) : null}
+
+          <div className="profile-edit-slider__title tiny-margin-top">
+            Your social info
+          </div>
           <InputField
             type="text"
-            placeHolder="Your Instagram page"
+            placeHolder="Add a plug"
+            value={plug}
+            onChange={(p) => {
+              setPlug(p);
+            }}
+            style={{ border: "1px solid #6f00ff" }}
+          />
+
+          {plug ? renderSuggestions(plug) : null}
+
+          {values.social
+            ? renderSocialInputs(Object.keys(values.social))
+            : null}
+
+          {/* <InputField
+            type="text"
+            placeHolder="Your Instagram handle"
             value={values.instagram}
             onChange={(instagram) => {
               setValues({ ...values, instagram: instagramTrim(instagram) });
@@ -290,7 +424,7 @@ const ProfileEditSlider = ({
             onChange={(website) => {
               setValues({ ...values, website });
             }}
-          />
+          /> */}
 
           {/* <InputField
                 type="text"
@@ -348,7 +482,7 @@ const ProfileEditSlider = ({
         ) : null}
 
         <div className="popup__button small-margin-top">
-          <button type="submit" className="boxed-button small-margin-bottom" >
+          <button type="submit" className="boxed-button small-margin-bottom">
             Update
           </button>
         </div>
@@ -357,4 +491,4 @@ const ProfileEditSlider = ({
   ) : null;
 };
 
-export default connect(null, {})(ProfileEditSlider);
+export default connect(null, { updateProfile })(ProfileEditSlider);

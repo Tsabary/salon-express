@@ -37,7 +37,13 @@ service cloud.firestore {
       allow update: if true; 
       allow delete: if request.auth.uid == resource.data.user_ID;
     }
-    
+
+    match /lounge/{entity}{
+      allow read: if true;
+      allow create: if true;
+      allow update: if true; 
+      allow delete: false;
+    }    
 
     match /multiverses/{portal}{
       allow read: if true;
@@ -99,6 +105,17 @@ service cloud.firestore {
   
   
     match /tags_count/{tag}{
+      allow read: if true;
+      allow write, delete: if false;
+    }
+
+    match /skills/{skill}{
+      allow read: if true;
+      allow write, delete: if false;
+    }
+  
+  
+    match /skills_count/{skill}{
       allow read: if true;
       allow write, delete: if false;
     }

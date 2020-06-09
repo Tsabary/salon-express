@@ -48,11 +48,11 @@ const InfoBar = ({
             {globalFloor ? (
               <div className="floating-info__details">
                 <div>{globalFloor.name}</div>·
-                <div>{globalFloor.listed ? " Public Floor" : "Private Floor"}</div>
+                <div>{globalFloor.private ? "Private Floor" : "Public Floor"}</div>
               </div>
             ) : (
               <div className="floating-info__details">
-                <div>{room.listed ? " Public Room" : "Private Room"}</div>·
+                <div>{room.private ? "Private Room" : "Public Room"}</div>·
                 <div>
                   {room.members && room.members.length > 0
                     ? room.members.length

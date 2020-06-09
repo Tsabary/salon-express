@@ -9,7 +9,6 @@ import { useToasts } from "react-toast-notifications";
 
 import { AuthContext } from "../../../providers/Auth";
 import { checkValidity, errorMessages, trimURL } from "../../../utils/forms";
-
 import { validateWordsLength } from "../../../utils/strings";
 import {
   renderLanguageOptions,
@@ -18,16 +17,19 @@ import {
 } from "../../../utils/languages";
 
 import { updateRoom, togglePopup, setEditedRoom } from "../../../actions";
+import { fetchTags } from "../../../actions/global";
 
 import InputField from "../../formComponents/inputField";
 import TextArea from "../../formComponents/textArea";
 import Tags from "../../formComponents/tags";
 
 const EditRoom = ({
+  tags,
   editedRoom,
   updateRoom,
   togglePopup,
   setEditedRoom,
+  fetchTags,
 }) => {
   const { currentUserProfile } = useContext(AuthContext);
   const { addToast } = useToasts();
@@ -46,6 +48,9 @@ const EditRoom = ({
 
   const [originalTags, setOriginalTags] = useState([]);
 
+  useEffect(() => {
+    if (!tags.length) fetchTags();
+  }, [tags]);
 
   useEffect(() => {
     if (!editedRoom.start) return;
@@ -139,7 +144,7 @@ const EditRoom = ({
           onClick={() => {
             togglePopup(false);
             reset();
-            window.location.hash=""
+            window.location.hash = "";
           }}
         >
           Close
@@ -310,8 +315,10 @@ const EditRoom = ({
             </Form.Control>
 
             <Tags
+              tags={tags}
               values={values}
               setValues={setValues}
+              field="tags"
               errorMessages={errorMessages}
               formError={formError}
               setFormError={setFormError}
@@ -352,4 +359,5 @@ export default connect(mapStateToProps, {
   updateRoom,
   togglePopup,
   setEditedRoom,
+  fetchTags,
 })(EditRoom);

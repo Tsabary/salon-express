@@ -27,12 +27,8 @@ export const errorMessages = {
   tips: "Please enter a valid PayPal payment link",
 };
 
-export const checkValidity = (
-  values,
-  setFormError
-) => {
+export const checkValidity = (values, setFormError) => {
   switch (true) {
-
     case !values.title && !values.name:
       setFormError(errorMessages.title);
       return false;
@@ -106,4 +102,81 @@ export const renderMinutes = () => {
       </option>
     );
   });
+};
+
+export const proffesionalCategories = [
+  "Graphics & Design",
+  "Digital Marketing",
+  "Writing & Translation",
+  "Video & Animation",
+  "Music & Audio",
+  "Programming & Tech",
+  "Business",
+  "Lifestyle",
+];
+
+export const renderCategories = (categories) => {
+  return categories.map((cat) => {
+    return (
+      <option className="form-drop" key={cat}>
+        {cat}
+      </option>
+    );
+  });
+};
+
+export const getCategoryCode = (cat) => {
+  switch (cat) {
+    case "Graphics & Design":
+      return "gnd";
+
+    case "Digital Marketing":
+      return "dm";
+
+    case "Writing & Translation":
+      return "wnt";
+
+    case "Video & Animation":
+      return "vna";
+
+    case "Music & Audio":
+      return "mna";
+
+    case "Programming & Tech":
+      return "pnt";
+
+    case "Business":
+      return "bsns";
+
+    case "Lifestyle":
+      return "lfstl";
+  }
+};
+
+export const getCategoryName = (cat) => {
+  switch (cat) {
+    case "gnd":
+      return "Graphics & Design";
+
+    case "dm":
+      return "Digital Marketing";
+
+    case "wnt":
+      return "Writing & Translation";
+
+    case "vna":
+      return "Video & Animation";
+
+    case "mna":
+      return "Music & Audio";
+
+    case "pnt":
+      return "Programming & Tech";
+
+    case "bsns":
+      return "Business";
+
+    case "lfstl":
+      return "Lifestyle";
+  }
 };

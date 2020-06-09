@@ -29,6 +29,11 @@ const MediaContent = ({
   setMicrophonePermissionGranted,
   currentPortalUrl,
 }) => {
+
+  useEffect(() => {
+    console.log("currentAudioChannel content", currentAudioChannel)
+  },[currentAudioChannel])
+
   return (
     <div className="content media__content">
       <input

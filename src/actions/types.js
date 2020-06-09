@@ -1,6 +1,7 @@
 // GLOBAL //
 export const FETCH_QUESTIONS = "FETCH_QUESTIONS";
 export const FETCH_TAGS = "FETCH_TAGS";
+export const FETCH_SKILLS = "FETCH_SKILLS";
 export const TOGGLE_POPUP = "TOGGLE_POPUP";
 export const SET_EDITED_ROOM = "SET_EDITED_ROOM";
 export const FETCH_SUGGESTIONS = "FETCH_SUGGESTIONS";

@@ -2,6 +2,7 @@
 
 .user-options {
   position: relative;
+  z-index: $z100;
 
   &__container-full {
     margin-top: -1rem;

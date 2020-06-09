@@ -1,9 +1,10 @@
 @import "../../../styles/imports";
 
 .contact {
-  width: 100%;
-  min-width: calc(100vw - 5rem);
-  margin-right: auto;
-  margin-left: auto;
-  padding: 2rem;
+  // width: 100%;
+  // min-width: calc(100vw - 5rem);
+  // margin-right: auto;
+  // margin-left: auto;
+  // padding: 2rem;
+  @include pagePadding;
 }

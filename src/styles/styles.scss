@@ -42,11 +42,7 @@ h3 {
   padding: 2rem;
   position: relative;
   display: grid;
-
-  max-height: calc(100vh - 5rem);
-  overflow-y: scroll;
-
-  @include scroll;
+  @include pagePadding;
 
   &__load-more {
     border-radius: $borderRadius;
@@ -404,7 +400,8 @@ h3 {
     padding: 2rem;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: max-content;
+    // height: 100%;
     transition: all 0.15s;
 
     &:hover {
@@ -660,39 +657,85 @@ h3 {
 
 .auth {
   &__button {
-    // height: 6rem;
     width: 100%;
-    display: flex;
-    justify-content: center;
+    height: 5rem;
+    display: grid;
     align-items: center;
-    // font-size: 1.6rem;
+    grid-template-columns: 1fr max-content;
     user-select: none;
     font-family: $font;
 
-    padding: 1.2rem 5rem 1.4rem 5rem;
+    padding: 0.8rem 2.5rem 1rem 2.5rem;
     border-radius: $borderRadius;
-    // box-shadow: 0 0.2rem 1rem rgb(170, 170, 170);
-    border: 1px solid $mainColor;
+    // border: 1px solid $mainColor;
     cursor: pointer;
     transition: all 0.2s;
 
-    &:hover {
-      font-weight: 900;
-    }
+    border: none;
+    outline: none;
+
+    color: white;
+
+    // &:hover {
+    //   font-weight: 900;
+    // }
 
     &--google {
-      background: white;
-      color: red;
+      background: $blueGoogleColor;
     }
 
     &--facebook {
-      background: white;
-      color: $facebookColor;
+      background: $facebookColor;
     }
 
-    &--direct {
+    &--email {
       background: $mainColor;
-      color: white;
+    }
+  }
+
+  &__icon-frame {
+    height: 3rem;
+    width: 3rem;
+    background-color: white;
+    border-radius: 100%;
+    padding: 0.3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__seperator {
+    overflow: hidden;
+    text-align: center;
+
+    &:before,
+    &:after {
+      background-color: #000;
+      content: "";
+      display: inline-block;
+      height: 1px;
+      position: relative;
+      vertical-align: middle;
+      width: 50%;
+    }
+
+    &:before {
+      right: 0.5em;
+      margin-left: -50%;
+    }
+
+    &:after {
+      left: 0.5em;
+      margin-right: -50%;
+    }
+
+    &--clean {
+      background-color: white;
+      padding: 0 10px;
+      z-index: $z10;
+      font-family: $fontBold;
+      border-bottom: none;
     }
   }
 }

@@ -12,17 +12,43 @@ import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import history from "../../../../history";
 
-const SidebarAuth = ({ logOut, createUpdateInRooms, removeUpdateInRooms }) => {
+import {
+  listenToMyLoungeVisitors,
+  detachMyLoungeListener,
+} from "../../../../actions/rooms";
+import { GlobalContext } from "../../../../providers/Global";
+
+const SidebarAuth = ({
+  logOut,
+  listenToMyLoungeVisitors,
+  detachMyLoungeListener,
+}) => {
   const myHistory = useHistory(history);
 
   const { currentUserProfile } = useContext(AuthContext);
+  const { setLoungeRequests, setIsMenuOpen } = useContext(GlobalContext);
+
+  useEffect(() => {
+    if (!currentUserProfile) return;
+
+    listenToMyLoungeVisitors(`user-${currentUserProfile.uid}`, (reqs) => {
+      setLoungeRequests(reqs);
+    });
+
+    return function cleanup() {
+      detachMyLoungeListener();
+    };
+  });
 
   const userProfile = () => {
     return (
       <div className="max-fr">
         <div
           className="user-options__image-container clickable"
-          onClick={() => myHistory.push(`/${currentUserProfile.username}`)}
+          onClick={() => {
+            myHistory.push(`/${currentUserProfile.username}`);
+            setIsMenuOpen(false);
+          }}
         >
           <img
             className="user-options__image"
@@ -43,7 +69,7 @@ const SidebarAuth = ({ logOut, createUpdateInRooms, removeUpdateInRooms }) => {
               : currentUserProfile.email}
           </div>
           <div className="max-max">
-            <div
+            {/* <div
               className="side-menu__button"
               onClick={() => {
                 window.location.hash = "update-profile";
@@ -51,7 +77,7 @@ const SidebarAuth = ({ logOut, createUpdateInRooms, removeUpdateInRooms }) => {
               }}
             >
               Edit
-            </div>
+            </div> */}
             <div className="side-menu__button" onClick={() => logOut()}>
               Logout
             </div>
@@ -77,6 +103,6 @@ const SidebarAuth = ({ logOut, createUpdateInRooms, removeUpdateInRooms }) => {
 
 export default connect(null, {
   logOut,
-  createUpdateInRooms,
-  removeUpdateInRooms,
+  listenToMyLoungeVisitors,
+  detachMyLoungeListener,
 })(SidebarAuth);

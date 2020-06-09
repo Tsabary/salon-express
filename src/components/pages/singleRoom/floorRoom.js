@@ -11,6 +11,7 @@ import Media from "./media";
 import Management from "./management";
 import RoomInfo from "./info";
 import EditSlider from "./editSlider";
+import { RoomContext } from "../../../providers/Room";
 
 const FloorRoom = ({ isOwner, entityID }) => {
   const {
@@ -19,9 +20,9 @@ const FloorRoom = ({ isOwner, entityID }) => {
     setGlobalFloorRoom,
     setGlobalFloorRoomIndex,
   } = useContext(FloorContext);
+  const { setGlobalCurrentAudioChannel } = useContext(RoomContext);
 
   const [roomIndex, setRoomIndex] = useState(null);
-  const [currentAudioChannel, setCurrentAudioChannel] = useState(null);
   const [isRoomEdited, setIsRoomEdited] = useState(false);
 
   useEffect(() => {
@@ -35,7 +36,7 @@ const FloorRoom = ({ isOwner, entityID }) => {
       ) {
         setRoomIndex(i);
         setGlobalFloorRoomIndex(i);
-        setCurrentAudioChannel(globalFloor.rooms[i].active_channel);
+        setGlobalCurrentAudioChannel(globalFloor.rooms[i].active_channel);
       }
     }
   }, [globalFloor, globalFloorRoom]);
@@ -54,15 +55,15 @@ const FloorRoom = ({ isOwner, entityID }) => {
 
       <EditSlider
         room={globalFloorRoom}
+        roomIndex={roomIndex}
         isRoomEdited={isRoomEdited}
         setIsRoomEdited={setIsRoomEdited}
-        floor
+        floor={globalFloor}
       />
 
       <Media
         roomIndex={roomIndex}
         floor={globalFloor}
-        currentAudioChannel={currentAudioChannel}
         entityID={entityID}
         isOwner={isOwner}
       />
@@ -71,12 +72,10 @@ const FloorRoom = ({ isOwner, entityID }) => {
         room={globalFloorRoom}
         roomIndex={roomIndex}
         floor={globalFloor}
-        currentAudioChannel={currentAudioChannel}
         isOwner={isOwner}
       />
 
-      {/** This is the comments tile*/}
-      {globalFloorRoom ? <Comments entityID={entityID} /> : null}
+      {globalFloorRoom ? <Comments entityID={entityID} isOwner={isOwner}/> : null}
     </div>
   );
 };

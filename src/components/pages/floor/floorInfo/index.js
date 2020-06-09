@@ -29,7 +29,7 @@ const FloorInfo = ({ floor, addToFloorMembers, removeFromFloorMembers }) => {
         <FloorLogo />
         <div className="tiny-margin-top">
           <div className="floor-info__details">
-            <div>{floor.listed ? " Public Floor" : "Private Floor"}</div>
+            <div>{floor.private ? "Private Floor" : "Public Floor"}</div>
             <div className="floor-info__seperator" />
             <div>
               {floor.rooms ? Object.keys(floor.rooms).length : "0"} rooms

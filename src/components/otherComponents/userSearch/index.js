@@ -25,7 +25,11 @@ const UserSearch = ({
 
     index.search(userSearch).then(({ hits }) => {
       setUserSuggestions(
-        hits.filter((hit) => !existingUsers.includes(hit.objectID)).slice(0, 7)
+        hits
+          .filter(
+            (hit) => !existingUsers.map((u) => u.uid).includes(hit.objectID) && !!hit.name
+          )
+          .slice(0, 7)
       );
     });
   }, [userSearch]);

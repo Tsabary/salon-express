@@ -1,0 +1,14 @@
+@import "../../../../styles/imports";
+
+.single-request {
+  background-color: white;
+  z-index: $z100;
+  padding: 2rem;
+  box-shadow: $containerBoxShadow;
+  border-radius: $borderRadius;
+
+  &__note {
+    margin-top: 2rem;
+    color: $mainColor;
+  }
+}

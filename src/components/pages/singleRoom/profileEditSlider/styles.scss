@@ -15,11 +15,32 @@
 
     &:checked ~ .profile-edit-slider__content {
       padding: 2rem;
-      width: 30rem;
+      width: 40rem;
       display: grid;
       visibility: visible;
       opacity: 1;
     }
+  }
+
+  &__title{
+    font-size: 2.2rem;
+    font-family: $fontBold;
+  }
+
+  &__subtitle{
+    color: $grey;
+    margin-top: -1rem;
+  }
+
+  &__suggestion {
+    width: max-content;
+    display: inline-block;
+    background-color: $mainColor;
+    color: white;
+    padding: 0 0.5rem;
+    font-size: 1.1rem;
+    border-radius: $borderRadius;
+    cursor: pointer;
   }
 
   &__content {
@@ -34,12 +55,12 @@
   }
 
   &__image {
-    position: relative;
-    width: 8.3rem;
-    justify-self: center;
+    // position: relative;
+    // width: 8rem;
+    // justify-self: center;
     &-preview {
-      width: 8rem;
-      height: 8rem;
+      width: 15rem;
+      height: 15rem;
       object-fit: cover;
 
       border: 3px solid white;
@@ -47,8 +68,9 @@
     }
 
     &-container {
-      width: 8.3rem;
-      height: 8.3rem;
+      width: 15.3rem;
+      height: 15.3rem;
+      margin: auto;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -85,5 +107,48 @@
       left: 0;
       bottom: 0;
     }
+  }
+
+
+  // &__image {
+  //   &-preview {
+  //     object-fit: cover;
+  //     width: 15rem;
+  //     height: 15rem;
+  //   }
+
+  //   &-container {
+  //     border-radius: 100%;
+  //     overflow: hidden;
+  //     width: 15rem;
+  //     height: 15rem;
+  //     border: $mainColor solid 2px;
+  //   }
+  // }
+
+  &__fields{
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  &__top {
+    display: grid;
+    grid-template-columns: 15rem 1fr;
+    gap: 2rem;
+    align-items: center;
+    justify-items: center;
+    align-content: center;
+    justify-content: center;
+    margin-bottom: 3rem;
+    @include resize(1100px) {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+  }
+
+  &__upload {
+    visibility: hidden;
+    display: none;
+    opacity: 0;
   }
 }

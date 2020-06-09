@@ -11,19 +11,16 @@ import { fetchSingleRoom, detachChannelListener } from "../../../actions/rooms";
 
 import Comments from "./comments";
 import Media from "./media";
-import Details from "./details";
 import Management from "./management";
 import EditSlider from "./editSlider";
 import RoomInfo from "./info";
 
 const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
   const { currentUserProfile } = useContext(AuthContext);
-  const { setGlobalCurrentAudioChannel } = useContext(RoomContext);
   const { globalRoom, setGlobalRoom } = useContext(RoomContext);
   const { uniqueId } = useContext(UniqueIdContext);
 
   const [roomId, setRoomId] = useState(null);
-  const [currentAudioChannel, setCurrentAudioChannel] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
   const [isRoomEdited, setIsRoomEdited] = useState(false);
 
@@ -42,17 +39,7 @@ const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
     const id = match.params.id.split("-");
     setRoomId(id[id.length - 1]);
 
-    fetchSingleRoom(
-      id[id.length - 1],
-      // setRoom,
-      setGlobalRoom,
-      setCurrentAudioChannel,
-      setGlobalCurrentAudioChannel
-    );
-
-    return function cleanup() {
-      detachChannelListener();
-    };
+    fetchSingleRoom(id[id.length - 1], setGlobalRoom);
   }, [match.params.id, uniqueId]);
 
   // Our main render
@@ -72,18 +59,16 @@ const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
       />
 
       <Media
-        currentAudioChannel={currentAudioChannel}
         entityID={roomId}
         isOwner={isOwner}
       />
 
       <Management
         entityID={roomId}
-        currentAudioChannel={currentAudioChannel}
         isOwner={isOwner}
       />
 
-      {globalRoom ? <Comments entityID={roomId} /> : null}
+      {globalRoom ? <Comments entityID={roomId} isOwner={isOwner}/> : null}
     </div>
   ) : null;
 };

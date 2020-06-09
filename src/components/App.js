@@ -23,7 +23,7 @@ import FloorRoomHeader from "./staticComponents/header/FloorRoom";
 import Footer from "./staticComponents/footer/main";
 
 import SignUp from "./popups/signUp";
-import UpdateProfile from "./popups/updateProfile";
+// import UpdateProfile from "./popups/updateProfile";
 import NewRoom from "./popups/newRoom";
 import NewFloor from "./popups/newFloor";
 import NewFloorPlan from "./popups/newFloorPlan";
@@ -60,6 +60,8 @@ import Pricing from "./pages/pricing";
 import PremiumPlan from "./popups/premiumPlan";
 import ContentSuggestions from "./popups/contentSuggestions";
 import addSuggestion from "./pages/addSuggestion";
+import Requests from "./otherComponents/requests";
+import Landing from "./pages/landing";
 
 const App = () => {
   const [isFloor, setIsFloor] = useState(
@@ -105,14 +107,15 @@ const App = () => {
                         {/* {!isFloor ? <OnBoarding /> : null} */}
                         <FloorDetails />
                         <SignUp />
-                        <UpdateProfile />
+                        {/* <UpdateProfile /> */}
                         <NewRoom />
                         <NewFloor />
                         <NewFloorPlan />
                         <AudioChannels />
                         <PremiumPlan />
                         <ContentSuggestions />
-                        {!isMobile ? <BottomHelpers /> : null}
+                        <Requests />
+                        {/* {!isMobile ? <BottomHelpers /> : null} */}
 
                         <MinimalHeader />
 
@@ -120,7 +123,7 @@ const App = () => {
                           <SideMenu />
                           <div className="app__content">
                             <Switch>
-                              <Route path="/" exact component={Explore} />
+                              <Route path="/" exact component={Landing} />
                               <Route path="/on/:id" exact component={Search} />
                               <Route
                                 path="/room/:id"

@@ -13,7 +13,7 @@ import {
   instagramTrim,
   spotifyTrim,
   beatportTrim,
-} from "../../../utils/websiteTrims";
+} from "../../../utils/externalContent";
 import { errorMessages, trimURL } from "../../../utils/forms";
 import {
   renderLanguageOptions,

@@ -13,6 +13,7 @@ import { deleteEvent } from "../../../../../../actions/rooms";
 import { deleteEventFloor } from "../../../../../../actions/floors";
 import { renderGoogleLink } from "../../../../../../utils/others";
 import { FloorContext } from "../../../../../../providers/Floor";
+import { titleToUrl } from "../../../../../../utils/strings";
 
 const Event = ({
   event,
@@ -105,7 +106,6 @@ const Event = ({
                 event.title.split(" ").join("%20"),
                 `https://salon.express/room/${event.room_ID}`
               )}
-              // href={google(myEvent)}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -114,6 +114,20 @@ const Event = ({
           </div>
         </div>
       </div>
+      {event.room ? (
+        <>
+          <div className="tiny-margin-top">Hosted by:</div>
+          <a
+            href={`https://salon.express/room/${titleToUrl(event.room.name)}-${
+              event.room.id
+            }`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {event.room.name}
+          </a>
+        </>
+      ) : null}
     </div>
   );
 };

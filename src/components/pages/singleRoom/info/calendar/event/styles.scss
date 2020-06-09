@@ -4,9 +4,13 @@
   min-width: 20rem;
 
   margin: 0 2rem 2rem 2rem;
-  background-color: $bgColor;
+  background-color: $mainColorTransparent2;
   border-radius: $borderRadius;
   padding: 1.5rem;
+
+  a {
+    color: $mainColor;
+  }
 
   &__main {
     display: grid;

@@ -3,10 +3,11 @@ import React, { useState } from "react";
 export const GlobalContext = React.createContext();
 
 export const GlobalProvider = ({ children }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNewRoomPublic, setIsNewRoomPublic] = useState(false);
   const [isNewFloorPublic, setIsNewFloorPublic] = useState(false);
   const [upgradePlan, setUpgradePlan] = useState(null);
+  const [loungeRequests, setLoungeRequests] = useState([]);
 
   return (
     <GlobalContext.Provider
@@ -19,6 +20,8 @@ export const GlobalProvider = ({ children }) => {
         setIsNewFloorPublic,
         upgradePlan,
         setUpgradePlan,
+        loungeRequests,
+        setLoungeRequests,
       }}
     >
       {children}

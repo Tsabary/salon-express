@@ -7,6 +7,8 @@ import { RoomContext } from "../../../../providers/Room";
 
 import { updateRoom, addImageToRoom } from "../../../../actions/rooms";
 import { addImageToFloorRoom } from "../../../../actions/floors";
+import { fetchTags } from "../../../../actions/global";
+
 import { errorMessages } from "../../../../utils/forms";
 
 import InputField from "../../../formComponents/inputField";
@@ -21,9 +23,11 @@ const EditSlider = ({
   floor,
   isRoomEdited,
   setIsRoomEdited,
+  tags,
   addImageToRoom,
   addImageToFloorRoom,
   updateRoom,
+  fetchTags,
 }) => {
   const { setGlobalRoom } = useContext(RoomContext);
   const { setGlobalFloorRoom } = useContext(FloorContext);
@@ -34,6 +38,10 @@ const EditSlider = ({
 
   const [imageError, setImageError] = useState(null);
   const [tagsFormError, setTagsFormError] = useState("");
+
+  useEffect(() => {
+    if (!tags.length) fetchTags();
+  }, [tags]);
 
   useEffect(() => {
     if (!room) {
@@ -175,8 +183,10 @@ const EditSlider = ({
 
         {!floor ? (
           <Tags
+            tags={tags}
             values={values}
             setValues={setValues}
+            field="tags"
             errorMessages={errorMessages}
             formError={tagsFormError}
             setFormError={setTagsFormError}
@@ -201,8 +211,15 @@ const EditSlider = ({
   ) : null;
 };
 
-export default connect(null, {
+const mapStateToProps = (state) => {
+  return {
+    tags: state.tags,
+  };
+};
+
+export default connect(mapStateToProps, {
   addImageToRoom,
   addImageToFloorRoom,
   updateRoom,
+  fetchTags,
 })(EditSlider);

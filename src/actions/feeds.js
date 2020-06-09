@@ -48,7 +48,7 @@ export const fetchFirstExplore = (
     languages && languages.length
       ? await db
           .collection("rooms")
-          .where("listed", "==", true)
+          .where("private", "==", false)
           .orderBy("last_visit", "desc")
           // .where("language", "in", [...languages, "lir"])
           .limit(90)
@@ -56,7 +56,7 @@ export const fetchFirstExplore = (
           .catch((e) => console.error("promise Error fetch ex", e))
       : await db
           .collection("rooms")
-          .where("listed", "==", true)
+          .where("private", "==", false)
           .orderBy("last_visit", "desc")
           .limit(90)
           .get()
@@ -83,7 +83,7 @@ export const fetchMoreExplore = (
     languages && languages.length
       ? await db
           .collection("rooms")
-          .where("listed", "==", true)
+          .where("private", "==", false)
           .orderBy("last_visit", "desc")
           // .where("language", "in", [...languages, "lir"])
           .startAfter(lastVisible)
@@ -92,7 +92,7 @@ export const fetchMoreExplore = (
           .catch((e) => console.error("promise Error fetch mo ex", e))
       : await db
           .collection("rooms")
-          .where("listed", "==", true)
+          .where("private", "==", false)
           .orderBy("last_visit", "desc")
           .startAfter(lastVisible)
           .limit(90)
@@ -219,7 +219,7 @@ export const fetchFirstExploreFloors = (
 ) => async (dispatch) => {
   const data = await db
     .collection("floors")
-    .where("listed", "==", true)
+    .where("private", "==", false)
     .orderBy("last_visit", "desc")
     .limit(90)
     .get()
@@ -247,7 +247,7 @@ export const fetchMoreExploreFloors = (
 ) => async (dispatch) => {
   const data = db
     .collection("floors")
-    .where("listed", "==", true)
+    .where("private", "==", false)
     .orderBy("last_visit", "desc")
     .startAfter(lastVisible)
     .limit(90)
@@ -281,7 +281,7 @@ export const fetchFirstSearched = (
           .collection("rooms")
           // .where("language", "in", [...languages, "lir"])
           .where("tags", "array-contains", tag)
-          .where("listed", "==", true)
+          .where("private", "==", false)
           .orderBy("last_visit", "desc")
           .limit(90)
           .get()
@@ -289,7 +289,7 @@ export const fetchFirstSearched = (
       : await db
           .collection("rooms")
           .where("tags", "array-contains", tag)
-          .where("listed", "==", true)
+          .where("private", "==", false)
           .orderBy("last_visit", "desc")
           .limit(90)
           .get()
@@ -320,7 +320,7 @@ export const fetchMoreSearched = (
           .collection("rooms")
           // .where("language", "in", [...languages, "lir"])
           .where("tags", "array-contains", tag)
-          .where("listed", "==", true)
+          .where("private", "==", false)
           .orderBy("last_visit", "desc")
           .startAfter(lastVisible)
           .limit(90)
@@ -329,7 +329,7 @@ export const fetchMoreSearched = (
       : await db
           .collection("rooms")
           .where("tags", "array-contains", tag)
-          .where("listed", "==", true)
+          .where("private", "==", false)
           .orderBy("last_visit", "desc")
           .startAfter(lastVisible)
           .limit(15)
@@ -357,7 +357,7 @@ export const fetchFirstPrivate = (
   const data = await db
     .collection("rooms")
     .where("members", "array-contains", userID)
-    .where("listed", "==", false)
+    .where("private", "==", true)
     .orderBy("last_visit", "desc")
     .limit(90)
     .get()
@@ -385,7 +385,7 @@ export const fetchMorePrivate = (
   const data = await db
     .collection("rooms")
     .where("members", "array-contains", userID)
-    .where("listed", "==", false)
+    .where("private", "==", true)
     .orderBy("last_visit", "desc")
     .startAfter(lastVisible)
     .limit(90)
@@ -413,7 +413,7 @@ export const fetchFirstPublic = (
   const data = await db
     .collection("rooms")
     .where("members", "array-contains", userID)
-    .where("listed", "==", true)
+    .where("private", "==", false)
     .orderBy("last_visit", "desc")
     .limit(90)
     .get()
@@ -441,7 +441,7 @@ export const fetchMorePublic = (
   const data = await db
     .collection("rooms")
     .where("members", "array-contains", userID)
-    .where("listed", "==", true)
+    .where("private", "==", false)
     .orderBy("last_visit", "desc")
     .startAfter(lastVisible)
     .limit(90)
@@ -470,7 +470,7 @@ export const fetchFirstPublicFloors = (
 ) => async (dispatch) => {
   const data = await db
     .collection("floors")
-    .where("listed", "==", true)
+    .where("private", "==", false)
     .where("members", "array-contains", userID)
     .orderBy("last_visit", "desc")
     .limit(90)
@@ -499,7 +499,7 @@ export const fetchMorePublicFloors = (
 ) => async (dispatch) => {
   const data = db
     .collection("floors")
-    .where("listed", "==", true)
+    .where("private", "==", false)
     .where("members", "array-contains", userID)
     .orderBy("last_visit", "desc")
     .startAfter(lastVisible)
@@ -529,7 +529,7 @@ export const fetchFirstPrivateFloors = (
 ) => async (dispatch) => {
   const data = await db
     .collection("floors")
-    .where("listed", "==", false)
+    .where("private", "==", true)
     .where("members", "array-contains", userID)
     .orderBy("last_visit", "desc")
     .limit(90)
@@ -558,7 +558,7 @@ export const fetchMorePrivateFloors = (
 ) => async (dispatch) => {
   const data = db
     .collection("floors")
-    .where("listed", "==", false)
+    .where("private", "==", true)
     .where("members", "array-contains", userID)
     .orderBy("last_visit", "desc")
     .startAfter(lastVisible)

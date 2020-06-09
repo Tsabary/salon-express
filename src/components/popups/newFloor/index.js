@@ -82,7 +82,7 @@ const NewFloor = ({ floorPlans, newFloor, fetchFloorPlans }) => {
       crew: [currentUserObject],
       crew_ID: [currentUserProfile.uid],
       open: new Date(),
-      listed: true,
+      private: false,
       language: "lir",
       visitors: [],
     });

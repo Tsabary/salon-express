@@ -1,0 +1,86 @@
+@import "../../../../styles/imports";
+
+.lounge {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 2rem;
+
+  // justify-items: stretch;
+  // align-items: stretch;
+
+  // width: 100%;
+  // min-width: calc(100vw - 5rem);
+  // max-height: calc(100vh - 5rem);
+
+  // margin: 0 0 8rem 0;
+  // // padding: 2rem 2rem 8rem 2rem;
+
+  // overflow-x: hidden;
+  // overflow-y: scroll;
+  // @include scroll;
+
+  &__form{
+    height: 100%;
+    grid-column: 1/4;
+  }
+
+  &__chat{
+    height: 100%;
+    grid-column: 4/13;
+
+    &--full{
+      height: 100%;
+      grid-column: 1/13;
+    }
+  }
+
+  @include resize(1000px) {
+    max-height: calc(100vh - 11rem);
+  }
+
+  &__messages {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__msg {
+    width: max-content;
+    max-width: 70%;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+
+    &-time {
+      color: $grey;
+      font-size: 1.2rem;
+    }
+
+    &--me {
+      width: max-content;
+      align-self: flex-end;
+      align-items: flex-end;
+
+      &-container {
+        width: max-content;
+        background-color: $mainColor;
+        color: white;
+        padding: 1rem;
+        border-radius: $borderRadius;
+      }
+    }
+    &--host {
+      width: max-content;
+      align-self: flex-start;
+      align-items: flex-start;
+
+      &-container {
+        width: max-content;
+        background-color: $greyLightest;
+        color: $greyDarkest;
+        padding: 1rem;
+        border-radius: $borderRadius;
+      }
+    }
+  }
+}

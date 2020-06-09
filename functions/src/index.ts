@@ -15,6 +15,8 @@ const floorsIndex = client.initIndex("floors");
 const questionsIndex = client.initIndex("questions");
 const usersIndex = client.initIndex("users");
 const blogPostsIndex = client.initIndex("blog_posts");
+const tagsIndex = client.initIndex("tags_count");
+const skillsIndex = client.initIndex("skills_count");
 
 // USER CREATED //
 
@@ -72,7 +74,7 @@ exports.userCreated = functions.auth.user().onCreate((user) => {
     id: userRoomRef.id,
     language: "lir",
     last_visit: new Date(),
-    listed: false,
+    private: true,
     name: `${userName ? `${userName}'s` : "My"} first Room`,
     tags: ["my-first-room"],
     user_ID: user.uid,
@@ -297,7 +299,7 @@ exports.roomCreated = functions.firestore
           user_ID: room.user_ID,
           visitors_count: room.visitors_count,
           last_visit: room.last_visit,
-          listed: room.listed,
+          private: room.private,
           created_on: room.created_on,
           favorites_count: room.favorites_count,
         })
@@ -398,7 +400,7 @@ exports.roomUpdated = functions.firestore
           user_ID: newRoom.user_ID,
           visitors_count: newRoom.visitors_count,
           last_visit: newRoom.last_visit,
-          listed: newRoom.listed,
+          private: newRoom.private,
           created_on: newRoom.created_on,
           favorites_count: newRoom.favorites_count,
         })
@@ -468,7 +470,7 @@ exports.floorCreated = functions.firestore
         name: floor.name,
         description: floor.description,
         image: floor.image,
-        listed: floor.listed,
+        private: floor.private,
         tags: floor.tags,
       })
     );
@@ -497,7 +499,7 @@ exports.floorUpdated = functions.firestore
         name: floor.name,
         description: floor.description,
         image: floor.image,
-        listed: floor.listed,
+        private: floor.private,
         tags: floor.tags,
       })
     );
@@ -626,6 +628,72 @@ exports.blogPostDeleted = functions.firestore
     if (!bp) return;
 
     promises.push(blogPostsIndex.deleteObject(bp.id));
+
+    return Promise.all(promises);
+  });
+
+// TAG COUNT CREATED //
+
+exports.tagCountCreated = functions.firestore
+  .document("tags_count/{tagsPrefix}")
+  .onCreate((snap, context) => {
+    const tagsPrefix = snap.data();
+    const batch = db.batch();
+    const promises: any = [];
+
+    if (!tagsPrefix) return;
+
+    // promises.push(
+    //   roomsIndex.saveObject({
+    //     objectID: room.id,
+    //     language: room.language,
+    //     tags: room.tags,
+    //     name: room.name,
+    //     image: room.image,
+    //     members: room.members,
+    //     user_ID: room.user_ID,
+    //     visitors_count: room.visitors_count,
+    //     last_visit: room.last_visit,
+    //     private: room.private,
+    //     created_on: room.created_on,
+    //     favorites_count: room.favorites_count,
+    //   })
+    // );
+
+    return Promise.all(promises);
+  });
+
+// TAG COUNT UPDATE //
+
+exports.tagCountUpdated = functions.firestore
+  .document("tags_count/{tagsPrefix}")
+  .onUpdate((change, context) => {
+    const newTagsPrefix = change.after.data();
+    const oldTagsPrefix = change.before.data();
+
+    const batch = db.batch();
+    const promises: any = [];
+
+    if (!newTagsPrefix || !oldTagsPrefix || newTagsPrefix === oldTagsPrefix) return;
+
+
+    // promises.push(
+    //   roomsIndex.saveObject({
+    //     objectID: newRoom.id,
+    //     language: newRoom.language,
+    //     tags: newRoom.tags,
+    //     name: newRoom.name,
+    //     image: newRoom.image,
+    //     members: newRoom.members,
+    //     user_ID: newRoom.user_ID,
+    //     visitors_count: newRoom.visitors_count,
+    //     last_visit: newRoom.last_visit,
+    //     private: newRoom.private,
+    //     created_on: newRoom.created_on,
+    //     favorites_count: newRoom.favorites_count,
+    //   })
+    // );
+    
 
     return Promise.all(promises);
   });

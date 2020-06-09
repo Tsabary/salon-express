@@ -9,7 +9,7 @@ import { fetchRoomComments, newComment } from "../../../../actions/rooms";
 import CommentForm from "../../../forms/commentForm";
 import Comment from "../../../otherComponents/comment";
 
-const Comments = ({ entityID, fetchRoomComments, newComment }) => {
+const Comments = ({ entityID, isOwner, fetchRoomComments, newComment }) => {
   const { currentUserProfile } = useContext(AuthContext);
 
   // This is the array of all the comments
@@ -61,7 +61,13 @@ const Comments = ({ entityID, fetchRoomComments, newComment }) => {
   };
 
   return (
-    <div className="comments single-room__comments section__container">
+    <div
+      className={
+        isOwner
+          ? "comments single-room__comments section__container"
+          : "comments single-room__comments--visitor section__container"
+      }
+    >
       <CommentForm
         comment={comment}
         setComment={setComment}

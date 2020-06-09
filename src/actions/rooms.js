@@ -28,12 +28,7 @@ const storage = firebase.storage();
 
 let channelListener;
 
-export const fetchSingleRoom = (
-  room_ID,
-  setGlobalRoom,
-  setCurrentAudioChannel,
-  setGlobalCurrentAudioChannel
-) => async (dispatch) => {
+export const fetchSingleRoom = (room_ID, setGlobalRoom) => async (dispatch) => {
   const docRoom = await db
     .collection("rooms")
     .doc(room_ID)
@@ -52,16 +47,20 @@ export const fetchSingleRoom = (
         : [],
     });
   }
+};
 
-  console.log("audio channel action 1", room_ID);
-
+export const addChannelListener = (
+  entityID,
+  setGlobalCurrentAudioChannel
+) => () => {
   channelListener = db
     .collection("active_channels")
-    .doc(room_ID)
+    .doc(entityID)
     .onSnapshot((docChannel) => {
-      console.log("audio channel action 2", docChannel.data());
+      // setCurrentAudioChannel(docChannel.data() ? docChannel.data() : null);
 
-      setCurrentAudioChannel(docChannel.data() ? docChannel.data() : null);
+      console.log("currentAudioChannel addChannelListener", docChannel.data())
+
       setGlobalCurrentAudioChannel(
         docChannel.data() ? docChannel.data() : null
       );
@@ -195,7 +194,9 @@ export const addChannel = (channel, entityID, cb) => async (dispatch) => {
   };
 
   db.collection(entityID.startsWith("user-") ? "users" : "rooms")
-    .doc(entityID.startsWith("user-") ? entityID.replace("user-", "") : entityID)
+    .doc(
+      entityID.startsWith("user-") ? entityID.replace("user-", "") : entityID
+    )
     .set(
       {
         audio_channels: firebase.firestore.FieldValue.arrayUnion(channelObj),
@@ -215,8 +216,8 @@ export const addChannel = (channel, entityID, cb) => async (dispatch) => {
 
 // Setting the active audio channel
 export const setActiveChannel = (channel, entityID, cb) => () => {
-  console.log("entityIDddd", channel)
-  console.log("entityIDddd", entityID)
+  console.log("entityIDddd", channel);
+  console.log("entityIDddd", entityID);
   channel
     ? db
         .collection("active_channels")
@@ -241,7 +242,9 @@ export const setActiveChannel = (channel, entityID, cb) => () => {
 
 export const deleteChannel = (channel, entityID, cb) => async (dispatch) => {
   db.collection(entityID.startsWith("user-") ? "users" : "rooms")
-    .doc(entityID.startsWith("user-") ? entityID.replace("user-", "") : entityID)
+    .doc(
+      entityID.startsWith("user-") ? entityID.replace("user-", "") : entityID
+    )
     .set(
       { audio_channels: firebase.firestore.FieldValue.arrayRemove(channel) },
       { merge: true }
@@ -283,7 +286,7 @@ export const keepRoomListed = (room, listed) => async (dispatch) => {
         payload: newRoom,
       });
     })
-    .catch((e) => console.error("promise Error keep listed", e));
+    .catch((e) => console.error("promise Error keep not private", e));
 };
 
 export const addAdmin = (room, admin, cb) => () => {
@@ -297,7 +300,7 @@ export const addAdmin = (room, admin, cb) => () => {
     .then(() => {
       cb(newRoom);
     })
-    .catch((e) => console.error("promise Error keep listed", e));
+    .catch((e) => console.error("promise Error add admin", e));
 };
 
 // ROOM //
@@ -409,7 +412,6 @@ export const fetchRoomComments = (roomID, cb) => async () => {
       .where("room_ID", "==", roomID)
       .orderBy("created_on", "desc")
       .onSnapshot((querySnapshot) => {
-        console.log("querySnapshot", querySnapshot);
         if (!querySnapshot) return;
         var comments = querySnapshot.docs.map((doc) => doc.data());
         cb(comments);
@@ -461,7 +463,8 @@ export const deleteComment = (commentID, cb) => async () => {
 export const fetchEvents = (entityID) => async (dispatch) => {
   const data = await db
     .collection("events")
-    .where("entity_ID", "==", entityID)
+    .where("private", "==", false)
+    .where("entitys_ID", "array-contains", entityID)
     .where("start", ">", new Date())
     .orderBy("start", "desc")
     .limit(10)
@@ -473,9 +476,9 @@ export const fetchEvents = (entityID) => async (dispatch) => {
   });
 };
 
-export const addEvent = (event, entityID, cb) => async (dispatch) => {
+export const addEvent = (event, cb) => async (dispatch) => {
   const eventDoc = db.collection("events").doc();
-  const eventObj = { ...event, entity_ID: entityID, id: eventDoc.id };
+  const eventObj = { ...event, id: eventDoc.id };
 
   eventDoc
     .set(eventObj)
@@ -581,4 +584,111 @@ export const adminsIdToMembers = () => async () => {
 
     await db.collection("rooms").doc(doc.id).set(newRoom);
   });
+};
+
+export const knock = (entityID, userID, values, cb) => () => {
+  db.collection("lounge")
+    .doc(entityID)
+    .set({ [userID]: { ...values, created_on: new Date() } }, { merge: true })
+    .then(() => {
+      cb();
+    });
+};
+
+let loungeListener;
+
+export const listenToLoungeRequest = (
+  entityID,
+  userID,
+  setIsApproved,
+  setIsWaiting,
+  setLoungeMessages
+) => () => {
+  loungeListener = db
+    .collection("lounge")
+    .doc(entityID)
+    .onSnapshot((doc) => {
+      if (!doc) return;
+
+      const lounge = doc.data();
+      if (!lounge[userID]) return;
+
+      const userRequest = lounge[userID];
+      if (!userRequest) return;
+
+      setIsWaiting(!userRequest.approved);
+      setIsApproved(!!userRequest.approved);
+      if (userRequest.messages)
+        setLoungeMessages(userRequest.messages.reverse());
+    });
+};
+
+export const detachLoungeListener = () => () => {
+  if (loungeListener) loungeListener();
+};
+
+let myLoungeListener;
+
+export const listenToMyLoungeVisitors = (entityID, cb) => () => {
+  myLoungeListener = db
+    .collection("lounge")
+    .doc(entityID)
+    .onSnapshot((doc) => {
+      if (!doc) return;
+
+      const lounge = doc.data();
+      if (!lounge) return;
+
+      cb(lounge);
+    });
+};
+export const detachMyLoungeListener = () => () => {
+  if (myLoungeListener) myLoungeListener();
+};
+
+export const messageHost = (
+  entityID,
+  visitorID,
+  authorID,
+  message,
+  cb
+) => () => {
+  db.collection("lounge")
+    .doc(entityID)
+    .set(
+      {
+        [visitorID]: {
+          messages: firebase.firestore.FieldValue.arrayUnion({
+            user_ID: authorID,
+            message,
+            created_on: new Date(),
+          }),
+        },
+      },
+      { merge: true }
+    )
+    .then(() => {
+      cb();
+    });
+};
+
+export const approveVisitor = (entityID, userID) => () => {
+  db.collection("lounge")
+    .doc(entityID)
+    .set(
+      {
+        [userID]: {
+          approved: true,
+        },
+      },
+      { merge: true }
+    );
+};
+
+export const denyVisitor = (entityID, userID) => () => {
+  db.collection("lounge")
+    .doc(entityID)
+    .update({
+      [userID]: firebase.firestore.FieldValue.delete(),
+    });
 };

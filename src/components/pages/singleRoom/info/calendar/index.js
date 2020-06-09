@@ -13,22 +13,50 @@ import { addEventFloor } from "../../../../../actions/floors";
 
 import Event from "./event";
 import InputField from "../../../../formComponents/inputField";
+import UserSearch from "../../../../otherComponents/userSearch";
 import { renderHours, renderMinutes } from "../../../../../utils/forms";
 
 const Calendar = ({
+  room,
   events,
   entityID,
   roomIndex,
   floor,
   isOwner,
+  isPrivate,
   fetchEvents,
   addEvent,
   addEventFloor,
 }) => {
-  const [event, setEvent] = useState({});
+  let basicEvent = {
+    users: [],
+    private: isPrivate,
+    entitys_ID: [entityID],
+  };
+  const [event, setEvent] = useState(basicEvent);
 
   const [hours, setHours] = useState("");
   const [minutes, setMinutes] = useState("");
+
+  useEffect(() => {
+    if (room) {
+      if (floor) {
+        basicEvent.floor = {
+          name: floor.name,
+          id: floor.id,
+        };
+
+        setEvent(basicEvent);
+      } else {
+        basicEvent.room = {
+          name: room.name,
+          id: room.id,
+        };
+
+        setEvent(basicEvent);
+      }
+    }
+  }, [entityID, room]);
 
   useEffect(() => {
     if (!event || (event && !event.start)) return;
@@ -79,7 +107,6 @@ const Calendar = ({
       .sort(dateCompare);
   };
 
-
   const onWheel = (e) => {
     e.preventDefault();
     var container = document.getElementById("eventsScroll");
@@ -92,8 +119,27 @@ const Calendar = ({
     });
   };
 
+  const renderUsers = (users) => {
+    return users.map((user) => {
+      return (
+        <div
+          className="calendar__user"
+          onClick={() =>
+            setEvent({
+              ...event,
+              users: event.users.filter((u) => u.uid !== user.uid),
+              entitys_ID: [...event.entitys_ID, user.uid],
+            })
+          }
+        >
+          {user.name}
+        </div>
+      );
+    });
+  };
+
   return (
-    <div className=" section__container">
+    <div className="section__container">
       <div className="max-max">
         <div className="section__title">Calendar</div>
 
@@ -122,12 +168,12 @@ const Calendar = ({
               e.preventDefault();
               if (event && event.title && event.start)
                 !floor
-                  ? addEvent(event, entityID, () => setEvent({}))
+                  ? addEvent(event, () => setEvent(basicEvent))
                   : addEventFloor(
                       { ...event, id: uuidv4() },
                       roomIndex,
                       floor,
-                      () => setEvent({})
+                      () => setEvent(basicEvent)
                     );
             }}
           >
@@ -146,6 +192,26 @@ const Calendar = ({
                     });
                   }}
                 />
+
+                <UserSearch
+                  className="extra-tiny-margin-top"
+                  placeholder="Tag any users that will a"
+                  existingUsers={event.users}
+                  handleChoose={(user) => {
+                    setEvent({
+                      ...event,
+                      users: [...event.users, user],
+                      entitys_ID: [...event.entitys_ID, `user-${user.uid}`],
+                    });
+                  }}
+                />
+
+                {event.users.length ? (
+                  <div className="extra-tiny-margin-top">
+                    {renderUsers(event.users)}
+                  </div>
+                ) : null}
+
                 <div className="calendar__date">
                   <DatePicker
                     selected={event.start}

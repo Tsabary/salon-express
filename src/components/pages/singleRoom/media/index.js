@@ -13,6 +13,11 @@ import {
   newPortal,
 } from "../../../../actions/portals";
 
+import {
+  addChannelListener,
+  detachChannelListener,
+} from "../../../../actions/rooms";
+
 import { titleToKey } from "../../../../utils/strings";
 
 import SideBar from "./sideBar";
@@ -24,16 +29,18 @@ import { RoomContext } from "../../../../providers/Room";
 
 const Media = ({
   floor,
-  currentAudioChannel,
+  profile,
   entityID,
   listenToMultiverse,
   detachMultiverseListener,
   newPortal,
+  addChannelListener,
+  detachChannelListener,
 }) => {
   // This is a fake unique id based on current timestamp. We use it to identify users that aren't logged in, so we can manage the coun of users in each portal
   const { uniqueId } = useContext(UniqueIdContext);
   const { currentUserProfile } = useContext(AuthContext);
-  const { globalRoom } = useContext(RoomContext);
+  const { globalRoom, globalCurrentAudioChannel, setGlobalCurrentAudioChannel } = useContext(RoomContext);
   const { globalFloorRoom } = useContext(FloorContext);
 
   // This holds the current portal were in (its title)
@@ -66,6 +73,16 @@ const Media = ({
       setCurrentPortal(null);
     }
   }, [globalRoom, globalFloorRoom]);
+
+  useEffect(() => {
+    if (!entityID) return;
+
+    addChannelListener(entityID, setGlobalCurrentAudioChannel);
+
+    return function cleanup() {
+      detachChannelListener();
+    };
+  }, [entityID]);
 
   useEffect(() => {
     setIsFirstLoad(true);
@@ -113,16 +130,17 @@ const Media = ({
   ]);
 
   useEffect(() => {
-    if (currentAudioChannel && currentAudioChannel.source) {
+    if (globalCurrentAudioChannel && globalCurrentAudioChannel.source) {
       setIsVideoVisible(true);
     }
-  }, [currentAudioChannel]);
+  }, [globalCurrentAudioChannel]);
 
   return (
     <div className="media single-room__media">
       <SideBar
-        currentAudioChannel={currentAudioChannel}
+        currentAudioChannel={globalCurrentAudioChannel}
         entityID={entityID}
+        profile={profile}
         currentPortal={currentPortal}
         setCurrentPortal={setCurrentPortal}
         multiverse={multiverse}
@@ -139,9 +157,8 @@ const Media = ({
 
       {!isMobile ? (
         <MediaContent
-          // room={room}
           floor={floor}
-          currentAudioChannel={currentAudioChannel}
+          currentAudioChannel={globalCurrentAudioChannel}
           entityID={entityID}
           currentPortal={currentPortal}
           setCurrentPortal={setCurrentPortal}
@@ -175,6 +192,8 @@ export default connect(null, {
   listenToMultiverse,
   detachMultiverseListener,
   newPortal,
+  addChannelListener,
+  detachChannelListener,
 })(Media);
 
 // {!isMobile ? (

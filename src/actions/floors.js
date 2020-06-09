@@ -138,7 +138,7 @@ export const newFloor = (values, reset) => async (dispatch) => {
 
       reset();
 
-      if (values.listed) {
+      if (!values.private) {
         dispatch({
           type: ADD_PUBLIC_FLOOR,
           payload: floor,
@@ -203,9 +203,10 @@ export const addImageToFloorRoom = (
   image,
   reset
 ) => async () => {
+  
   const batch = db.batch();
   const docRef = db.collection("floors").doc(floor.id);
-  console.log("imguplp", "sarting");
+
   if (!image) return;
 
   const ref = storage.ref(`/images/floor-rooms/${floor.id}/${roomIndex}`);
@@ -683,7 +684,7 @@ export const addToFloorMembers = (currentUserProfile, floor, cb) => async (
         },
       });
 
-      if (floor.listed) {
+      if (!floor.private) {
         dispatch({
           type: ADD_PUBLIC_FLOOR,
           payload: {

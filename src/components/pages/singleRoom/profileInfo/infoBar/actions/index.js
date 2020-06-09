@@ -15,22 +15,23 @@ import { FloorContext } from "../../../../../../providers/Floor";
 
 const InfoBarActions = ({
   profile,
-  setRoom,
   isOwner,
   setIsCalendarVisible,
   setIsInfoVisible,
+  setIsEmbedVisible,
   setIsProfileEdited,
+  setIsSettingsEdited,
   joinAsMember,
   leaveAsMember,
 }) => {
-  const { globalFloorRoom } = useContext(FloorContext);
-  const { currentUserProfile } = useContext(AuthContext);
-
   const [isCalendarHover, setIsCalendarHover] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isInfoHover, setIsInfoHover] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [isEditHover, setIsEditHover] = useState(false);
+  const [isSettingsHover, setIsSettingsHover] = useState(false);
+  const [isEmbedHover, setIsEmbedHover] = useState(false);
+  const [isEmbedOpen, setIsEmbedOpen] = useState(false);
 
   const [shareButton, setShareButton] = useState("Invite friends +");
 
@@ -53,83 +54,116 @@ const InfoBarActions = ({
         <div className="small-button">{shareButton}</div>
       </CopyToClipboard>
 
-      <div className="max-max-max">
-        <div
-          className={
+      {/* <div className="info-bar-actions__buttons"> */}
+      <div
+        className="info-bar-actions__action"
+        onMouseEnter={() => setIsCalendarHover(true)}
+        onMouseLeave={() => setIsCalendarHover(false)}
+        onClick={() => {
+          setIsCalendarVisible((v) => {
+            return !v;
+          });
+          setIsCalendarOpen(!isCalendarOpen);
+        }}
+      >
+        <ReactSVG
+          src={
             isCalendarHover || isCalendarOpen
-              ? "info-bar-actions__action info-bar-actions__action--active"
-              : "info-bar-actions__action"
+              ? "../svgs/calendar_white.svg"
+              : "../svgs/calendar.svg"
           }
-          onMouseEnter={() => setIsCalendarHover(true)}
-          onMouseLeave={() => setIsCalendarHover(false)}
-          onClick={() => {
-            setIsCalendarVisible((v) => {
-              return !v;
-            });
-            setIsCalendarOpen(!isCalendarOpen);
+          wrapper="div"
+          beforeInjection={(svg) => {
+            svg.classList.add("svg-icon--normal");
           }}
-        >
-          <ReactSVG
-            src={
-              isCalendarHover || isCalendarOpen
-                ? "../svgs/calendar_white.svg"
-                : "../svgs/calendar.svg"
-            }
-            wrapper="div"
-            beforeInjection={(svg) => {
-              svg.classList.add("svg-icon--normal");
-            }}
-          />
-        </div>
-
-        <div
-          className={
-            isInfoHover || isInfoOpen
-              ? "info-bar-actions__action info-bar-actions__action--active"
-              : "info-bar-actions__action"
-          }
-          onMouseEnter={() => setIsInfoHover(true)}
-          onMouseLeave={() => setIsInfoHover(false)}
-          onClick={() => {
-            setIsInfoVisible((v) => {
-              return !v;
-            });
-            setIsInfoOpen(!isInfoOpen);
-          }}
-        >
-          <ReactSVG
-            src={
-              isInfoHover || isInfoOpen
-                ? "../svgs/info_white.svg"
-                : "../svgs/info.svg"
-            }
-            wrapper="div"
-            beforeInjection={(svg) => {
-              svg.classList.add("svg-icon--normal");
-            }}
-          />
-        </div>
-        {isOwner ? (
-          <div
-            className={
-              isEditHover
-                ? "info-bar-actions__action info-bar-actions__action--active"
-                : "info-bar-actions__action"
-            }
-            onClick={() => setIsProfileEdited(true)}
-            onMouseEnter={() => setIsEditHover(true)}
-            onMouseLeave={() => setIsEditHover(false)}
-          >
-            <ReactSVG
-              src={isEditHover ? "../svgs/edit_white.svg" : "../svgs/edit.svg"}
-              wrapper="div"
-              beforeInjection={(svg) => {
-                svg.classList.add("svg-icon--normal");
-              }}
-            />
-          </div>
-        ) : null}
+        />
       </div>
+
+      <div
+        className="info-bar-actions__action"
+        onMouseEnter={() => setIsInfoHover(true)}
+        onMouseLeave={() => setIsInfoHover(false)}
+        onClick={() => {
+          setIsInfoVisible((v) => {
+            return !v;
+          });
+          setIsInfoOpen(!isInfoOpen);
+        }}
+      >
+        <ReactSVG
+          src={
+            isInfoHover || isInfoOpen
+              ? "../svgs/info_white.svg"
+              : "../svgs/info.svg"
+          }
+          wrapper="div"
+          beforeInjection={(svg) => {
+            svg.classList.add("svg-icon--normal");
+          }}
+        />
+      </div>
+
+      {isOwner ? (
+        <div
+          className="info-bar-actions__action"
+          onMouseEnter={() => setIsEmbedHover(true)}
+          onMouseLeave={() => setIsEmbedHover(false)}
+          onClick={() => {
+            setIsEmbedVisible((v) => {
+              return !v;
+            });
+            setIsEmbedOpen(!isEmbedOpen);
+          }}
+        >
+          <ReactSVG
+            src={
+              isEmbedHover || isEmbedOpen
+                ? "../svgs/code_white.svg"
+                : "../svgs/code.svg"
+            }
+            wrapper="div"
+            beforeInjection={(svg) => {
+              svg.classList.add("svg-icon--normal");
+            }}
+          />
+        </div>
+      ) : null}
+
+      {isOwner ? (
+        <div
+          className="info-bar-actions__action"
+          onClick={() => setIsProfileEdited(true)}
+          onMouseEnter={() => setIsEditHover(true)}
+          onMouseLeave={() => setIsEditHover(false)}
+        >
+          <ReactSVG
+            src={isEditHover ? "../svgs/edit_white.svg" : "../svgs/edit.svg"}
+            wrapper="div"
+            beforeInjection={(svg) => {
+              svg.classList.add("svg-icon--normal");
+            }}
+          />
+        </div>
+      ) : null}
+
+      {isOwner ? (
+        <div
+          className="info-bar-actions__action"
+          onClick={() => setIsSettingsEdited(true)}
+          onMouseEnter={() => setIsSettingsHover(true)}
+          onMouseLeave={() => setIsSettingsHover(false)}
+        >
+          <ReactSVG
+            src={
+              isSettingsHover ? "../svgs/settings_white.svg" : "../svgs/settings.svg"
+            }
+            wrapper="div"
+            beforeInjection={(svg) => {
+              svg.classList.add("svg-icon--normal");
+            }}
+          />
+        </div>
+      ) : null}
     </div>
   );
 };

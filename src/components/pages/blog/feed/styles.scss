@@ -1,19 +1,22 @@
 @import "../../../../styles/imports";
 
 .blog {
-  padding: 2rem;
-  width: 100%;
-  min-width: calc(100vw - 5rem);
+  // padding: 2rem;
+  // width: 100%;
+  // min-width: calc(100vw - 5rem);
+
+  @include pagePadding;
+
 
   &__posts {
     display: grid;
     gap: 3rem;
-    margin: auto;
-    margin-bottom: 5rem;
+    // margin: auto;
+    // margin-bottom: 5rem;
 
-    max-height: calc(100vh - 5rem);
-    overflow-x: hidden;
-    overflow-y: scroll;
-    @include scroll;
+    // max-height: calc(100vh - 5rem);
+    // overflow-x: hidden;
+    // overflow-y: scroll;
+    // @include scroll;
   }
 }
