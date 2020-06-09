@@ -1,0 +1,8 @@
+@import "../../../../../../styles/imports";
+
+.multiverse-portals {
+  margin-top: 2rem;
+  overflow-y: scroll;
+
+  @include scroll;
+}

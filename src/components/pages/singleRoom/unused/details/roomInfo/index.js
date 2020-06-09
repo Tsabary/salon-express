@@ -7,31 +7,31 @@ import { ReactSVG } from "react-svg";
 
 import firebase from "firebase/app";
 
-import { AuthContext } from "../../../../../providers/Auth";
-import { SearchContext } from "../../../../../providers/Search";
-import { PageContext } from "../../../../../providers/Page";
+import { AuthContext } from "../../../../../../providers/Auth";
+import { SearchContext } from "../../../../../../providers/Search";
+import { PageContext } from "../../../../../../providers/Page";
 
 import {
   joinAsMember,
   leaveAsMember,
   updateRoom,
   addImageToRoom,
-} from "../../../../../actions/rooms";
+} from "../../../../../../actions/rooms";
 
-import { addImageToFloorRoom } from "../../../../../actions/floors";
-import { fetchTags } from "../../../../../actions/global";
+import { addImageToFloorRoom } from "../../../../../../actions/floors";
+import { fetchTags } from "../../../../../../actions/global";
 
-import { getLanguageName } from "../../../../../utils/languages";
+import { getLanguageName } from "../../../../../../utils/languages";
 import {
   capitalizeSentances,
   validateWordsLength,
-} from "../../../../../utils/strings";
-import { errorMessages } from "../../../../../utils/forms";
+} from "../../../../../../utils/strings";
+import { errorMessages } from "../../../../../../utils/forms";
 
-import TextArea from "../../../../formComponents/textArea";
-import InputField from "../../../../formComponents/inputField";
-import Tags from "../../../../formComponents/tags";
-import { RoomContext } from "../../../../../providers/Room";
+import TextArea from "../../../../../formComponents/textArea";
+import InputField from "../../../../../formComponents/inputField";
+import Tags from "../../../../../formComponents/tags";
+import { RoomContext } from "../../../../../../providers/Room";
 
 const RoomInfo = ({
   room,

@@ -2,10 +2,9 @@ import "./styles.scss";
 import React from "react";
 import { isMobile } from "react-device-detect";
 
-import MobileMultiverse from "./mobileMultiverse";
 import Multiverse from "./multiverse";
 import UserSocial from "../../../../otherComponents/userSocial";
-import CallToAction from "./callToAction";
+import SmallScreenMultiverse from "./smallScreenMultiverse";
 
 const SideBar = ({
   currentAudioChannel,
@@ -70,6 +69,7 @@ const SideBar = ({
     >
       {!isMobile && entityID && isChatVisible ? (
         <Multiverse
+          entityID={entityID}
           currentPortal={currentPortal}
           setCurrentPortal={setCurrentPortal}
           multiverse={multiverse}
@@ -77,7 +77,6 @@ const SideBar = ({
           currentAudioChannel={currentAudioChannel}
           microphonePermissionGranted={microphonePermissionGranted}
           cameraPermissionGranted={cameraPermissionGranted}
-          entityID={entityID}
           isFirstLoad={isFirstLoad}
           setIsFirstLoad={setIsFirstLoad}
           isChatVisible={isChatVisible}
@@ -85,7 +84,19 @@ const SideBar = ({
         />
       ) : null}
 
-      {isVideoVisible && currentAudioChannel ? (
+      {/* {!isMobile && entityID && isChatVisible ? (
+        <SmallScreenMultiverse
+          entityID={entityID}
+          currentPortal={currentPortal}
+          setCurrentPortal={setCurrentPortal}
+          multiverse={multiverse}
+          multiverseArray={multiverseArray}
+          microphonePermissionGranted={microphonePermissionGranted}
+          cameraPermissionGranted={cameraPermissionGranted}
+        />
+      ) :null} */}
+
+      {isVideoVisible && currentAudioChannel && currentAudioChannel.source ? (
         <div
           className={
             isChatVisible

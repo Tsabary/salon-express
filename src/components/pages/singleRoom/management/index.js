@@ -3,16 +3,11 @@ import React from "react";
 
 import AudioSettings from "./audioSettings";
 
-const Management = ({
-  entityID,
-  roomIndex,
-  floor,
-  isOwner,
-}) => {
+const Management = ({ profile, entityID, roomIndex, floor, isOwner }) => {
   return (
     <div className="management single-room__management">
       {/** This is the audio settings tile, in case the user is the page's admin*/}
-      {isOwner ? (
+      {isOwner || profile.guest_embed ? (
         <AudioSettings
           entityID={entityID}
           roomIndex={roomIndex}

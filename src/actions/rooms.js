@@ -59,7 +59,7 @@ export const addChannelListener = (
     .onSnapshot((docChannel) => {
       // setCurrentAudioChannel(docChannel.data() ? docChannel.data() : null);
 
-      console.log("currentAudioChannel addChannelListener", docChannel.data())
+      console.log("currentAudioChannel addChannelListener", docChannel.data());
 
       setGlobalCurrentAudioChannel(
         docChannel.data() ? docChannel.data() : null
@@ -189,9 +189,11 @@ export const leaveAsMember = (currentUserProfile, room, cb) => async (
 export const addChannel = (channel, entityID, cb) => async (dispatch) => {
   const channelObj = {
     ...channel,
-    source: channel.source.toLowerCase(),
+    // source: channel.source.toLowerCase(),
     id: uuidv1(),
   };
+
+  console.log("chaaaa", channelObj);
 
   db.collection(entityID.startsWith("user-") ? "users" : "rooms")
     .doc(

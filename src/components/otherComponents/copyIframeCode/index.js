@@ -20,7 +20,12 @@ const CopyIframeCode = ({ profile }) => {
 
   return (
     <div className="fr-max tiny-margin-top">
-      <div className="input-field__input clickable">{iframeCode}</div>
+      <input
+        className="input-field__input clickable"
+        onFocus={(e) => e.target.select()}
+        value={iframeCode}
+        style={{ color: "#ababab" }}
+      />
 
       <CopyToClipboard
         text={iframeCode}
@@ -33,11 +38,7 @@ const CopyIframeCode = ({ profile }) => {
         }}
       >
         <div
-          className={
-            isCopyHover
-              ? "info-bar-actions__action info-bar-actions__action--active"
-              : "info-bar-actions__action"
-          }
+          className="info-bar-actions__action"
           onMouseEnter={() =>
             setIsCopyHover((val) => {
               return !val;
@@ -50,11 +51,7 @@ const CopyIframeCode = ({ profile }) => {
           }
         >
           <ReactSVG
-            src={
-              isCopyHover || isCopyHover
-                ? "../svgs/copy_white.svg"
-                : "../svgs/copy.svg"
-            }
+            src={isCopyHover ? "../svgs/copy_white.svg" : "../svgs/copy.svg"}
             wrapper="div"
             beforeInjection={(svg) => {
               svg.classList.add("svg-icon--normal");

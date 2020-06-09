@@ -4,11 +4,17 @@ const getStringBeforeParams = (str) => {
   return str.split("?")[0];
 };
 
-const getLastStringAfterSlash = (arr) => {
-  if (arr[arr.length - 1].length) {
-    return arr[arr.length - 1];
+const getStringAfterParams = (str) => {
+  return str.split("?")[1];
+};
+
+const getLastStringAfterSlash = (str) => {
+  const split = str.split("/");
+
+  if (split[split.length - 1].length) {
+    return split[split.length - 1];
   } else {
-    return arr[arr.length - 2];
+    return split[split.length - 2];
   }
 };
 
@@ -20,47 +26,93 @@ const getLastTwoStringsAfterSlash = (arr) => {
   }
 };
 
-export const extractUrlId = (id, str) => {
-  switch (id) {
+const extractFirstEqualValue = (str) => {
+  return str.split("=")[1];
+};
+
+export const detactPlatform = (url) => {
+  switch (true) {
+    case url.includes("beatport.com"):
+      return "bp";
+
+    case url.includes("facebook.com"):
+      return "fb";
+
+    case url.includes("instagram.com"):
+      return "ig";
+
+    case url.includes("linkedin.com"):
+      return "li";
+
+    case url.includes("mixcloud.com"):
+      return "mc";
+
+    case url.includes("soundcloud.com"):
+      return "sc";
+
+    case url.includes("spotify.com") && url.includes("artist"):
+      return "spfy-ar";
+
+    case url.includes("spotify.com") && url.includes("user"):
+      return "spfy-us";
+
+    case url.includes("twitter.com"):
+      return "ttr";
+
+    case url.includes("twitch.tv"):
+      return "tw";
+
+    case url.includes("youtube.com"):
+      return "yt";
+
+    default:
+      return "ws";
+  }
+};
+
+export const extractUrlId = (platform, str) => {
+  // console.log("chaaaa", platform);
+
+  switch (platform) {
     case "bp":
-      return getLastTwoStringsAfterSlash(getStringBeforeParams(str).split("/")); // https://www.beatport.com/chart/ + content
+      return getLastTwoStringsAfterSlash(getStringBeforeParams(str)); // https://www.beatport.com/chart/ + content
 
     case "fb":
-      return getLastStringAfterSlash(getStringBeforeParams(str).split("/")); // https://www.facebook.com/ + content
+      return getLastStringAfterSlash(getStringBeforeParams(str)); // https://www.facebook.com/ + content
 
     case "ig":
-      return getLastStringAfterSlash(getStringBeforeParams(str).split("/")); // https://www.instagram.com/ + content
+      return getLastStringAfterSlash(getStringBeforeParams(str)); // https://www.instagram.com/ + content
 
     case "li":
-      return getLastStringAfterSlash(getStringBeforeParams(str).split("/")); // https://www.linkedin.com/in/
+      return getLastStringAfterSlash(getStringBeforeParams(str)); // https://www.linkedin.com/in/
 
     case "mc":
-      return getLastStringAfterSlash(getStringBeforeParams(str).split("/")); // https://www.mixcloud.com/ + content
+      return getLastStringAfterSlash(getStringBeforeParams(str)); // https://www.mixcloud.com/ + content
 
     case "sc":
-      return getLastStringAfterSlash(getStringBeforeParams(str).split("/")); // https://soundcloud.com/
+      return getLastStringAfterSlash(getStringBeforeParams(str)); // https://soundcloud.com/
 
     case "spfy-ar":
-      return getLastStringAfterSlash(getStringBeforeParams(str).split("/")); // https://open.spotify.com/artist/
+      return getLastStringAfterSlash(getStringBeforeParams(str)); // https://open.spotify.com/artist/
 
     case "spfy-us":
-      return getLastStringAfterSlash(getStringBeforeParams(str).split("/")); // https://open.spotify.com/user/
+      return getLastStringAfterSlash(getStringBeforeParams(str)); // https://open.spotify.com/user/
 
     case "ttr":
-      return getLastStringAfterSlash(getStringBeforeParams(str).split("/")); // https://twitter.com/ + content
+      return getLastStringAfterSlash(getStringBeforeParams(str)); // https://twitter.com/ + content
 
     case "tw":
-      return getLastStringAfterSlash(getStringBeforeParams(str).split("/")); // https://twitch.tv/ + content
+      return getLastStringAfterSlash(getStringBeforeParams(str)); // https://twitch.tv/ + content
 
     case "yt":
-      return getLastTwoStringsAfterSlash(getStringBeforeParams(str).split("/")); // https://www.youtube.com/ + content
+      return extractFirstEqualValue(getStringAfterParams(str)); // https://www.youtube.com/ + content
 
     case "ws":
       return trimURL(str);
   }
 };
 
-export const getPlatformPrefix = (id, str) => {
+export const getPlatformPrefix = (id) => {
   switch (id) {
     case "bp":
       return "https://www.beatport.com/chart/";
@@ -96,7 +148,7 @@ export const getPlatformPrefix = (id, str) => {
       return "https://www.youtube.com/";
 
     case "ws":
-      return "https://"
+      return "https://";
   }
 };
 

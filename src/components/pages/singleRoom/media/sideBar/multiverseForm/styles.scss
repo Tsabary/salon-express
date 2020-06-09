@@ -1,0 +1,57 @@
+@import "../../../../../../styles/imports";
+
+.multiverse-form {
+  max-width: 100%;
+  display: grid;
+  gap: 1rem;
+  align-items: center;
+  grid-template-columns: 1fr max-content;
+
+  @include resize(1200px) {
+    grid-template-columns: 1fr;
+  }
+
+  &__input {
+    max-width: 9rem;
+    outline: none;
+    border: none;
+    font-size: 1.2rem;
+    &::-webkit-input-placeholder {
+      color: $grey;
+    }
+    &-container {
+      width: 100%;
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 1rem;
+      align-items: center;
+      background-color: white;
+      box-shadow: 0 0.2rem 2rem rgb(228, 228, 228);
+      border-radius: $borderRadius;
+      padding: 0.3rem 1.7rem;
+    }
+  }
+
+
+  &__emoji {
+    position: relative;
+    z-index: $z90;
+
+    &:hover .multiverse-form__emoji-picker {
+      display: block;
+    }
+
+    &-current {
+      width: 1.3rem;
+      height: 1.3rem;
+    }
+    &-picker {
+      max-width: 20rem;
+      position: absolute;
+      top: 0rem;
+      left: 0rem;
+      z-index: 200000;
+      display: none;
+    }
+  }
+}

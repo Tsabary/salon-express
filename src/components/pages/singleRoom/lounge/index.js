@@ -12,6 +12,7 @@ import LoungeMessage from "../../../otherComponents/loungeMsg";
 
 const Lounge = ({
   profile,
+  isEmbed,
   isWaiting,
   values,
   setValues,
@@ -100,9 +101,19 @@ const Lounge = ({
             className="extra-tiny-margin-top"
           />
 
-          <button type="submit" className="small-button tiny-margin-top">
-            Tap to knock
-          </button>
+          {currentUserProfile || isEmbed ? (
+            <button type="submit" className="small-button tiny-margin-top">
+              Tap to knock
+            </button>
+          ) : (
+            <div
+              type="submit"
+              className="small-button tiny-margin-top"
+              onClick={() => (window.location.hash = "sign-up")}
+            >
+              Tap to knock
+            </div>
+          )}
         </form>
       )}
 

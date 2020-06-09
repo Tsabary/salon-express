@@ -44,7 +44,7 @@ const PublicRoom = ({ match, fetchSingleRoom, detachChannelListener }) => {
 
   // Our main render
   return roomId ? (
-    <div className="single-room">
+    <div className="single-room single-room--insite">
       <RoomInfo
         room={globalRoom}
         setRoom={setGlobalRoom}

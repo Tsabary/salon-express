@@ -36,13 +36,13 @@ const MinimalHeader = () => {
       </div>
       <div className="max-max">
       <div className="max-max">
-        <h2>MARKETPLACE</h2>
-        <h2>EVENTS</h2>
+        <h2>Marketplace</h2>
+        <h2>Events</h2>
       </div>
       <div className="max-max-max tiny-margin-right">
-        <h2 onClick={()=> myHistory.push("/blog")}>GUIDES</h2>
-        <h2 onClick={()=> myHistory.push("/pricing")}>PRICING</h2>
-        <h2 onClick={()=> myHistory.push("/contact")}>CONTACT</h2>
+        <h2 onClick={()=> myHistory.push("/blog")}>Guides</h2>
+        <h2 onClick={()=> myHistory.push("/pricing")}>Pricing</h2>
+        <h2 onClick={()=> myHistory.push("/contact")}>Contact</h2>
       </div></div>
     </div>
   );

@@ -5,13 +5,13 @@ import { connect } from "react-redux";
 import validator from "validator";
 import ReactTooltip from "react-tooltip";
 
-import { AuthContext } from "../../../../../providers/Auth";
-import { updateRoom } from "../../../../../actions/rooms";
-import { updateFloorRoom } from "../../../../../actions/floors";
+import { AuthContext } from "../../../../../../providers/Auth";
+import { updateRoom } from "../../../../../../actions/rooms";
+import { updateFloorRoom } from "../../../../../../actions/floors";
 
-import InputField from "../../../../formComponents/inputField";
-import ToggleField from "../../../../formComponents/toggleField";
-import TextArea from "../../../../formComponents/textArea";
+import InputField from "../../../../../formComponents/inputField";
+import ToggleField from "../../../../../formComponents/toggleField";
+import TextArea from "../../../../../formComponents/textArea";
 
 const Donations = ({
   room,

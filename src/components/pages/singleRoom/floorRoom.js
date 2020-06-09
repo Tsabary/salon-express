@@ -43,7 +43,7 @@ const FloorRoom = ({ isOwner, entityID }) => {
 
   // Our main render
   return (
-    <div className="single-room single-room--floor">
+    <div className="single-room single-room--insite">
       <RoomInfo
         room={globalFloorRoom}
         roomIndex={roomIndex}

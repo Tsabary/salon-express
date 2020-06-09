@@ -19,6 +19,7 @@ import ProfileInfo from "./profileInfo";
 import ProfileEditSlider from "./profileEditSlider";
 import Lounge from "./lounge";
 import ProfileSettingsSlider from "./profileSettingsSlider";
+import EmbedLogin from "./embedLogin";
 
 const ProfileRoom = ({
   match,
@@ -38,6 +39,16 @@ const ProfileRoom = ({
   const [isWaiting, setIsWaiting] = useState(false);
   const [loungeMessages, setLoungeMessages] = useState([]);
   const [values, setValues] = useState();
+
+  const [isEmbed, setIsEmbed] = useState(
+    window.location.href.includes("embed")
+  );
+
+  // useEffect(() => {
+  //   return history.listen(() => {
+  //     setIsEmbed(window.location.href.includes("embed"));
+  //   });
+  // }, [history]);
 
   useEffect(() => {
     if (!profile) return;
@@ -91,7 +102,13 @@ const ProfileRoom = ({
 
   // Our main render
   return !profile ? null : (
-    <div className="single-room">
+    <div
+      className={
+        isEmbed
+          ? "single-room single-room--embed"
+          : "single-room single-room--insite"
+      }
+    >
       {/* We replace this with profile info  */}
       <ProfileInfo
         profile={profile}
@@ -114,6 +131,7 @@ const ProfileRoom = ({
 
       {isApproved || isOwner || !profile.private ? (
         <Media
+          isEmbed={isEmbed}
           profile={profile}
           currentAudioChannel={globalCurrentAudioChannel}
           entityID={`user-${profile.uid}`}
@@ -122,6 +140,7 @@ const ProfileRoom = ({
       ) : (
         <Lounge
           profile={profile}
+          isEmbed={isEmbed}
           isWaiting={isWaiting}
           values={values}
           setValues={setValues}
@@ -131,12 +150,19 @@ const ProfileRoom = ({
       )}
 
       <Management
+        profile={profile}
         entityID={`user-${profile.uid}`}
         currentAudioChannel={globalCurrentAudioChannel}
         isOwner={isOwner}
       />
 
-      <Comments entityID={`user-${profile.uid}`} isOwner={isOwner} />
+      <Comments
+        profile={profile}
+        entityID={`user-${profile.uid}`}
+        isOwner={isOwner}
+      />
+
+      {isEmbed ? <EmbedLogin /> : <EmbedLogin />}
     </div>
   );
 };

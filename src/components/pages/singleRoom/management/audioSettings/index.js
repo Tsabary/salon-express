@@ -19,7 +19,10 @@ import {
   addChannelFloorRoom,
   setActiveChannelFloorRoom,
 } from "../../../../../actions/floors";
-import { extractUrlId } from "../../../../../utils/externalContent";
+import {
+  extractUrlId,
+  detactPlatform,
+} from "../../../../../utils/externalContent";
 
 import SingleChannel from "./singleChannel";
 import InputField from "../../../../formComponents/inputField";
@@ -61,102 +64,6 @@ const AudioSettings = ({
         />
       );
     });
-  };
-
-  const trimYoutubeLink = (string) => {
-    switch (true) {
-      case string.includes("youtube.com/watch?v="):
-        const splt1 = string.split("watch?v=");
-        if (splt1.length > 1) {
-          setFormError(null);
-          return { valid: true, id: splt1[1].split("?")[0] };
-        } else {
-          return { valid: false };
-        }
-
-      case string.includes("youtu.be"):
-        const spltArr = string.split("/");
-        const splt2 = spltArr[spltArr.length - 1];
-
-        setFormError(null);
-        return { valid: true, id: splt2.split("?")[0] };
-
-      default:
-        setFormError(
-          "Something isn't right with this data, pleace copy it and try again"
-        );
-        return { valid: false };
-    }
-  };
-
-  const renderIdInput = (newChannel) => {
-    if (!newChannel || (newChannel && !newChannel.source)) return;
-
-    switch (newChannel.source) {
-      case "Mixlr":
-        return (
-          <InputField
-            type="text"
-            placeHolder="Mixlr ID"
-            value={newChannel && newChannel.link}
-            onChange={(link) => {
-              setNewChannel({ ...newChannel, link });
-            }}
-            isNumber
-          />
-        );
-
-      case "Youtube":
-        return (
-          <InputField
-            type="text"
-            placeHolder="Youtube video URL"
-            value={newChannel && newChannel.link}
-            onChange={(link) => {
-              if (!link) {
-                setNewChannel({
-                  ...newChannel,
-                  link: "",
-                });
-              } else {
-                if (trimYoutubeLink(link).valid)
-                  setNewChannel({
-                    ...newChannel,
-                    link: trimYoutubeLink(link).id,
-                  });
-              }
-            }}
-          />
-        );
-
-      case "Twitch":
-        return (
-          <InputField
-            type="text"
-            placeHolder="Channel ID"
-            value={newChannel && newChannel.link}
-            onChange={(link) => {
-              setNewChannel({ ...newChannel, link });
-            }}
-            // numbersAndLetters
-          />
-        );
-
-      case "Website":
-        return (
-          <InputField
-            type="text"
-            placeHolder="Website URL"
-            value={newChannel && newChannel.link}
-            onChange={(link) => {
-              setNewChannel({ ...newChannel, link });
-            }}
-          />
-        );
-
-      default:
-        return null;
-    }
   };
 
   return (
@@ -217,11 +124,10 @@ const AudioSettings = ({
             // newChannel.source &&
             newChannel.link
           ) {
-            const sourceObj = extractUrlId(newChannel.link);
             const channelObj = {
               ...newChannel,
-              link: sourceObj.link,
-              source: sourceObj.source,
+              link: extractUrlId(detactPlatform(newChannel.link), newChannel.link),
+              source: detactPlatform(newChannel.link),
             };
 
             !floor

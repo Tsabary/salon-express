@@ -17,10 +17,18 @@
     align-items: stretch;
     flex-grow: 1;
 
+    &--embed{
+      height: 100vh;
+      width: 100vw;
+    }
   }
 
   &__content {
     max-height: calc(100vh - 5rem);
+    &--embed{
+      height: 100vh;
+      width: 100vw;
+    }
   }
 
   &__footer {

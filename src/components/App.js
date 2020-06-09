@@ -64,31 +64,13 @@ import Requests from "./otherComponents/requests";
 import Landing from "./pages/landing";
 
 const App = () => {
-  const [isFloor, setIsFloor] = useState(
-    window.location.href.includes("floor") &&
-      !window.location.href.includes("management") &&
-      window.location.href.split("/").length === 5
-  );
-
-  const [isFloorRoom, setIsFloorRoom] = useState(
-    window.location.href.includes("floor") &&
-      !window.location.href.includes("management") &&
-      window.location.href.split("/").length === 6
+  const [isEmbed, setIsEmbed] = useState(
+    window.location.href.includes("embed")
   );
 
   useEffect(() => {
-    return history.listen((location) => {
-      setIsFloor(
-        location.pathname.includes("floor") &&
-          !location.pathname.includes("management") &&
-          location.pathname.split("/").length === 3
-      );
-
-      setIsFloorRoom(
-        location.pathname.includes("floor") &&
-          !location.pathname.includes("management") &&
-          location.pathname.split("/").length === 4
-      );
+    return history.listen(() => {
+      setIsEmbed(window.location.href.includes("embed"));
     });
   }, [history]);
 
@@ -117,11 +99,12 @@ const App = () => {
                         <Requests />
                         {/* {!isMobile ? <BottomHelpers /> : null} */}
 
-                        <MinimalHeader />
+                        {!isEmbed ? <MinimalHeader /> : null}
 
-                        <div className="app__body">
-                          <SideMenu />
-                          <div className="app__content">
+                        <div className={isEmbed ? "app__body--embed": "app__body"}>
+                          {!isEmbed ? <SideMenu /> : null}
+
+                          <div className={isEmbed ? "app__content--embed": "app__content"}>
                             <Switch>
                               <Route path="/" exact component={Landing} />
                               <Route path="/on/:id" exact component={Search} />
@@ -217,20 +200,10 @@ const App = () => {
                               />
 
                               <Route path="/:id" exact component={Stranger} />
+                              <Route path="/embed/:id" exact component={Stranger} />
                             </Switch>
                           </div>
                         </div>
-
-                        {/* {isFloor ? (
-                        <FloorHeader />
-                      ) : isFloorRoom ? (
-                        <FloorRoomHeader />
-                      ) : (
-                        <MainHeader />
-                      )} */}
-                        {/* <div className="app__footer">
-                        <Footer isFloor={isFloor} />
-                      </div> */}
                       </div>
                     </Router>
                   </UniqueIdProvider>
@@ -245,3 +218,31 @@ const App = () => {
 };
 
 export default App;
+
+// const [isFloor, setIsFloor] = useState(
+//   window.location.href.includes("floor") &&
+//     !window.location.href.includes("management") &&
+//     window.location.href.split("/").length === 5
+// );
+
+// const [isFloorRoom, setIsFloorRoom] = useState(
+//   window.location.href.includes("floor") &&
+//     !window.location.href.includes("management") &&
+//     window.location.href.split("/").length === 6
+// );
+
+// useEffect(() => {
+//   return history.listen((location) => {
+//     setIsFloor(
+//       location.pathname.includes("floor") &&
+//         !location.pathname.includes("management") &&
+//         location.pathname.split("/").length === 3
+//     );
+
+//     setIsFloorRoom(
+//       location.pathname.includes("floor") &&
+//         !location.pathname.includes("management") &&
+//         location.pathname.split("/").length === 4
+//     );
+//   });
+// }, [history]);

@@ -42,8 +42,6 @@
   }
 }
 
-
-
 @mixin image {
   object-fit: contain;
   width: 100%;
@@ -116,11 +114,9 @@
   }
 }
 
-
 @mixin pagePadding {
   width: calc(100vw - 5rem);
-  // max-width: calc(100vw - 5rem);
-  max-height: calc(100vh - 5rem);
+  height: calc(100vh - 5rem);
 
   margin-left: 5rem;
   padding: 2rem 2rem 8rem 2rem;
@@ -128,4 +124,26 @@
   overflow-x: hidden;
   overflow-y: scroll;
   @include scroll;
+
+  &:after{
+    content: "";
+    display: block;
+    margin-bottom: 12rem;
+  }
+}
+
+@mixin pagePaddingEmbed {
+  width: calc(100vw);
+  height: calc(100vh);
+
+  padding: 2rem 2rem 8rem 2rem;
+
+  overflow-x: hidden;
+  overflow-y: scroll;
+  @include scroll;
+  &:after{
+    content: "";
+    display: block;
+    margin-bottom: 12rem;
+  }
 }

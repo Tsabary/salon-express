@@ -1,18 +1,42 @@
-import React from 'react';
+import React from "react";
 
 export const getIframeUrl = (audioChannel) => {
   switch (audioChannel.source) {
-    case "youtube":
-      return `https://www.youtube.com/embed/${audioChannel.link}?autoplay=true`;
+    case "bp":
+      return "https://www.beatport.com/chart/";
 
-    case "twitch":
-      return `https://player.twitch.tv/?channel=${audioChannel.link}`;
+    case "fb":
+      return "https://www.facebook.com/";
 
-    case "mixcloud":
+    case "ig":
+      return "https://www.instagram.com/";
+
+    case "li":
+      return "https://www.linkedin.com/in/";
+
+    case "mc":
       return `https://www.mixcloud.com/widget/iframe/?hide_cover=1&feed=%2F${audioChannel.link}`;
 
-    case "mixlr":
+    case "mxlr":
       return `https://mixlr.com/users/${audioChannel.link}/embed?autoplay=true`;
+
+    case "sc":
+      return "https://soundcloud.com/";
+
+    case "spfy-ar":
+      return "https://open.spotify.com/artist/";
+
+    case "spfy-us":
+      return "https://open.spotify.com/user/";
+
+    case "ttr":
+      return "https://twitter.com/";
+
+    case "tw":
+      return `https://player.twitch.tv/?channel=${audioChannel.link}`;
+
+    case "yt":
+      return `https://www.youtube.com/embed/${audioChannel.link}?autoplay=true`;
 
     default:
       return `https://${audioChannel.link}`;
@@ -38,7 +62,12 @@ export const getIframeHeight = (audioChannel) => {
   }
 };
 
-export const renderControllers = (isChatVisible, setIsChatVisible, isVideoVisible, setIsVideoVisible) => {
+export const renderControllers = (
+  isChatVisible,
+  setIsChatVisible,
+  isVideoVisible,
+  setIsVideoVisible
+) => {
   return (
     <div className="content__buttons">
       {isChatVisible ? (

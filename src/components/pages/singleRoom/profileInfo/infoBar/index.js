@@ -33,7 +33,7 @@ console.log("setIsSettingsEdited", setIsSettingsEdited)
             alt="Room"
           />
           <div>
-            <div className="floating-info__name">{profile.name}</div>
+            <div className="floating-info__name">{profile.name}'s Studio</div>
             <Social data={profile.social} classname="tiny-margin-top" />
 
             {isOwner ? (

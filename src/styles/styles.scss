@@ -424,6 +424,20 @@ h3 {
     margin: auto;
   }
 
+  &--80 {
+    height: 80px;
+    width: 80px;
+    text-align: center;
+    margin: auto;
+  }
+
+  &--60 {
+    height: 60px;
+    width: 60px;
+    text-align: center;
+    margin: auto;
+  }
+
   &--big {
     height: 20px;
     width: 20px;
@@ -484,6 +498,18 @@ h3 {
 .rtl {
   direction: rtl;
 }
+
+.main-color{
+  color: $mainColor;
+}
+
+.hover-up {
+  transition: all 0.15s;
+  &:hover {
+    transform: translateY(-0.15rem);
+  }
+}
+
 
 .modal-window {
   position: relative;
@@ -828,110 +854,6 @@ h3 {
   grid-template-columns: max-content 1fr max-content;
 }
 
-.big-numbered-list {
-  font-family: $font;
-  font-size: 1.6rem;
-  color: $grey;
-  line-height: 2.8rem;
-  border-color: $mainColor !important;
-  margin-top: 4rem;
-  padding: 3rem;
-  counter-increment: section;
-  position: relative;
-  z-index: 5;
-}
-
-.big-numbered-list::before {
-  content: counter(section);
-  position: absolute;
-  text-align: center;
-  height: 2rem;
-  width: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  color: $mainColorTransparent;
-  font-size: 12rem;
-  font-family: $fontBold, $fontHebrew;
-  font-weight: 900;
-  z-index: -5;
-}
-
-.caged-list {
-  font-family: $font;
-  font-size: 1.6rem;
-  color: $grey;
-  line-height: 2.8rem;
-  border-top: 2px dashed;
-  border-color: $mainColor !important;
-  margin: 0;
-  padding: 3rem;
-  counter-increment: section;
-  position: relative;
-}
-
-.caged-list:nth-child(even):before {
-  content: counter(section);
-  right: 100%;
-  margin-right: -2rem;
-  position: absolute;
-  border-radius: 50%;
-  padding: 1rem;
-  height: 2rem;
-  width: 2rem;
-  background: $gradientColor;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  color: white;
-  font-size: 110%;
-}
-
-.caged-list:nth-child(odd):before {
-  content: counter(section);
-  left: 100%;
-  margin-left: -2rem;
-  position: absolute;
-  border-radius: 50%;
-  padding: 1rem;
-  height: 2rem;
-  width: 2rem;
-  background: $gradientColor;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 110%;
-}
-
-.caged-list:nth-child(even) {
-  border-left: 2px dashed;
-  border-top-left-radius: 3rem;
-  border-bottom-left-radius: 3rem;
-  margin-right: 3rem;
-  padding-right: 0;
-}
-
-.caged-list:nth-child(odd) {
-  border-right: 2px dashed;
-  border-top-right-radius: 3rem;
-  border-bottom-right-radius: 3rem;
-  margin-left: 3rem;
-  padding-left: 0;
-}
-
-.caged-list:first-child {
-  border-top: 0;
-  border-top-right-radius: 0;
-  border-top-left-radius: 0;
-}
-
-.caged-list:last-child {
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-}
 
 .tiny-margin-right {
   margin-right: 2rem;
@@ -991,4 +913,25 @@ h3 {
 
 .big-margin-top {
   margin-top: 16rem;
+}
+
+
+.extra-tiny-margin-left {
+  margin-left: 1rem;
+}
+
+.tiny-margin-left {
+  margin-left: 2rem;
+}
+
+.small-margin-left {
+  margin-left: 4rem;
+}
+
+.medium-margin-left {
+  margin-left: 8rem;
+}
+
+.big-margin-left {
+  margin-left: 16rem;
 }

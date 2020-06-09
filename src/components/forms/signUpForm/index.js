@@ -78,7 +78,7 @@ const SignUpForm = ({ providerSignIn }) => {
             </div>
 
             <div className="auth__button auth__button--email extra-tiny-margin-top hover-up">
-              <label htmlFor="sign-up-email-checkbox" className="clickable">
+              <label htmlFor="sign-up-email-checkbox" className="clickable" style={{marginTop:".5rem"}}>
                 Sign up with Email
               </label>
               <div className="auth__icon-frame">

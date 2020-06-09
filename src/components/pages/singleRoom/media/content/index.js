@@ -5,7 +5,6 @@ import { isMobile } from "react-device-detect";
 
 import Notice from "./notice";
 
-import Mixlr from "../../unused/mixlr";
 import IFrame from "./iframe";
 import Chat from "./chat";
 import {

@@ -1,18 +1,10 @@
 import "./styles.scss";
-import React, { useState, useEffect, useContext } from "react";
-import { connect } from "react-redux";
-import "emoji-mart/css/emoji-mart.css";
-import { Emoji, Picker } from "emoji-mart";
+import React, { useEffect } from "react";
+
 import ReactTooltip from "react-tooltip";
-import AutosizeInput from "react-input-autosize";
 
-import { AuthContext } from "../../../../../../providers/Auth";
-
-import { titleToKey } from "../../../../../../utils/strings";
-import { newPortal } from "../../../../../../actions/portals";
-
-import Portal from "./portal";
-import InputField from "../../../../../formComponents/inputField";
+import MultiverseForm from "../multiverseForm";
+import MultiversePortals from "../multiversePortals";
 
 const Multiverse = ({
   entityID,
@@ -22,22 +14,11 @@ const Multiverse = ({
   multiverseArray,
   microphonePermissionGranted,
   cameraPermissionGranted,
-  newPortal,
   isFirstLoad,
   setIsFirstLoad,
   isChatVisible,
   isVideoVisible,
 }) => {
-  const { currentUserProfile } = useContext(AuthContext);
-
-  const [newPortalValues, setNewPortalValues] = useState({});
-
-  // This holdes the portal error if any (currently only one is "a portal with a similar name exists")
-  const [portalError, setPortalError] = useState(null);
-
-  // We use this to filter portals by user text search
-  const [query, setQuery] = useState("");
-
   // If it's not the first load or if we don't have anything in the multiverse array then return, because we either don't need to automatically pick the portal (not the first load) or there is no portal to choose
   useEffect(() => {
     if (!isFirstLoad || !multiverseArray || !multiverseArray.length) return;
@@ -49,51 +30,16 @@ const Multiverse = ({
     }
   }, [multiverseArray]);
 
-  useEffect(() => {
-    if (!currentUserProfile) return;
-    setNewPortalValues({ ...newPortalValues, user_ID: currentUserProfile.uid });
-  }, [currentUserProfile]);
-
-  // Render the portals to the page
-  const renderPortals = (multiverse, query) => {
-    return multiverse
-      .filter(
-        (el) =>
-          el.title && el.title.toLowerCase().startsWith(query.toLowerCase())
-      )
-      .map((portal) => {
-        return (
-          <Portal
-            portal={portal}
-            currentPortal={currentPortal}
-            setCurrentPortal={setCurrentPortal}
-            entityID={entityID}
-            microphonePermissionGranted={microphonePermissionGranted}
-            cameraPermissionGranted={cameraPermissionGranted}
-            key={titleToKey(portal.title)}
-          />
-        );
-      });
-  };
-
-  const addEmoji = (emo) => {
-    setNewPortalValues({ ...newPortalValues, totem: emo });
-  };
-
   return (
     <div
-    // className={
-    //   isChatVisible && isVideoVisible
-    //     ? " media-sidebar__multiverse section__container "
-    //     : " media-sidebar__multiverse--lean section__container "
-    // }
-    className={
-      isChatVisible && isVideoVisible
-        ? "multiverse media-sidebar__multiverse section__container "
-        : "multiverse media-sidebar__multiverse--lean section__container "
-    }
+      className={
+        isChatVisible && isVideoVisible
+          ? "multiverse media-sidebar__multiverse section__container "
+          : "multiverse media-sidebar__multiverse--lean section__container "
+      }
+      style={{ height: "100%" }}
     >
-     <div className="max-max">
+      <div className="max-max">
         <div className="section__title">The Multiverse</div>
 
         <>
@@ -110,146 +56,29 @@ const Multiverse = ({
               }}
             />
           </ReactTooltip>
-        </> 
+        </>
       </div>
 
-       <form
-        className="multiverse__form"
-        autoComplete="off"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (
-            !currentUserProfile ||
-            (newPortalValues && !newPortalValues.title) ||
-            !newPortalValues.title.length
-          )
-            return;
-
-          if (
-            multiverse.hasOwnProperty(
-              newPortalValues.title.trim().split(" ").join("").toLowerCase()
-            )
-          ) {
-            setPortalError("A portal with that name already exists");
-            return;
-          }
-
-          newPortal(
-            newPortalValues,
-            currentPortal.new,
-            entityID,
-            currentUserProfile.uid,
-            (portalObj) => {
-              setNewPortalValues({});
-              setCurrentPortal((val) => {
-                return { new: portalObj, old: val.new };
-              });
-              setPortalError(null);
-            }
-          );
-        }}
-      >
-        <div className="fr-max">
-          <div className="multiverse__form-input-container">
-            <div className="multiverse__emoji">
-              {newPortalValues && newPortalValues.totem ? (
-                <div className="extra-tiny-margin-top">
-                  <Emoji emoji={newPortalValues.totem} size={16} />
-                </div>
-              ) : (
-                <img
-                  className="multiverse__emoji--current"
-                  src="../../../imgs/emoji.png"
-                />
-              )}
-
-              <div className="multiverse__emoji--picker">
-                <Picker
-                  set="apple"
-                  onSelect={addEmoji}
-                  title="Pick your emoji…"
-                  emoji="point_up"
-                  i18n={{
-                    search: "Search",
-                    categories: {
-                      search: "Search Results",
-                      recent: "Recents",
-                    },
-                  }}
-                />
-              </div>
-            </div>
-
-            <input
-              className="multiverse__form-input"
-              style={{ border: "none", outline: "none" }}
-              id="Open a portal"
-              type="text"
-              placeholder="Open a portal"
-              value={newPortalValues.title || ""}
-              onChange={(e) => {
-                if (e.target.value.length < 30)
-                  setNewPortalValues({
-                    ...newPortalValues,
-                    title: e.target.value
-                      .replace(/^([^-]*-)|-/g, "$1")
-                      .replace(/[^\p{L}\s\d-]+/gu, ""),
-                  });
-              }}
-            />
-          </div>
-          <div
-            className="info extra-tiny-margin-top"
-            data-tip="portalInfo"
-            data-for="portalInfo"
-          />
-          <ReactTooltip place="bottom" id="portalInfo">
-            <div
-              dangerouslySetInnerHTML={{
-                __html:
-                  'A "Portal" is a video chat. Every Portal you open is a seperate video chat to all the others.',
-              }}
-            />
-          </ReactTooltip>
-        </div>
-
-        {currentUserProfile ? (
-          <button type="submit" className="small-button">
-            Open
-          </button>
-        ) : (
-          <div
-            className="small-button"
-            onClick={() => (window.location.hash = "sign-up")}
-          >
-            Open
-          </div>
-        )}
-      </form>
-
-      {portalError ? (
-        <div className="form-error tiny-margin-top">{portalError}</div>
-      ) : null}
-
-      <div className="extra-tiny-margin-top">
-        <InputField
-          type="text"
-          placeHolder="Find a portal"
-          value={query}
-          onChange={setQuery}
-        />
-      </div>
-
-      <div className="multiverse__channels">
-        {multiverseArray ? renderPortals(multiverseArray, query) : null}
-      </div>
+      <MultiverseForm
+        entityID={entityID}
+        multiverse={multiverse}
+        currentPortal={currentPortal}
+        setCurrentPortal={setCurrentPortal}
+      />
+      <div className="extra-tiny-margin-top" />
+      <MultiversePortals
+        entityID={entityID}
+        currentPortal={currentPortal}
+        setCurrentPortal={setCurrentPortal}
+        multiverseArray={multiverseArray}
+        microphonePermissionGranted={microphonePermissionGranted}
+        cameraPermissionGranted={cameraPermissionGranted}
+      />
     </div>
   );
 };
 
-export default connect(null, {
-  newPortal,
-})(Multiverse);
+export default Multiverse;
 
 // // This is our cleanup event for when the comonent unloads ( remove the user from the portal)
 // useEffect(() => {

@@ -26,6 +26,7 @@ import Notice from "./content/notice";
 import MobileMultiverse from "./sideBar/mobileMultiverse";
 import { FloorContext } from "../../../../providers/Floor";
 import { RoomContext } from "../../../../providers/Room";
+import SmallScreenMultiverse from "./sideBar/smallScreenMultiverse";
 
 const Media = ({
   floor,
@@ -40,7 +41,11 @@ const Media = ({
   // This is a fake unique id based on current timestamp. We use it to identify users that aren't logged in, so we can manage the coun of users in each portal
   const { uniqueId } = useContext(UniqueIdContext);
   const { currentUserProfile } = useContext(AuthContext);
-  const { globalRoom, globalCurrentAudioChannel, setGlobalCurrentAudioChannel } = useContext(RoomContext);
+  const {
+    globalRoom,
+    globalCurrentAudioChannel,
+    setGlobalCurrentAudioChannel,
+  } = useContext(RoomContext);
   const { globalFloorRoom } = useContext(FloorContext);
 
   // This holds the current portal were in (its title)
@@ -183,7 +188,22 @@ const Media = ({
         />
       )}
 
-      <MobileMultiverse entityID={entityID} multiverseArray={multiverseArray} />
+      {isMobile ? (
+        <MobileMultiverse
+          entityID={entityID}
+          multiverseArray={multiverseArray}
+        />
+      ) : (
+        <SmallScreenMultiverse
+          entityID={entityID}
+          currentPortal={currentPortal}
+          setCurrentPortal={setCurrentPortal}
+          multiverse={multiverse}
+          multiverseArray={multiverseArray}
+          microphonePermissionGranted={microphonePermissionGranted}
+          cameraPermissionGranted={cameraPermissionGranted}
+        />
+      )}
     </div>
   );
 };

@@ -36,10 +36,10 @@ const MobileMultiverse = ({ entityID, multiverseArray }) => {
           // readOnly
         />
         <label
-          className="max-max mobile-multiverse__top"
+          className="max-max mobile-multiverse__top mobile-multiverse__title"
           htmlFor="mobileMultiverse"
         >
-          <div className="mobile-multiverse__title">Multiverse</div>
+          Multiverse
         </label>
         <div className="mobile-multiverse__channels">
           {multiverseArray ? renderPortals(multiverseArray) : null}
